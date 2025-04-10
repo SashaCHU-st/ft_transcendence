@@ -14,7 +14,7 @@ npm install
 ```
 2.3 Start server
 ```
-npm start
+npm run dev
 ```
 
  ### 🚀3. For frontend
