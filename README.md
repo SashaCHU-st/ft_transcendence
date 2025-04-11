@@ -29,5 +29,5 @@ npm install
   
 3.3 Start server
 ```
-npm start
+npm run dev
 ```
