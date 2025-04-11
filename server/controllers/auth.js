@@ -4,7 +4,7 @@ import db from "../database/database.js"; // Using better-sqlite3
 export async function signup(req, reply) {
   console.log("We are in SIGNUP middleware");
 
-  const { name,nickname, email, password } = req.body;
+  const { name, nickname, email, password } = req.body;
 
   // Validate request body
   if (!name || !password || !email || !nickname) {
@@ -12,17 +12,30 @@ export async function signup(req, reply) {
   }
 
   try {
-    const hasUser = db.prepare("SELECT * FROM users WHERE email = ? OR nickname = ?").get(email, nickname);
+    const hasUser = db
+      .prepare("SELECT * FROM users WHERE email = ? OR nickname = ?")
+      .get(email, nickname);
     console.log("Has user", hasUser);
-    if (!hasUser)
-      {
-      const users = db.prepare("INSERT INTO users (name, nickname, email, password) VALUES (?, ?, ?, ?)");
-      users.run(name, nickname, email, password);
+    if (!hasUser) {
+      const users = db.prepare(
+        "INSERT INTO users (name, nickname, email, password) VALUES (?, ?, ?, ?)"
+      );
+      const result = users.run(name, nickname, email, password);
 
-      // const kuku = db.prepare('SELECT id, name, email FROM users WHERE id = ?').get(users.lastInsertRowId)
-      // console.log("!!!!",kuku);
+      console.log("ID =>", result.lastInsertRowid);
 
-      return reply.code(201).send({ message: "USER created" });
+      const online = db
+        .prepare("UPDATE users SET online = ? WHERE id = ?")
+        .run(1, result.lastInsertRowid);
+
+      // JUST CHECKING ONLINE
+      const updated = db
+        .prepare("SELECT id, online FROM users WHERE id = ?")
+        .get(result.lastInsertRowid);
+
+      console.log("ONLINE? =>", updated);
+
+      return reply.code(201).send({ message: "USER created", users });
     } else {
       console.log("User already exist");
       return reply.code(400).send({ message: "User already exist" });
@@ -54,6 +67,18 @@ export async function login(req, reply) {
       console.log("kuku", kuku);
       if (kuku) {
         console.log("WE are logged in");
+        const userOnline = db
+          .prepare("SELECT * FROM users WHERE id = ?")
+          .get(user.id);
+
+        console.log("ID=>", user.id);
+        // Put Online
+        const online = db
+          .prepare("UPDATE users SET online = '1' WHERE id = ?")
+          .run(user.id);
+
+        console.log("ONLINE =>", online.changes);
+
         return reply.code(200).send({ message: "We are logged in" });
       } else {
         console.log("Wrong pass ");
@@ -62,6 +87,23 @@ export async function login(req, reply) {
     } else {
       return reply.code(400).send({ message: "No such user?" });
     }
+  } catch (err) {
+    console.error("Database error:", err.message);
+    return reply.code(500).send({ message: "Something went wrong" });
+  }
+}
+
+export async function logout(req, reply) {
+  const { email } = req.body;
+  try {
+    const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+
+    console.log("ID=>",user.id)
+
+    // console.log(logout);
+    const offline = db.prepare("UPDATE users SET online = ? WHERE email = ?").run(0, email)
+    console.log("Offline =>",offline)
+    return reply.code(200).send({ message: "We are logout", user });
   } catch (err) {
     console.error("Database error:", err.message);
     return reply.code(500).send({ message: "Something went wrong" });

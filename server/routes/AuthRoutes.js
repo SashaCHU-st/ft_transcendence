@@ -1,4 +1,4 @@
-import { signup, login } from "../controllers/auth.js";
+import { signup, login , logout} from "../controllers/auth.js";
 import db from "../database/database.js";
 
 async function authRoutes(fastify) {
@@ -9,9 +9,7 @@ async function authRoutes(fastify) {
   fastify.post('/signup', signup);  // Directly using signup function here
 
   // Route for logout (you can adjust this as needed)
-  fastify.get('/', async (req, reply) => {
-    return { message: "LOGOUT" };
-  });
+  fastify.post('/logout', logout);
 
   ///for debug???? or delete later
   fastify.get("/users", async (req, reply) => {

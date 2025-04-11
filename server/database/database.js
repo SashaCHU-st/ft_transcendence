@@ -8,7 +8,8 @@ db.exec(`
     nickname TEXT NOT NULL,
     email TEXT NOT NULL,
     name TEXT NOT NULL,
-    password TEXT NOT NULL
+    password TEXT NOT NULL,
+    online BOOL
   );
 `);
 
