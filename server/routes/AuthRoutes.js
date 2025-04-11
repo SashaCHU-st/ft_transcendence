@@ -1,11 +1,9 @@
-import { signup } from "../controllers/auth.js";
+import { signup, login } from "../controllers/auth.js";
 import db from "../database/database.js";
 
 async function authRoutes(fastify) {
   // Route for login
-  fastify.post('/login', async (req, reply) => {
-    return { message: "LOGIN" };
-  });
+  fastify.post('/login', login);
 
   // Route for signup
   fastify.post('/signup', signup);  // Directly using signup function here
@@ -15,17 +13,13 @@ async function authRoutes(fastify) {
     return { message: "LOGOUT" };
   });
 
-  // Route to fetch all users
+  ///for debug???? or delete later
   fastify.get("/users", async (req, reply) => {
     try {
-      const rows = await new Promise((resolve, reject) => {
-        db.all("SELECT * FROM users", [], (err, rows) => {
-          if (err) reject(err);
-          else resolve(rows);
-        });
-      });
-
-      console.log("!!!!", rows)
+      // Use better-sqlite3's prepare and all methods
+      const rows = db.prepare("SELECT * FROM users").all();
+  
+      // console.log("!!!!", rows);
       return reply.code(200).send({ users: rows });
     } catch (err) {
       console.error("Error fetching users:", err.message);

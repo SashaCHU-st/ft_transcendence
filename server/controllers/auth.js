@@ -25,3 +25,42 @@ export async function signup(req, reply) {
   }
 }
 
+export async function login(req, reply) {
+  const { email, password } = req.body;
+
+  if (!password || !email) {
+    return reply.code(400).send({ message: "No pass or email" });
+  }
+
+  try {
+    const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+    console.log("Query result:", user); // Log the result
+
+    if (user) {
+      console.log("Email", user.email )
+      console.log("Pass", user.password )
+      // reply.code(200).send({ message: "There is such a user", user });
+      const kuku = db.prepare("SELECT * FROM users WHERE email = ? AND password = ?").get(email,password);
+      console.log("kuku", kuku);
+      if(kuku)
+      {
+        console.log("WE are logged in");
+        return reply.code(200).send({ message: "We are logged in" });
+      }
+      else
+      {
+        console.log("Wrong pass ")
+       return reply.code(400).send({ message: "Wrong pass" });
+      }
+
+    } else {
+     return reply.code(400).send({ message: "No such user?" });
+    }
+
+
+
+  } catch (err) {
+    console.error("Database error:", err.message);
+    return reply.code(500).send({ message: "Something went wrong" });
+  }
+}
