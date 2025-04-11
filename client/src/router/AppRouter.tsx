@@ -1,6 +1,7 @@
-import React from 'react'
+// import React, { Profiler } from 'react'
 import MainPage from '../pages/MainPage/MainPage'
 import AuthPage from '../pages/AuthPage/AuthPage'
+import Profile from '../pages/Profile/Profile';
 import { BrowserRouter, Route, Routes} from "react-router-dom";
 
 const AppRouter = () => {
@@ -9,7 +10,8 @@ const AppRouter = () => {
       <BrowserRouter>
         <Routes>
           <Route path ="/" element={<MainPage/>}/>
-          <Route path ="/login" element={<AuthPage/>}/>
+          <Route path ="/auth" element={<AuthPage/>}/>
+          <Route path ="/profile" element={<Profile/>}/>
         </Routes>
       </BrowserRouter>
     </div>
