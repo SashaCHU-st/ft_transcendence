@@ -2,19 +2,15 @@ import { signup, login , logout} from "../controllers/auth.js";
 import db from "../database/database.js";
 
 async function authRoutes(fastify) {
-  // Route for login
   fastify.post('/login', login);
 
-  // Route for signup
-  fastify.post('/signup', signup);  // Directly using signup function here
+  fastify.post('/signup', signup);
 
-  // Route for logout (you can adjust this as needed)
   fastify.post('/logout', logout);
 
   ///for debug???? or delete later
   fastify.get("/users", async (req, reply) => {
     try {
-      // Use better-sqlite3's prepare and all methods
       const rows = db.prepare("SELECT * FROM users").all();
   
       // console.log("!!!!", rows);
