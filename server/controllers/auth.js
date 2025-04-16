@@ -1,6 +1,36 @@
 import HttpError from "../http-error.js";
 import db from "../database/database.js"; // Using better-sqlite3
 
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
+
+
+export async function authJWT (req, reply)
+{
+  const token = req.headers.authorization?.split(" ")[1];
+
+  if (!token)
+    return reply.code(401).send({ message: "smth wrong with TOKEN" });
+
+  try
+  {
+    jwt.verify(token, process.env.JWT_SECRET_KEY), (err, decoded)=>
+    {
+      if(err)
+      {
+        return reply.code(403).send({ message: "Invalid Token" });
+
+      }
+      req.userData = { userId: decoded.userId};
+    })
+  }
+  catch (err) {
+    console.error("Database error:", err.message);
+    return reply.code(500).send({ message: "Something went wrong" });
+  }
+};
+
+
 export async function signup(req, reply) {
   console.log("We are in SIGNUP middleware");
 
