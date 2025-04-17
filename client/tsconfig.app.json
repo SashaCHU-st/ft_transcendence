@@ -20,7 +20,10 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    /* 🙏 Импорты без ./ ада */
+    "baseUrl": "./src"
   },
   "include": ["src"]
 }
