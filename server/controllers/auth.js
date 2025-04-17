@@ -1,35 +1,5 @@
-import HttpError from "../http-error.js";
+// import HttpError from "../http-error.js";
 import db from "../database/database.js"; // Using better-sqlite3
-
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
-
-
-export async function authJWT (req, reply)
-{
-  const token = req.headers.authorization?.split(" ")[1];
-
-  if (!token)
-    return reply.code(401).send({ message: "smth wrong with TOKEN" });
-
-  try
-  {
-    jwt.verify(token, process.env.JWT_SECRET_KEY), (err, decoded)=>
-    {
-      if(err)
-      {
-        return reply.code(403).send({ message: "Invalid Token" });
-
-      }
-      req.userData = { userId: decoded.userId};
-    })
-  }
-  catch (err) {
-    console.error("Database error:", err.message);
-    return reply.code(500).send({ message: "Something went wrong" });
-  }
-};
-
 
 export async function signup(req, reply) {
   console.log("We are in SIGNUP middleware");
@@ -51,6 +21,9 @@ export async function signup(req, reply) {
         "INSERT INTO users (name, nickname, email, password) VALUES (?, ?, ?, ?)"
       );
       const result = users.run(name, nickname, email, password);
+      const token  =  req.jwt.sign ({
+        id: users.id
+      })
 
       console.log("ID =>", result.lastInsertRowid);
 
@@ -65,7 +38,7 @@ export async function signup(req, reply) {
 
       console.log("ONLINE? =>", updated);
 
-      return reply.code(201).send({ message: "USER created", users });
+      return reply.code(201).send({ message: "USER created", users, accessToken: token });
     } else {
       console.log("User already exist");
       return reply.code(400).send({ message: "User already exist" });
@@ -94,7 +67,16 @@ export async function login(req, reply) {
       const kuku = db
         .prepare("SELECT * FROM users WHERE email = ? AND password = ?")
         .get(email, password);
-      console.log("kuku", kuku);
+
+        // const token = jwt.sign(
+        //   { userId: user.id },
+        //   { expiresIn: "2h" }
+        // );
+      // console.log("kuku", kuku);
+
+      const token  =  req.jwt.sign ({
+        id: user.id
+      })
       if (kuku) {
         console.log("WE are logged in");
         const userOnline = db
@@ -109,10 +91,10 @@ export async function login(req, reply) {
 
         console.log("ONLINE =>", online.changes);
 
-        return reply.code(200).send({ message: "We are logged in" });
+        return reply.code(200).send({ message: "We are logged in", accessToken: token });
       } else {
         console.log("Wrong pass ");
-        return reply.code(400).send({ message: "Wrong pass" });
+        return reply.code(401).send({ message: "Wrong pass" });
       }
     } else {
       return reply.code(400).send({ message: "No such user?" });
