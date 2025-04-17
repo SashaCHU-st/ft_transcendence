@@ -1,22 +1,40 @@
-import { signup, login , logout} from "../controllers/auth.js";
+import { signup, login, logout } from "../controllers/auth.js";
 import db from "../database/database.js";
+import { SignUpSchema, LoginSchema} from "../schema/user.schema.js";
 
 async function authRoutes(fastify) {
-  // Route for login
-  fastify.post('/login', login);
+  fastify.post("/login", async (req, reply) =>
+  {
+    const validated = LoginSchema.safeParse(req.body);
+    if(!validated.success)
+    {
+      return reply.code(400).send({
+        message: "Validation error",
+        errors: validated.error.errors,
+      });
+    }
+    return login ({...req, body:validated.data}, reply);
+  });
 
-  // Route for signup
-  fastify.post('/signup', signup);  // Directly using signup function here
+  fastify.post("/signup", async (req, reply) => {
+    const validated = SignUpSchema.safeParse(req.body);
 
-  // Route for logout (you can adjust this as needed)
-  fastify.post('/logout', logout);
+    if (!validated.success) {
+      return reply.code(400).send({
+        message: "Validation error",
+        errors: validated.error.errors,
+      });
+    }
+    return signup({...req, body:validated.data}, reply);
+  });
+
+  fastify.post("/logout", logout);
 
   ///for debug???? or delete later
   fastify.get("/users", async (req, reply) => {
     try {
-      // Use better-sqlite3's prepare and all methods
       const rows = db.prepare("SELECT * FROM users").all();
-  
+
       // console.log("!!!!", rows);
       return reply.code(200).send({ users: rows });
     } catch (err) {
