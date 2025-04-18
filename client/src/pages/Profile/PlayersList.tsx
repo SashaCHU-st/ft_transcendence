@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PlayerItem from './PlayerItem';
 
@@ -9,17 +8,25 @@ type Player = {
   totalLosses: number;
 };
 
-const PlayersList = ({ players }: { players: Player[] }) => {
+const PlayersList: React.FC<{ players: Player[] }> = ({ players }) => {
   const sorted = [...players].sort((a, b) => Number(b.online) - Number(a.online));
 
   return (
-    <ul className="space-y-3 overflow-y-auto max-h-[600px] pr-1">
-      {sorted.map((player, idx) => (
-        <PlayerItem key={idx} player={player} />
-      ))}
-    </ul>
+	<ul className="grid
+					grid-cols-1
+					sm:grid-cols-2
+					gap-3
+					max-h-[550px]
+					overflow-y-auto
+					pr-1
+					scrollbar-thin
+					scrollbar-thumb-white/60
+					scrollbar-track-transparent">
+	  {sorted.map((player, idx) => (
+		<PlayerItem key={idx} player={player} />
+	  ))}
+	</ul>
   );
 };
 
 export default PlayersList;
-

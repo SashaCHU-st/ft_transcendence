@@ -1,24 +1,41 @@
 import React from 'react';
 
-interface Player {
+type Player = {
   name: string;
   online: boolean;
   totalWins: number;
   totalLosses: number;
-}
+};
 
 const PlayerItem: React.FC<{ player: Player }> = ({ player }) => {
   return (
-    <li className="bg-gray-800 bg-opacity-50 p-1 rounded shadow-sm flex flex-col sm:flex-row justify-between items-center text-sm">
-      <div className="flex items-center gap-2">
+    // Player card container
+    <li className="bg-gray-800
+                   bg-opacity-70
+                   p-2
+                   rounded
+                   shadow-sm
+                   text-sm
+                   text-center
+                   max-w-[180px]
+                   mx-auto">
+
+      {/* Name and online status */}
+      <div className="flex
+                      items-center
+                      justify-center
+                      gap-2
+                      mb-1">
         <span className="font-semibold">{player.name}</span>
-        <span
-          className={`h-2.5 w-2.5 rounded-full ${
-            player.online ? 'bg-green-400' : 'bg-gray-500'
-          }`}
-        />
+        <span className={`h-2.5 
+                          w-2.5 
+                          rounded-full 
+                          ${player.online ? 'bg-green-400' : 'bg-gray-500'}`} />
       </div>
-      <div className="text-gray-400 text-xs sm:text-sm">
+
+      {/* Win/Loss stats */}
+      <div className="text-gray-400
+                      text-xs">
         Wins: {player.totalWins} | Losses: {player.totalLosses}
       </div>
     </li>

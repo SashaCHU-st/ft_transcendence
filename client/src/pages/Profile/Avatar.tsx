@@ -21,13 +21,26 @@ const Avatar: React.FC<AvatarProps> = ({ src, username, className }) => {
   };
 
   return (
+    // Avatar container block
     <div className="flex flex-col items-center">
-      <img
-        src={src}
-        alt={username}
+      {/* Circle wrapper with border */}
+      <div
         onClick={handleClick}
-        className={`rounded-full cursor-pointer border-4 border-white ${className}`}
-      />
+        className={`rounded-full
+                    border-2
+                    border-white
+                    overflow-hidden
+                    cursor-pointer
+                    ${className}`}
+      >
+        <img
+          src={src}
+          alt={username}
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Hidden file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -35,7 +48,10 @@ const Avatar: React.FC<AvatarProps> = ({ src, username, className }) => {
         onChange={handleFileChange}
         className="hidden"
       />
-      <span className="text-xs text-gray-400 mt-2">Click avatar to change</span>
+
+      <span className="text-xs text-gray-400 mt-1">
+        Click avatar to change
+      </span>
     </div>
   );
 };
