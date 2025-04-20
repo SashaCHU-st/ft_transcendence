@@ -1,4 +1,4 @@
-// App.tsx
+
 import './index.css';
 import Profile from './pages/Profile/Profile';
 import { Toaster } from 'react-hot-toast';

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 interface AvatarProps {
   src: string;
@@ -7,51 +7,36 @@ interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ src, username, className }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      console.log('Avatar selected:', file);
-    }
-  };
+  const [isImageLoaded, setIsImageLoaded] = React.useState(true);
 
   return (
-    // Avatar container block
     <div className="flex flex-col items-center">
-      {/* Circle wrapper with border */}
       <div
-        onClick={handleClick}
-        className={`rounded-full
-                    border-2
-                    border-white
-                    overflow-hidden
-                    cursor-pointer
-                    ${className}`}
+        className={`
+          rounded-full
+          border-2
+          border-white
+          overflow-hidden
+          flex
+          items-center
+          justify-center
+          bg-gray-800
+          text-white
+          text-center
+          ${className}
+        `}
       >
-        <img
-          src={src}
-          alt={username}
-          className="w-full h-full object-cover"
-        />
+        {isImageLoaded ? (
+          <img
+            src={src}
+            alt={username}
+            className="w-full h-full object-cover"
+            onError={() => setIsImageLoaded(false)}
+          />
+        ) : (
+          <span className="text-sm font-semibold px-2">{username}</span>
+        )}
       </div>
-
-      {/* Hidden file input */}
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="hidden"
-      />
-
-      <span className="text-xs text-gray-400 mt-1">
-        Click avatar to change
-      </span>
     </div>
   );
 };

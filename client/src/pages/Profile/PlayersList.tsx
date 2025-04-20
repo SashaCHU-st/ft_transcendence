@@ -15,7 +15,7 @@ const PlayersList: React.FC<{ players: Player[] }> = ({ players }) => {
 	<ul className="grid
 					grid-cols-1
 					sm:grid-cols-2
-					gap-3
+					gap-2
 					max-h-[550px]
 					overflow-y-auto
 					pr-1

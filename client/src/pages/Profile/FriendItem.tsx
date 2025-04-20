@@ -14,7 +14,7 @@ const FriendItem: React.FC<FriendItemProps> = ({ friend }) => {
 		// Friend card container
 		<li className="bg-gray-800
 				bg-opacity-70
-				p-3
+				p-1
 				rounded
 				shadow-sm
 				flex
@@ -23,7 +23,6 @@ const FriendItem: React.FC<FriendItemProps> = ({ friend }) => {
 				text-center
 				w-full
 				mx-auto">
-
 
 			{/* Name and online indicator */}
 			<div className="flex
@@ -41,8 +40,7 @@ const FriendItem: React.FC<FriendItemProps> = ({ friend }) => {
 
 			{/* Win/Loss stats */}
 			<div className="text-gray-300
-                      text-sm
-                      mb-2">
+                      mb-1">
 				Wins: {friend.totalWins} | Losses: {friend.totalLosses}
 			</div>
 
@@ -57,10 +55,9 @@ const FriendItem: React.FC<FriendItemProps> = ({ friend }) => {
 					className="bg-red-600
 					hover:bg-red-700
 					text-white
-					px-2
+					px-1
 					py-1
 					rounded
-					text-xs
 					flex-1
 					min-w-[70px]">
 					Remove
@@ -70,16 +67,14 @@ const FriendItem: React.FC<FriendItemProps> = ({ friend }) => {
 					className="bg-blue-600
 					hover:bg-blue-700
 					text-white
-					px-2
+					px-1
 					py-1
 					rounded
-					text-xs
 					flex-1
 					min-w-[70px]">
 					Challenge
 				</button>
 			</div>
-
 		</li>
 	);
 };

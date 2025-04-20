@@ -12,10 +12,9 @@ const PlayerItem: React.FC<{ player: Player }> = ({ player }) => {
     // Player card container
     <li className="bg-gray-800
                    bg-opacity-70
-                   p-2
+                   p-3
                    rounded
                    shadow-sm
-                   text-sm
                    text-center
                    max-w-[180px]
                    mx-auto">
@@ -34,9 +33,8 @@ const PlayerItem: React.FC<{ player: Player }> = ({ player }) => {
       </div>
 
       {/* Win/Loss stats */}
-      <div className="text-gray-400
-                      text-xs">
-        Wins: {player.totalWins} | Losses: {player.totalLosses}
+      <div className="text-gray-400">
+        Wins: {player.totalWins}  Losses: {player.totalLosses}
       </div>
     </li>
   );

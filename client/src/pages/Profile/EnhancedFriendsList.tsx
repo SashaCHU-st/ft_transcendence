@@ -14,7 +14,7 @@ const EnhancedFriendsList: React.FC<EnhancedFriendsListProps> = ({ friends }) =>
     <ul className="grid
 			grid-cols-1
 			sm:grid-cols-2
-			gap-3
+			gap-1
 			max-h-[550px]
 			overflow-y-auto
 			pr-1
