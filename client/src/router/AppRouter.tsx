@@ -4,6 +4,7 @@ import AuthPage from '../pages/AuthPage/AuthPage'
 import Profile from '../pages/Profile/Profile';
 import { BrowserRouter, Route, Routes} from "react-router-dom";
 import Layout from '../components/Layout.tsx';
+import { Toaster } from 'react-hot-toast';
 
 const AppRouter = () => {
   return (
@@ -14,6 +15,7 @@ const AppRouter = () => {
             <Route path ="/" element={<MainPage/>}/>
             <Route path ="/auth" element={<AuthPage/>}/>
             <Route path ="/profile" element={<Profile/>}/>
+            <Toaster position="top-right" reverseOrder={false} />
           </Route>
         </Routes>
       </BrowserRouter>

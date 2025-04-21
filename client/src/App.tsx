@@ -1,5 +1,7 @@
 import AppRouter from './router/AppRouter'
 import './index.css';
+//import { Toaster } from 'react-hot-toast';
+
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -28,6 +30,7 @@ function App() {
     //   </p>
     // </>
     <AppRouter/>
+    //<Toaster position="top-right" reverseOrder={false} />
   )
 }
 

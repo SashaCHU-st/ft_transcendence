@@ -9,7 +9,7 @@ interface Player {
 
 const PlayerItem: React.FC<{ player: Player }> = ({ player }) => {
   return (
-    <li className="bg-gray-800 bg-opacity-70 p-1 rounded shadow-sm flex flex-col sm:flex-row justify-between items-center text-sm">
+    <li className="bg-gray-800 bg-opacity-50 p-1 rounded shadow-sm flex flex-col sm:flex-row justify-between items-center text-sm">
       <div className="flex items-center gap-2">
         <span className="font-semibold">{player.name}</span>
         <span
