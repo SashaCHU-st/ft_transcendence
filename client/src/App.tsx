@@ -1,4 +1,4 @@
- import AppRouter from './router/AppRouter'
+import AppRouter from './router/AppRouter'
 // import './index.css';
 // //import { Toaster } from 'react-hot-toast';
 
@@ -36,8 +36,9 @@
 // export default App
 
 
+
 import './index.css';
-import Profile from './pages/Profile/Profile';
+//import Profile from './pages/Profile/Profile';
 import { Toaster } from 'react-hot-toast';
 
 function App() {

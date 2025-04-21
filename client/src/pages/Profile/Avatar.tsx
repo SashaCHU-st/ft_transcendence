@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 interface AvatarProps {
   src: string;
@@ -7,35 +7,36 @@ interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ src, username, className }) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      console.log('Avatar selected:', file);
-    }
-  };
+  const [isImageLoaded, setIsImageLoaded] = React.useState(true);
 
   return (
     <div className="flex flex-col items-center">
-      <img
-        src={src}
-        alt={username}
-        onClick={handleClick}
-        className={`rounded-full cursor-pointer border-4 border-white ${className}`}
-      />
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="hidden"
-      />
-      <span className="text-xs text-gray-400 mt-2">Click avatar to change</span>
+      <div
+        className={`
+          rounded-full
+          border-2
+          border-white
+          overflow-hidden
+          flex
+          items-center
+          justify-center
+          bg-gray-800
+          text-white
+          text-center
+          ${className}
+        `}
+      >
+        {isImageLoaded ? (
+          <img
+            src={src}
+            alt={username}
+            className="w-full h-full object-cover"
+            onError={() => setIsImageLoaded(false)}
+          />
+        ) : (
+          <span className="text-sm font-semibold px-2">{username}</span>
+        )}
+      </div>
     </div>
   );
 };

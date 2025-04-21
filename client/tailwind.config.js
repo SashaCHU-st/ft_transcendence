@@ -38,5 +38,12 @@ export default {
       },
     },
   },
+<<<<<<< HEAD
   plugins: [],
 }
+=======
+  plugins: [
+    require('tailwind-scrollbar'),
+  ],
+}
+>>>>>>> origin/oleg_profile
