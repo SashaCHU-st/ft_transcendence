@@ -11,7 +11,7 @@ const PlayerItem: React.FC<{ player: Player }> = ({ player }) => {
   return (
     // Player card container
     <li className="bg-gray-800
-                   bg-opacity-70
+                   bg-opacity-50
                    p-3
                    rounded
                    shadow-sm

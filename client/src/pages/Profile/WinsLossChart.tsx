@@ -34,7 +34,7 @@ const WinLossChart = () => {
     <div className="w-full
 					h-[min(360px,40vw)] 
 					bg-gray-800
-					bg-opacity-70
+					bg-opacity-50
 					rounded-2xl 
 					p-4 
 					shadow-lg">

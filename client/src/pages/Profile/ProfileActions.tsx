@@ -3,11 +3,11 @@ import React from 'react';
 interface ProfileActionsProps {
 	username: string;
 	online: boolean;
+	onProfileClick: () => void;
   }
   
 
-const ProfileActions: React.FC<ProfileActionsProps> = ({ username, online }) => {
-	const handleProfileClick = () => alert('Edit profile...');
+const ProfileActions: React.FC<ProfileActionsProps> = ({ username, online, onProfileClick }) => {
 	const handleLogout = () => alert('Logging out...');
 
 	return (
@@ -22,7 +22,7 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({ username, online }) => 
 				
 			{/* PROFILE */}
 			<button
-				onClick={handleProfileClick}
+				onClick={onProfileClick}
 				className="px-4
                    py-1
                    rounded

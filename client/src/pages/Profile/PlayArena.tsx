@@ -46,6 +46,7 @@ const Arena: React.FC<ArenaProps> = ({
 				overflow-hidden
 				flex
 				items-center
+        drop-shadow-[0_0_8px_white]
 				justify-center">
         {playerImage ? (
           <img
@@ -90,6 +91,7 @@ const Arena: React.FC<ArenaProps> = ({
 				flex
 				items-center
 				justify-center
+        drop-shadow-[0_0_8px_white]
 				relative">
         {opponentImage ? (
           <>

@@ -13,7 +13,7 @@ const FriendItem: React.FC<FriendItemProps> = ({ friend }) => {
 	return (
 		// Friend card container
 		<li className="bg-gray-800
-				bg-opacity-70
+				bg-opacity-50
 				p-1
 				rounded
 				shadow-sm
