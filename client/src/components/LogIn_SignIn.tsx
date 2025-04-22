@@ -17,7 +17,9 @@ const AuthButtons = () => {
       {/* Log In Button */}
       <button
         onClick={toLoginPage}
-        className="px-4 py-2 rounded-2xl text-base font-bold bg-transparent outline-3 outline-offset-2 outline-double border border-emerald-200  text-white transition-all duration-300 ease-in-out hover:scale-110"
+        className="px-2 sm:px-2 md:px-4 py-1 sm:py-1 md:py-2 rounded-2xl font-bold bg-transparent outline-3 outline-offset-2 outline-double 
+            border border-blue-300  text-white transition-all duration-300 ease-in-out hover:scale-110
+            text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg"
 		style={{ 
 			textShadow:`
 			  0 0 4px rgba(102, 0, 255, 0.9),
@@ -34,7 +36,9 @@ const AuthButtons = () => {
       {/* Sign Up Button */}
       <button
         onClick={toSignUpPage}
-        className="px-4 py-2 rounded-2xl text-base font-bold bg-transparent outline-3 outline-offset-2 outline-double border border-emerald-200  text-white transition-all duration-300 ease-in-out hover:scale-110"
+        className="px-2 sm:px-2 md:px-4 py-1 sm:py-1 md:py-2  rounded-2xl font-bold bg-transparent outline-3 outline-offset-2 outline-double
+             border border-blue-300  text-white transition-all duration-300 ease-in-out hover:scale-110
+             text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg"
 		style={{ 
 			textShadow:`
 			  0 0 4px rgba(102, 0, 255, 0.9),
