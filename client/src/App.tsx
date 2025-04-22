@@ -1,6 +1,8 @@
-// import { useState } from 'react'
+
+
+import './index.css';
+// import Profile from './pages/Profile/Profile';
 import AppRouter from './router/AppRouter'
-import './App.css'
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -28,7 +30,6 @@ function App() {
     //     Click on the Vite and React logos to learn more
     //   </p>
     // </>
-    
     <AppRouter/>
   )
 }
