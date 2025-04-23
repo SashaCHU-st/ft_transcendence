@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 
 interface ProfileModalProps {
@@ -27,11 +28,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   const [email, setEmail] = useState(userData.email);
   const [password, setPassword] = useState("");
 
+  // Чтение файла и конвертация в base64
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setAvatar(URL.createObjectURL(file));
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatar(reader.result as string); // сохраняем base64
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -59,120 +65,61 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           shadow-2xl
         "
       >
-        <h2
-          className="
-            text-2xl
-            font-bold
-            text-center
-          "
-        >
-          Edit Profile
-        </h2>
+        <h2 className="text-2xl font-bold text-center">Edit Profile</h2>
 
-        <div
-          className="
-            flex
-            flex-col
-            items-center
-            gap-2
-          "
-        >
+        {/* Avatar */}
+        <div className="flex flex-col items-center gap-2">
           <img
             src={avatar}
             alt="Avatar"
-            className="
-              w-24
-              h-24
-              rounded-full
-              object-cover
-              border-2
-              border-white
-            "
+            className="w-24 h-24 rounded-full object-cover border-2 border-white"
           />
           <input
             type="file"
             accept="image/*"
             onChange={handleAvatarChange}
-            className="
-              text-sm
-              text-gray-300
-            "
+            className="text-sm text-gray-300"
           />
         </div>
 
+        {/* Nickname */}
         <input
           type="text"
           placeholder="Nickname"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
-          className="
-            w-full
-            p-2
-            rounded
-            bg-gray-800
-            border
-            border-gray-600
-          "
+          className="w-full p-2 rounded bg-gray-800 border border-gray-600"
         />
 
+        {/* Email */}
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="
-            w-full
-            p-2
-            rounded
-            bg-gray-800
-            border
-            border-gray-600
-          "
+          className="w-full p-2 rounded bg-gray-800 border border-gray-600"
         />
 
+        {/* Password */}
         <input
           type="password"
           placeholder="New Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="
-            w-full
-            p-2
-            rounded
-            bg-gray-800
-            border
-            border-gray-600
-          "
+          className="w-full p-2 rounded bg-gray-800 border border-gray-600"
         />
 
-        <div
-          className="
-            text-sm
-            text-gray-400
-            space-y-1
-          "
-        >
+        {/* Static fields */}
+        <div className="text-sm text-gray-400 space-y-1">
           <p>First Name: {userData.firstName}</p>
           <p>Last Name: {userData.lastName}</p>
         </div>
 
-        <div
-          className="
-            flex
-            justify-end
-            gap-3
-            pt-4
-          "
-        >
+        {/* Buttons */}
+        <div className="flex justify-end gap-3 pt-4">
           <button
             onClick={onClose}
-            className="
-              px-4
-              py-2
-              bg-gray-600
-              hover:bg-gray-700
-              rounded
-            "
+            className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded"
           >
             Cancel
           </button>
@@ -185,14 +132,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
                 password,
               })
             }
-            className="
-              px-4
-              py-2
-              bg-green-500
-              hover:bg-green-600
-              text-white
-              rounded
-            "
+            className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded"
           >
             Save
           </button>

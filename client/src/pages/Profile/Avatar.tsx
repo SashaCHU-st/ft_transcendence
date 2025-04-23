@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 
 interface AvatarProps {
   src: string;
@@ -7,7 +8,13 @@ interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ src, username, className }) => {
-  const [isImageLoaded, setIsImageLoaded] = React.useState(true);
+  const [imgSrc, setImgSrc] = useState(src);
+  const [isImageLoaded, setIsImageLoaded] = useState(true);
+
+  useEffect(() => {
+    setImgSrc(src);
+    setIsImageLoaded(true);
+  }, [src]);
 
   return (
     <div className="flex flex-col items-center">
@@ -28,7 +35,7 @@ const Avatar: React.FC<AvatarProps> = ({ src, username, className }) => {
       >
         {isImageLoaded ? (
           <img
-            src={src}
+            src={imgSrc}
             alt={username}
             className="w-full h-full object-cover"
             onError={() => setIsImageLoaded(false)}
