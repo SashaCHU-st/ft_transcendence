@@ -3,21 +3,18 @@ import React, { useState } from "react";
 import SignInForm from "./LogInForm";
 import SignUpForm from "./SignUpForm";
 
-const AuthPage = ({ onClose }: { onClose: () => void }) => {
-  const [isLogin, setIsLogin] = useState(true);
+const AuthPage = ({ onClose, mode }: { onClose: () => void; mode: "login" | "signup" }) => {
+  const [isLogin, setIsLogin] = useState(mode === "login");
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full relative">
+      <div className="bg-white bg-opacity-30 rounded-lg shadow-xl p-6 max-w-md w-full relative">
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-600 hover:text-red-500 text-lg font-bold"
+          className="absolute top-2 right-2 text-blue-100 hover:text-red-500 text-lg font-bold"
         >
           ✕
         </button>
-        <h2 className="text-xl font-bold text-center mb-4">
-          {isLogin ? "Login" : "Sign Up"}
-        </h2>
         {isLogin ? (
           <SignInForm onSuccess={onClose} />
         ) : (
@@ -26,7 +23,7 @@ const AuthPage = ({ onClose }: { onClose: () => void }) => {
         <div className="text-center mt-4">
           <button
             onClick={() => setIsLogin(!isLogin)}
-            className="text-blue-600 hover:underline"
+            className="text-indigo-200 hover:underline"
           >
             {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
           </button>

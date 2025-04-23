@@ -9,7 +9,7 @@ const HeaderButton = () => {
         onClick={() => navigate("/")}
         className="text-transparent bg-clip-text 
              bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-300
-             text-xl sm:text-3xl md:text-4xl font-bold 
+             text-xl sm:text-xl md:text-2xl lg:text-3xl font-bold 
              bg-transparent 
              transition-transform duration-300 ease-in-out 
              hover:scale-110"

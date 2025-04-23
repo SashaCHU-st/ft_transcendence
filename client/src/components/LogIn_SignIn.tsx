@@ -1,25 +1,13 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
-const AuthButtons = () => {
-  const navigate = useNavigate();
-
-  const toLoginPage = () => {
-    navigate('/auth');
-  };
-
-  const toSignUpPage = () => {
-    navigate('/auth');
-  };
-
+const AuthButtons = ({ openModal }: { openModal: (mode: "login" | "signup") => void }) => {
   return (
-    <div className="fixed top-4 right-6 z-50 flex gap-4">
-      {/* Log In Button */}
+    <div className="fixed top-4 right-8 z-50 flex gap-4">
       <button
-        onClick={toLoginPage}
-        className="px-2 sm:px-2 md:px-4 py-1 sm:py-1 md:py-2 rounded-2xl font-bold bg-transparent outline-3 outline-offset-2 outline-double 
+        onClick={()=> openModal("login")}
+        className="px-2 py-1 rounded-lg font-bold bg-transparent outline-3 outline-offset-2 outline-double 
             border border-blue-300  text-white transition-all duration-300 ease-in-out hover:scale-110
-            text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg"
+            text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm"
 		style={{ 
 			textShadow:`
 			  0 0 4px rgba(102, 0, 255, 0.9),
@@ -28,17 +16,14 @@ const AuthButtons = () => {
 			  0 0 32px rgba(102, 0, 255, 0.3)
 			  `,
 		  }}
-	  
-	  >
+	    >
         LOG IN
       </button>
-
-      {/* Sign Up Button */}
       <button
-        onClick={toSignUpPage}
-        className="px-2 sm:px-2 md:px-4 py-1 sm:py-1 md:py-2  rounded-2xl font-bold bg-transparent outline-3 outline-offset-2 outline-double
+        onClick={()=> openModal("signup")}
+        className="px-2 py-1 rounded-lg font-bold bg-transparent outline-3 outline-offset-2 outline-double
              border border-blue-300  text-white transition-all duration-300 ease-in-out hover:scale-110
-             text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg"
+             text-xs sm:text-xs md:text-sm lg:text-sm xl:text-sm"
 		style={{ 
 			textShadow:`
 			  0 0 4px rgba(102, 0, 255, 0.9),
@@ -47,8 +32,7 @@ const AuthButtons = () => {
 			  0 0 32px rgba(102, 0, 255, 0.3)
 			  `,
 		  }}
-	  
-	  >
+	    >
         SIGN UP
       </button>
     </div>

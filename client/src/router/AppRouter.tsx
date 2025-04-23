@@ -12,7 +12,6 @@ const AppRouter = () => {
         <Routes>
           <Route element={<Layout />}>
             <Route path ="/" element={<MainPage/>}/>
-            
             <Route path ="/profile" element={<Profile/>}/>
           </Route>
         </Routes>
