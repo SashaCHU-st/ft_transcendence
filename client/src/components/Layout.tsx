@@ -5,7 +5,7 @@ import AuthButtons from "./LogIn_SignIn";
 const Layout = () => {
   return (
     <div>
-      <HeaderButton />
+      {/* <HeaderButton /> */}
 	  <AuthButtons />
       <Outlet />
     </div>

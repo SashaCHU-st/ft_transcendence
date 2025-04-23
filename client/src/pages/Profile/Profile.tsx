@@ -7,7 +7,7 @@ import { bots } from "./types/botsData";
 import PlayArena from "./PlayArena";
 import ProfileActions from "./ProfileActions";
 import EnhancedFriendsList from "./EnhancedFriendsList";
-// import WinLossChart from "./WinsLossChart";
+import WinLossChart from "./WinsLossChart";
 import ProfileModal from "./ProfileModal";
 import { EnhancedFriend } from "./types/EnhancedFriend";
 import { PrimaryButton } from "./types/ui";
@@ -88,15 +88,19 @@ const Profile: React.FC = () => {
 					"
 				>
 					<div
-						className="
-							text-xl
-							font-bold
-							flex
-							items-center
-							gap-2
-						"
+					className="text-transparent bg-clip-text 
+					bg-gradient-to-r from-red-400 via-indigo-300 to-green-300
+					text-2xl sm:text-3xl font-bold 
+					bg-transparent 
+					transition-transform duration-300 ease-in-out 
+					hover:scale-110"
+					style={{ 
+					 textShadow:`
+					   0 0 20px rgba(255, 255, 255, 0.3),
+					   0 0 32px rgba(255, 0, 255, 0.3)
+					   `,}}
 					>
-						Super Puper Pong
+						NEON PONG
 					</div>
 
 					<ProfileActions
@@ -132,7 +136,7 @@ const Profile: React.FC = () => {
 						</div>
 
 						{/* PLACE FOR CHART */}
-						<div className="pt-6">{/* <WinLossChart /> */}</div>
+						<div className="pt-6"><WinLossChart /> </div>
 
 						{/* CENTER BLOCK: AVATAR, STATS, PLAY BUTTON */}
 						<div
@@ -208,7 +212,7 @@ const Profile: React.FC = () => {
 						"
 					>
 						{/* CHART (OPTIONAL) */}
-						<div className="w-full max-w-md">{/* <WinLossChart /> */}</div>
+						<div className="w-full max-w-md"><WinLossChart /> </div>
 
 						{/* USER INFO & PLAY BUTTON */}
 						<Avatar
@@ -267,7 +271,12 @@ const Profile: React.FC = () => {
 						mt-4
 					"
 				>
-					<p className="text-lg text-purple-400 font-extrabold uppercase tracking-wide drop-shadow-[0_0_8px_white]">
+					<p className="text-lg 
+								text-purple-400
+								font-extrabold
+								uppercase
+								tracking-wide
+								drop-shadow-[0_0_8px_white]">
 						Fighters — choose your rival!
 					</p>
 
