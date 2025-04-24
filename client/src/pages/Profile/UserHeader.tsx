@@ -6,29 +6,36 @@ interface UserHeaderProps {
   avatar: string;
   wins: number;
   losses: number;
+  className?: string;
 }
 
-const UserHeader = ({ username, avatar, wins, losses }: UserHeaderProps) => {
+const UserHeader: React.FC<UserHeaderProps> = ({
+  username,
+  avatar,
+  wins,
+  losses,
+  className
+}) => {
   return (
-    <div className="flex
-                    items-center
-                    gap-6">
+    <div className={`flex flex-col items-center text-center gap-3 ${className ?? ''}`}>
       <Avatar
         src={avatar}
         username={username}
+        className="
+          w-32
+          h-32
+          sm:w-40
+          sm:h-40
+          md:w-44
+          md:h-44
+          xl:w-48
+          xl:h-48
+        "
       />
-
-      <div className="text-left">
-        <h1 className="text-4xl
-                       font-bold">
-          {username}
-        </h1>
-
-        <p className="text-gray-400
-                      text-lg">
-          Wins: {wins} | Losses: {losses}
-        </p>
-      </div>
+      <h1 className="text-xl sm:text-2xl font-bold">{username}</h1>
+      <p className="text-gray-300 text-sm sm:text-base">
+        Wins: {wins} | Losses: {losses}
+      </p>
     </div>
   );
 };

@@ -31,7 +31,7 @@ function App() {
     //   </p> */}
       {/* <AppRouter/> */}
       <Profile />
-      {/* <Toaster position="top-right" reverseOrder={false} /> */}
+      <Toaster position="top-right" reverseOrder={false} />
     </>
     
   )

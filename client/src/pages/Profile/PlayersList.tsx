@@ -1,8 +1,8 @@
-
 import React, { useState } from "react";
 import { EnhancedFriend } from "./types/EnhancedFriend";
 import PlayerCard from "./PlayerCard";
 import { CardWrapper } from "./types/ui";
+import { toast } from 'react-hot-toast';
 
 type Props = {
   players: EnhancedFriend[];
@@ -38,9 +38,6 @@ const PlayersList: React.FC<Props> = ({ players }) => {
                 {player.online ? "Online" : "Offline"}
               </div>
             </div>
-            <div className="text-sm text-gray-300">
-              Wins: {player.totalWins} | Losses: {player.totalLosses}
-            </div>
 
             <div className={`
               transition-all 
@@ -53,7 +50,7 @@ const PlayersList: React.FC<Props> = ({ players }) => {
                 online={player.online}
                 wins={player.totalWins}
                 losses={player.totalLosses}
-                onChallenge={() => alert(`Challenged ${player.name}`)}
+                onChallenge={() => toast.success(`Challenged ${player.name}`)}
               />
             </div>
           </CardWrapper>

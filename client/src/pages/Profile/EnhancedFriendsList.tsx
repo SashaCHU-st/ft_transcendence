@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { EnhancedFriend } from "./types/EnhancedFriend";
 import PlayerCard from "./PlayerCard";
 import { CardWrapper } from "./types/ui";
+import { toast } from 'react-hot-toast';
 
 interface Props {
   friends: EnhancedFriend[];
@@ -38,10 +39,8 @@ const EnhancedFriendsList: React.FC<Props> = ({ friends }) => {
                 {friend.online ? "Online" : "Offline"}
               </div>
             </div>
-            <div className="text-sm text-gray-300">
-              Wins: {friend.totalWins} | Losses: {friend.totalLosses}
-            </div>
 
+            {/* Expanded content */}
             <div className={`
               transition-all 
               duration-300 
@@ -53,8 +52,8 @@ const EnhancedFriendsList: React.FC<Props> = ({ friends }) => {
                 online={friend.online}
                 wins={friend.totalWins}
                 losses={friend.totalLosses}
-                onRemove={() => alert(`Removed ${friend.name}`)}
-                onChallenge={() => alert(`Challenged ${friend.name}`)}
+                onRemove={() => toast(`${friend.name} removed from friends 👋`)}
+                onChallenge={() => toast.success(`Challenge sent to ${friend.name}`)}
               />
             </div>
           </CardWrapper>
