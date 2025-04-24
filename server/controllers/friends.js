@@ -26,7 +26,7 @@ export async function friendsSearch(req, reply) {
     console.error("Database error:", err.message);
     return reply.code(500).send({ message: "Something went wrong" });
   }
-}
+}     
 
 export async function friendsAdd(req, reply) {
     console.log("WE ARE IN ADDING FRIENDS");
