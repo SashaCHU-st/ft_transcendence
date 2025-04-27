@@ -1,12 +1,12 @@
 
 import React, { useState } from "react";
-import { EnhancedFriend } from "./types/EnhancedFriend";
+import { UserInfo } from "./types/UserInfo";
 import PlayerCard from "./PlayerCard";
 import { CardWrapper } from "./types/ui";
 import { toast } from 'react-hot-toast';
 
 interface Props {
-  friends: EnhancedFriend[];
+  friends: UserInfo[];
 }
 
 const EnhancedFriendsList: React.FC<Props> = ({ friends }) => {
@@ -34,7 +34,7 @@ const EnhancedFriendsList: React.FC<Props> = ({ friends }) => {
         return (
           <CardWrapper key={index} onClick={() => toggleExpand(index)}>
             <div className="flex justify-between items-center">
-              <div className="font-bold text-base">{friend.name}</div>
+              <div className="font-bold text-base">{friend.username}</div>
               <div className={`text-sm ${friend.online ? "text-green-400" : "text-gray-400"}`}>
                 {friend.online ? "Online" : "Offline"}
               </div>
@@ -48,12 +48,14 @@ const EnhancedFriendsList: React.FC<Props> = ({ friends }) => {
               ${isExpanded ? "max-h-[600px] mt-3" : "max-h-0"}
             `}>
               <PlayerCard
-                name={friend.name}
+                name={friend.username}
                 online={friend.online}
-                wins={friend.totalWins}
-                losses={friend.totalLosses}
-                onRemove={() => toast(`${friend.name} removed from friends 👋`)}
-                onChallenge={() => toast.success(`Challenge sent to ${friend.name}`)}
+                wins={friend.wins}
+                losses={friend.losses}
+                avatar={friend.avatar}
+                history={friend.history}
+                onRemove={() => toast(`${friend.username} removed from friends 👋`)}
+                onChallenge={() => toast.success(`Challenge sent to ${friend.username}`)}
               />
             </div>
           </CardWrapper>

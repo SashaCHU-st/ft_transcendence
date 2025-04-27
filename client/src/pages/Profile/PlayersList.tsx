@@ -1,11 +1,12 @@
+
 import React, { useState } from "react";
-import { EnhancedFriend } from "./types/EnhancedFriend";
 import PlayerCard from "./PlayerCard";
 import { CardWrapper } from "./types/ui";
 import { toast } from 'react-hot-toast';
+import { UserInfo } from "./types/UserInfo";
 
 type Props = {
-  players: EnhancedFriend[];
+  players: UserInfo[]; 
 };
 
 const PlayersList: React.FC<Props> = ({ players }) => {
@@ -33,7 +34,7 @@ const PlayersList: React.FC<Props> = ({ players }) => {
         return (
           <CardWrapper key={index} onClick={() => toggleExpand(index)}>
             <div className="flex justify-between items-center">
-              <div className="font-bold text-base">{player.name}</div>
+              <div className="font-bold text-base">{player.username}</div>
               <div className={`text-sm ${player.online ? "text-green-400" : "text-gray-400"}`}>
                 {player.online ? "Online" : "Offline"}
               </div>
@@ -46,11 +47,13 @@ const PlayersList: React.FC<Props> = ({ players }) => {
               ${isExpanded ? "max-h-[600px] mt-3" : "max-h-0"}
             `}>
               <PlayerCard
-                name={player.name}
+                name={player.username}
                 online={player.online}
-                wins={player.totalWins}
-                losses={player.totalLosses}
-                onChallenge={() => toast.success(`Challenged ${player.name}`)}
+                wins={player.wins}
+                losses={player.losses}
+                avatar={player.avatar}
+                history={player.history}
+                onChallenge={() => toast.success(`Challenged ${player.username}`)}
               />
             </div>
           </CardWrapper>

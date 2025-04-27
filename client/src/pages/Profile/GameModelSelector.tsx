@@ -28,17 +28,18 @@ const GameModeSelector: React.FC = () => {
       {modes.map((mode, index) => (
         <button
           key={index}
+          onClick={() => alert(`${mode.name} clicked!`)}
           className="
             bg-transparent
             rounded-xl
             shadow-md
             overflow-hidden
             transform
-            hover:scale-110
             transition
-            duration-200
+            duration-300
+            hover:scale-110
+            hover:shadow-[0_0_20px_#00ff7f]
           "
-          onClick={() => alert(`${mode.name} clicked!`)}
         >
           <img
             src={mode.img}
@@ -48,6 +49,9 @@ const GameModeSelector: React.FC = () => {
               h-auto
               object-contain
               block
+              transition
+              duration-300
+              hover:brightness-110
             "
           />
         </button>
