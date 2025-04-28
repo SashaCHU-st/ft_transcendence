@@ -3,6 +3,7 @@ import AppRouter from './router/AppRouter'
 import './index.css';
 import Profile from './pages/Profile/Profile';
 import { Toaster } from 'react-hot-toast';
+import NeonCursor from './components/NeonCursor';
 
 function App() {
   // const [count, setCount] = useState(0)
@@ -30,6 +31,7 @@ function App() {
     //     Click on the Vite and React logos to learn more
     //   </p> */}
       {/* <AppRouter/> */}
+	  <NeonCursor />
       <Profile />
       <Toaster position="top-right" reverseOrder={false} />
     </>
