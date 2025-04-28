@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import PlayersList from "./PlayersList";
 import BotCard from "./BotCard";
@@ -5,7 +6,6 @@ import { bots } from "./types/botsData";
 import PlayArena from "./PlayArena";
 import ProfileActions from "./ProfileActions";
 import EnhancedFriendsList from "./EnhancedFriendsList";
-import WinLossChart from "./WinsLossChart";
 import ProfileModal from "./ProfileModal";
 import { PrimaryButton } from "./types/ui";
 import GameModeSelector from "./GameModelSelector";
@@ -76,7 +76,6 @@ const fetchPlayersFromServer = async (): Promise<UserInfo[]> => {
 };
 
 // *** Block: Local Data Loader ***
-// I’m creating a function to load local data when axios isn’t available.
 const loadLocalData = () => ({
 	user: defaultUser,
 	friends: defaultFriends,
@@ -84,7 +83,6 @@ const loadLocalData = () => ({
 });
 
 // *** Block: Profile Component ***
-// I’m defining the main Profile component with state management.
 const Profile: React.FC = () => {
 	const [selectedBot, setSelectedBot] = useState<(typeof bots)[0] | null>(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
@@ -260,14 +258,14 @@ const Profile: React.FC = () => {
               hover:scale-110
             "
 						style={{
-							textShadow: `0 0 20px rgba(255, 255, 255, 0.3), 0 0 32px rgba(255, 0, 255, 0.3)`,
+							textShadow: `0 0 20px rgba(255, 255, 255, 0.3), 
+										0 0 32px rgba(255, 0, 255, 0.3)`,
 						}}
 					>
 						NEON PONG
 					</div>
 					<ProfileActions
-						username={user.username}
-						online={user.online}
+						user={{ username: user.username, online: user.online }}
 						onProfileClick={() => setIsModalOpen(true)}
 					/>
 				</div>
@@ -308,15 +306,36 @@ const Profile: React.FC = () => {
 						<EnhancedFriendsList friends={friends} />
 					</div>
 
-					{/* *** Block: Win/Loss Chart (Large Screens) *** */}
+					{/* *** Block: Fight Video (Large Screens) *** */}
 					<div
 						className="
               pt-6
-              col-span-1
-              ml-12
+              col-span-1 
+              mx-auto
             "
 					>
-						<WinLossChart history={user.history} />
+						<div
+							className="
+                w-full
+                max-w-[750px]
+                bg-gray-800
+                bg-opacity-40
+                rounded-lg
+                p-1
+                shadow-lg
+                ml-14
+                mt-32
+              "
+						>
+							<video
+								src="/videos/fight_gif.mp4"
+								autoPlay
+								loop
+								muted
+								playsInline
+								className="w-full h-auto rounded-lg"
+							/>
+						</div>
 					</div>
 
 					{/* *** Block: Central Section (Large Screens) *** */}
@@ -332,18 +351,17 @@ const Profile: React.FC = () => {
             "
 					>
 						<UserHeader
-							username={user.username}
-							avatar={user.avatar}
-							wins={user.wins}
-							losses={user.losses}
-							history={user.history}
+							user={{ username: user.username,
+									avatar: user.avatar,
+									wins: user.wins,
+									losses: user.losses,
+									history: user.history }}
 						/>
 						<PrimaryButton onClick={handlePlayClick}>PLAY</PrimaryButton>
 						<PlayArena
-							username={user.username}
-							opponentImage={selectedBot?.image ?? null}
-							opponentName={selectedBot?.name}
-							playerImage={user.avatar}
+							user={{ username: user.username, avatar: user.avatar }}
+							opponentImage={selectedBot ? selectedBot.image : null}
+							opponentName={selectedBot ? selectedBot.name : undefined}
 						/>
 					</div>
 
@@ -412,32 +430,21 @@ const Profile: React.FC = () => {
             gap-4
           "
 				>
-					{/* *** Block: Win/Loss Chart (Small Screens) *** */}
-					<div
-						className="
-              w-full
-              max-w-md
-            "
-					>
-						<WinLossChart history={user.history} />
-					</div>
-
 					{/* *** Block: User Header (Small Screens) *** */}
 					<UserHeader
-						username={user.username}
-						avatar={user.avatar}
-						wins={user.wins}
-						losses={user.losses}
-						history={user.history}
+						user={{ username: user.username,
+								avatar: user.avatar,
+								wins: user.wins,
+								losses: user.losses,
+								history: user.history }}
 					/>
 					<PrimaryButton onClick={handlePlayClick}>PLAY</PrimaryButton>
 
 					{/* *** Block: Play Arena (Small Screens) *** */}
 					<PlayArena
-						username={user.username}
-						opponentImage={selectedBot?.image ?? null}
-						opponentName={selectedBot?.name}
-						playerImage={user.avatar}
+						user={{ username: user.username, avatar: user.avatar }}
+						opponentImage={selectedBot ? selectedBot.image : null}
+						opponentName={selectedBot ? selectedBot.name : undefined}
 					/>
 
 					{/* *** Block: Game Mode Selector (Small Screens) *** */}
@@ -463,7 +470,6 @@ const Profile: React.FC = () => {
             "
 					>
 						{/* *** Block: Friends List (Small Screens) *** */}
-						{/* I’m rendering the friends list for small screens here. */}
 						<div
 							className="
                 w-full
@@ -493,7 +499,7 @@ const Profile: React.FC = () => {
                 min-w-0
                 flex
                 flex-col
-                arrows-end
+                items-end
               "
 						>
 							<h2
@@ -508,6 +514,36 @@ const Profile: React.FC = () => {
 								Players
 							</h2>
 							<PlayersList players={players} />
+						</div>
+					</div>
+
+					{/* *** Block: Fight Video (Small Screens) *** */}
+					<div
+						className="
+              w-full
+              mt-8
+            "
+					>
+						<div
+							className="
+                w-full
+                max-w-[600px]
+                bg-gray-800
+                bg-opacity-50
+                rounded-2xl
+                p-4
+                shadow-lg
+                mx-auto
+              "
+						>
+							<video
+								src="/videos/fight_gif.mp4"
+								autoPlay
+								loop
+								muted
+								playsInline
+								className="w-full h-auto rounded-lg"
+							/>
 						</div>
 					</div>
 				</div>

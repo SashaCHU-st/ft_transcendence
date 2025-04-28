@@ -31,7 +31,7 @@ function App() {
     //     Click on the Vite and React logos to learn more
     //   </p> */}
       {/* <AppRouter/> */}
-	  <NeonCursor />
+	    <NeonCursor />
       <Profile />
       <Toaster position="top-right" reverseOrder={false} />
     </>

@@ -2,11 +2,10 @@
 import React, { useState } from "react";
 import PlayerCard from "./PlayerCard";
 import { CardWrapper } from "./types/ui";
-import { toast } from 'react-hot-toast';
 import { UserInfo } from "./types/UserInfo";
 
 type Props = {
-  players: UserInfo[]; 
+  players: UserInfo[];
 };
 
 const PlayersList: React.FC<Props> = ({ players }) => {
@@ -17,17 +16,19 @@ const PlayersList: React.FC<Props> = ({ players }) => {
   };
 
   return (
-    <div className="
-      flex 
-      flex-col 
-      gap-2 
-      overflow-y-auto 
-      max-h-[500px] 
-      pr-1 
-      scrollbar-thin 
-      scrollbar-thumb-white/60 
-      scrollbar-track-transparent
-    ">
+    <div
+      className="
+        flex
+        flex-col
+        gap-2
+        overflow-y-auto
+        max-h-[500px]
+        pr-1
+        scrollbar-thin
+        scrollbar-thumb-white/60
+        scrollbar-track-transparent
+      "
+    >
       {players.map((player, index) => {
         const isExpanded = expandedIndex === index;
 
@@ -35,26 +36,21 @@ const PlayersList: React.FC<Props> = ({ players }) => {
           <CardWrapper key={index} onClick={() => toggleExpand(index)}>
             <div className="flex justify-between items-center">
               <div className="font-bold text-base">{player.username}</div>
-              <div className={`text-sm ${player.online ? "text-green-400" : "text-gray-400"}`}>
+              <div
+                className={`text-sm ${player.online ? "text-green-400" : "text-gray-400"}`}
+              >
                 {player.online ? "Online" : "Offline"}
               </div>
             </div>
-
-            <div className={`
-              transition-all 
-              duration-300 
-              overflow-hidden 
-              ${isExpanded ? "max-h-[600px] mt-3" : "max-h-0"}
-            `}>
-              <PlayerCard
-                name={player.username}
-                online={player.online}
-                wins={player.wins}
-                losses={player.losses}
-                avatar={player.avatar}
-                history={player.history}
-                onChallenge={() => toast.success(`Challenged ${player.username}`)}
-              />
+            <div
+              className={`
+                transition-all
+                duration-300
+                overflow-hidden
+                ${isExpanded ? "max-h-[600px] mt-3" : "max-h-0"}
+              `}
+            >
+              <PlayerCard user={player} />
             </div>
           </CardWrapper>
         );

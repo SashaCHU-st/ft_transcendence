@@ -22,7 +22,7 @@ const GameModeSelector: React.FC = () => {
         flex
         flex-col
         items-center
-        gap-4
+        gap-9
       "
     >
       {modes.map((mode, index) => (
