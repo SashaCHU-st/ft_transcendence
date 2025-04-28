@@ -8,9 +8,9 @@ export async function updateProfile(req, reply) {
     return reply.code(400).send({ message: "Notning to change" });
   }
   // console.log("name", name);
-  console.log("EMaillllll", id);
+  console.log("idddd", id);
   try {
-    console.log("EMail", id);
+    console.log("id", id);
     const user = db.prepare("SELECT * FROM users WHERE id = ?").get(id); ///Here we need id not id!!!!!!
     console.log("user ok => ", user.id);
     if (!user) {
@@ -82,7 +82,7 @@ export async function uploadPicture(pic,reply) {
   const id = pic.fields?.id.value;
   try {
     console.log("eeeeeeeeeeeeeee");
-    console.log("EMAIL=>", id)
+    console.log("id=>", id)
     const user = db.prepare("SELECT * FROM users WHERE id = ?").get(id); 
     console.log("user ok => ", user.id);
 
