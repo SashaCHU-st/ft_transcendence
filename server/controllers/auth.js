@@ -25,7 +25,9 @@ export async function signup(req, reply) {
         id: users.id
       })
 
-      console.log("ID =>", result.lastInsertRowid);
+      console.log("TOKEN_ID", token);
+
+      console.log("22222 =>", result.lastInsertRowid);
 
       const online = db
         .prepare("UPDATE users SET online = ? WHERE id = ?")

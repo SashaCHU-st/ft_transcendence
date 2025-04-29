@@ -9,7 +9,8 @@ db.exec(`
     email TEXT NOT NULL,
     name TEXT NOT NULL,
     password TEXT NOT NULL,
-    online BOOL
+    online BOOL, 
+    image BLOB
   );
 `);
 

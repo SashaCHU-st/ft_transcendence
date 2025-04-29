@@ -1,0 +1,205 @@
+import React, { useState } from "react";
+
+interface ProfileModalProps {
+  onClose: () => void;
+  onSave: (data: {
+    avatar: string;
+    nickname: string;
+    email: string;
+    password: string;
+  }) => void;
+  userData: {
+    avatar: string;
+    nickname: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+  };
+}
+
+const ProfileModal: React.FC<ProfileModalProps> = ({
+  onClose,
+  onSave,
+  userData,
+}) => {
+  const [avatar, setAvatar] = useState(userData.avatar);
+  const [nickname, setNickname] = useState(userData.nickname);
+  const [email, setEmail] = useState(userData.email);
+  const [password, setPassword] = useState("");
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatar(URL.createObjectURL(file));
+    }
+  };
+
+  return (
+    <div
+      className="
+        fixed
+        inset-0
+        z-50
+        flex
+        items-center
+        justify-center
+        bg-black
+        bg-opacity-60
+      "
+    >
+      <div
+        className="
+          bg-gray-900
+          text-white
+          rounded-xl
+          p-6
+          w-full
+          max-w-md
+          space-y-4
+          shadow-2xl
+        "
+      >
+        <h2
+          className="
+            text-2xl
+            font-bold
+            text-center
+          "
+        >
+          Edit Profile
+        </h2>
+
+        <div
+          className="
+            flex
+            flex-col
+            items-center
+            gap-2
+          "
+        >
+          <img
+            src={avatar}
+            alt="Avatar"
+            className="
+              w-24
+              h-24
+              rounded-full
+              object-cover
+              border-2
+              border-white
+            "
+          />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleAvatarChange}
+            className="
+              text-sm
+              text-gray-300
+            "
+          />
+        </div>
+
+        <input
+          type="text"
+          placeholder="Nickname"
+          value={nickname}
+          onChange={(e) => setNickname(e.target.value)}
+          className="
+            w-full
+            p-2
+            rounded
+            bg-gray-800
+            border
+            border-gray-600
+          "
+        />
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="
+            w-full
+            p-2
+            rounded
+            bg-gray-800
+            border
+            border-gray-600
+          "
+        />
+
+        <input
+          type="password"
+          placeholder="New Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="
+            w-full
+            p-2
+            rounded
+            bg-gray-800
+            border
+            border-gray-600
+          "
+        />
+
+        <div
+          className="
+            text-sm
+            text-gray-400
+            space-y-1
+          "
+        >
+          <p>First Name: {userData.firstName}</p>
+          <p>Last Name: {userData.lastName}</p>
+        </div>
+
+        <div
+          className="
+            flex
+            justify-end
+            gap-3
+            pt-4
+          "
+        >
+          <button
+            onClick={onClose}
+            className="
+              px-4
+              py-2
+              bg-gray-600
+              hover:bg-gray-700
+              rounded
+            "
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() =>
+              onSave({
+                avatar,
+                nickname,
+                email,
+                password,
+              })
+            }
+            className="
+              px-4
+              py-2
+              bg-green-500
+              hover:bg-green-600
+              text-white
+              rounded
+            "
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProfileModal;
