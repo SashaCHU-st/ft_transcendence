@@ -8,7 +8,7 @@ import ProfileActions from "./ProfileActions";
 import EnhancedFriendsList from "./EnhancedFriendsList";
 import ProfileModal from "./ProfileModal";
 import { PrimaryButton } from "./types/ui";
-import GameModeSelector from "./GameModelSelector";
+import GameModeSelector from "./GameModeSelector";
 import UserHeader from "./UserHeader";
 import { UserInfo, MatchResult } from "./types/UserInfo";
 import { toast } from "react-hot-toast";
@@ -26,7 +26,7 @@ try {
 // *** Block: Default User Data ***
 const defaultUser: UserInfo = {
 	username: "Legend",
-	avatar: "/prof_img/avatar.webp",
+	avatar: "/prof_img/avatar1.png",
 	email: "legend@example.com",
 	name: "Oleg",
 	password: "default",
@@ -145,7 +145,6 @@ const Profile: React.FC = () => {
 	const handleSaveProfile = async (data: {
 		avatar: string;
 		username: string;
-		email: string;
 		password: string;
 	}) => {
 		if (!user) return;
@@ -610,7 +609,6 @@ const Profile: React.FC = () => {
 					userData={{
 						avatar: user.avatar,
 						username: user.username,
-						email: user.email,
 						name: user.name,
 					}}
 					onSave={handleSaveProfile}

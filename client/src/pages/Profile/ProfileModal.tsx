@@ -6,10 +6,9 @@ interface ProfileModalProps {
   onSave: (data: {
     avatar: string;
     username: string;
-    email: string;
     password: string;
   }) => void;
-  userData: Pick<UserInfo, "avatar" | "username" | "email" | "name">;
+  userData: Pick<UserInfo, "avatar" | "username" | "name">;
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
@@ -19,7 +18,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 }) => {
   const [avatar, setAvatar] = useState(userData.avatar);
   const [username, setUsername] = useState(userData.username);
-  const [email, setEmail] = useState(userData.email);
   const [password, setPassword] = useState("");
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,15 +82,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           className="w-full p-2 rounded bg-gray-800 border border-gray-600"
         />
 
-        {/* Email */}
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-2 rounded bg-gray-800 border border-gray-600"
-        />
-
         {/* Password */}
         <input
           type="password"
@@ -120,7 +109,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               onSave({
                 avatar,
                 username,
-                email,
                 password,
               })
             }

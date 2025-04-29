@@ -1,21 +1,13 @@
 
-
-
 import React from "react";
 import UserHeader from "./UserHeader";
-import { UserInfo, calculateUserStats } from "./types/UserInfo";
+import { UserInfo } from "./types/UserInfo";
 
 interface Props {
   user: UserInfo;
 }
 
 const PlayerCard: React.FC<Props> = ({ user }) => {
-  const { winRate, latestDate, winsToday, lossesToday } = calculateUserStats(
-    user.wins,
-    user.losses,
-    user.history
-  );
-
   return (
     <div
       className="
@@ -30,9 +22,15 @@ const PlayerCard: React.FC<Props> = ({ user }) => {
         items-center
       "
     >
-<UserHeader
-  user={{ username: user.username, avatar: user.avatar, wins: user.wins, losses: winRate, history: user.history }}
-/>
+      <UserHeader
+        user={{
+          username: user.username,
+          avatar: user.avatar,
+          wins: user.wins,
+          losses: user.losses,
+          history: user.history,
+        }}
+      />
       <div
         className="
           flex

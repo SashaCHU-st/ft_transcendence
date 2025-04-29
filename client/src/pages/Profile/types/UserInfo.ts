@@ -9,12 +9,7 @@ export type MatchResult = {
 	username: string;
 	avatar: string;
 	email: string;
-<<<<<<< HEAD
 	name: string;
-=======
-	firstName: string;
-	// lastName: string;
->>>>>>> updateProfile
 	password: string;
 	wins: number;
 	losses: number;
