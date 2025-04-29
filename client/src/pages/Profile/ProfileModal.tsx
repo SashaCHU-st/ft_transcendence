@@ -9,7 +9,7 @@ interface ProfileModalProps {
     email: string;
     password: string;
   }) => void;
-  userData: Pick<UserInfo, "avatar" | "username" | "email" | "firstName" | "lastName">;
+  userData: Pick<UserInfo, "avatar" | "username" | "email" | "name">;
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
@@ -104,8 +104,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 
         {/* Static fields */}
         <div className="text-sm text-gray-400 space-y-1">
-          <p>First Name: {userData.firstName}</p>
-          <p>Last Name: {userData.lastName}</p>
+            <p>Name: {userData.name}</p>
         </div>
 
         {/* Buttons */}

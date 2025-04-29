@@ -28,8 +28,7 @@ const defaultUser: UserInfo = {
 	username: "Legend",
 	avatar: "/prof_img/avatar.webp",
 	email: "legend@example.com",
-	firstName: "Legi",
-	lastName: "Gnoman",
+	name: "Oleg",
 	password: "default",
 	wins: 30,
 	losses: 0,
@@ -612,8 +611,7 @@ const Profile: React.FC = () => {
 						avatar: user.avatar,
 						username: user.username,
 						email: user.email,
-						firstName: user.firstName,
-						lastName: user.lastName,
+						name: user.name,
 					}}
 					onSave={handleSaveProfile}
 				/>
