@@ -87,20 +87,37 @@ export async function confirmFriend(req, reply) {
     const checkReq1 = db
       .prepare("SELECT * FROM friends WHERE userId1 = ? AND userId2 = ?")
       .get(id, id2);
-    // const checkReq2 = db.prepare("SELECT * FROM friends WHERE userId2 = ? AND userId1 = ?").get(id, id2);
+    const checkReq2 = db
+      .prepare("SELECT * FROM friends WHERE userId2 = ? AND userId1 = ?")
+      .get(id, id2);
     console.log("REQUEST? =? ", checkReq1);
-    // console.log("REQUEST? =? ",checkReq2);
-    if (!checkReq1) {
-      return reply.code(400).send({ message: "No request" });
-    } else {
-      const confirmAccept = db
-        .prepare("SELECT * FROM friends WHERE confirmReq = ?")
-        .get(0);
+    console.log("REQUEST2222 =? ", checkReq2);
 
-      confirmAccept.run(confirmReq);
-      console.log("CONFIRM =>", confirmAccept);
-      return reply.code(200).send({ message: "confirmed" });
+    // console.log("REQUEST? =? ",checkReq2);
+    // if (!checkReq1 || !checkReq2) {
+    //   return reply.code(400).send({ message: "No request" });
+    // } else {
+    if (checkReq1) {
+      const confirmAccept1 = db
+        .prepare(
+          "UPDATE friends SET confirmReq = ? WHERE userId1 = ? AND userId2 = ?"
+        )
+        .run(confirmReq, id, id2);
+        console.log("CONFIRM =>....", confirmAccept1);
     }
+    if (checkReq2) {
+      const confirmAccept2 = db
+        .prepare(
+          "UPDATE friends SET confirmReq = ? WHERE userId2 = ? AND userId1 = ?"
+        )
+        .run(confirmReq, id, id2);
+        console.log("CONFIRM 222=>....", confirmAccept2);
+    }
+    if (!checkReq1 && !checkReq2) {
+      return reply.code(400).send({ message: "No request" });
+    }
+    // confirmAccept.run();
+    return reply.code(200).send({ message: "confirmed" });
   } catch (err) {
     console.error("Database error:", err.message);
     return reply.code(500).send({ message: "Something went wrong" });
