@@ -1,5 +1,7 @@
 import Fastify from "fastify";
 import authRoutes from "./routes/AuthRoutes.js";
+import friendsRoutes from "./routes/FriendsRoutes.js"
+import profileRoutes from "./routes/ProfileRoutes.js"
 import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 import jwt from '@fastify/jwt';
@@ -26,6 +28,8 @@ await fastify.register(cors, {
 
 // Routes
 fastify.register(authRoutes);
+fastify.register(friendsRoutes);
+fastify.register(profileRoutes);
 
 // Server start
 const start = async () => {
