@@ -1,21 +1,15 @@
-
 import React, { useState } from "react";
+import { UserInfo } from "./types/UserInfo";
 
 interface ProfileModalProps {
   onClose: () => void;
   onSave: (data: {
     avatar: string;
-    nickname: string;
+    username: string;
     email: string;
     password: string;
   }) => void;
-  userData: {
-    avatar: string;
-    nickname: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
+  userData: Pick<UserInfo, "avatar" | "username" | "email" | "firstName" | "lastName">;
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
@@ -24,18 +18,17 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   userData,
 }) => {
   const [avatar, setAvatar] = useState(userData.avatar);
-  const [nickname, setNickname] = useState(userData.nickname);
+  const [username, setUsername] = useState(userData.username);
   const [email, setEmail] = useState(userData.email);
   const [password, setPassword] = useState("");
 
-  // Чтение файла и конвертация в base64
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onloadend = () => {
-      setAvatar(reader.result as string); // сохраняем base64
+      setAvatar(reader.result as string);
     };
     reader.readAsDataURL(file);
   };
@@ -82,12 +75,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           />
         </div>
 
-        {/* Nickname */}
+        {/* Username */}
         <input
           type="text"
-          placeholder="Nickname"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           className="w-full p-2 rounded bg-gray-800 border border-gray-600"
         />
 
@@ -127,7 +120,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             onClick={() =>
               onSave({
                 avatar,
-                nickname,
+                username,
                 email,
                 password,
               })

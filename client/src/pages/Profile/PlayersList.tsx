@@ -1,11 +1,11 @@
 
 import React, { useState } from "react";
-import { EnhancedFriend } from "./types/EnhancedFriend";
 import PlayerCard from "./PlayerCard";
 import { CardWrapper } from "./types/ui";
+import { UserInfo } from "./types/UserInfo";
 
 type Props = {
-  players: EnhancedFriend[];
+  players: UserInfo[];
 };
 
 const PlayersList: React.FC<Props> = ({ players }) => {
@@ -16,45 +16,41 @@ const PlayersList: React.FC<Props> = ({ players }) => {
   };
 
   return (
-    <div className="
-      flex 
-      flex-col 
-      gap-2 
-      overflow-y-auto 
-      max-h-[500px] 
-      pr-1 
-      scrollbar-thin 
-      scrollbar-thumb-white/60 
-      scrollbar-track-transparent
-    ">
+    <div
+      className="
+        flex
+        flex-col
+        gap-2
+        overflow-y-auto
+        max-h-[500px]
+        pr-1
+        scrollbar-thin
+        scrollbar-thumb-white/60
+        scrollbar-track-transparent
+      "
+    >
       {players.map((player, index) => {
         const isExpanded = expandedIndex === index;
 
         return (
           <CardWrapper key={index} onClick={() => toggleExpand(index)}>
             <div className="flex justify-between items-center">
-              <div className="font-bold text-base">{player.name}</div>
-              <div className={`text-sm ${player.online ? "text-green-400" : "text-gray-400"}`}>
+              <div className="font-bold text-base">{player.username}</div>
+              <div
+                className={`text-sm ${player.online ? "text-green-400" : "text-gray-400"}`}
+              >
                 {player.online ? "Online" : "Offline"}
               </div>
             </div>
-            <div className="text-sm text-gray-300">
-              Wins: {player.totalWins} | Losses: {player.totalLosses}
-            </div>
-
-            <div className={`
-              transition-all 
-              duration-300 
-              overflow-hidden 
-              ${isExpanded ? "max-h-[600px] mt-3" : "max-h-0"}
-            `}>
-              <PlayerCard
-                name={player.name}
-                online={player.online}
-                wins={player.totalWins}
-                losses={player.totalLosses}
-                onChallenge={() => alert(`Challenged ${player.name}`)}
-              />
+            <div
+              className={`
+                transition-all
+                duration-300
+                overflow-hidden
+                ${isExpanded ? "max-h-[600px] mt-3" : "max-h-0"}
+              `}
+            >
+              <PlayerCard user={player} />
             </div>
           </CardWrapper>
         );

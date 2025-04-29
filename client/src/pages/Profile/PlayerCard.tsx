@@ -1,23 +1,21 @@
+
+
+
 import React from "react";
-import WinLossChart from "./WinsLossChart";
+import UserHeader from "./UserHeader";
+import { UserInfo, calculateUserStats } from "./types/UserInfo";
 
-type Props = {
-  name: string;
-  online: boolean;
-  wins: number;
-  losses: number;
-  onRemove?: () => void;
-  onChallenge?: () => void;
-};
+interface Props {
+  user: UserInfo;
+}
 
-const PlayerCard: React.FC<Props> = ({
-  name,
-  online,
-  wins,
-  losses,
-  onRemove,
-  onChallenge,
-}) => {
+const PlayerCard: React.FC<Props> = ({ user }) => {
+  const { winRate, latestDate, winsToday, lossesToday } = calculateUserStats(
+    user.wins,
+    user.losses,
+    user.history
+  );
+
   return (
     <div
       className="
@@ -25,36 +23,73 @@ const PlayerCard: React.FC<Props> = ({
         rounded-xl
         p-4
         shadow-md
-        space-y-2
+        space-y-4
         w-full
+        flex
+        flex-col
+        items-center
       "
     >
-      <div className="flex justify-between items-center">
-        <div className="text-lg font-bold">{name}</div>
-        <div className={online ? "text-green-400" : "text-gray-400"}>
-          {online ? "Online" : "Offline"}
-        </div>
-      </div>
-
-      <div className="text-sm text-gray-300">
-        Wins: {wins} | Losses: {losses}
-      </div>
-
-      <WinLossChart />
-
-      <div className="flex gap-2 justify-end flex-wrap">
-        {onRemove && (
+<UserHeader
+  user={{ username: user.username, avatar: user.avatar, wins: user.wins, losses: winRate, history: user.history }}
+/>
+      <div
+        className="
+          flex
+          gap-3
+          justify-center
+          flex-wrap
+          pt-2
+        "
+      >
+        {user.onRemove && (
           <button
-            className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded text-sm"
-            onClick={onRemove}
+            onClick={(e) => {
+              e.stopPropagation();
+              user.onRemove!();
+            }}
+            className="
+              px-4
+              py-2
+              rounded-md
+              text-sm
+              font-semibold
+              text-red-400
+              border-2
+              border-red-500
+              hover:bg-red-600
+              hover:text-white
+              transition
+              duration-300
+              shadow-[0_0_12px_#ff4d4d]
+              hover:shadow-[0_0_18px_#ff4d4d]
+            "
           >
             Remove
           </button>
         )}
-        {onChallenge && (
+        {user.onChallenge && (
           <button
-            className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm"
-            onClick={onChallenge}
+            onClick={(e) => {
+              e.stopPropagation();
+              user.onChallenge!();
+            }}
+            className="
+              px-4
+              py-2
+              rounded-md
+              text-sm
+              font-semibold
+              text-cyan-300
+              border-2
+              border-cyan-400
+              hover:bg-cyan-500
+              hover:text-black
+              transition
+              duration-300
+              shadow-[0_0_12px_#00ffff]
+              hover:shadow-[0_0_18px_#00ffff]
+            "
           >
             Challenge
           </button>

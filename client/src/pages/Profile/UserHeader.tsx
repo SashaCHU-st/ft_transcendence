@@ -1,34 +1,74 @@
-import React from 'react';
-import Avatar from './Avatar';
+import React from "react";
+import Avatar from "./Avatar";
+import { UserInfo, calculateUserStats, MatchResult } from "./types/UserInfo";
 
 interface UserHeaderProps {
-  username: string;
-  avatar: string;
-  wins: number;
-  losses: number;
+  user: Pick<UserInfo, "username" | "avatar" | "wins" | "losses" | "history">;
+  className?: string;
 }
 
-const UserHeader = ({ username, avatar, wins, losses }: UserHeaderProps) => {
+const UserHeader: React.FC<UserHeaderProps> = ({
+  user,
+  className,
+}) => {
+  const { winRate, latestDate, winsToday, lossesToday } = calculateUserStats(
+    user.wins,
+    user.losses,
+    user.history
+  );
+
   return (
-    <div className="flex
-                    items-center
-                    gap-6">
+    <div
+      className={`
+        flex
+        flex-col
+        items-center
+        text-center
+        gap-3
+        ${className ?? ""}
+      `}
+    >
       <Avatar
-        src={avatar}
-        username={username}
+		user={{ avatar: user.avatar, username: user.username }}
+        className="
+          w-32
+          h-32
+          sm:w-40
+          sm:h-40
+          md:w-44
+          md:h-44
+          xl:w-48
+          xl:h-48
+        "
       />
-
-      <div className="text-left">
-        <h1 className="text-4xl
-                       font-bold">
-          {username}
-        </h1>
-
-        <p className="text-gray-400
-                      text-lg">
-          Wins: {wins} | Losses: {losses}
+      <h1
+        className="
+          text-xl
+          sm:text-2xl
+          font-bold
+        "
+      >
+        {user.username}
+      </h1>
+      <p
+        className="
+          text-gray-300
+          text-sm
+          sm:text-base
+        "
+      >
+        Wins: {user.wins} | Winrate: {winRate}%
+      </p>
+      {latestDate && (
+        <p
+          className="
+            text-sm
+            text-purple-300
+          "
+        >
+          Last Game: {latestDate} — Wins: {winsToday}, Losses: {lossesToday}
         </p>
-      </div>
+      )}
     </div>
   );
 };
