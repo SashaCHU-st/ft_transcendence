@@ -17,3 +17,4 @@ db.exec(`
 console.log("Database initialized and users table is ready.");
 
 export default db;
+

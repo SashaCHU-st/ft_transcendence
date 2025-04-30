@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 interface SignUpFormProps {
   onSuccess?: () => void;  // Made optional if not always provided
-  closeModal?: () => void; // Add closeModal prop
+  closeModal?: () => void;  // Add closeModal prop
 }
 
 const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
@@ -26,14 +26,14 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      
+
       localStorage.setItem("token", data.accessToken);
       console.log("Signed up with JWT:", data.accessToken);
-      
+
       // Call both success handlers if they exist
       onSuccess?.();
       closeModal?.();
-      
+
       navigate("/profile");
     } catch (error: any) {
       setError(error.message || "Signup failed");
@@ -45,13 +45,11 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
       <h2 className="text-2xl tracking-wide font-bold mb-5 text-center">Registration</h2>
       <form onSubmit={handleSignUp} className="space-y-4">
         {err && <p className="text-red-500 text-center">{err}</p>}
-        
         <div className="space-y-2">
           <input
             type="text"
             placeholder="Name"
-            className="w-full bg-black text-white bg-opacity-30 px-4 py-2 border rounded-lg focus:outline-none 
-                    focus:ring-2 focus:ring-indigo-800"
+            className="w-full bg-black text-white bg-opacity-30 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -59,8 +57,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
           <input
             type="text"
             placeholder="Nickname"
-            className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none 
-                    focus:ring-2 focus:ring-indigo-800"
+            className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             required
@@ -68,8 +65,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
           <input
             type="email"
             placeholder="Email"
-            className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none 
-                    focus:ring-2 focus:ring-indigo-800"
+            className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -77,22 +73,20 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
           <input
             type="password"
             placeholder="Password"
-            className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none 
-                    focus:ring-2 focus:ring-indigo-800"
+            className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-        <div className="flex justify-center"> 
-          <button 
-            type="submit" 
+        <div className="flex justify-center">
+          <button
+            type="submit"
             className="w-1/2 bg-indigo-950 hover:bg-rose-950 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
           >
             Sign Up
           </button>
         </div>
-       
       </form>
     </div>
   );

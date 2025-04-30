@@ -1,4 +1,3 @@
-
 export type MatchResult = {
 	date: string;
 	weekday: string;
@@ -6,6 +5,7 @@ export type MatchResult = {
   };
   
   export type UserInfo = {
+	id: string;
 	username: string;
 	avatar: string;
 	email: string;

@@ -1,42 +1,45 @@
-import React from 'react'
 import myImage from '../../assets/mainPageImages/Main_Image.png';
 import { useOutletContext } from "react-router-dom";
 
 const MainPage = () => {
-  const { openModal } = useOutletContext<{ openModal: () => void }>();
+  const { openModal } = useOutletContext<{ openModal: (mode?: 'login' | 'signup') => void }>();
+  
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="container mx-auto flex flex-col items-center justify-center relative">
-            <div className="relative w-full pt-10">
-                <img 
-                  src={myImage} 
-                  alt="Main Visual" 
-                  className="w-full h-auto rounded-xl shadow-neon transition-shadow duration-300 ease-in-out"
-                />
-                <div className="absolute top-20 left-1/2 transform -translate-x-1/2">
-                  <button className="rounded-lg outline-3 outline-offset-2 outline-double border-4 border-blue-300 
-                                    px-8 sm:px-10 md:px-14 py-4 sm:py-3 md:py-5
-                                    font-bold text-transparent text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl
-                                    bg-clip-text bg-gradient-to-r from-indigo-300 via-blue-300 to-sky-500
-                                    hover:from-red-50 hover:via-indigo-200 hover:to-purple-100
-                                    animate-pulse hover:animate-none
-                                    transition-all duration-300 ease-in-out hover:scale-110 w-full sm:w-auto text-center"
-                  style={{ 
-                          textShadow: '2px 2px 10px rgba(209, 255, 249, 0.6)', 
-                          boxShadow: '0 0 15px 6px rgba(117, 184, 255, 0.5)'
-                    }}
-                    onClick={openModal}>
-                     START GAME
-                  </button>
-                </div>
-              
-            </div>
+      <div className="container mx-auto flex flex-col items-center justify-center relative">
+        <div className="relative w-full pt-10">
+          <img 
+            src={myImage} 
+            alt="Main Visual" 
+            className="w-full h-auto rounded-xl shadow-neon transition-shadow duration-300 ease-in-out"
+          />
+          <div className="absolute top-20 left-1/2 transform -translate-x-1/2">
+            <button 
+              className="rounded-lg outline-3 outline-offset-2 outline-double border-4 border-blue-300 
+                        px-8 sm:px-10 md:px-14 py-4 sm:py-3 md:py-5
+                        font-bold text-transparent text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl
+                        bg-clip-text bg-gradient-to-r from-indigo-300 via-blue-300 to-sky-500
+                        hover:from-red-50 hover:via-indigo-200 hover:to-purple-100
+                        animate-pulse hover:animate-none
+                        transition-all duration-300 ease-in-out hover:scale-110 w-full sm:w-auto text-center"
+              style={{ 
+                textShadow: '2px 2px 10px rgba(209, 255, 249, 0.6)', 
+                boxShadow: '0 0 15px 6px rgba(117, 184, 255, 0.5)'
+              }}
+              onClick={() => openModal('login')}
+            >
+              START GAME
+            </button>
           </div>
+        </div>
       </div>
-  )
-}
+    </div>
+  );
+};
 
-export default MainPage
+export default MainPage;
+
+
 
 
 // const MainPage = () => {
