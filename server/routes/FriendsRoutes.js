@@ -1,8 +1,8 @@
-import { FriendsAccept, FriendsAddSchema, FriendsSchema, FriendsMy, FriendsDelete} from "../schema/friends.schema.js";
+import { FriendsAccept, usersSchema, FriendsMy, FriendsSchema} from "../schema/friends.schema.js";
 import { friendsSearch, friendsAdd, confirmFriend, myFriends, deleteFriend } from "../controllers/friends.js";
 async function friendsRoutes(fastify) {
-  fastify.post("/friends", async (req, reply) => {
-    const validated = FriendsSchema.safeParse(req.body);
+  fastify.post("/seacrhUsers", async (req, reply) => {
+    const validated = usersSchema.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
         message: "Validation error",
@@ -46,7 +46,7 @@ async function friendsRoutes(fastify) {
   });
   fastify.delete("/deletefriend", async (req, reply) => {
     console.log("we in my delete friends")
-    const validated = FriendsDelete.safeParse(req.body);
+    const validated = FriendsSchema.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
         message: "Validation error",
