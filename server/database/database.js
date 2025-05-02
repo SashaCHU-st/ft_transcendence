@@ -19,11 +19,11 @@ console.log("Database initialized and users table is ready.");
 db.exec(`
   CREATE TABLE IF NOT EXISTS friends (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    userId1 INTEGER NOT NULL,
-    userId2 INTEGER NOT NULL,
-    confirmReq BOOL,
-    FOREIGN KEY (userId1) REFERENCES users(id),
-    FOREIGN KEY (userId2) REFERENCES users(id)
+    user_id INTEGER NOT NULL,
+    friends_id INTEGER NOT NULL,
+    confirmReq BOOL NOT NULL default 0,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (friends_id) REFERENCES users(id)
   );
 `);
 
