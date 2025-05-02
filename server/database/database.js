@@ -11,7 +11,7 @@ db.exec(`
     password TEXT NOT NULL,
     online BOOL, 
     image BLOB,
-    wins INTEGER default 0,
+    wins INTEGER default 3,
     losses INTEGER default 0
   );
 `);
@@ -35,8 +35,8 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS statistics (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
-    wins INTEGER NOT NULL,
-    losses INTEGER NOT NULL,
+    wins INTEGER NOT NULL default 0,
+    losses INTEGER NOT NULL default 0,
     FOREIGN KEY (user_id) REFERENCES users(id)
   );
 `);

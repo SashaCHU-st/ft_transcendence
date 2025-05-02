@@ -1,5 +1,5 @@
-import { statisticsSchema } from "../schema/statisticSchema.js";
-import { statisticsAll, statisticsUser } from "../controllers/statistics.js";
+import { statisticsSchema, winSchema } from "../schema/statisticSchema.js";
+import { statisticsAll, statisticsUser, win, loseUser } from "../controllers/statistics.js";
 
 
 async function statistics(fastify) {
@@ -16,6 +16,29 @@ async function statistics(fastify) {
       });
     }
     return statisticsUser({ ...req, body: validated.data }, reply);
+  });
+
+  fastify.post("/winUser", async (req, reply) => {
+    const validated = winSchema.safeParse(req.body);
+
+    if (!validated.success) {
+      return reply.code(400).send({
+        message: "Validation error",
+        errors: validated.error.errors,
+      });
+    }
+    return win({ ...req, body: validated.data }, reply);
+  });
+  fastify.post("/loseUser", async (req, reply) => {
+    const validated = winSchema.safeParse(req.body);
+
+    if (!validated.success) {
+      return reply.code(400).send({
+        message: "Validation error",
+        errors: validated.error.errors,
+      });
+    }
+    return loseUser({ ...req, body: validated.data }, reply);
   });
 }
 
