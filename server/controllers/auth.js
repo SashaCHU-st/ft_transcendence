@@ -40,7 +40,7 @@ export async function signup(req, reply) {
 
       console.log("ONLINE? =>", updated);
 
-      return reply.code(201).send({ message: "USER created", users, accessToken: token });
+      return reply.code(201).send({ message: "USER created", users, accessToken: token });// TOKEN DELETE LATER!!!!!!!!!!!!
     } else {
       console.log("User already exist");
       return reply.code(400).send({ message: "User already exist" });
@@ -93,7 +93,7 @@ export async function login(req, reply) {
 
         console.log("ONLINE =>", online.changes);
 
-        return reply.code(200).send({ message: "We are logged in", accessToken: token });
+        return reply.code(200).send({ message: "We are logged in", accessToken: token });// TOKEN DELETE LATER
       } else {
         console.log("Wrong pass ");
         return reply.code(401).send({ message: "Wrong pass" });
