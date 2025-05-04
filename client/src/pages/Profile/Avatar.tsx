@@ -1,55 +1,3 @@
-
-// import React, { useEffect, useState } from 'react';
-
-// interface AvatarProps {
-//   src: string;
-//   username: string;
-//   className?: string;
-// }
-
-// const Avatar: React.FC<AvatarProps> = ({ src, username, className }) => {
-//   const [imgSrc, setImgSrc] = useState(src);
-//   const [isImageLoaded, setIsImageLoaded] = useState(true);
-
-//   useEffect(() => {
-//     setImgSrc(src);
-//     setIsImageLoaded(true);
-//   }, [src]);
-
-//   return (
-//     <div className="flex flex-col items-center">
-//       <div
-//         className={`
-//           rounded-full
-//           border-2
-//           border-white
-//           overflow-hidden
-//           flex
-//           items-center
-//           justify-center
-//           bg-gray-800
-//           text-white
-//           text-center
-//           ${className}
-//         `}
-//       >
-//         {isImageLoaded ? (
-//           <img
-//             src={imgSrc}
-//             alt={username}
-//             className="w-full h-full object-cover"
-//             onError={() => setIsImageLoaded(false)}
-//           />
-//         ) : (
-//           <span className="text-sm font-semibold px-2">{username}</span>
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Avatar;
-
 import React, { useEffect, useState } from 'react';
 import { UserInfo } from './types/UserInfo';
 
@@ -68,7 +16,14 @@ const Avatar: React.FC<AvatarProps> = ({ user, className }) => {
   }, [user.avatar]);
 
   return (
-    <div className="flex flex-col items-center">
+    <div
+      className={`
+        flex
+        flex-col
+        items-center
+      `}
+      /* Main container: Centers the avatar vertically and horizontally */
+    >
       <div
         className={`
           rounded-full
@@ -83,16 +38,31 @@ const Avatar: React.FC<AvatarProps> = ({ user, className }) => {
           text-center
           ${className}
         `}
+        /* Avatar wrapper: Styles the circular avatar with border, background, and custom size */
       >
         {isImageLoaded ? (
           <img
             src={imgSrc}
             alt={user.username}
-            className="w-full h-full object-cover"
+            className={`
+              w-full
+              h-full
+              object-cover
+            `}
+            /* Avatar image: Ensures the image fills the circular container and covers it */
             onError={() => setIsImageLoaded(false)}
           />
         ) : (
-          <span className="text-sm font-semibold px-2">{user.username}</span>
+          <span
+            className={`
+              text-sm
+              font-semibold
+              px-2
+            `}
+            /* Fallback text: Displays username in small, bold text when image fails to load */
+          >
+            {user.username}
+          </span>
         )}
       </div>
     </div>

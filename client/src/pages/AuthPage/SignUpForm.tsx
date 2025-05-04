@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface SignUpFormProps {
-  onSuccess?: () => void;  // Made optional if not always provided
-  closeModal?: () => void;  // Add closeModal prop
+  onSuccess?: () => void; // Made optional if not always provided
+  closeModal?: () => void; // Add closeModal prop
 }
 
 const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
   const [name, setName] = useState("");
-  const [nickname, setNickname] = useState("");
+  const [username, setusername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setError] = useState("");
@@ -22,7 +22,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, nickname, email, password }),
+        body: JSON.stringify({ name, username, email, password }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
@@ -42,7 +42,9 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
 
   return (
     <div className="p-6 max-w-md mx-auto">
-      <h2 className="text-2xl tracking-wide font-bold mb-5 text-center">Registration</h2>
+      <h2 className="text-2xl tracking-wide font-bold mb-5 text-center">
+        Registration
+      </h2>
       <form onSubmit={handleSignUp} className="space-y-4">
         {err && <p className="text-red-500 text-center">{err}</p>}
         <div className="space-y-2">
@@ -56,10 +58,10 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
           />
           <input
             type="text"
-            placeholder="Nickname"
+            placeholder="username"
             className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
+            value={username}
+            onChange={(e) => setusername(e.target.value)}
             required
           />
           <input
