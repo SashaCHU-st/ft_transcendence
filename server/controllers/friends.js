@@ -3,15 +3,15 @@ import db from "../database/database.js";
 export async function friendsSearch(req, reply) {
   console.log("WE ARE IN FRIENDS");
 
-  const { nickname } = req.body;
+  const { username } = req.body;
   
-  if(!nickname)
-        return reply.code(400).send({message: "PLease fill in frien nickname"})
+  if(!username)
+        return reply.code(400).send({message: "PLease fill in frien username"})
 
   try
   {
-    const hasUser = db.prepare("SELECT * FROM users WHERE nickname = ? ").get(nickname);
-    console.log("THERE is such nickname",hasUser);
+    const hasUser = db.prepare("SELECT * FROM users WHERE username = ? ").get(username);
+    console.log("THERE is such username",hasUser);
     if(!hasUser)
     {
         return reply.code(400).send({ message: "Not such user" });
@@ -31,15 +31,15 @@ export async function friendsSearch(req, reply) {
 export async function friendsAdd(req, reply) {
     console.log("WE ARE IN ADDING FRIENDS");
   
-    const {id, nickname } = req.body;
+    const {id, username } = req.body;
     
-    if(!nickname || !id)
-          return reply.code(400).send({message: "PLease fill in friend nickname"})
+    if(!username || !id)
+          return reply.code(400).send({message: "PLease fill in friend username"})
   
     try
     {
-      const hasUser = db.prepare("SELECT * FROM users WHERE nickname = ? ").get(nickname);
-      console.log("THERE is such nickname",hasUser);
+      const hasUser = db.prepare("SELECT * FROM users WHERE username = ? ").get(username);
+      console.log("THERE is such username",hasUser);
       if(!hasUser)
       {
           return reply.code(400).send({ message: "Not such user" });
