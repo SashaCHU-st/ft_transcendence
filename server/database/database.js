@@ -35,3 +35,4 @@ console.log("Database initialized and friends table is ready.");
 
 
 export default db;
+

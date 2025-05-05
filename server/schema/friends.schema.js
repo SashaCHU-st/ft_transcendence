@@ -1,6 +1,7 @@
 import { z } from "zod"; /// validation
 
-export const usersSchema = z.object({
+
+export const FriendsSchema = z.object({
   username: z.string().max(20)
 });
 

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const [email, setEmail] = useState("");
@@ -21,6 +22,7 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
       if (!res.ok) throw new Error(data.message);
       localStorage.setItem("token", data.accessToken); // Store JWT token
       console.log("Logged in with JWT:", data.accessToken);
+      toast.success("Successfully logged in!");
       onSuccess(); // Close modal or redirect
       navigate("/profile");
     } catch (error: any) {
@@ -54,10 +56,11 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
           />
         </div>
         <div className="flex justify-center">
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="w-1/2 bg-indigo-950 hover:bg-rose-950 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
-          >Login
+          >
+            Login
           </button>
         </div>
       </form>
