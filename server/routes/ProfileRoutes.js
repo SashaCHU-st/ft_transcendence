@@ -5,7 +5,7 @@ import { updateProfile, uploadPicture } from "../controllers/profile.js";
 async function profileRoutes(fastify) {
   fastify.register(fastifyMultipart);
 
-  fastify.patch("/updateProfile", async (req, reply) => {
+  fastify.patch(`/updateProfile`, async (req, reply) => {
     const validated = ProfileSchema.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
@@ -15,7 +15,7 @@ async function profileRoutes(fastify) {
     }
     return updateProfile({ ...req, body: validated.data }, reply);
   });
-  fastify.post("/uploadPicture", async (req, reply) => {
+  fastify.post(`/uploadPicture`, async (req, reply) => {
     const pic = await req.file();
     // const email = pic.fields?.email.value;
     // console.log("email:", email);

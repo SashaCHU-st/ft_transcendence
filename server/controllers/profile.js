@@ -2,16 +2,16 @@ import db from "../database/database.js";
 
 export async function updateProfile(req, reply) {
   console.log("WE in Update Profile MW");
-  const { name, nickname, id, password } = req.body;
+  const { name, username, id, password } = req.body;
 
-  if (!name && !nickname && !password) {
+  if (!name && !username && !password) {
     return reply.code(400).send({ message: "Notning to change" });
   }
   // console.log("name", name);
   console.log("idddd", id);
   try {
     console.log("id", id);
-    const user = db.prepare("SELECT * FROM users WHERE id = ?").get(id); ///Here we need id not id!!!!!!
+    const user = db.prepare(`SELECT * FROM users WHERE id = ?`).get(id); ///Here we need id not id!!!!!!
     console.log("user ok => ", user.id);
     if (!user) {
       return reply.code(400).send({ message: "Notning to change" });
@@ -19,31 +19,31 @@ export async function updateProfile(req, reply) {
     if (user) {
       if (name) {
         const updateName = db
-          .prepare("UPDATE users SET name = ? WHERE id = ?")
+          .prepare(`UPDATE users SET name = ? WHERE id = ?`)
           .run(name, user.id);
         console.log("NAME UPDATED =>", updateName);
         // return reply.code(200).send({message: "Name updated"})
       }
       if (password) {
         const updatePassword = db
-          .prepare("UPDATE users SET password = ? WHERE id = ?")
+          .prepare(`UPDATE users SET password = ? WHERE id = ?`)
           .run(password, id);
         console.log("password UPDATED =>", updatePassword);
         // return reply.code(200).send({message: "password updated"})
       }
-      if (nickname) {
+      if (username) {
         console.log("we are in nick change");
         const nickExist = db
-          .prepare("SELECT * FROM users WHERE nickname = ?")
-          .get(nickname);
+          .prepare(`SELECT * FROM users WHERE username = ?`)
+          .get(username);
         console.log("NickExist =>", nickExist);
         if (nickExist) {
           return reply.code(400).send({ message: "Nick already exists" });
         } else {
-          const updateNickname = db
-            .prepare("UPDATE users SET nickname = ? WHERE id = ?")
-            .run(nickname, id);
-          console.log("nickname UPDATED =>", updateNickname);
+          const updateusername = db
+            .prepare(`UPDATE users SET username = ? WHERE id = ?`)
+            .run(username, id);
+          console.log("username UPDATED =>", updateusername);
           // return reply.code(200).send({message: "Nick updated"})
         }
       }

@@ -4,23 +4,23 @@ import db from "../database/database.js"; // Using better-sqlite3
 export async function signup(req, reply) {
   console.log("We are in SIGNUP middleware");
 
-  const { name, nickname, email, password } = req.body;
+  const { name, username, email, password } = req.body;
 
   // Validate request body
-  if (!name || !password || !email || !nickname) {
+  if (!name || !password || !email || !username) {
     return reply.code(400).send({ message: "No pass or name or email" });
   }
 
   try {
     const hasUser = db
-      .prepare("SELECT * FROM users WHERE email = ? OR nickname = ?")
-      .get(email, nickname);
+      .prepare(`SELECT * FROM users WHERE email = ? OR username = ?`)
+      .get(email, username);
     console.log("Has user", hasUser);
     if (!hasUser) {
       const users = db.prepare(
-        "INSERT INTO users (name, nickname, email, password) VALUES (?, ?, ?, ?)"
+        `INSERT INTO users (name, username, email, password) VALUES (?, ?, ?, ?)`
       );
-      const result = users.run(name, nickname, email, password);
+      const result = users.run(name, username, email, password);
       const token  =  req.jwt.sign ({
         id: users.id
       })
@@ -30,12 +30,12 @@ export async function signup(req, reply) {
       console.log("22222 =>", result.lastInsertRowid);
 
       const online = db
-        .prepare("UPDATE users SET online = ? WHERE id = ?")
+        .prepare(`UPDATE users SET online = ? WHERE id = ?`)
         .run(1, result.lastInsertRowid);
 
       // JUST CHECKING ONLINE
       const updated = db
-        .prepare("SELECT id, online FROM users WHERE id = ?")
+        .prepare(`SELECT id, online FROM users WHERE id = ?`)
         .get(result.lastInsertRowid);
 
       console.log("ONLINE? =>", updated);
@@ -59,7 +59,7 @@ export async function login(req, reply) {
   }
 
   try {
-    const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+    const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(email);
     console.log("Query result:", user); // Log the result
 
     if (user) {
@@ -67,7 +67,7 @@ export async function login(req, reply) {
       console.log("Pass", user.password);
       // reply.code(200).send({ message: "There is such a user", user });
       const kuku = db
-        .prepare("SELECT * FROM users WHERE email = ? AND password = ?")
+        .prepare(`SELECT * FROM users WHERE email = ? AND password = ?`)
         .get(email, password);
 
         // const token = jwt.sign(
@@ -82,13 +82,13 @@ export async function login(req, reply) {
       if (kuku) {
         console.log("WE are logged in");
         const userOnline = db
-          .prepare("SELECT * FROM users WHERE id = ?")
+          .prepare(`SELECT * FROM users WHERE id = ?`)
           .get(user.id);
 
         console.log("ID=>", user.id);
         // Put Online
         const online = db
-          .prepare("UPDATE users SET online = '1' WHERE id = ?")
+          .prepare(`UPDATE users SET online = '1' WHERE id = ?`)
           .run(user.id);
 
         console.log("ONLINE =>", online.changes);
@@ -110,12 +110,12 @@ export async function login(req, reply) {
 export async function logout(req, reply) {
   const { email } = req.body;
   try {
-    const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+    const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(email);
 
     console.log("ID=>",user.id)
 
     // console.log(logout);
-    const offline = db.prepare("UPDATE users SET online = ? WHERE email = ?").run(0, email)
+    const offline = db.prepare(`UPDATE users SET online = ? WHERE email = ?`).run(0, email)
     console.log("Offline =>",offline)
     return reply.code(200).send({ message: "We are logout", user });
   } catch (err) {

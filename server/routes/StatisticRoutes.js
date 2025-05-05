@@ -3,9 +3,7 @@ import { statisticsAll, statisticsUser, win, loseUser } from "../controllers/sta
 
 
 async function statistics(fastify) {
-  fastify.get("/statistics", async (reply) => {
-    return statisticsAll(reply);
-  });
+  fastify.get("/statistics",statisticsAll);
   fastify.post("/statisticsUser", async (req, reply) => {
     const validated = statisticsSchema.safeParse(req.body);
 
