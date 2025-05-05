@@ -140,6 +140,7 @@ export async function signup(req, reply) {
 
   // Validate request body
   if (!name || !password || !email || !username) {
+
     return reply.code(400).send({ message: "No pass or name or email or username" });
   }
 
@@ -150,6 +151,14 @@ export async function signup(req, reply) {
     console.log("Has user", hasUser);
     if (!hasUser) {
       const users = db.prepare(
+// <<<<<<< mainPage
+//         `INSERT INTO users (name, username, email, password) VALUES (?, ?, ?, ?)`
+//       );
+//       const result = users.run(name, username, email, password);
+//       const token  =  req.jwt.sign ({
+//         id: users.id
+//       })
+// =======
         "INSERT INTO users (name, username, email, password) VALUES (?, ?, ?, ?)"
       );
       const result = users.run(name, username, email, password);
@@ -162,12 +171,12 @@ export async function signup(req, reply) {
 
       // Set user online
       const online = db
-        .prepare("UPDATE users SET online = ? WHERE id = ?")
+        .prepare(`UPDATE users SET online = ? WHERE id = ?`)
         .run(1, result.lastInsertRowid);
 
       // Verify online status
       const updated = db
-        .prepare("SELECT id, online FROM users WHERE id = ?")
+        .prepare(`SELECT id, online FROM users WHERE id = ?`)
         .get(result.lastInsertRowid);
 
       console.log("ONLINE? =>", updated);
@@ -191,7 +200,7 @@ export async function login(req, reply) {
   }
 
   try {
-    const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+    const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(email);
     console.log("Query result:", user); // Log the result
 
     if (user) {
@@ -199,7 +208,7 @@ export async function login(req, reply) {
       console.log("Pass", user.password);
       // reply.code(200).send({ message: "There is such a user", user });
       const kuku = db
-        .prepare("SELECT * FROM users WHERE email = ? AND password = ?")
+        .prepare(`SELECT * FROM users WHERE email = ? AND password = ?`)
         .get(email, password);
 
       // const token = jwt.sign(
@@ -214,14 +223,17 @@ export async function login(req, reply) {
       if (kuku) {
         console.log("WE are logged in");
         const userOnline = db
-          .prepare("SELECT * FROM users WHERE id = ?")
+          .prepare(`SELECT * FROM users WHERE id = ?`)
           .get(user.id);
 
         console.log("ID=>", user.id);
         // Put Online
-        const online = db
-          .prepare("UPDATE users SET online = ? WHERE id = ?")
-          .run(1, user.id);
+        const online = db.prepare(`UPDATE users SET online = '1' WHERE id = ?`)
+          .run(user.id);
+// =======
+//           .prepare("UPDATE users SET online = ? WHERE id = ?")
+//           .run(1, user.id);
+// >>>>>>> testing
 
         console.log("ONLINE =>", online.changes);
 
@@ -242,7 +254,7 @@ export async function login(req, reply) {
 export async function logout(req, reply) {
   const { email } = req.body;
   try {
-    const user = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
+    const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(email);
 
     if (!user) {
       return reply.code(400).send({ message: "No such user" });
@@ -250,11 +262,18 @@ export async function logout(req, reply) {
 
     console.log("ID=>", user.id);
 
+// <<<<<<< mainPage
+//     // console.log(logout);
+//     const offline = db.prepare(`UPDATE users SET online = ? WHERE email = ?`).run(0, email)
+//     console.log("Offline =>",offline)
+//     return reply.code(200).send({ message: "We are logout", user });
+// =======
     const offline = db
       .prepare("UPDATE users SET online = ? WHERE email = ?")
       .run(0, email);
     console.log("Offline =>", offline.changes);
     return reply.code(200).send({ message: "We are logged out" });
+// >>>>>>> testing
   } catch (err) {
     console.error("Database error:", err.message);
     return reply.code(500).send({ message: "Something went wrong" });

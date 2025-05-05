@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+
 export const ProfileSchema = z
   .object({
     username: z.string().max(20).optional(),

@@ -29,6 +29,9 @@ async function authRoutes(fastify) {
   fastify.post("/logout", logout);
 
   ///for debug???? or delete later
+// <<<<<<< mainPage
+//   fastify.get("/users", async (reply) => {
+// =======
   fastify.get(
     "/users/me",
     {
@@ -39,6 +42,7 @@ async function authRoutes(fastify) {
 
   // For debug, keep as is
   fastify.get("/users", async (req, reply) => {
+// >>>>>>> testing
     try {
       const rows = db.prepare("SELECT * FROM users").all();
       // console.log("!!!!", rows);
