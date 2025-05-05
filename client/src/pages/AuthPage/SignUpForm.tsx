@@ -8,7 +8,7 @@ interface SignUpFormProps {
 
 const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
   const [name, setName] = useState("");
-  const [username, setusername] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setError] = useState("");
@@ -61,7 +61,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
             placeholder="username"
             className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={username}
-            onChange={(e) => setusername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value)}
             required
           />
           <input

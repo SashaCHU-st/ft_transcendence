@@ -46,7 +46,7 @@ const AuthPage = ({
 //   const [signUpMode, setSignUPMode] = useState(true); // should be false?
 //   const [err, setError] = useState("");
 //   const [name, setName] = useState("");
-//   const [username, setusername] = useState("");
+//   const [username, setUsername] = useState("");
 //   const [email, setEmail] = useState("");
 //   const [password, setPassword] = useState("");
 
@@ -131,7 +131,7 @@ const AuthPage = ({
 //                 type="text"
 //                 name="username"
 //                 value={username}
-//                 onChange={(e) => setusername(e.target.value)}
+//                 onChange={(e) => setUsername(e.target.value)}
 //               />
 //             </div>
 //           </>
