@@ -21,6 +21,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+    "types": ["node"],
 
     /* 🙏 Импорты без ./ ада */
     "baseUrl": "./src"

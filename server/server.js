@@ -7,6 +7,7 @@ import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 import jwt from '@fastify/jwt';
 
+
 dotenv.config();
 
 const fastify = Fastify({
@@ -14,17 +15,27 @@ const fastify = Fastify({
 });
 
 // JWT
-fastify.register(jwt, { secret: 'kuku' });
+fastify.register(jwt, { secret: "kuku" });
 
-fastify.addHook('preHandler', (req, res, next) => {
+fastify.addHook("preHandler", (req, res, next) => {
   req.jwt = fastify.jwt;
-  next();
+  return next();
+});
+
+// JWT Authentication
+fastify.decorate("authenticate", async (request, reply) => {
+  try {
+    await request.jwtVerify();
+  } catch (err) {
+    reply.code(401).send({ message: "Unauthorized" });
+  }
 });
 
 // CORS
-await fastify.register(cors, {
-  origin: 'http://localhost:5173',
+fastify.register(cors, {
+  origin: "http://localhost:5173",
   credentials: true,
+  methods: ["GET", "POST", "PATCH", "DELETE"],
 });
 
 // Routes

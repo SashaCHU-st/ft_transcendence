@@ -39,4 +39,5 @@ const AuthButtons = ({ openModal }: { openModal: (mode: "login" | "signup") => v
   );
 };
 
+
 export default AuthButtons;

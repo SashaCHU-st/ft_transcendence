@@ -1,5 +1,6 @@
 import { z } from "zod"; /// validation
 
+
 export const usersSchema = z.object({
   username: z.string().max(20)
 });

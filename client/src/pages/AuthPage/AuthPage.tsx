@@ -3,7 +3,13 @@ import React, { useState } from "react";
 import SignInForm from "./LogInForm";
 import SignUpForm from "./SignUpForm";
 
-const AuthPage = ({ onClose, mode }: { onClose: () => void; mode: "login" | "signup" }) => {
+const AuthPage = ({
+  onClose,
+  mode,
+}: {
+  onClose: () => void;
+  mode: "login" | "signup";
+}) => {
   const [isLogin, setIsLogin] = useState(mode === "login");
 
   return (
@@ -25,7 +31,9 @@ const AuthPage = ({ onClose, mode }: { onClose: () => void; mode: "login" | "sig
             onClick={() => setIsLogin(!isLogin)}
             className="text-indigo-200 hover:underline"
           >
-            {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
+            {isLogin
+              ? "Don't have an account? Sign Up"
+              : "Already have an account? Login"}
           </button>
         </div>
       </div>
@@ -38,7 +46,7 @@ const AuthPage = ({ onClose, mode }: { onClose: () => void; mode: "login" | "sig
 //   const [signUpMode, setSignUPMode] = useState(true); // should be false?
 //   const [err, setError] = useState("");
 //   const [name, setName] = useState("");
-//   const [nickname, setNickname] = useState("");
+//   const [username, setUsername] = useState("");
 //   const [email, setEmail] = useState("");
 //   const [password, setPassword] = useState("");
 
@@ -82,7 +90,7 @@ const AuthPage = ({ onClose, mode }: { onClose: () => void; mode: "login" | "sig
 //           },
 //           body: JSON.stringify({
 //             name,
-//             nickname,
+//             username,
 //             email,
 //             password,
 //           }),
@@ -118,12 +126,12 @@ const AuthPage = ({ onClose, mode }: { onClose: () => void; mode: "login" | "sig
 //               />
 //             </div>
 //             <div className="form_group">
-//               <label htmlFor="name">NickName </label>
+//               <label htmlFor="name">username </label>
 //               <input
 //                 type="text"
-//                 name="nickname"
-//                 value={nickname}
-//                 onChange={(e) => setNickname(e.target.value)}
+//                 name="username"
+//                 value={username}
+//                 onChange={(e) => setUsername(e.target.value)}
 //               />
 //             </div>
 //           </>

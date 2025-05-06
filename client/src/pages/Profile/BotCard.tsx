@@ -40,6 +40,9 @@ const BotCard: React.FC<BotCardProps> = ({
         lg:min-h-[180px]
         xl:min-h-[190px]
         overflow-hidden
+		hover:scale-105
+		hover:shadow-[0_0_20px_#ff008c]
+
         ${selected ? 'ring-2 ring-purple-400' : ''}
       `}
     >
