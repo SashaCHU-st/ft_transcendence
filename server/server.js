@@ -1,6 +1,5 @@
 import Fastify from "fastify";
 import authRoutes from "./routes/AuthRoutes.js";
-
 import friendsRoutes from "./routes/FriendsRoutes.js"
 import profileRoutes from "./routes/ProfileRoutes.js"
 import statisticsRoutes from "./routes/StatisticRoutes.js";
@@ -36,7 +35,7 @@ fastify.decorate("authenticate", async (request, reply) => {
 fastify.register(cors, {
   origin: "http://localhost:5173",
   credentials: true,
-  methods: ["GET", "POST", "PATCH"],
+  methods: ["GET", "POST", "PATCH", "DELETE"],
 });
 
 // Routes

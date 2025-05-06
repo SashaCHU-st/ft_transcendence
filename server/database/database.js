@@ -13,7 +13,7 @@ db.exec(`
     image BLOB,
     wins INTEGER default 3,
     losses INTEGER default 0,
-    UNIQUE (id, nickname, email)
+    UNIQUE (id, username, email)
   );
 `);
 console.log("Database initialized and users table is ready.");

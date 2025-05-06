@@ -27,10 +27,10 @@
     background-position: center;
     background-attachment: fixed;
   }
-
+/* 
   @media (hover: hover) {
     body {
       cursor: none;
     }
-  }
+  } */
 }
