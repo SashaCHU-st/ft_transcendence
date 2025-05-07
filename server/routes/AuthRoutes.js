@@ -46,6 +46,10 @@ async function authRoutes(fastify) {
     try {
       const rows = db.prepare("SELECT * FROM users").all();
       // console.log("!!!!", rows);
+      const users = rows.map(user => ({                                      //!
+      ...user,                                                               //!
+      image: user.image ? Buffer.from(user.image).toString("base64") : null, //!
+      }));
       return reply.code(200).send({ users: rows });
     } catch (err) {
       console.error("Error fetching users:", err.message);

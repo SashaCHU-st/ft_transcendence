@@ -15,7 +15,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 }) => {
 	const [avatar, setAvatar] = useState(userData.avatar);
 	const [username, setUsername] = useState(userData.username);
-	const [name] = useState(userData.name); // Read-only, не обновляется
+	const [name, setName] = useState(userData.name);
 	const [password, setPassword] = useState("");
 
 	const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB max
@@ -119,7 +119,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             flex-col
             gap-1
           `}
-				/* Name field container: Groups the name label and read-only input */
+				/* Name field container: Groups the name label and input */
 				>
 					<label
 						className={`
@@ -132,8 +132,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 					</label>
 					<input
 						type="text"
+						placeholder="Name"
 						value={name}
-						readOnly
+						onChange={(e) => setName(e.target.value)} // Добавляем возможность редактирования
 						className={`
               w-full
               p-2
@@ -141,10 +142,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               bg-gray-800
               border
               border-gray-600
-              text-gray-400
-              cursor-not-allowed
             `}
-					/* Name input: Styles the read-only name input with disabled cursor */
+					/* Name input: Styles the editable name input */
 					/>
 				</div>
 

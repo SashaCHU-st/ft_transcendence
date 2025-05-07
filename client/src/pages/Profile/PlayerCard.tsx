@@ -98,3 +98,10 @@ const PlayerCard: React.FC<Props> = ({ user }) => {
 };
 
 export default PlayerCard;
+
+
+
+
+//07.05
+
+
