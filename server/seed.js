@@ -3,5 +3,5 @@ import Database from "better-sqlite3";
 const db = new Database("./database/database.db");
 
 db.exec(
-  `DELETE FROM friends WHERE id = 15 `
+  `DELETE FROM users WHERE id < 10 `
 );

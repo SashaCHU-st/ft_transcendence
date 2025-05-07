@@ -1,14 +1,18 @@
 import db from "../database/database.js"; // Using better-sqlite3
+import bcrypt, { hash } from "bcrypt";
 
 export async function signup(req, reply) {
   console.log("We are in SIGNUP middleware");
 
   const { name, username, email, password } = req.body;
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
   // Validate request body
   if (!name || !password || !email || !username) {
-
-    return reply.code(400).send({ message: "No pass or name or email or username" });
+    return reply
+      .code(400)
+      .send({ message: "No pass or name or email or username" });
   }
 
   try {
@@ -20,9 +24,10 @@ export async function signup(req, reply) {
       const users = db.prepare(
         "INSERT INTO users (name, username, email, password) VALUES (?, ?, ?, ?)"
       );
-      const result = users.run(name, username, email, password);
-      const token = req.jwt.sign({ 
-        id: result.lastInsertRowid });
+      const result = users.run(name, username, email, hashedPassword);
+      const token = req.jwt.sign({
+        id: result.lastInsertRowid,
+      });
 
       console.log("TOKEN_ID", token);
 
@@ -40,7 +45,9 @@ export async function signup(req, reply) {
 
       console.log("ONLINE? =>", updated);
 
-      return reply.code(201).send({ message: "USER created", users, accessToken: token });
+      return reply
+        .code(201)
+        .send({ message: "USER created", users, accessToken: token });
     } else {
       console.log("User already exists");
       return reply.code(400).send({ message: "User already exists" });
@@ -63,42 +70,29 @@ export async function login(req, reply) {
     console.log("Query result:", user); // Log the result
 
     if (user) {
-      console.log("Email", user.email);
-      console.log("Pass", user.password);
-      // reply.code(200).send({ message: "There is such a user", user });
-      const kuku = db
-        .prepare(`SELECT * FROM users WHERE email = ? AND password = ?`)
-        .get(email, password);
+      const compareHashed = await bcrypt.compare(password, user.password);
 
-      // const token = jwt.sign(
-      //   { userId: user.id },
-      //   { expiresIn: "2h" }
-      // );
-      // console.log("kuku", kuku);
-
-      const token = req.jwt.sign({ 
-        id: user.id 
-      });
-      if (kuku) {
-        console.log("WE are logged in");
-        const userOnline = db
-          .prepare(`SELECT * FROM users WHERE id = ?`)
-          .get(user.id);
-
-        console.log("ID=>", user.id);
-        // Put Online
-        const online = db.prepare(`UPDATE users SET online = '1' WHERE id = ?`)
+      if (compareHashed) {
+        const token = req.jwt.sign({
+          id: user.id,
+        });
+        // const token = jwt.sign(
+        //   { userId: user.id },
+        //   { expiresIn: "2h" }
+        // );
+        const online = db
+          .prepare(`UPDATE users SET online = '1' WHERE id = ?`)
           .run(user.id);
 
         console.log("ONLINE =>", online.changes);
-
-        return reply.code(200).send({ accessToken: token });
+        return reply
+          .code(200)
+          .send({ message: "We are logged in", accessToken: token });
       } else {
-        console.log("Wrong pass");
-        return reply.code(401).send({ message: "Wrong pass" });
+        return reply.code(400).send({ message: "wrong pass" });
       }
     } else {
-      return reply.code(400).send({ message: "No such user" });
+      return reply.code(400).send({ message: "no such as user" });
     }
   } catch (err) {
     console.error("Database error:", err.message);
@@ -132,7 +126,9 @@ export async function getCurrentUser(req, reply) {
   try {
     const userId = req.user.id;
     const user = db
-      .prepare("SELECT id, name, username, email, online, image FROM users WHERE id = ?")
+      .prepare(
+        "SELECT id, name, username, email, online, image FROM users WHERE id = ?"
+      )
       .get(userId);
 
     if (!user) {
