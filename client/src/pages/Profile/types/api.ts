@@ -84,3 +84,30 @@ export const saveGameResult = async (
 ): Promise<void> => {
   await api.post("/game/result", matchResult, { headers });
 };
+
+// export const fetchAllUsers = async (
+//   headers: { Authorization: string } | {} = getAuthHeaders()
+// ): Promise<UserInfo[]> => {
+//   try {
+//     const response = await api.get("/users", { headers });
+//     return response.data.users.map((user: any) => ({
+//       id: user.id?.toString() || "unknown",
+//       username: user.username || user.name || "Unknown",
+//       avatar: user.image
+//         ? `data:image/jpeg;base64,${user.image}`
+//         : "/prof_img/avatar1.png",
+//       email: user.email || "",
+//       name: user.name || "",
+//       password: "", // Не возвращаем пароль
+//       wins: user.wins || 0,
+//       losses: user.losses || 0,
+//       online: !!user.online,
+//       history: user.history || [],
+//       onChallenge: () => toast.success(`Challenged ${user.username}`),
+//     }));
+//   } catch (error) {
+//     console.error("Error fetching users:", error);
+//     toast.error("Failed to load players.");
+//     return [];
+//   }
+// };

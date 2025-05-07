@@ -28,9 +28,9 @@
     background-attachment: fixed;
   }
 
-  @media (hover: hover) {
+  /* @media (hover: hover) {
     body {
       cursor: none;
     }
-  }
+  } */
 }

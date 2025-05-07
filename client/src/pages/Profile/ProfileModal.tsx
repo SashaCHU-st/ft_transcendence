@@ -15,7 +15,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 }) => {
 	const [avatar, setAvatar] = useState(userData.avatar);
 	const [username, setUsername] = useState(userData.username);
-	const [name] = useState(userData.name); // Read-only, не обновляется
+	const [name] = useState(userData.name); // Read-only
 	const [password, setPassword] = useState("");
 
 	const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB max
@@ -37,7 +37,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 	};
 
 	const handleSave = () => {
-		console.log("Saving data:", { avatar, username, name, password }); // Отладка
+		console.log("Saving data:", { avatar, username, name, password });
 		onSave({ avatar, username, name, password });
 	};
 
