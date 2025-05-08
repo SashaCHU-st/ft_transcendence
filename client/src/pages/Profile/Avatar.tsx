@@ -1,3 +1,57 @@
+
+// import React, { useEffect, useState } from 'react';
+// import { UserInfo } from './types/UserInfo';
+
+// interface AvatarProps {
+//   user: Pick<UserInfo, "avatar" | "username">;
+//   className?: string;
+// }
+
+// const Avatar: React.FC<AvatarProps> = ({ user, className }) => {
+//   const [imgSrc, setImgSrc] = useState<string>("/prof_img/avatar1.png");
+//   const [isImageLoaded, setIsImageLoaded] = useState(true);
+
+//   useEffect(() => {
+//     console.log(`Avatar for ${user.username}: ${user.avatar}`);
+//     if (!user.avatar || !user.avatar.startsWith("data:image/")) {
+//       console.warn(`Invalid avatar format for ${user.username}: ${user.avatar}`);
+//       setImgSrc("/prof_img/avatar1.png");
+//       setIsImageLoaded(false);
+//     } else {
+//       setImgSrc(user.avatar);
+//       setIsImageLoaded(true);
+//     }
+//   }, [user.avatar, user.username]);
+
+//   return (
+//     <div className="flex flex-col items-center">
+//       <div
+//         className={`
+//           rounded-full border-2 border-white overflow-hidden
+//           flex items-center justify-center bg-gray-800 text-white text-center ${className}`}
+//       >
+//         {isImageLoaded ? (
+//           <img
+//             src={imgSrc}
+//             alt={user.username}
+//             className="w-full h-full object-cover"
+//             onError={() => {
+//               console.log(`Failed to load image for ${user.username}, using fallback`);
+//               setImgSrc("/prof_img/avatar1.png");
+//               setIsImageLoaded(false);
+//             }}
+//           />
+//         ) : (
+//           <span className="text-sm font-semibold px-2">{user.username}</span>
+//         )}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Avatar;
+
+
 import React, { useEffect, useState } from 'react';
 import { UserInfo } from './types/UserInfo';
 
@@ -7,23 +61,23 @@ interface AvatarProps {
 }
 
 const Avatar: React.FC<AvatarProps> = ({ user, className }) => {
-  const [imgSrc, setImgSrc] = useState(user.avatar);
+  const [imgSrc, setImgSrc] = useState<string>("/prof_img/avatar1.png");
   const [isImageLoaded, setIsImageLoaded] = useState(true);
 
   useEffect(() => {
-    setImgSrc(user.avatar);
-    setIsImageLoaded(true);
-  }, [user.avatar]);
+    console.log(`Avatar for ${user.username}: ${user.avatar}`);
+    if (!user.avatar || !user.avatar.startsWith("data:image/")) {
+      console.warn(`Invalid avatar format for ${user.username}: ${user.avatar}`);
+      setImgSrc("/prof_img/avatar1.png");
+      setIsImageLoaded(false);
+    } else {
+      setImgSrc(user.avatar);
+      setIsImageLoaded(true);
+    }
+  }, [user.avatar, user.username]);
 
   return (
-    <div
-      className={`
-        flex
-        flex-col
-        items-center
-      `}
-      /* Main container: Centers the avatar vertically and horizontally */
-    >
+    <div className="flex flex-col items-center">
       <div
         className={`
           rounded-full
@@ -38,31 +92,29 @@ const Avatar: React.FC<AvatarProps> = ({ user, className }) => {
           text-center
           ${className}
         `}
-        /* Avatar wrapper: Styles the circular avatar with border, background, and custom size */
       >
+        {/* Conditional rendering based on image loading status */}
         {isImageLoaded ? (
           <img
             src={imgSrc}
             alt={user.username}
-            className={`
+            className="
               w-full
               h-full
               object-cover
-            `}
-            /* Avatar image: Ensures the image fills the circular container and covers it */
-            onError={() => setIsImageLoaded(false)}
+            "
+            onError={() => {
+              console.log(`Failed to load image for ${user.username}, using fallback`);
+              setImgSrc("/prof_img/avatar1.png");
+              setIsImageLoaded(false);
+            }}
           />
         ) : (
-          <span
-            className={`
-              text-sm
-              font-semibold
-              px-2
-            `}
-            /* Fallback text: Displays username in small, bold text when image fails to load */
-          >
-            {user.username}
-          </span>
+          <span className="
+            text-sm
+            font-semibold
+            px-2
+          ">{user.username}</span>
         )}
       </div>
     </div>

@@ -6,7 +6,6 @@
 // import { bots } from "../types/botsData";
 
 // export const useProfile = () => {
-//   /* Initialize state and hooks: Set up user data, bot selection, modal state, and navigation */
 //   const [selectedBot, setSelectedBot] = useState<(typeof bots)[0] | null>(null);
 //   const [isModalOpen, setIsModalOpen] = useState(false);
 //   const [isLoading, setIsLoading] = useState(true);
@@ -16,36 +15,43 @@
 //   const navigate = useNavigate();
 //   const isFetchingRef = useRef(false);
 
-//   /* Cache authentication headers: Memoize headers for API requests to avoid recalculation */
 //   const authHeaders = useMemo(() => getAuthHeaders(), []);
 
-//   /* Fetch all users: Load all registered users from the database */
 //   const fetchAllUsers = useCallback(async () => {
 //     try {
-//       const response = await fetch("http://localhost:3000/users", {
+//       console.log("Fetching all users...");
+//       const response = await fetch(`http://localhost:3000/users?t=${Date.now()}`, {
 //         headers: {
 //           "Content-Type": "application/json",
 //           ...authHeaders,
 //         },
 //       });
 //       const data = await response.json();
+//       console.log("Fetched users data:", data);
 //       if (!response.ok) {
 //         throw new Error(data.message || "Failed to fetch users");
 //       }
 
-//       const mappedUsers: UserInfo[] = data.users.map((u: any) => ({
-//         id: u.id.toString(),
-//         username: u.username || u.name || "Unknown",
-//         avatar: u.image ? `data:image/jpeg;base64,${u.image}` : "/prof_img/avatar1.png",
-//         email: u.email || "",
-//         name: u.name || "",
-//         password: "",
-//         wins: u.wins || 0,
-//         losses: u.losses || 0,
-//         online: !!u.online,
-//         history: [],
-//       }));
+//       const mappedUsers: UserInfo[] = data.users.map((u: any) => {
+//         let avatarSrc = "/prof_img/avatar1.png";
+//         if (u.image && u.image_type) {
+//           avatarSrc = `data:${u.image_type};base64,${u.image}`;
+//         }
+//         return {
+//           id: u.id.toString(),
+//           username: u.username || u.name || "Unknown",
+//           avatar: avatarSrc,
+//           email: u.email || "",
+//           name: u.name || "",
+//           password: "",
+//           wins: u.wins || 0,
+//           losses: u.losses || 0,
+//           online: !!u.online,
+//           history: [],
+//         };
+//       });
 
+//       console.log("Mapped players:", mappedUsers);
 //       setPlayers(mappedUsers);
 //     } catch (err: any) {
 //       console.error("Failed to fetch users:", err);
@@ -53,7 +59,6 @@
 //     }
 //   }, [authHeaders]);
 
-//   /* Load user data: Fetch user profile, all users, and handle authentication errors */
 //   const loadData = useCallback(async () => {
 //     if (isFetchingRef.current) {
 //       return;
@@ -71,12 +76,10 @@
 
 //     setIsLoading(true);
 //     try {
-//       const [userData] = await Promise.all([
-//         fetchUserData(authHeaders),
-//         fetchAllUsers(),
-//       ]);
+//       const userData = await fetchUserData(authHeaders);
 //       setUser(userData);
-//       setFriends([]); // Placeholder for friends (not implemented)
+//       await fetchAllUsers(); 
+//       setFriends([]);
 //     } catch (err: any) {
 //       toast.error("Failed to load user data. Please log in again.");
 //       localStorage.removeItem("token");
@@ -87,7 +90,6 @@
 //     }
 //   }, [navigate, authHeaders, fetchAllUsers]);
 
-//   /* Save user profile: Update user data on the server and refresh local state */
 //   const saveUserData = useCallback(
 //     async (updatedUser: UserInfo) => {
 //       const profileUpdates: Partial<UserInfo> = {};
@@ -102,12 +104,12 @@
 //       );
 //       const updatedUserData = await fetchUserData(authHeaders);
 //       setUser(updatedUserData);
-//       toast.success("Profile updated successfully!");
+//       console.log("Reloading all users after avatar update...");
+//       await fetchAllUsers();
 //     },
-//     [user, authHeaders]
+//     [user, authHeaders, fetchAllUsers]
 //   );
 
-//   /* Handle profile save: Merge updated data with existing user and save */
 //   const handleSaveProfile = useCallback(
 //     async (data: Partial<UserInfo>) => {
 //       if (!user) return;
@@ -122,7 +124,6 @@
 //     [user, saveUserData]
 //   );
 
-//   /* Handle game end: Save game result, update user data, and show result notification */
 //   const handleGameEnd = useCallback(
 //     async (result: "win" | "loss", opponent: string) => {
 //       if (!user) return;
@@ -146,7 +147,6 @@
 //     [user, authHeaders]
 //   );
 
-//   /* Handle game play: Simulate a game with a random or selected bot and process result */
 //   const handlePlay = useCallback(() => {
 //     const opponent = selectedBot || bots[Math.floor(Math.random() * bots.length)];
 //     const result = Math.random() > 0.5 ? "win" : "loss";
@@ -158,7 +158,6 @@
 //     }
 //   }, [selectedBot, handleGameEnd]);
 
-//   /* Fetch initial data: Load user data and all users on component mount and clean up on unmount */
 //   useEffect(() => {
 //     let isMounted = true;
 
@@ -175,7 +174,6 @@
 //     };
 //   }, [loadData]);
 
-//   /* Return hook API: Expose state and functions for use in components */
 //   return {
 //     user,
 //     friends,
@@ -193,10 +191,6 @@
 // };
 
 
-// // 07.05
-
-
-
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -204,7 +198,9 @@ import { UserInfo, MatchResult } from "../types/UserInfo";
 import { fetchUserData, updateUserProfile, getAuthHeaders, saveGameResult } from "../types/api";
 import { bots } from "../types/botsData";
 
+// Custom hook for managing user profile and game-related state
 export const useProfile = () => {
+  // State for selected bot, modal visibility, loading status, user data, friends, and players
   const [selectedBot, setSelectedBot] = useState<(typeof bots)[0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -214,8 +210,10 @@ export const useProfile = () => {
   const navigate = useNavigate();
   const isFetchingRef = useRef(false);
 
+  // Memoize auth headers to avoid recalculating on every render
   const authHeaders = useMemo(() => getAuthHeaders(), []);
 
+  // Fetch all users from the server
   const fetchAllUsers = useCallback(async () => {
     try {
       console.log("Fetching all users...");
@@ -231,13 +229,16 @@ export const useProfile = () => {
         throw new Error(data.message || "Failed to fetch users");
       }
 
+      // Map fetched users to the UserInfo type
       const mappedUsers: UserInfo[] = data.users.map((u: any) => {
-        // Проверяем, является ли u.image объектом или строкой
-        const imageBase64 = typeof u.image === "object" && u.image?.data ? u.image.data : u.image;
+        let avatarSrc = "/prof_img/avatar1.png";
+        if (u.image && u.image_type) {
+          avatarSrc = `data:${u.image_type};base64,${u.image}`;
+        }
         return {
           id: u.id.toString(),
           username: u.username || u.name || "Unknown",
-          avatar: imageBase64 ? `data:image/jpeg;base64,${imageBase64}` : "/prof_img/avatar1.png",
+          avatar: avatarSrc,
           email: u.email || "",
           name: u.name || "",
           password: "",
@@ -256,6 +257,7 @@ export const useProfile = () => {
     }
   }, [authHeaders]);
 
+  // Load user data and related information
   const loadData = useCallback(async () => {
     if (isFetchingRef.current) {
       return;
@@ -273,12 +275,10 @@ export const useProfile = () => {
 
     setIsLoading(true);
     try {
-      const [userData] = await Promise.all([
-        fetchUserData(authHeaders),
-        fetchAllUsers(),
-      ]);
+      const userData = await fetchUserData(authHeaders);
       setUser(userData);
-      setFriends([]); // Placeholder for friends (not implemented)
+      await fetchAllUsers(); 
+      setFriends([]);
     } catch (err: any) {
       toast.error("Failed to load user data. Please log in again.");
       localStorage.removeItem("token");
@@ -289,6 +289,7 @@ export const useProfile = () => {
     }
   }, [navigate, authHeaders, fetchAllUsers]);
 
+  // Save updated user data to the server
   const saveUserData = useCallback(
     async (updatedUser: UserInfo) => {
       const profileUpdates: Partial<UserInfo> = {};
@@ -304,11 +305,12 @@ export const useProfile = () => {
       const updatedUserData = await fetchUserData(authHeaders);
       setUser(updatedUserData);
       console.log("Reloading all users after avatar update...");
-      await fetchAllUsers(); // Reload players list after updating avatar
+      await fetchAllUsers();
     },
     [user, authHeaders, fetchAllUsers]
   );
 
+  // Handle profile save action
   const handleSaveProfile = useCallback(
     async (data: Partial<UserInfo>) => {
       if (!user) return;
@@ -323,6 +325,7 @@ export const useProfile = () => {
     [user, saveUserData]
   );
 
+  // Handle the end of a game and save the result
   const handleGameEnd = useCallback(
     async (result: "win" | "loss", opponent: string) => {
       if (!user) return;
@@ -346,6 +349,7 @@ export const useProfile = () => {
     [user, authHeaders]
   );
 
+  // Handle the play action against a bot
   const handlePlay = useCallback(() => {
     const opponent = selectedBot || bots[Math.floor(Math.random() * bots.length)];
     const result = Math.random() > 0.5 ? "win" : "loss";
@@ -357,6 +361,7 @@ export const useProfile = () => {
     }
   }, [selectedBot, handleGameEnd]);
 
+  // Fetch data on component mount
   useEffect(() => {
     let isMounted = true;
 
@@ -368,11 +373,13 @@ export const useProfile = () => {
 
     fetchData();
 
+    // Cleanup to prevent memory leaks
     return () => {
       isMounted = false;
     };
   }, [loadData]);
 
+  // Return the state and functions for use in components
   return {
     user,
     friends,
