@@ -1,3 +1,172 @@
+// import db from "../database/database.js";
+// // import dbFriends from "../database/databaseFriends.js";
+
+// // see users but not friends
+// export async function friendsSearch(req, reply) {
+//   console.log("WE ARE IN FRIENDS");
+
+//   const { username } = req.body;
+
+//   if (!username)
+//     return reply.code(400).send({ message: "PLease fill in friend username" });
+
+//   try {
+//     const hasUser = db
+//       .prepare(`SELECT * FROM users WHERE username = ? `)
+//       .get(username);
+//     console.log("THERE is such username", hasUser);
+//     if (!hasUser) {
+//       return reply.code(400).send({ message: "Not such user" });
+//     }
+//     if (hasUser) {
+//       console.log("KUKU, lets add display user");
+//       return reply.code(200).send({ message: "we have this user", hasUser });
+//     }
+//   } catch (err) {
+//     console.error("Database error:", err.message);
+//     return reply.code(500).send({ message: "Something went wrong" });
+//   }
+// }
+
+// /////ADD friends
+// export async function friendsAdd(req, reply) {
+//   console.log("WE ARE IN ADDING FRIENDS");
+
+//   const { user_id, username } = req.body;
+//   console.log("id=>", user_id);
+//   console.log("username=>", username);
+
+//   if (!username)
+//     return reply.code(400).send({ message: "PLease fill in friend username" });
+  
+//   const friend = db.prepare("SELECT * FROM users WHERE username = ?").get(username)
+//   if(!friend)
+//   {
+//     return reply.code(404).send({ message: "NO such as friend" }); 
+//   }
+
+//   console.log("ID=>>>>", friend.id)
+//   if (user_id === friend.id)
+//   {
+//     return reply.code(400).send({ message: "Cannot add yourself" });
+//   }
+
+//   try {
+//       const hasUser2 = db
+//       .prepare(`SELECT * FROM users WHERE id = ?`)
+//       .get(friend.id);
+//     console.log("THERE is such username", hasUser2);
+
+//     if (!hasUser2) {
+//       return reply.code(400).send({ message: "Not such user" });
+//     }
+//     if (hasUser2 ) {
+//       const friendAlready1 = db
+//         .prepare(`SELECT * FROM friends WHERE user_id = ? AND friends_id = ? OR user_id = ? AND friends_id = ?`)
+//         .get(user_id, friend.id, friend.id, user_id);
+//       if (friendAlready1 ) {
+//         return reply.code(400).send({ message: "Friend already" });
+//       } else {
+//         const add = db
+//           .prepare(`INSERT INTO friends (user_id, friends_id) VALUES (?,? )`)
+//           .run(user_id, friend.id);
+//         return reply.code(200).send({ message: "we have this user", add });
+//       }
+//     }
+//   } catch (err) {
+//     console.error("Database error:", err.message);
+//     return reply.code(500).send({ message: "Something went wrong" });
+//   }
+// }
+
+// //Confirm friends
+// export async function confirmFriend(req, reply) {
+//   console.log("WE IN CONFIRM FRIEND");
+// /// confirm just will be 1???
+//   const { user_id, username, confirmReq } = req.body;
+
+
+//   const friend = db.prepare("SELECT * FROM users WHERE username = ?").get(username)
+//   if(!friend)
+//   {
+//     return reply.code(404).send({ message: "NO such as friend" }); 
+//   }
+
+//   // confirm can be accepted only from friend_id side
+//   try {
+//     const checkReq1 = db
+//       .prepare(`SELECT * FROM friends WHERE friends_id = ? AND user_id = ?`)
+//       .get(user_id, friend.id);
+//     if (checkReq1) {
+
+//       console.log("CoN=>", confirmReq)
+//       const confirmAccept1 = db
+//       .prepare(`UPDATE friends SET confirmReq = 1 WHERE (user_id = ? AND friends_id = ?) 
+//            OR (user_id = ? AND friends_id = ?)`)
+//       .run(user_id, friend.id, friend.id, user_id);
+//       console.log("CONFIRM =>....", confirmAccept1);
+//       return reply.code(200).send({ message: "confirmed" });
+//     }
+//     if (!checkReq1) {
+//       return reply.code(400).send({ message: "No request" });
+//     }
+//     // confirmAccept.run();
+//   } catch (err) {
+//     console.error("Database error:", err.message);
+//     return reply.code(500).send({ message: "Something went wrong" });
+//   }
+// }
+
+// ///SEE the own friends
+// export async function myFriends(req, reply) {
+//   console.log("WE IN MY FRIENDS");
+
+//   const { user_id } = req.body;
+
+//   try {
+//     const myfriends = db
+//       .prepare(`SELECT * FROM friends WHERE (user_id = ? OR friends_id = ?) AND confirmReq = 1`)
+//       .all(user_id, user_id);
+//       if(myfriends)
+//       {
+//         return reply.code(200).send({ myfriends });
+//       }
+//       else
+//       {
+//         return reply.code(200).send({ message: "No friends" });
+//       }
+
+//   } catch (err) {
+//     console.error("Database error:", err.message);
+//     return reply.code(500).send({ message: "Something went wrong" });
+//   }
+// }
+
+// /// delete from friends
+// export async function deleteFriend(req, reply) {
+//   console.log("WE IN MY DELETE FRIENDS");
+
+//   const { user_id, username } = req.body;
+
+//   const friend = db.prepare("SELECT * FROM users WHERE username = ?").get(username)
+//   if(!friend)
+//   {
+//     return reply.code(404).send({ message: "NO such as friend" }); 
+//   }
+//   try {
+//     const deleteFr = db
+//       .prepare(`DELETE FROM friends WHERE user_id = ? AND friends_id = ?`)
+//       .run(user_id, friend.id);
+//     return reply.code(200).send({ deleteFr });
+//   } catch (err) {
+//     console.error("Database error:", err.message);
+//     return reply.code(500).send({ message: "Something went wrong" });
+//   }
+// }
+
+
+
+
 import db from "../database/database.js";
 // import dbFriends from "../database/databaseFriends.js";
 
@@ -5,16 +174,16 @@ import db from "../database/database.js";
 export async function friendsSearch(req, reply) {
   console.log("WE ARE IN FRIENDS");
 
-  const { nickname } = req.body;
+  const { username } = req.body;
 
-  if (!nickname)
-    return reply.code(400).send({ message: "PLease fill in frien nickname" });
+  if (!username)
+    return reply.code(400).send({ message: "PLease fill in friend username" });
 
   try {
     const hasUser = db
-      .prepare("SELECT * FROM users WHERE nickname = ? ")
-      .get(nickname);
-    console.log("THERE is such nickname", hasUser);
+      .prepare(`SELECT * FROM users WHERE username = ? `)
+      .get(username);
+    console.log("THERE is such username", hasUser);
     if (!hasUser) {
       return reply.code(400).send({ message: "Not such user" });
     }
@@ -32,36 +201,43 @@ export async function friendsSearch(req, reply) {
 export async function friendsAdd(req, reply) {
   console.log("WE ARE IN ADDING FRIENDS");
 
-  const { user_id, friend_id } = req.body;
+  const { user_id, username } = req.body;
   console.log("id=>", user_id);
-  console.log("friend_id=>", friend_id);
+  console.log("username=>", username);
 
-  if (!user_id)
-    return reply.code(400).send({ message: "PLease fill in friend nickname" });
+  if (!username)
+    return reply.code(400).send({ message: "PLease fill in friend username" });
+  
+  const friend = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
+  if (!friend) {
+    return reply.code(404).send({ message: "NO such as friend" }); 
+  }
+
+  console.log("ID=>>>>", friend.id);
+  if (user_id === friend.id) {
+    return reply.code(400).send({ message: "Cannot add yourself" });
+  }
 
   try {
-    const hasUser = db
-      .prepare("SELECT * FROM users WHERE id IN (?, ?)")
-      .get(user_id, friend_id);
-    console.log("THERE is such nickname", hasUser);
+    const hasUser2 = db
+      .prepare(`SELECT * FROM users WHERE id = ?`)
+      .get(friend.id);
+    console.log("THERE is such username", hasUser2);
 
-    if (!hasUser) {
+    if (!hasUser2) {
       return reply.code(400).send({ message: "Not such user" });
     }
-    if (hasUser) {
+    if (hasUser2) {
       const friendAlready1 = db
-        .prepare(
-          "SELECT * FROM friends WHERE user_id = ? AND friends_id = ? OR friends_id = ? AND user_id = ?"
-        )
-        .get(user_id, friend_id, friend_id, user_id);
-
+        .prepare(`SELECT * FROM friends WHERE user_id = ? AND friends_id = ? OR user_id = ? AND friends_id = ?`)
+        .get(user_id, friend.id, friend.id, user_id);
       if (friendAlready1) {
         return reply.code(400).send({ message: "Friend already" });
       } else {
         const add = db
-          .prepare("INSERT INTO friends (user_id, friends_id) VALUES (?,? )")
-          .run(user_id, friend_id);
-        return reply.code(200).send({ message: "we have this user", hasUser });
+          .prepare(`INSERT INTO friends (user_id, friends_id, confirmReq) VALUES (?, ?, 1)`) //!
+          .run(user_id, friend.id);
+        return reply.code(200).send({ message: "Friend added successfully", add });
       }
     }
   } catch (err) {
@@ -73,35 +249,40 @@ export async function friendsAdd(req, reply) {
 //Confirm friends
 export async function confirmFriend(req, reply) {
   console.log("WE IN CONFIRM FRIEND");
+  // confirm just will be 1???
+  const { user_id, username, confirmReq } = req.body;
 
-  const { user_id, friend_id, confirmReq } = req.body;
+  const friend = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
+  if (!friend) 
+  {
+    return reply.code(404).send({ message: "NO such as friend" }); 
+  }
 
+  // confirm can be accepted only from friend_id side
   try {
     const checkReq1 = db
-      .prepare(
-        "SELECT * FROM friends WHERE user_id = ? AND friends_id = ? OR friends_id = ? AND user_id = ?"
-      )
-      .get(user_id, friend_id, user_id, friend_id);
+      .prepare(`SELECT * FROM friends WHERE friends_id = ? AND user_id = ?`)
+      .get(user_id, friend.id);
     if (checkReq1) {
+
+      console.log("CoN=>", confirmReq);
       const confirmAccept1 = db
-        .prepare(
-          "UPDATE friends SET confirmReq = ? WHERE user_id = ? AND friends_id = ? OR user_id = ? AND friends_id = ?"
-        )
-        .run(confirmReq, user_id, friend_id, friend_id, user_id);
+        .prepare(`UPDATE friends SET confirmReq = 1 WHERE user_id = ? AND friends_id = ?`) //!
+        .run(friend.id, user_id); //!
       console.log("CONFIRM =>....", confirmAccept1);
+      return reply.code(200).send({ message: "confirmed" });
     }
     if (!checkReq1) {
       return reply.code(400).send({ message: "No request" });
     }
     // confirmAccept.run();
-    return reply.code(200).send({ message: "confirmed" });
   } catch (err) {
     console.error("Database error:", err.message);
     return reply.code(500).send({ message: "Something went wrong" });
   }
 }
 
-///SEE the own friends
+///SEE the own friends  //!
 export async function myFriends(req, reply) {
   console.log("WE IN MY FRIENDS");
 
@@ -109,12 +290,31 @@ export async function myFriends(req, reply) {
 
   try {
     const myfriends = db
-      .prepare(
-        "SELECT * FROM friends WHERE user_id = ? OR friends_id = ? AND confirmReq = 1"
-      )
+      .prepare(`SELECT * FROM friends WHERE (user_id = ? OR friends_id = ?) AND confirmReq = 1`)
       .all(user_id, user_id);
+    
+    const friendsData = myfriends.map((f) => {
+      const friendId = f.user_id === user_id ? f.friends_id : f.user_id;
+      const friendData = db
+        .prepare(`SELECT id, username, email, name, wins, losses, online, image, image_type FROM users WHERE id = ?`)
+        .get(friendId);
+      if (!friendData) {
+        return null;
+      }
+      return {
+        id: friendData.id,
+        username: friendData.username,
+        email: friendData.email || "",
+        name: friendData.name || "",
+        wins: friendData.wins || 0,
+        losses: friendData.losses || 0,
+        online: !!friendData.online,
+        image: friendData.image ? Buffer.from(friendData.image).toString("base64") : null,
+        image_type: friendData.image_type || "image/png",
+      };
+    }).filter((f) => f !== null);
 
-    return reply.code(200).send({ myfriends });
+    return reply.code(200).send({ myfriends: friendsData });
   } catch (err) {
     console.error("Database error:", err.message);
     return reply.code(500).send({ message: "Something went wrong" });
@@ -125,15 +325,28 @@ export async function myFriends(req, reply) {
 export async function deleteFriend(req, reply) {
   console.log("WE IN MY DELETE FRIENDS");
 
-  const { user_id, friends_id } = req.body;
+  const { user_id, username } = req.body;
 
-  try {
+  const friend = db.prepare("SELECT * FROM users WHERE username = ?").get(username);
+  if (!friend) {
+    return reply.code(404).send({ message: "NO such as friend" }); 
+  }
+
+  try { //!
     const deleteFr = db
-      .prepare("DELETE FROM friends WHERE user_id = ? AND friends_id = ?")
-      .run(user_id, friends_id);
-    return reply.code(200).send({ deleteFr });
+      .prepare(`DELETE FROM friends WHERE (user_id = ? AND friends_id = ?) OR (user_id = ? AND friends_id = ?)`) 
+      .run(user_id, friend.id, friend.id, user_id); 
+    if (deleteFr.changes === 0) {
+      return reply.code(400).send({ message: "Friendship not found" });
+    }
+    return reply.code(200).send({ message: "Friend removed successfully" });
   } catch (err) {
     console.error("Database error:", err.message);
     return reply.code(500).send({ message: "Something went wrong" });
   }
 }
+
+
+// все добавления и какие то изминения сделаны, что бы переместить и отобразить игрока в друзьях. 
+// Старался твой код вообще не удалять. Без вмешательства у меня ничего не получалось. 
+// Твой оригинальный код сверху. 

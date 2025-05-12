@@ -1,22 +1,23 @@
 import React, { useState } from "react";
-import { UserInfo } from "./types/UserInfo";
 import PlayerCard from "./PlayerCard";
+import Avatar from "./Avatar";
 import { CardWrapper } from "./types/ui";
+import { UserInfo } from "./types/UserInfo";
 
 interface Props {
-	friends: UserInfo[];
+  friends: UserInfo[];
 }
 
 const EnhancedFriendsList: React.FC<Props> = ({ friends }) => {
-	const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
-	const toggleExpand = (index: number) => {
-		setExpandedIndex((prev) => (prev === index ? null : index));
-	};
+  const toggleExpand = (index: number) => {
+    setExpandedIndex(prev => (prev === index ? null : index));
+  };
 
-	return (
-		<div
-			className={`
+  return (
+    <div
+      className="
         flex
         flex-col
         gap-2
@@ -26,57 +27,70 @@ const EnhancedFriendsList: React.FC<Props> = ({ friends }) => {
         scrollbar-thin
         scrollbar-thumb-white/60
         scrollbar-track-transparent
-      `}
-		/* Main container: Displays a scrollable list of friends with a fixed maximum height */
-		>
-			{friends.map((friend, index) => {
-				const isExpanded = expandedIndex === index;
+      "
+    >
+      {friends.map((friend, index) => {
+        const isExpanded = expandedIndex === index;
 
-				return (
-					<CardWrapper key={index} onClick={() => toggleExpand(index)}>
-						<div
-							className={`
+        return (
+          <CardWrapper key={friend.id ?? index} onClick={() => toggleExpand(index)}>
+            {/* Header: avatar, username, status */}
+            <div
+              className="
                 flex
                 justify-between
                 items-center
-              `}
-						/* Friend header: Aligns username and online status horizontally */
-						>
-							<div
-								className={`
-                  font-bold
-                  text-base
-                `}
-							/* Username: Styles the friend’s username with bold text */
-							>
-								{friend.username}
-							</div>
-							<div
-								className={`
+              "
+            >
+              <div
+                className="
+                  flex
+                  items-center
+                  gap-2
+                "
+              >
+                <Avatar
+                  user={{ username: friend.username, avatar: friend.avatar }}
+                  className="
+                    w-8
+                    h-8
+                  "
+                />
+                <span
+                  className="
+                    font-bold
+                    text-base
+                  "
+                >
+                  {friend.username}
+                </span>
+              </div>
+              <span
+                className={`
                   text-sm
                   ${friend.online ? "text-green-400" : "text-gray-400"}
                 `}
-							/* Online status: Displays online/offline status with color coding */
-							>
-								{friend.online ? "Online" : "Offline"}
-							</div>
-						</div>
-						<div
-							className={`
+              >
+                {friend.online ? "Online" : "Offline"}
+              </span>
+            </div>
+
+            {/* Expandable PlayerCard */}
+            <div
+              className={`
                 transition-all
                 duration-300
                 overflow-hidden
                 ${isExpanded ? "max-h-[600px] mt-3" : "max-h-0"}
               `}
-						/* Expandable content: Toggles visibility of the player card with smooth animation */
-						>
-							<PlayerCard user={friend} />
-						</div>
-					</CardWrapper>
-				);
-			})}
-		</div>
-	);
+            >
+              <PlayerCard user={friend} />
+            </div>
+          </CardWrapper>
+        );
+      })}
+    </div>
+  );
 };
 
 export default EnhancedFriendsList;

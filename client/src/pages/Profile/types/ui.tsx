@@ -36,6 +36,7 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
 type CardWrapperProps = {
   children: ReactNode;
   onClick?: () => void;
+  className?: string;
 };
 
 export const CardWrapper: React.FC<CardWrapperProps> = ({
