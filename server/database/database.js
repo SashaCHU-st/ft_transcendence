@@ -24,7 +24,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     friends_id INTEGER NOT NULL,
-    confirmReq BOOL NOT NULL default 0,
+    confirmReq BOOL default 0,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (friends_id) REFERENCES users(id)
   );

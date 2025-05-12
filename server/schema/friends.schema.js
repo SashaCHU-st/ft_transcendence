@@ -17,6 +17,12 @@ export const FriendsAccept = z.object({
   confirmReq: z.string()///????? maybe int need to check
 });
 
+export const FriendsRequest = z.object({
+  user_id: z.string(),
+  // username:z.string(),
+  // confirmReq: z.string()///????? maybe int need to check
+});
+
 export const FriendsMy = z.object({
   user_id: z.string()
 });
