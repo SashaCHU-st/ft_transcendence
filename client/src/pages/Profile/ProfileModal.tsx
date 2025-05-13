@@ -1,49 +1,60 @@
+
 import React, { useState } from "react";
 import { UserInfo } from "./types/UserInfo";
 import { toast } from "react-hot-toast";
 
 interface ProfileModalProps {
-	onClose: () => void;
-	onSave: (data: Partial<UserInfo>) => void;
-	userData: Pick<UserInfo, "avatar" | "username" | "name">;
+  onClose: () => void;
+  onSave: (data: Partial<UserInfo>) => void;
+  userData: Pick<UserInfo, "avatar" | "username" | "name">;
 }
 
 const ProfileModal: React.FC<ProfileModalProps> = ({
-	onClose,
-	onSave,
-	userData,
+  onClose,
+  onSave,
+  userData,
 }) => {
-	const [avatar, setAvatar] = useState(userData.avatar);
-	const [username, setUsername] = useState(userData.username);
-	const [name] = useState(userData.name); // Read-only, не обновляется
-	const [password, setPassword] = useState("");
+  // State for form fields
+  const [avatar, setAvatar] = useState(userData.avatar);
+  const [username, setUsername] = useState(userData.username);
+  const [name, setName] = useState(userData.name);
+  const [password, setPassword] = useState("");
+  const MAX_FILE_SIZE = 10 * 1024 * 1024; // Maximum file size: 10 MB
 
-	const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB max
+  // Handler for avatar change
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-	const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const file = e.target.files?.[0];
-		if (!file) return;
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("File is too large! Maximum size is 10 MB.");
+      return;
+    }
 
-		if (file.size > MAX_FILE_SIZE) {
-			toast.error("File is too big! Max size: 10 MB.");
-			return;
-		}
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatar(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
-		const reader = new FileReader();
-		reader.onloadend = () => {
-			setAvatar(reader.result as string);
-		};
-		reader.readAsDataURL(file);
-	};
+  // Handler for saving changes
+  const handleSave = () => {
+    if (name.length < 2) {
+      toast.error("Name must be at least 2 characters long.");
+      return;
+    }
+    if (username.length < 2) {
+      toast.error("Username must be at least 2 characters long.");
+      return;
+    }
+    console.log("Saving data:", { avatar, username, name, password }); // Debugging
+    onSave({ avatar, username, name, password });
+  };
 
-	const handleSave = () => {
-		console.log("Saving data:", { avatar, username, name, password }); // Отладка
-		onSave({ avatar, username, name, password });
-	};
-
-	return (
-		<div
-			className={`
+  return (
+    <div
+      className={`
         fixed
         inset-0
         z-50
@@ -53,10 +64,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
         bg-black
         bg-opacity-60
       `}
-		/* Modal overlay: Creates a centered, full-screen backdrop with semi-transparent background */
-		>
-			<div
-				className={`
+      // Modal overlay: darkens the screen and centers the content
+    >
+      <div
+        className={`
           bg-gray-900
           text-white
           rounded-xl
@@ -66,32 +77,32 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           space-y-4
           shadow-2xl
         `}
-			/* Modal content: Styles the modal window with a dark background and shadow */
-			>
-				<h2
-					className={`
+        // Modal container: dark background with rounded corners
+      >
+        <h2
+          className={`
             text-2xl
             font-bold
             text-center
           `}
-				/* Modal title: Centers the heading for the edit profile form */
-				>
-					Edit Profile
-				</h2>
+          // Header: centered "Edit Profile" text
+        >
+          Edit Profile
+        </h2>
 
-				<div
-					className={`
+        <div
+          className={`
             flex
             flex-col
             items-center
             gap-2
           `}
-				/* Avatar section: Centers the avatar image and file input vertically */
-				>
-					<img
-						src={avatar}
-						alt="Avatar"
-						className={`
+          // Avatar section: centers the image and file input
+        >
+          <img
+            src={avatar}
+            alt="Avatar"
+            className={`
               w-24
               h-24
               rounded-full
@@ -99,148 +110,159 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               border-2
               border-white
             `}
-					/* Avatar image: Displays a circular avatar with a white border */
-					/>
-					<input
-						type="file"
-						accept="image/jpeg,image/png"
-						onChange={handleAvatarChange}
-						className={`
+            // Avatar image: circular with a white border
+          />
+          <input
+            type="file"
+            accept="image/jpeg,image/png"
+            onChange={handleAvatarChange}
+            className={`
               text-sm
               text-gray-300
             `}
-					/* File input: Styles the file input for avatar uploads */
-					/>
-				</div>
+            // File input: for selecting a new avatar
+          />
+        </div>
 
-				<div
-					className={`
+        <div
+          className={`
             flex
             flex-col
             gap-1
           `}
-				/* Name field container: Groups the name label and read-only input */
-				>
-					<label
-						className={`
+          // Name field: contains label and text input
+        >
+          <label
+            className={`
               text-sm
               text-gray-400
             `}
-					/* Name label: Styles the label for the name input */
-					>
-						Name
-					</label>
-					<input
-						type="text"
-						value={name}
-						readOnly
-						className={`
+            // Label for the name field
+          >
+            Name
+          </label>
+          <input
+            type="text"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={`
               w-full
               p-2
               rounded
               bg-gray-800
               border
               border-gray-600
-              text-gray-400
-              cursor-not-allowed
+              text-white
+              focus:outline-none
+              focus:ring-2
+              focus:ring-indigo-800
             `}
-					/* Name input: Styles the read-only name input with disabled cursor */
-					/>
-				</div>
+            // Text input for editing the name
+          />
+        </div>
 
-				<div
-					className={`
+        <div
+          className={`
             flex
             flex-col
             gap-1
           `}
-				/* Username field container: Groups the username label and input */
-				>
-					<label
-						className={`
+          // Username field: contains label and text input
+        >
+          <label
+            className={`
               text-sm
               text-gray-400
             `}
-					/* Username label: Styles the label for the username input */
-					>
-						Username
-					</label>
-					<input
-						type="text"
-						placeholder="Username"
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
-						className={`
+            // Label for the username field
+          >
+            Username
+          </label>
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className={`
               w-full
               p-2
               rounded
               bg-gray-800
               border
               border-gray-600
+              text-white
+              focus:outline-none
+              focus:ring-2
+              focus:ring-indigo-800
             `}
-					/* Username input: Styles the editable username input */
-					/>
-				</div>
+            // Text input for editing the username
+          />
+        </div>
 
-				<div
-					className={`
+        <div
+          className={`
             flex
             flex-col
             gap-1
           `}
-				/* Password field container: Groups the password label and input */
-				>
-					<label
-						className={`
+          // Password field: contains label and password input
+        >
+          <label
+            className={`
               text-sm
               text-gray-400
             `}
-					/* Password label: Styles the label for the password input */
-					>
-						New Password
-					</label>
-					<input
-						type="password"
-						placeholder="New Password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						className={`
+            // Label for the new password field
+          >
+            New Password
+          </label>
+          <input
+            type="password"
+            placeholder="New Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={`
               w-full
               p-2
               rounded
               bg-gray-800
               border
               border-gray-600
+              text-white
+              focus:outline-none
+              focus:ring-2
+              focus:ring-indigo-800
             `}
-					/* Password input: Styles the editable password input */
-					/>
-				</div>
+            // Input for entering a new password
+          />
+        </div>
 
-				<div
-					className={`
+        <div
+          className={`
             flex
             justify-end
             gap-3
             pt-4
           `}
-				/* Button group: Aligns the cancel and save buttons to the right */
-				>
-					<button
-						onClick={onClose}
-						className={`
+          // Button container: aligns buttons to the right
+        >
+          <button
+            onClick={onClose}
+            className={`
               px-4
               py-2
               bg-gray-600
               hover:bg-gray-700
               rounded
             `}
-					/* Cancel button: Styles the cancel button with hover effect */
-					>
-						Cancel
-					</button>
-					<button
-						onClick={handleSave}
-						className={`
+            // Cancel button: closes the modal
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            className={`
               px-4
               py-2
               bg-green-500
@@ -248,14 +270,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               text-white
               rounded
             `}
-					/* Save button: Styles the save button with hover effect */
-					>
-						Save
-					</button>
-				</div>
-			</div>
-		</div>
-	);
+            // Save button: saves changes
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default ProfileModal;

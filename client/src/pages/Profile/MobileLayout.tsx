@@ -1,9 +1,9 @@
+
 import React from "react";
-import EnhancedFriendsList from "./EnhancedFriendsList";
-import PlayersList from "./PlayersList";
+import UserList from "./UserList";
 import UserHeader from "./UserHeader";
 import PlayArena from "./PlayArena";
-import GameModeSelector from "./GameModeSelector";
+import GameSelector from "./GameSelector/GameSelector";
 import { PrimaryButton } from "./types/ui";
 import { UserInfo } from "./types/UserInfo";
 import { bots } from "./types/botsData";
@@ -14,6 +14,7 @@ interface MobileLayoutProps {
   players: UserInfo[];
   selectedBot: (typeof bots)[0] | null;
   handlePlay: () => void;
+  expandUsername?: string;
 }
 
 const MobileLayout: React.FC<MobileLayoutProps> = ({
@@ -22,18 +23,18 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   players,
   selectedBot,
   handlePlay,
+  expandUsername,
 }) => {
   return (
     <div
-      className={`
+      className="
         flex
         xl:hidden
         flex-col
         items-center
         px-4
         gap-4
-      `}
-      /* Main container: Creates a centered, vertical layout for mobile screens, hidden on xl screens */
+      "
     >
       <UserHeader
         user={{
@@ -51,83 +52,76 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         opponentName={selectedBot ? selectedBot.name : undefined}
       />
       <div
-        className={`
+        className="
           w-full
           max-w-xs
           mt-4
-        `}
-        /* Game mode section: Constrains the width of the game mode selector with top margin */
+        "
       >
-        <GameModeSelector />
+        <GameSelector />
       </div>
       <div
-        className={`
+        className="
           w-full
           flex
           flex-col
           sm:flex-row
           sm:justify-between
           gap-4
-        `}
-        /* Friends and players container: Arranges friends and players lists vertically on mobile, horizontally on sm screens */
+        "
       >
         <div
-          className={`
+          className="
             w-full
             sm:w-1/2
             min-w-0
-          `}
-          /* Friends section: Styles the friends list container, taking half width on sm screens */
+          "
         >
           <h2
-            className={`
+            className="
               text-lg
               font-semibold
               mb-2
               text-left
               drop-shadow-[0_0_8px_red]
-            `}
-            /* Friends title: Styles the heading for the friends list with a red glow */
+            "
           >
             Friends
           </h2>
-          <EnhancedFriendsList friends={friends} />
+          <UserList users={friends} variant="friends" expandUsername={expandUsername} />
         </div>
         <div
-          className={`
+          className="
             w-full
             sm:w-1/2
             min-w-0
             flex
             flex-col
             items-end
-          `}
-          /* Players section: Styles the players list container, aligned right, taking half width on sm screens */
+          "
         >
           <h2
-            className={`
+            className="
               text-lg
               font-semibold
               mb-2
               text-right
               drop-shadow-[0_0_8px_red]
-            `}
-            /* Players title: Styles the heading for the players list with a red glow */
+            "
           >
             Players
           </h2>
-          <PlayersList players={players} />
+          <UserList users={players} variant="players" expandUsername={expandUsername} />
         </div>
       </div>
       <div
-        className={`
+        className="
           w-full
           mt-8
-        `}
-        /* Video section: Centers the video container with top margin */
+        "
       >
         <div
-          className={`
+          className="
             w-full
             max-w-[600px]
             bg-gray-800
@@ -136,8 +130,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
             p-4
             shadow-lg
             mx-auto
-          `}
-          /* Video wrapper: Styles the video container with a semi-transparent background and shadow */
+          "
         >
           <video
             src="/videos/fight_gif.mp4"
@@ -145,12 +138,11 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
             loop
             muted
             playsInline
-            className={`
+            className="
               w-full
               h-auto
               rounded-lg
-            `}
-            /* Video: Ensures the video fills the container with rounded corners */
+            "
           />
         </div>
       </div>

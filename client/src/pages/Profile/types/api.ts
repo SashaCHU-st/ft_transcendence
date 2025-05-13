@@ -36,7 +36,7 @@ export const fetchUserData = async (
   const currentUser = response.data.user;
 
   return {
-    id: currentUser.id || "unknown",
+    id: String(currentUser.id || "unknown"),
     username: currentUser.username || currentUser.name || "Unknown",
     avatar: currentUser.image ? `data:image/jpeg;base64,${currentUser.image}` : "/prof_img/avatar1.png",
     email: currentUser.email || "",

@@ -27,6 +27,16 @@
     background-position: center;
     background-attachment: fixed;
   }
+
+    /* scrollbar invisible players/friends */
+  .scrollbar-hidden {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE и Edge */
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Edge */
+  }
 /* 
   @media (hover: hover) {
     body {

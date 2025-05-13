@@ -1,4 +1,3 @@
-
 import React from "react";
 import UserHeader from "./UserHeader";
 import { UserInfo } from "./types/UserInfo";
@@ -40,6 +39,32 @@ const PlayerCard: React.FC<Props> = ({ user }) => {
           pt-2
         "
       >
+        {user.onAdd && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              user.onAdd!();
+            }}
+            className="
+              px-4
+              py-2
+              rounded-md
+              text-sm
+              font-semibold
+              text-green-400
+              border-2
+              border-green-500
+              hover:bg-green-600
+              hover:text-white
+              transition
+              duration-300
+              shadow-[0_0_12px_#00ff00]
+              hover:shadow-[0_0_18px_#00ff00]
+            "
+          >
+            Add
+          </button>
+        )}
         {user.onRemove && (
           <button
             onClick={(e) => {
