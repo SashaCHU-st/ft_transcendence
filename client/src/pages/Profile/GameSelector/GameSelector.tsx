@@ -1,9 +1,13 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import GameModeSelector from "./GameModeSelector";
-import TournamentModal from "./TournamentModal";
+import TournamentModal from "./Tournament/components/TournamentModal";
 import { useGameSelector } from "./useGameSelector";
 
 const GameSelector: React.FC = () => {
+  // Hook for navigation
+  const navigate = useNavigate();
+
   // Manage tournament modal state and player name inputs
   const {
     isTournamentOpen,
@@ -16,9 +20,9 @@ const GameSelector: React.FC = () => {
 
   // Called when "Start" is clicked: filter out empty entries and proceed
   const handleStart = () => {
-    const players = names.filter(n => n.trim());
-    console.log("Tournament names:", players);
-    // TODO: navigate to tournament setup or bracket view
+    const playersList = names.filter(n => n.trim());
+    console.log("Tournament names:", playersList);
+    navigate('/tournament', { state: { players: playersList } });
     closeTournament();
   };
 
