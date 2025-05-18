@@ -1,76 +1,79 @@
 import React from "react";
-import EnhancedFriendsList from "./EnhancedFriendsList";
-import PlayersList from "./PlayersList";
+import UserList from "./UserList";
 import UserHeader from "./UserHeader";
 import PlayArena from "./PlayArena";
-import GameModeSelector from "./GameModeSelector";
+import GameSelector from "./GameSelector/GameSelector";
 import { PrimaryButton } from "./types/ui";
 import { UserInfo } from "./types/UserInfo";
 import { bots } from "./types/botsData";
 
+// Define props for DesktopLayout component
 interface DesktopLayoutProps {
-  user: UserInfo;
-  friends: UserInfo[];
-  players: UserInfo[];
-  selectedBot: (typeof bots)[0] | null;
-  handlePlay: () => void;
+  user: UserInfo; // Current user's data
+  friends: UserInfo[]; // List of friends
+  players: UserInfo[]; // List of other players
+  selectedBot: (typeof bots)[0] | null; // Currently selected bot for gameplay
+  handlePlay: () => void; // Callback to start the game
+  expandUsername?: string; // Optional username to auto-expand a user's card in UserList
 }
 
+// DesktopLayout component for rendering the profile page layout on desktop screens
 const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   user,
   friends,
   players,
   selectedBot,
   handlePlay,
+  expandUsername,
 }) => {
+  // Render a 6-column grid layout visible only on extra-large screens
   return (
     <div
-      className={`
+      className="
         hidden
         xl:grid
         xl:grid-cols-6
         gap-4
         px-4
         flex-grow
-      `}
-      /* Main container: Creates a responsive grid layout visible only on extra-large screens */
+      "
     >
+      {/* Friends list section (left column) */}
       <div
-        className={`
+        className="
           pt-4
           flex
           flex-col
           items-start
           col-span-1
           max-w-[220px]
-        `}
-        /* Friends section: Aligns the friends list vertically on the left side with constrained width */
+        "
       >
         <h2
-          className={`
+          className="
             text-lg
             font-semibold
             mb-2
             text-left
             drop-shadow-[0_0_8px_red]
-          `}
-          /* Friends title: Styles the heading for the friends list with a red glow */
+          "
         >
           Friends
         </h2>
-        <EnhancedFriendsList friends={friends} />
+        {/* Render list of friends with optional auto-expansion */}
+        <UserList users={friends} variant="friends" expandUsername={expandUsername} />
       </div>
 
+      {/* Video section (decorative animation) */}
       <div
-        className={`
+        className="
           pt-6
           col-span-1
           mx-auto
-        `}
-        /* Video section: Centers the video container with top padding */
+        "
       >
         <div
-          className={`
+          className="
             w-full
             max-w-[750px]
             bg-gray-800
@@ -80,27 +83,27 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             shadow-lg
             ml-14
             mt-32
-          `}
-          /* Video wrapper: Styles the video container with a semi-transparent background and shadow */
+          "
         >
+          {/* Auto-playing looped video for visual effect */}
           <video
             src="/videos/fight_gif.mp4"
             autoPlay
             loop
             muted
             playsInline
-            className={`
+            className="
               w-full
               h-auto
               rounded-lg
-            `}
-            /* Video: Ensures the video fills the container with rounded corners */
+            "
           />
         </div>
       </div>
 
+      {/* Central section: User info, play button, and game arena */}
       <div
-        className={`
+        className="
           pt-8
           flex
           flex-col
@@ -108,9 +111,9 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           justify-start
           gap-6
           col-span-2
-        `}
-        /* Central section: Centers user info, play button, and arena with vertical spacing */
+        "
       >
+        {/* Display user's profile header with stats */}
         <UserHeader
           user={{
             username: user.username,
@@ -120,7 +123,9 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             history: user.history,
           }}
         />
+        {/* Button to trigger the game */}
         <PrimaryButton onClick={handlePlay}>PLAY</PrimaryButton>
+        {/* Game arena displaying user and opponent (bot) info */}
         <PlayArena
           user={{ username: user.username, avatar: user.avatar }}
           opponentImage={selectedBot ? selectedBot.image : null}
@@ -128,17 +133,17 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
         />
       </div>
 
+      {/* Game mode selector section */}
       <div
-        className={`
+        className="
           pt-8
           flex
           justify-center
           col-span-1
-        `}
-        /* Game mode section: Centers the game mode selector */
+        "
       >
         <div
-          className={`
+          className="
             flex
             flex-col
             items-center
@@ -149,15 +154,16 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             w-full
             max-w-[320px]
             xl:max-w-full
-          `}
-          /* Game mode wrapper: Styles the container for the game mode selector with responsive padding */
+          "
         >
-          <GameModeSelector />
+          {/* Component for selecting game mode */}
+          <GameSelector />
         </div>
       </div>
 
+      {/* Players list section (right column) */}
       <div
-        className={`
+        className="
           pt-4
           flex
           flex-col
@@ -165,22 +171,21 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           col-span-1
           max-w-[220px]
           ml-auto
-        `}
-        /* Players section: Aligns the players list vertically on the right side with constrained width */
+        "
       >
         <h2
-          className={`
+          className="
             text-lg
             font-semibold
             mb-2
             text-right
             drop-shadow-[0_0_8px_red]
-          `}
-          /* Players title: Styles the heading for the players list with a red glow */
+          "
         >
           Players
         </h2>
-        <PlayersList players={players} />
+        {/* Render list of players with optional auto-expansion */}
+        <UserList users={players} variant="players" expandUsername={expandUsername} />
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ export type MatchResult = {
 	history: MatchResult[];
 	onRemove?: () => void;
 	onChallenge?: () => void;
+	onAdd?: () => void;
   };
   
   // *** Block: Calculate User Stats ***
