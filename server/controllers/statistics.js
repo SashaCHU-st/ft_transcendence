@@ -1,13 +1,10 @@
 import db from "../database/database.js";
 
 export async function statisticsAll(request, reply) {
-  const stat = db.prepare(`
-    SELECT id,nickname, wins, losses FROM users
-  `).all();
+  const stat = db.prepare(`SELECT id,nickname, wins, losses FROM users`).all();
 
   return reply.code(200).send({ stat });
 }
-
 
 export async function statisticsUser(req, reply) {
   console.log("WE IN USER STATISTICS");

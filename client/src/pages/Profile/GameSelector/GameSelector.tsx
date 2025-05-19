@@ -1,54 +1,22 @@
+
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import GameModeSelector from "./GameModeSelector";
-import TournamentModal from "./Tournament/components/TournamentModal";
-import { useGameSelector } from "./useGameSelector";
+import { useNavigate } from "react-router-dom";
 
 const GameSelector: React.FC = () => {
-  // Hook for navigation
   const navigate = useNavigate();
 
-  // Manage tournament modal state and player name inputs
-  const {
-    isTournamentOpen,
-    openTournament,
-    closeTournament,
-    names,
-    updateName,
-    canStart
-  } = useGameSelector();
-
-  // Called when "Start" is clicked: filter out empty entries and proceed
-  const handleStart = () => {
-    const playersList = names.filter(n => n.trim());
-    console.log("Tournament names:", playersList);
-    navigate('/tournament', { state: { players: playersList } });
-    closeTournament();
-  };
-
-  // Stub handlers for other game modes
-  const handleSingle = () => alert("Single Player clicked");
-  const handleMulti  = () => alert("Multiplayer clicked");
+  const handleSingle = () => navigate("/pong?mode=ai");
+  const handleMulti = () => navigate("/pong?mode=local2p");
+  const handleTournament = () => navigate("/pong?mode=tournament");
 
   return (
-    <>
-      {/* Buttons to choose game mode */}
-      <GameModeSelector
-        onSingleClick={handleSingle}
-        onMultiClick={handleMulti}
-        onTournamentClick={openTournament}
-      />
+    <GameModeSelector
+      onSingleClick={handleSingle}
+      onMultiClick={handleMulti}
+      onTournamentClick={handleTournament}
+    />
 
-      {/* Modal for entering up to 8 player names */}
-      <TournamentModal
-        isOpen={isTournamentOpen}
-        onClose={closeTournament}
-        names={names}
-        updateName={updateName}
-        onStart={handleStart}
-        canStart={canStart()}
-      />
-    </>
   );
 };
 
