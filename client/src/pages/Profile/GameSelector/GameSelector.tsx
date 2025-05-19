@@ -1,3 +1,4 @@
+
 import React from "react";
 import GameModeSelector from "./GameModeSelector";
 import { useNavigate } from "react-router-dom";
@@ -15,6 +16,7 @@ const GameSelector: React.FC = () => {
       onMultiClick={handleMulti}
       onTournamentClick={handleTournament}
     />
+
   );
 };
 

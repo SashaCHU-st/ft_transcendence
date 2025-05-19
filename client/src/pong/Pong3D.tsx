@@ -14,7 +14,7 @@ import { TournamentSetup } from "./components/TournamentSetup";
 
 import { stripPredTag } from "./utils/utils";
 import { useTournament } from "./hooks/useTournament";
-import "./PongGame.css";
+import "./pongGame.css";
 
 import type { BetweenMatchesData, ByeOverlayData } from "./hooks/useTournament";
 
