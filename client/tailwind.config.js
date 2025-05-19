@@ -35,6 +35,7 @@ export default {
         neonGreen: '#00fc65',
         neonCyan: '#00ffff',
         neonIndigo: '#6600ff',
+		mainNeon: '#0a0a23',
       },
     },
   },

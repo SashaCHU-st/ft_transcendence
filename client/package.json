@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@babylonjs/core": "^8.7.0",
+    "@babylonjs/materials": "^8.7.0",
     "@fastify/multipart": "^9.0.3",
     "axios": "^1.9.0",
     "buffer": "^6.0.3",

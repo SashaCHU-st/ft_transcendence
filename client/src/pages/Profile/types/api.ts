@@ -1,4 +1,3 @@
-
 import axios, { AxiosInstance, AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import { UserInfo, MatchResult } from "./UserInfo";
@@ -21,7 +20,7 @@ api.interceptors.response.use(
       window.location.href = "/login";
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export const getAuthHeaders = (): { Authorization: string } | {} => {
@@ -30,7 +29,7 @@ export const getAuthHeaders = (): { Authorization: string } | {} => {
 };
 
 export const fetchUserData = async (
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | {} = getAuthHeaders(),
 ): Promise<UserInfo> => {
   const response = await api.get("/users/me", { headers });
   const currentUser = response.data.user;
@@ -38,7 +37,9 @@ export const fetchUserData = async (
   return {
     id: String(currentUser.id || "unknown"),
     username: currentUser.username || currentUser.name || "Unknown",
-    avatar: currentUser.image ? `data:image/jpeg;base64,${currentUser.image}` : "/prof_img/avatar1.png",
+    avatar: currentUser.image
+      ? `data:image/jpeg;base64,${currentUser.image}`
+      : "/prof_img/avatar1.png",
     email: currentUser.email || "",
     name: currentUser.name || "",
     password: currentUser.password || "",
@@ -52,7 +53,7 @@ export const fetchUserData = async (
 export const updateUserProfile = async (
   profileUpdates: Partial<UserInfo>,
   avatar?: string,
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | {} = getAuthHeaders(),
 ): Promise<void> => {
   const updates: Partial<UserInfo> = {};
   if (profileUpdates.name) updates.name = profileUpdates.name;
@@ -65,7 +66,9 @@ export const updateUserProfile = async (
 
   if (avatar && avatar.startsWith("data:image")) {
     const base64Data = avatar.split(",")[1];
-    const blob = await (await fetch(`data:image/jpeg;base64,${base64Data}`)).blob();
+    const blob = await (
+      await fetch(`data:image/jpeg;base64,${base64Data}`)
+    ).blob();
     const formData = new FormData();
     formData.append("file", blob, "avatar.jpg");
 
@@ -80,7 +83,34 @@ export const updateUserProfile = async (
 
 export const saveGameResult = async (
   matchResult: MatchResult,
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | {} = getAuthHeaders(),
 ): Promise<void> => {
   await api.post("/game/result", matchResult, { headers });
+};
+
+export const getUserIdFromToken = (): string | null => {
+  const token = localStorage.getItem("token");
+  if (!token) return null;
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.id ? String(payload.id) : null;
+  } catch {
+    return null;
+  }
+};
+
+export const recordWin = async (
+  headers: { Authorization: string } | {} = getAuthHeaders(),
+): Promise<void> => {
+  const id = getUserIdFromToken();
+  if (!id) throw new Error("No user id");
+  await api.post("/winUser", { user_id: id }, { headers });
+};
+
+export const recordLoss = async (
+  headers: { Authorization: string } | {} = getAuthHeaders(),
+): Promise<void> => {
+  const id = getUserIdFromToken();
+  if (!id) throw new Error("No user id");
+  await api.post("/loseUser", { user_id: id }, { headers });
 };
