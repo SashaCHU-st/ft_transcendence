@@ -28,7 +28,9 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
       if (!res.ok) throw new Error(data.message);
 
       localStorage.setItem("token", data.accessToken);
-      console.log("Signed up with JWT:", data.accessToken);
+      localStorage.setItem("userId", data.userId); // Save user ID
+      localStorage.console.log("Signed up with JWT:", data.accessToken);
+      console.log("User ID saved:", data.userId);
 
       // Call both success handlers if they exist
       onSuccess?.();
@@ -58,7 +60,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
           />
           <input
             type="text"
-            placeholder="username"
+            placeholder="Username"
             className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={username}
             onChange={(e) => setUsername(e.target.value)}

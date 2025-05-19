@@ -7,7 +7,7 @@ const MainPage = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="container mx-auto flex flex-col items-center justify-center relative">
-        <div className="relative w-full pt-10">
+        <div className="relative w-full pt-0">
           <img 
             src={myImage} 
             alt="Main Visual" 
@@ -28,7 +28,7 @@ const MainPage = () => {
               }}
               onClick={() => openModal('login')}
             >
-              START GAME
+              NEON PONG
             </button>
           </div>
         </div>

@@ -21,7 +21,10 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
       localStorage.setItem("token", data.accessToken); // Store JWT token
+      localStorage.setItem("userId", data.userId); // Save user ID
+      
       console.log("Logged in with JWT:", data.accessToken);
+      console.log("User ID saved:", data.userId);
       toast.success("Successfully logged in!");
       onSuccess(); // Close modal or redirect
       navigate("/profile");
