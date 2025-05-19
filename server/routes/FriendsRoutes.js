@@ -65,6 +65,7 @@ async function friendsRoutes(fastify) {
     }
     return deleteFriend({ ...req, body: validated.data }, reply);
   });
+  
 }
 
 export default friendsRoutes;
