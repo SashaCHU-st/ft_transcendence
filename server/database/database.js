@@ -11,7 +11,7 @@ db.exec(`
     password TEXT NOT NULL,
     online BOOL, 
     image BLOB,
-    wins INTEGER default 3,
+    wins INTEGER default 0,
     losses INTEGER default 0
   );
 `);
@@ -37,6 +37,19 @@ db.exec(`
     FOREIGN KEY (username) REFERENCES users(username)
   );
 `);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS challenge (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    friends_id INTEGER NOT NULL,
+    confirmReq BOOL default 0,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (friends_id) REFERENCES users(id)
+  );
+`);
+
+
 
 console.log("Database initialized and favorites table is ready.");
 
