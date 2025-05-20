@@ -26,10 +26,11 @@
 
 // // {/* <Route path ="/auth" element={<AuthPage/>}/> */}
 
-
+import TournamentBracket from '../pages/Profile/GameSelector/Tournament/TournamentBracket'; //!
 import MainPage from '../pages/MainPage/MainPage';
 import Profile from '../pages/Profile/Profile';
 import AuthPage from '../pages/AuthPage/AuthPage';
+import PongGame from '../pong/Pong3D';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import Layout from '../components/Layout';
 
@@ -40,9 +41,11 @@ const AppRouter = () => {
         <Route element={<Layout />}>
           <Route path="/" element={<MainPage />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/pong" element={<PongGame />} />
           <Route path="/login" element={<AuthPage mode="login" onClose={() => {}} />} />
           <Route path="/signup" element={<AuthPage mode="signup" onClose={() => {}} />} />
           <Route path="*" element={<Navigate to="/" />} />
+		  <Route path="/tournament" element={<TournamentBracket />} /> //!
         </Route>
       </Routes>
     </BrowserRouter>
