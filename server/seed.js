@@ -3,5 +3,6 @@ import Database from "better-sqlite3";
 const db = new Database("./database/database.db");
 
 db.exec(
-  `DELETE FROM favorites WHERE id < 8`
+  `DELETE FROM users WHERE 5 < id < 8
+  `
 );
