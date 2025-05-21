@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import { useAuth } from '../../context/AuthContext';
 
 const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,11 +22,13 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      localStorage.setItem("token", data.accessToken); // Store JWT token
-      localStorage.setItem("userId", data.userId); // Save user ID
+      //localStorage.setItem("token", data.accessToken); // Store JWT token
+      login(data.accessToken);
+      localStorage.setItem("userId", data.id); // Save user ID
+      localStorage.setItem("userEmail", data.email);
+      console.log("User Email:", data.email);
+      console.log("User ID saved:", data.id);
       
-      console.log("Logged in with JWT:", data.accessToken);
-      console.log("User ID saved:", data.userId);
       toast.success("Successfully logged in!");
       onSuccess(); // Close modal or redirect
       navigate("/profile");

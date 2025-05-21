@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { UserInfo } from "./types/UserInfo";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
-import { getAuthHeaders } from "./types/api";
+//import { useNavigate } from "react-router-dom";
+//import { getAuthHeaders } from "./types/api";
+import { useAuth } from "../../context/AuthContext";
 
 // Define the props accepted by the ProfileActions component
 interface ProfileActionsProps {
@@ -17,32 +18,32 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
   onProfileClick,
   onSearch,
 }) => {
-  const navigate = useNavigate();               // Hook for navigation after logout
+  //const navigate = useNavigate();               // Hook for navigation after logout
   const [searchQuery, setSearchQuery] = useState("");  // Local state for search input
 
   /**
    * Logout handler
    * Sends POST to /logout, clears token, and navigates to login on success
    */
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("http://localhost:3000/logout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...getAuthHeaders(),                    // Attach authorization header
-        },
-        body: JSON.stringify({ email: user.email }),
-      });
-      if (!response.ok) throw new Error("Failed to logout");
-      toast.success("Logged out successfully!");
-      localStorage.removeItem("token");          // Remove JWT to prevent unauthorized access
-      navigate("/login");                       // Redirect to login page
-    } catch (err) {
-      console.error("Logout error:", err);
-      toast.error("Failed to logout. Please try again.");
-    }
-  };
+  // const handleLogout = async () => {
+  //   try {
+  //     const response = await fetch("http://localhost:3000/logout", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         ...getAuthHeaders(),                    // Attach authorization header
+  //       },
+  //       body: JSON.stringify({ email: user.email }),
+  //     });
+  //     if (!response.ok) throw new Error("Failed to logout");
+  //     toast.success("Logged out successfully!");
+  //     localStorage.removeItem("token");          // Remove JWT to prevent unauthorized access
+  //     //navigate("/login");                       // Redirect to login page
+  //   } catch (err) {
+  //     console.error("Logout error:", err);
+  //     toast.error("Failed to logout. Please try again.");
+  //   }
+  // };
 
   /**
    * Search handler
@@ -70,7 +71,7 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
       handleSearch();
     }
   };
-
+  const { logout } = useAuth();
   return (
     // Container: switches layout from column (mobile) to row (desktop)
     <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
@@ -208,7 +209,7 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
             Profile
           </button>
           <button
-            onClick={handleLogout}
+            onClick={logout}
             className="
               px-3
               py-1
