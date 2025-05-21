@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import { UserInfo, MatchResult } from "./UserInfo";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "https://localhost:3000";
 
 const api: AxiosInstance = axios.create({
   baseURL: BASE_URL,
