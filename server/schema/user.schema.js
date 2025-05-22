@@ -12,3 +12,8 @@ export const LoginSchema = z.object({
     password: z.string().min(4).max(40),
   });
   
+export const LogoutSchema = z.object({
+    user_id: z.number(),
+  });
+  
+

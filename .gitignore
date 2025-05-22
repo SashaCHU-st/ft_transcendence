@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 /database/users.db
-/cert
+cert
 
 # Editor directories and files
 .vscode/*

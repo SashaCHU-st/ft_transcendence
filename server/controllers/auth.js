@@ -101,9 +101,9 @@ export async function login(req, reply) {
 }
 
 export async function logout(req, reply) {
-  const { email } = req.body;
+  const { user_id } = req.body;
   try {
-    const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(email);
+    const user = db.prepare(`SELECT * FROM users WHERE id = ?`).get(user_id);
 
     if (!user) {
       return reply.code(400).send({ message: "No such user" });
@@ -112,8 +112,8 @@ export async function logout(req, reply) {
     console.log("ID=>", user.id);
 
     const offline = db
-      .prepare("UPDATE users SET online = ? WHERE email = ?")
-      .run(0, email);
+      .prepare("UPDATE users SET online = ? WHERE id = ?")
+      .run(0, id);
     console.log("Offline =>", offline.changes);
     return reply.code(200).send({ message: "We are logged out" });
   } catch (err) {

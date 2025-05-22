@@ -1,6 +1,6 @@
 import { signup, login, logout, getCurrentUser } from "../controllers/auth.js";
 import db from "../database/database.js";
-import { SignUpSchema, LoginSchema } from "../schema/user.schema.js";
+import { SignUpSchema, LoginSchema, LogoutSchema } from "../schema/user.schema.js";
 
 async function authRoutes(fastify) {
   fastify.post("/login", async (req, reply) => {
@@ -26,7 +26,17 @@ async function authRoutes(fastify) {
     return signup({ ...req, body: validated.data }, reply);
   });
 
-  fastify.post("/logout", logout);
+  fastify.post("/logout", async (req, reply) => {
+    const validated = LogoutSchema.safeParse(req.body);
+
+    if (!validated.success) {
+      return reply.code(400).send({
+        message: "Validation error",
+        errors: validated.error.errors,
+      });
+    }
+    return logout({ ...req, body: validated.data }, reply);
+  });
 
   ///for debug???? or delete later
 // <<<<<<< mainPage
