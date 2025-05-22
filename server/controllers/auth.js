@@ -47,7 +47,7 @@ export async function signup(req, reply) {
 
       return reply
         .code(201)
-        .send({ message: "USER created", users, accessToken: token, id:result.lastInsertRowid, email});
+        .send({ message: "USER created", users, accessToken: token, id:result.lastInsertRowid});
     } else {
       console.log("User already exists");
       return reply.code(400).send({ message: "User already exists" });
@@ -87,7 +87,7 @@ export async function login(req, reply) {
         console.log("ONLINE =>", online.changes);
         return reply
           .code(200)
-          .send({ message: "We are logged in", accessToken: token, id:user.id, email: user.email});
+          .send({ message: "We are logged in", accessToken: token, id:user.id});
       } else {
         return reply.code(400).send({ message: "wrong pass" });
       }
@@ -113,7 +113,7 @@ export async function logout(req, reply) {
 
     const offline = db
       .prepare("UPDATE users SET online = ? WHERE id = ?")
-      .run(0, id);
+      .run(0, user_id);
     console.log("Offline =>", offline.changes);
     return reply.code(200).send({ message: "We are logged out" });
   } catch (err) {

@@ -13,7 +13,7 @@ export const LoginSchema = z.object({
   });
   
 export const LogoutSchema = z.object({
-    user_id: z.number(),
+    user_id: z.string(),
   });
   
 
