@@ -42,7 +42,13 @@ const AppRouter = () => {
     
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/" element={
+             isAuthenticated ? (
+            <Navigate to="/profile" replace />
+          ) : (
+             <MainPage/>
+          )
+          } />
           <Route path="/profile" 
           element={
             <ProtectedRoute>

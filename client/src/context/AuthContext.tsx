@@ -38,7 +38,7 @@ const logout = async () => {
     const token = localStorage.getItem("token");
     const email = localStorage.getItem("userEmail");
     console.log("JWT in logout: ", token);
-    const response = await fetch("http://localhost:3000/logout", {
+    const response = await fetch("https://localhost:3000/logout", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -19,7 +19,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3000/signup", {
+      const res = await fetch("https://localhost:3000/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
