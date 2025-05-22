@@ -1,23 +1,28 @@
-import myImage from '../../assets/mainPageImages/Main_Image.png';
+//import myImage from '../../assets/mainPageImages/Main_Image.png';
 import { useOutletContext } from "react-router-dom";
+import mainVideo from '../../assets/mainPageImages/Main_Video.mp4';
 
 const MainPage = () => {
   const { openModal } = useOutletContext<{ openModal: (mode?: 'login' | 'signup') => void }>();
   
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center">
       <div className="container mx-auto flex flex-col items-center justify-center relative">
-        <div className="relative w-full pt-10">
-          <img 
-            src={myImage} 
-            alt="Main Visual" 
-            className="w-full h-auto rounded-xl shadow-neon transition-shadow duration-300 ease-in-out"
-          />
-          <div className="absolute top-20 left-1/2 transform -translate-x-1/2">
+        <div className="relative w-full">
+          <video
+              src={mainVideo}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-auto rounded-xl transition-shadow duration-300 ease-in-out"
+             
+            />
+          <div className="bg-indigo-900 absolute bottom-2 left-1/2 transform -translate-x-1/2">
             <button 
-              className="rounded-lg outline-3 outline-offset-2 outline-double border-4 border-blue-300 
-                        px-8 sm:px-10 md:px-14 py-4 sm:py-3 md:py-5
-                        font-bold text-transparent text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl
+              className="rounded-lg outline-3 outline-offset-2 outline-double border-4 border-blue-300 px-5 py-2
+                        sm:px-8 md:px-8 sm:py-2 md:py-3 lg:py-5 lg:px-9 xl:py-5 xl:px-10 font-orbitron
+                        font-bold text-transparent sm:text-2xl md:text-3xl lg:text-4xl xl:text-6xl
                         bg-clip-text bg-gradient-to-r from-indigo-300 via-blue-300 to-sky-500
                         hover:from-red-50 hover:via-indigo-200 hover:to-purple-100
                         animate-pulse hover:animate-none
@@ -28,7 +33,7 @@ const MainPage = () => {
               }}
               onClick={() => openModal('login')}
             >
-              START GAME
+              NEON PONG
             </button>
           </div>
         </div>
@@ -41,6 +46,14 @@ export default MainPage;
 
 
 
+
+
+
+{/* <img 
+            src={myImage} 
+            alt="Main Visual" 
+            className="w-full h-auto rounded-xl shadow-neon transition-shadow duration-300 ease-in-out"
+          /> */}
 
 // const MainPage = () => {
 //   const navigate = useNavigate()
