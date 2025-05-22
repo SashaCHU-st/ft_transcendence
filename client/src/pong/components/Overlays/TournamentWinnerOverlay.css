@@ -1,0 +1,66 @@
+/* Firework animations */
+@keyframes firework-scale {
+  0%   { transform: scale(0.5); opacity: 0.7; }
+  50%  { transform: scale(1.2); opacity: 1;   }
+  100% { transform: scale(0.5); opacity: 0.7; }
+}
+@keyframes firework-color {
+  0%   { background: radial-gradient(circle, #FFD700 20%, #FF1493 80%); }
+  33%  { background: radial-gradient(circle, #FF1493 20%, #00FFFF 80%); }
+  66%  { background: radial-gradient(circle, #00FFFF 20%, #FFD700 80%); }
+  100% { background: radial-gradient(circle, #FFD700 20%, #FF1493 80%); }
+}
+.animate-firework {
+  width: 0.75rem;    /* if using Tailwind you can override with utility classes instead */
+  height: 0.75rem;
+  border-radius: 9999px;
+  position: absolute;
+  animation:
+    firework-scale 2s ease-in-out infinite,
+    firework-color 3s linear infinite;
+}
+
+/* Crown spin */
+@keyframes crown-spin {
+  from { transform: perspective(400px) rotateY(0deg); }
+  to   { transform: perspective(400px) rotateY(360deg); }
+}
+.animate-crown-spin {
+  animation: crown-spin 4s linear infinite;
+  transform-style: preserve-3d;
+  backface-visibility: visible;
+}
+
+/* Neon border for OK button */
+@keyframes neon-border {
+  0% {
+    box-shadow:
+      0 0 10px #FF1493,
+      0 0 20px #00FFFF,
+      0 0 30px #FFD700;
+  }
+  50% {
+    box-shadow:
+      0 0 10px #00FFFF,
+      0 0 20px #FFD700,
+      0 0 30px #FF1493;
+  }
+  100% {
+    box-shadow:
+      0 0 10px #FFD700,
+      0 0 20px #FF1493,
+      0 0 30px #00FFFF;
+  }
+}
+.animate-neon-border {
+  animation: neon-border 3s linear infinite;
+}
+
+/* Pulse on heading */
+@keyframes pulse-slow {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.05); opacity: 0.9; }
+}
+.animate-pulse-slow {
+  animation: pulse-slow 1.5s ease-in-out infinite;
+}

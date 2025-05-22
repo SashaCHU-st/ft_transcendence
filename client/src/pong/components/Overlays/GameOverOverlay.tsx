@@ -35,6 +35,8 @@
 
 
 
+import { SpaceBackground  } from "../SpaceBackground";
+
 interface GameOverOverlayProps {
   winnerName: string;
   playerScore: number;
@@ -49,66 +51,63 @@ export function GameOverOverlay({
   onOk,
 }: GameOverOverlayProps) {
   return (
-    <div className={`
-        absolute
-        inset-0
-        z-40
-        flex
-        items-center
-        justify-center
-        bg-black
-        bg-opacity-90
-      `}
-    >
-      <div className={`
+    <SpaceBackground>
+      <div
+        className="
+          relative
+          z-10
           rounded-2xl
           border-2
-          border-pink-500
+          border-[#0A7FC9]
           p-6
           text-center
-          bg-gradient-to-br
-          from-pink-900
-          via-red-800
-          to-purple-900
-          shadow-neon-lg
-        `}
+          bg-black
+          bg-opacity-30
+          shadow-[0_0_15px_rgba(0,255,255,0.7)]
+        "
       >
-        <h2 className={`
+        <h2
+          className="
             mb-4
             text-3xl
-            font-bold
-            text-pink-300
-          `}
+            font-extrabold
+            text-[#D3E0FB]
+            drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]
+          "
         >
           GAME OVER
         </h2>
-        <p className={`
+        <p
+          className="
             mb-4
             text-xl
-            text-white
-          `}
+            text-[#D3E0FB]
+          "
         >
-          Winner: {winnerName}
+          Winner: <b className="text-[#74C0FC]">{winnerName}</b>
           <br />
           Score: {playerScore}:{aiScore}
         </p>
         <button
           onClick={onOk}
-          className={`
+          className="
             mt-2
             px-6
             py-2
-            rounded-lg
+            rounded-xl
             border-2
-            border-pink-500
-            shadow-neon-button
+            border-[#BD0E86]
+            bg-black
+            bg-opacity-30
+            text-[#832264]
+            shadow-[0_0_15px_rgba(255,29,153,0.7)]
             hover:scale-105
             transition
-          `}
+          "
         >
           OK
         </button>
       </div>
-    </div>
+    </SpaceBackground>
   );
 }
