@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../../context/AuthContext';
 
 interface SignUpFormProps {
   onSuccess?: () => void; // Made optional if not always provided
@@ -13,6 +14,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
   const [password, setPassword] = useState("");
   const [err, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,9 +29,13 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      localStorage.setItem("token", data.accessToken);
-      console.log("Signed up with JWT:", data.accessToken);
-
+      login(data.accessToken);
+      //localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("userId", data.id); // Save user ID
+      localStorage.setItem("userEmail", data.email);
+      
+      localStorage.console.log("Signed up with JWT:", data.accessToken);
+      console.log("User ID saved:", data.id);
       // Call both success handlers if they exist
       onSuccess?.();
       closeModal?.();
@@ -58,7 +64,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
           />
           <input
             type="text"
-            placeholder="username"
+            placeholder="Username"
             className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={username}
             onChange={(e) => setUsername(e.target.value)}

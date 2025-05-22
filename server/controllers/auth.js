@@ -47,7 +47,7 @@ export async function signup(req, reply) {
 
       return reply
         .code(201)
-        .send({ message: "USER created", users, accessToken: token, id:result.lastInsertRowid });
+        .send({ message: "USER created", users, accessToken: token, id:result.lastInsertRowid, email});
     } else {
       console.log("User already exists");
       return reply.code(400).send({ message: "User already exists" });
@@ -87,7 +87,7 @@ export async function login(req, reply) {
         console.log("ONLINE =>", online.changes);
         return reply
           .code(200)
-          .send({ message: "We are logged in", accessToken: token, id:user.id });
+          .send({ message: "We are logged in", accessToken: token, id:user.id, email: user.email});
       } else {
         return reply.code(400).send({ message: "wrong pass" });
       }

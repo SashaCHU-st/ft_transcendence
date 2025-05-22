@@ -13,7 +13,6 @@ dist-ssr
 *.local
 /database/users.db
 cert
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -43,3 +43,17 @@ export default {
     require('tailwind-scrollbar'),
   ],
 }
+
+module.exports = {
+  content: [
+    "./src/**/*.{js,ts,jsx,tsx}", // make sure this matches your file structure
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        orbitron: ['Orbitron', 'sans-serif'],
+      },
+    },
+  },
+  plugins: [],
+}
