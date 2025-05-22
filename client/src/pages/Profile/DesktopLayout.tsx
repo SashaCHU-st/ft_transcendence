@@ -53,12 +53,14 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           className="
             text-lg
             font-semibold
+            font-orbitron
             mb-2
             text-left
-            drop-shadow-[0_0_8px_red]
+            drop-shadow-[0_0_8px_pink]
+            tracking-[.20em]
           "
         >
-          Friends
+          FRIENDS
         </h2>
         {/* Render list of friends with optional auto-expansion */}
         <UserList users={friends} variant="friends" expandUsername={expandUsername} />
@@ -177,12 +179,14 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           className="
             text-lg
             font-semibold
+            font-orbitron
             mb-2
             text-right
-            drop-shadow-[0_0_8px_red]
+            drop-shadow-[0_0_8px_pink]
+            tracking-[.20em]
           "
         >
-          Players
+          PLAYERS
         </h2>
         {/* Render list of players with optional auto-expansion */}
         <UserList users={players} variant="players" expandUsername={expandUsername} />

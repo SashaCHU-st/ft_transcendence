@@ -87,7 +87,7 @@ export async function login(req, reply) {
         console.log("ONLINE =>", online.changes);
         return reply
           .code(200)
-          .send({ message: "We are logged in", accessToken: token, id:user.id, email: user.email});
+          .send({ message: "We are logged in", accessToken: token, id:user.id, email:user.email});
       } else {
         return reply.code(400).send({ message: "wrong pass" });
       }

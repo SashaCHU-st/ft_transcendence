@@ -62,7 +62,7 @@ const AppRouter = () => {
            isAuthenticated ? (
             <Navigate to="/profile" replace />
           ) : (
-            <AuthPage mode="login" onClose={() => {}} />
+            <AuthPage mode="login" />
           )
             } />
           <Route path="/signup" element={<AuthPage mode="signup" onClose={() => {}} />} />

@@ -44,7 +44,7 @@ const logout = async () => {
         "Content-Type": "application/json",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({email}),
     });
 
     if (!response.ok) throw new Error("Failed to logout");

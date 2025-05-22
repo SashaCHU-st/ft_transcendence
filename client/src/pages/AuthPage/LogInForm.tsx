@@ -39,7 +39,7 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
 
   return (
     <div className="p-6 max-w-md mx-auto">
-      <h2 className="text-2xl tracking-wide font-bold mb-5 text-center">Login</h2>
+      <h2 className="text-2xl font-bold font-orbitron mb-5 text-center tracking-[.10em]">LOGIN</h2>
       <form onSubmit={handleLogin} className="space-y-4">
         {err && <p className="text-red-500">{err}</p>}
         <div className="space-y-2">
@@ -65,7 +65,7 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="w-1/2 bg-indigo-950 hover:bg-rose-950 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+            className="w-1/2 bg-indigo-950 font-orbitron tracking-[.10em] hover:bg-rose-950 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
           >
             Login
           </button>
