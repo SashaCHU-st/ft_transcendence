@@ -21,6 +21,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
     try {
       const res = await fetch("https://localhost:3000/signup", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -31,7 +32,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
 
       login(data.accessToken);
       //localStorage.setItem("token", data.accessToken);
-      localStorage.setItem("userId", data.id); // Save user ID
+      localStorage.setItem("id", data.id); // Save user ID
       // localStorage.setItem("userEmail", data.email);
       
       // localStorage.console.log("Signed up with JWT:", data.accessToken);
