@@ -24,9 +24,9 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
       if (!res.ok) throw new Error(data.message);
       //localStorage.setItem("token", data.accessToken); // Store JWT token
       login(data.accessToken);
-      localStorage.setItem("userId", data.id); // Save user ID
-      localStorage.setItem("userEmail", data.email);
-      console.log("User Email:", data.email);
+      localStorage.setItem("id", data.id); // Save user ID
+      // localStorage.setItem("userEmail", data.email);
+      // console.log("User Email:", data.email);
       console.log("User ID saved:", data.id);
       
       toast.success("Successfully logged in!");

@@ -32,10 +32,11 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
       login(data.accessToken);
       //localStorage.setItem("token", data.accessToken);
       localStorage.setItem("userId", data.id); // Save user ID
-      localStorage.setItem("userEmail", data.email);
+      // localStorage.setItem("userEmail", data.email);
       
-      localStorage.console.log("Signed up with JWT:", data.accessToken);
-      console.log("User ID saved:", data.id);
+      // localStorage.console.log("Signed up with JWT:", data.accessToken);
+      // console.log("User ID saved:", data.id);
+      
       // Call both success handlers if they exist
       onSuccess?.();
       closeModal?.();

@@ -1,10 +1,16 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: (token:string) => void;
+  login: (token: string) => void;
   logout: () => void;
 }
 
@@ -22,7 +28,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token ) {
+    if (token) {
       setIsAuthenticated(true);
     }
   }, []);
@@ -33,32 +39,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsAuthenticated(true);
   };
 
-const logout = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    const email = localStorage.getItem("userEmail");
-    console.log("JWT in logout: ", token);
-    const response = await fetch("https://localhost:3000/logout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify({ email }),
-    });
+  const logout = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const user_id = localStorage.getItem("id");
+      console.log("YYYY=>", user_id);
+      console.log(typeof user_id);
+      console.log("JWT in logout: ", token);
+      const response = await fetch("https://localhost:3000/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({ user_id }),
+      });
 
-    if (!response.ok) throw new Error("Failed to logout");
+      console.log("!!!!!!!!!");
+      const responseData = await response.json();
+      console.log("HERE=>", responseData);
+      if (!response.ok) throw new Error("Failed to logout");
 
-    toast.success("Logged out successfully!");
-  } catch (err) {
-    console.error("Logout error:", err);
-    toast.error("Failed to logout. Please try again.");
-  } finally {
-    localStorage.removeItem("token");
-    setIsAuthenticated(false);
-    navigate("/login", { replace: true }); // Avoid double push
-  }
-};
+      toast.success("Logged out successfully!");
+    } catch (err) {
+      console.error("Logout error:", err);
+      toast.error("Failed to logout. Please try again.");
+    } finally {
+      localStorage.removeItem("token");
+      localStorage.removeItem("id");
+      setIsAuthenticated(false);
+      navigate("/login", { replace: true }); // Avoid double push
+    }
+  };
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
