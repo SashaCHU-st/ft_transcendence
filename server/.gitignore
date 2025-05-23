@@ -12,7 +12,8 @@ dist
 dist-ssr
 *.local
 /database/database.db
-
+/cert/cert.pem
+/cert/key.pem
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
