@@ -15,6 +15,7 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
     try {
       const res = await fetch("https://localhost:3000/login", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
