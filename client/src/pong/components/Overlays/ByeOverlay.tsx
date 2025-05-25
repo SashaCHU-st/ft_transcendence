@@ -1,34 +1,5 @@
-// import React from "react";
-// import { stripPredTag } from "../../utils/utils";
-
-// interface ByeOverlayProps {
-//   winner: string;
-//   nextPair?: string;
-//   onContinue: () => void;
-// }
-
-// export function ByeOverlay({ winner, nextPair, onContinue }: ByeOverlayProps) {
-//   return (
-//     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
-//       <div className="rounded border-2 border-yellow-400 p-4 text-center">
-//         <h2 className="mb-4 text-2xl text-yellow-200">BYE Match</h2>
-//         <p className="mb-4 text-lg">
-//           Player <b>{stripPredTag(winner)}</b> gets a pass to next round!
-//         </p>
-//         {nextPair && (
-//           <p className="text-md mb-4 text-gray-300">Next match: {nextPair}</p>
-//         )}
-//         <button
-//           onClick={onContinue}
-//           className="rounded border border-white px-6 py-2"
-//         >
-//           Continue
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
+import { useEffect } from "react";
+import { OverlayWrapper, NeonCard, NeonButton } from "./OverlayComponents";
 
 interface ByeOverlayProps {
   winner: string;
@@ -37,32 +8,26 @@ interface ByeOverlayProps {
 }
 
 export function ByeOverlay({ winner, nextPair, onContinue }: ByeOverlayProps) {
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        onContinue();
+      }
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onContinue]);
   return (
-    <div className={`
-        absolute
-        inset-0
-        z-50
-        flex
-        items-center
-        justify-center
-        bg-black
-        bg-opacity-90
-      `}
-    >
-      <div className={`
-          rounded-2xl
-          border-2
-          border-yellow-400
-          p-6
-          text-center
-          bg-gradient-to-br
-          from-purple-900
-          via-indigo-800
-          to-pink-900
-          shadow-neon-lg
-        `}
+    <OverlayWrapper className="z-50">
+      <NeonCard
+        borderColor="border-yellow-400"
+        from="from-purple-900"
+        via="via-indigo-800"
+        to="to-pink-900"
       >
-        <h2 className={`
+        <h2
+          className={`
             mb-4
             text-2xl
             font-bold
@@ -71,7 +36,8 @@ export function ByeOverlay({ winner, nextPair, onContinue }: ByeOverlayProps) {
         >
           BYE Match
         </h2>
-        <p className={`
+        <p
+          className={`
             mb-4
             text-lg
             text-white
@@ -80,7 +46,8 @@ export function ByeOverlay({ winner, nextPair, onContinue }: ByeOverlayProps) {
           Player <b>{winner}</b> gets a pass to next round!
         </p>
         {nextPair && (
-          <p className={`
+          <p
+            className={`
               mb-4
               text-md
               text-gray-300
@@ -89,23 +56,10 @@ export function ByeOverlay({ winner, nextPair, onContinue }: ByeOverlayProps) {
             Next match: {nextPair}
           </p>
         )}
-        <button
-          onClick={onContinue}
-          className={`
-            mt-2
-            px-6
-            py-2
-            rounded-lg
-            border-2
-            border-yellow-400
-            shadow-neon-button
-            hover:scale-105
-            transition
-          `}
-        >
+        <NeonButton borderColor="border-yellow-400" onClick={onContinue} autoFocus>
           Continue
-        </button>
-      </div>
-    </div>
+        </NeonButton>
+      </NeonCard>
+    </OverlayWrapper>
   );
 }

@@ -1,7 +1,8 @@
 // client/src/pong/pong.ts
 import * as BABYLON from "@babylonjs/core";
-import { createScene, fitFieldToCamera } from "./scene";
+import { createScene, fitFieldToCamera, type SceneObjects } from "./scene";
 import { stepPhysics, resetScores, resetPositions } from "./physics";
+import type { PhysicsParams, MatchInfo, InputState } from "./types";
 import {
   startSinglePlayerAI,
   startLocal2P,
@@ -9,49 +10,42 @@ import {
 } from "./modes";
 import { removeAllKeyListeners } from "./utils";
 
+export enum GameMode {
+  AI = "ai",
+  Local2P = "local2p",
+  Tournament = "tournament",
+}
+
 export interface GameState {
-  FIELD_WIDTH: number;
-  FIELD_HEIGHT: number;
-  PADDLE_SPEED: number;
-  AI_SPEED: number;
-  BALL_SPEED: number;
-  WINNING_SCORE: number;
+  physics: PhysicsParams;
+  match: MatchInfo;
+  input: InputState;
 
   FIXED_DT: number;
   accumulator: number;
 
   gameStarted: boolean;
-  currentMode: "ai" | "local2p" | "tournament";
+  currentMode: GameMode;
   paused: boolean;
   escMenuOpen: boolean;
-
-  playerScore: number;
-  aiScore: number;
-
-  leftName: string;
-  rightName: string;
 
   onScoreUpdate?: (plScore: number, aiScore: number) => void;
   onPauseChange?: (paused: boolean) => void;
   onEscMenuChange?: (show: boolean) => void;
   onMatchOver?: (
-    mode: "ai" | "local2p" | "tournament",
+    mode: GameMode,
     winnerName: string,
     plScore: number,
     aiScore: number,
   ) => void;
   onPlayersUpdate?: (leftName: string, rightName: string) => void;
 
-  onMatchEndCallback?: (winner: string, loser: string) => void;
-  isFinalMatch: boolean;
-
-  playerDzLeft: number;
-  playerDzRight: number;
-
-  aiTimer: number;
-  aiTargetZ: number;
-  ballDX: number;
-  ballDZ: number;
+  onMatchEndCallback?: (
+    winner: string,
+    loser: string,
+    winnerScore: number,
+    loserScore: number,
+  ) => void;
 
   keyDownHandler: ((e: KeyboardEvent) => void) | null;
   keyUpHandler: ((e: KeyboardEvent) => void) | null;
@@ -64,7 +58,12 @@ export interface GameAPI {
     p1Name: string,
     p2Name: string,
     isFinal: boolean,
-    onMatchEnd: (winner: string, loser: string) => void,
+    onMatchEnd: (
+      winner: string,
+      loser: string,
+      winnerScore: number,
+      loserScore: number,
+    ) => void,
   ) => void;
   backToMenu: () => void;
 
@@ -78,7 +77,7 @@ export interface PongCallbacks {
   onPauseChange?: (paused: boolean) => void;
   onEscMenuChange?: (show: boolean) => void;
   onMatchOver?: (
-    mode: "ai" | "local2p" | "tournament",
+    mode: GameMode,
     winnerName: string,
     plScore: number,
     aiScore: number,
@@ -93,26 +92,37 @@ export function initGame(
   const engine = new BABYLON.Engine(canvas, true);
 
   const state: GameState = {
-    FIELD_WIDTH: 20,
-    FIELD_HEIGHT: 10,
-    PADDLE_SPEED: 0.3,
-    AI_SPEED: 0.3,
-    BALL_SPEED: 0.25,
-    WINNING_SCORE: 1,
+    physics: {
+      FIELD_WIDTH: 20,
+      FIELD_HEIGHT: 10,
+      PADDLE_SPEED: 0.3,
+      AI_SPEED: 0.3,
+      BALL_SPEED: 0.25,
+      WINNING_SCORE: 3,
+    },
+    match: {
+      playerScore: 0,
+      aiScore: 0,
+      leftName: "PLAYER",
+      rightName: "AI",
+      isFinalMatch: false,
+    },
+    input: {
+      playerDzLeft: 0,
+      playerDzRight: 0,
+      aiTimer: 0,
+      aiTargetZ: 0,
+      ballDX: 0,
+      ballDZ: 0,
+    },
 
     FIXED_DT: 1 / 60,
     accumulator: 0,
 
     gameStarted: false,
-    currentMode: "ai",
+    currentMode: GameMode.AI,
     paused: false,
     escMenuOpen: false,
-
-    playerScore: 0,
-    aiScore: 0,
-
-    leftName: "PLAYER",
-    rightName: "AI",
 
     onScoreUpdate: callbacks?.onScoreUpdate,
     onPauseChange: callbacks?.onPauseChange,
@@ -121,30 +131,21 @@ export function initGame(
     onPlayersUpdate: callbacks?.onPlayersUpdate,
 
     onMatchEndCallback: undefined,
-    isFinalMatch: false,
-
-    playerDzLeft: 0,
-    playerDzRight: 0,
-
-    aiTimer: 0,
-    aiTargetZ: 0,
-    ballDX: 0,
-    ballDZ: 0,
 
     keyDownHandler: null,
     keyUpHandler: null,
   };
 
-  createScene(engine, canvas, state);
+  const sceneObjects: SceneObjects = createScene(engine, canvas, state.physics);
 
-  state.ballDX = state.BALL_SPEED;
-  state.ballDZ = state.BALL_SPEED;
+  state.input.ballDX = state.physics.BALL_SPEED;
+  state.input.ballDZ = state.physics.BALL_SPEED;
 
   engine.runRenderLoop(() => {
     const dt = engine.getDeltaTime() / 1000;
     state.accumulator += dt;
     while (state.accumulator >= state.FIXED_DT) {
-      stepPhysics(state, state.FIXED_DT);
+      stepPhysics(state, sceneObjects, state.FIXED_DT);
       state.accumulator -= state.FIXED_DT;
     }
     engine.scenes[0]?.render();
@@ -152,7 +153,11 @@ export function initGame(
 
   const resizeHandler = () => {
     engine.resize();
-    fitFieldToCamera(state.FIELD_WIDTH, state.FIELD_HEIGHT);
+    fitFieldToCamera(
+      sceneObjects.camera,
+      state.physics.FIELD_WIDTH,
+      state.physics.FIELD_HEIGHT,
+    );
   };
   window.addEventListener("resize", resizeHandler);
 
@@ -183,18 +188,18 @@ export function initGame(
 
   const api: GameAPI = {
     startSinglePlayerAI: () => {
-      startSinglePlayerAI(state);
+      startSinglePlayerAI(state, sceneObjects);
     },
     startLocal2P: () => {
-      startLocal2P(state);
+      startLocal2P(state, sceneObjects);
     },
     startTournamentMatch: (p1, p2, isF, cb) => {
-      startTournamentLocal2P(state, p1, p2, isF, cb);
+      startTournamentLocal2P(state, sceneObjects, p1, p2, isF, cb);
     },
     backToMenu: () => {
       removeAllKeyListeners(state);
       resetScores(state);
-      resetPositions(state);
+      resetPositions(state, sceneObjects);
       state.gameStarted = false;
       state.paused = false;
       state.escMenuOpen = false;
@@ -204,20 +209,19 @@ export function initGame(
     restartCurrentMatch: () => {
       removeAllKeyListeners(state);
       resetScores(state);
-      state.onScoreUpdate?.(state.playerScore, state.aiScore);
-      resetPositions(state);
+      state.onScoreUpdate?.(state.match.playerScore, state.match.aiScore);
+      resetPositions(state, sceneObjects);
 
       state.gameStarted = true;
-      state.paused = false;
+      state.paused = true;
       state.escMenuOpen = false;
-      state.onPauseChange?.(false);
+      state.onPauseChange?.(true);
       state.onEscMenuChange?.(false);
 
-      if (state.currentMode === "ai") {
-        startSinglePlayerAI(state);
-      } else if (state.currentMode === "local2p") {
-        startLocal2P(state);
-      } else if (state.currentMode === "tournament") {
+      if (state.currentMode === GameMode.AI) {
+        startSinglePlayerAI(state, sceneObjects);
+      } else if (state.currentMode === GameMode.Local2P) {
+        startLocal2P(state, sceneObjects);
       }
     },
     unpause: () => {

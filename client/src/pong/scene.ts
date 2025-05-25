@@ -1,35 +1,33 @@
 // client/src/pong/scene.ts
 import * as BABYLON from "@babylonjs/core";
 import { GridMaterial } from "@babylonjs/materials";
+import type { PhysicsParams } from "./types";
 
-export let scene: BABYLON.Scene | null = null;
-export let camera: BABYLON.ArcRotateCamera | null = null;
-export let leftPaddle: BABYLON.Mesh | null = null;
-export let rightPaddle: BABYLON.Mesh | null = null;
-export let ball: BABYLON.Mesh | null = null;
-
-interface GameState {
-  FIELD_WIDTH: number;
-  FIELD_HEIGHT: number;
+export interface SceneObjects {
+  scene: BABYLON.Scene;
+  camera: BABYLON.ArcRotateCamera;
+  leftPaddle: BABYLON.Mesh;
+  rightPaddle: BABYLON.Mesh;
+  ball: BABYLON.Mesh;
 }
+
+type Config = PhysicsParams;
 
 export function createScene(
   engine: BABYLON.Engine,
   canvas: HTMLCanvasElement,
-  config: GameState,
-) {
-  const s = new BABYLON.Scene(engine);
-  scene = s;
+  config: Config,
+): SceneObjects {
+  const scene = new BABYLON.Scene(engine);
 
-  const c = new BABYLON.ArcRotateCamera(
+  const camera = new BABYLON.ArcRotateCamera(
     "arcCamera",
     0,
     1.2,
     30,
     BABYLON.Vector3.Zero(),
-    s,
+    scene,
   );
-  camera = c;
   camera.attachControl(canvas, true);
 
   camera.keysUp = [];
@@ -46,10 +44,10 @@ export function createScene(
   new BABYLON.HemisphericLight(
     "hemi",
     new BABYLON.Vector3(0, 1, 0),
-    s,
+    scene,
   ).intensity = 0.8;
 
-  const pipe = new BABYLON.DefaultRenderingPipeline("pipe", true, s, [c]);
+  const pipe = new BABYLON.DefaultRenderingPipeline("pipe", true, scene, [camera]);
   pipe.bloomEnabled = true;
   pipe.bloomThreshold = 0.3;
   pipe.bloomWeight = 0.2;
@@ -57,12 +55,12 @@ export function createScene(
   pipe.chromaticAberration.aberrationAmount = 2;
 
   // skybox
-  const sky = BABYLON.MeshBuilder.CreateBox("sky", { size: 1000 }, s);
-  const skyMat = new BABYLON.StandardMaterial("skyMat", s);
+  const sky = BABYLON.MeshBuilder.CreateBox("sky", { size: 1000 }, scene);
+  const skyMat = new BABYLON.StandardMaterial("skyMat", scene);
   skyMat.backFaceCulling = false;
   skyMat.reflectionTexture = new BABYLON.CubeTexture(
     "https://assets.babylonjs.com/environments/space",
-    s,
+    scene,
   );
   skyMat.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
   skyMat.diffuseColor = new BABYLON.Color3(0, 0, 0);
@@ -76,9 +74,9 @@ export function createScene(
       width: config.FIELD_WIDTH * 2,
       height: config.FIELD_HEIGHT * 2,
     },
-    s,
+    scene,
   );
-  const gmat = new GridMaterial("gridMat", s);
+  const gmat = new GridMaterial("gridMat", scene);
   gmat.mainColor = new BABYLON.Color3(0, 0, 0);
   gmat.lineColor = new BABYLON.Color3(0.2, 1, 0.8);
   gmat.opacity = 0.85;
@@ -86,28 +84,23 @@ export function createScene(
 
   // paddles
   const paddleSize = { width: 1, height: 0.5, depth: 3 };
-  leftPaddle = BABYLON.MeshBuilder.CreateBox("pL", paddleSize, s);
-  rightPaddle = BABYLON.MeshBuilder.CreateBox("pR", paddleSize, s);
-  if (leftPaddle) {
-    leftPaddle.position.set(-config.FIELD_WIDTH + 1.5, 0.5, 0);
-    leftPaddle.material = neonMat(s, 0.8, 0.2, 0.8);
-  }
-  if (rightPaddle) {
-    rightPaddle.position.set(config.FIELD_WIDTH - 1.5, 0.5, 0);
-    rightPaddle.material = neonMat(s, 0.2, 0.8, 0.7);
-  }
+  const leftPaddle = BABYLON.MeshBuilder.CreateBox("pL", paddleSize, scene);
+  const rightPaddle = BABYLON.MeshBuilder.CreateBox("pR", paddleSize, scene);
+  leftPaddle.position.set(-config.FIELD_WIDTH + 1.5, 0.5, 0);
+  leftPaddle.material = neonMat(scene, 0.8, 0.2, 0.8);
+  rightPaddle.position.set(config.FIELD_WIDTH - 1.5, 0.5, 0);
+  rightPaddle.material = neonMat(scene, 0.2, 0.8, 0.7);
 
   // ball
-  const b = BABYLON.MeshBuilder.CreateSphere("ball", { diameter: 1 }, s);
-  ball = b;
+  const ball = BABYLON.MeshBuilder.CreateSphere("ball", { diameter: 1 }, scene);
   ball.position.set(0, 0.5, 0);
-  ball.material = neonMat(s, 0.8, 0.8, 0.2);
+  ball.material = neonMat(scene, 0.8, 0.8, 0.2);
 
   // trail
-  const trail = new BABYLON.ParticleSystem("trail", 1000, s);
+  const trail = new BABYLON.ParticleSystem("trail", 1000, scene);
   trail.particleTexture = new BABYLON.Texture(
     "https://assets.babylonjs.com/textures/flare.png",
-    s,
+    scene,
   );
   trail.emitter = ball;
   trail.minEmitBox = trail.maxEmitBox = new BABYLON.Vector3(0, 0, 0);
@@ -122,18 +115,24 @@ export function createScene(
   trail.updateSpeed = 0.02;
   trail.start();
 
-  new BABYLON.GlowLayer("glow", s, {
+  new BABYLON.GlowLayer("glow", scene, {
     mainTextureFixedSize: 512,
     blurKernelSize: 32,
   }).intensity = 0.2;
 
-  s.executeWhenReady(() => {
-    fitFieldToCamera(config.FIELD_WIDTH, config.FIELD_HEIGHT);
+  scene.executeWhenReady(() => {
+    fitFieldToCamera(camera, config.FIELD_WIDTH, config.FIELD_HEIGHT);
   });
+
+  return { scene, camera, leftPaddle, rightPaddle, ball };
 }
 
-export function fitFieldToCamera(FW: number, FH: number) {
-  if (!camera || !camera.framingBehavior) return;
+export function fitFieldToCamera(
+  camera: BABYLON.ArcRotateCamera,
+  FW: number,
+  FH: number,
+) {
+  if (!camera.framingBehavior) return;
   camera.alpha = -Math.PI / 2;
   const min = new BABYLON.Vector3(-FH, 0, -FW);
   const max = new BABYLON.Vector3(FH, 2, FW);
@@ -147,8 +146,7 @@ export function neonMat(s: BABYLON.Scene, r: number, g: number, b: number) {
   return m;
 }
 
-export function boom(pos: BABYLON.Vector3) {
-  if (!scene) return;
+export function boom(scene: BABYLON.Scene, pos: BABYLON.Vector3) {
   const ex = new BABYLON.ParticleSystem("boom", 50, scene);
   ex.particleTexture = new BABYLON.Texture(
     "https://assets.babylonjs.com/textures/flare.png",

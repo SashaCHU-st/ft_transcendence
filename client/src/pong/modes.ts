@@ -1,80 +1,57 @@
 // client/src/pong/modes.ts
 import { resetScores, resetPositions } from "./physics";
-import { removeAllKeyListeners } from "./utils";
+import type { SceneObjects } from "./scene";
+import { removeAllKeyListeners, setupKeyListeners } from "./utils";
 import type { GameState } from "./pong";
+import { GameMode } from "./pong";
 
 /**
  * SINGLE vs AI
  */
-export function startSinglePlayerAI(state: GameState) {
+export function startSinglePlayerAI(state: GameState, scene: SceneObjects) {
   removeAllKeyListeners(state);
 
-  state.currentMode = "ai";
+  state.currentMode = GameMode.AI;
   resetScores(state);
-  resetPositions(state);
+  resetPositions(state, scene);
   state.gameStarted = true;
-  state.paused = false;
+  state.paused = true;
   state.escMenuOpen = false;
-  state.onPauseChange?.(false);
+  state.onPauseChange?.(true);
   state.onEscMenuChange?.(false);
 
-  state.leftName = "YOU";
-  state.rightName = "AI";
+  state.match.leftName = "YOU";
+  state.match.rightName = "AI";
   // Notify React
-  state.onPlayersUpdate?.(state.leftName, state.rightName);
+  state.onPlayersUpdate?.(state.match.leftName, state.match.rightName);
 
-  state.keyDownHandler = (e) => {
-    if (e.key === "ArrowUp") state.playerDzLeft = -state.PADDLE_SPEED;
-    if (e.key === "ArrowDown") state.playerDzLeft = state.PADDLE_SPEED;
-  };
-  state.keyUpHandler = (e) => {
-    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-      state.playerDzLeft = 0;
-    }
-  };
-
-  window.addEventListener("keydown", state.keyDownHandler!);
-  window.addEventListener("keyup", state.keyUpHandler!);
+  setupKeyListeners(state, { up: "ArrowUp", down: "ArrowDown" });
 }
 
 /**
  * LOCAL 2P
  */
-export function startLocal2P(state: GameState) {
+export function startLocal2P(state: GameState, scene: SceneObjects) {
   removeAllKeyListeners(state);
 
-  state.currentMode = "local2p";
+  state.currentMode = GameMode.Local2P;
   resetScores(state);
-  resetPositions(state);
+  resetPositions(state, scene);
   state.gameStarted = true;
-  state.paused = false;
+  state.paused = true;
   state.escMenuOpen = false;
-  state.onPauseChange?.(false);
+  state.onPauseChange?.(true);
   state.onEscMenuChange?.(false);
 
-  state.leftName = "PLAYER 1";
-  state.rightName = "PLAYER 2";
-  state.onPlayersUpdate?.(state.leftName, state.rightName);
+  state.match.leftName = "PLAYER 1";
+  state.match.rightName = "PLAYER 2";
+  state.onPlayersUpdate?.(state.match.leftName, state.match.rightName);
 
-  state.keyDownHandler = (e) => {
-    if (e.key === "w" || e.key === "W")
-      state.playerDzLeft = -state.PADDLE_SPEED;
-    if (e.key === "s" || e.key === "S") state.playerDzLeft = state.PADDLE_SPEED;
-
-    if (e.key === "ArrowUp") state.playerDzRight = -state.PADDLE_SPEED;
-    if (e.key === "ArrowDown") state.playerDzRight = state.PADDLE_SPEED;
-  };
-  state.keyUpHandler = (e) => {
-    if (["w", "W", "s", "S"].includes(e.key)) {
-      state.playerDzLeft = 0;
-    }
-    if (["ArrowUp", "ArrowDown"].includes(e.key)) {
-      state.playerDzRight = 0;
-    }
-  };
-
-  window.addEventListener("keydown", state.keyDownHandler!);
-  window.addEventListener("keyup", state.keyUpHandler!);
+  setupKeyListeners(
+    state,
+    { up: ["w", "W"], down: ["s", "S"] },
+    { up: "ArrowUp", down: "ArrowDown" },
+  );
 }
 
 /**
@@ -82,50 +59,42 @@ export function startLocal2P(state: GameState) {
  */
 export function startTournamentLocal2P(
   state: GameState,
+  scene: SceneObjects,
   p1Name: string,
   p2Name: string,
   isFinal: boolean,
-  onMatchEnd: (winnerName: string, loserName: string) => void,
+  onMatchEnd: (
+    winnerName: string,
+    loserName: string,
+    winnerScore: number,
+    loserScore: number,
+  ) => void,
 ) {
   removeAllKeyListeners(state);
 
-  state.currentMode = "tournament";
+  state.currentMode = GameMode.Tournament;
   resetScores(state);
   // Reset scores for React
-  state.onScoreUpdate?.(state.playerScore, state.aiScore);
-  resetPositions(state);
+  state.onScoreUpdate?.(state.match.playerScore, state.match.aiScore);
+  resetPositions(state, scene);
 
   state.gameStarted = true;
-  state.paused = false;
+  state.paused = true;
   state.escMenuOpen = false;
-  state.onPauseChange?.(false);
+  state.onPauseChange?.(true);
   state.onEscMenuChange?.(false);
 
-  state.leftName = p1Name;
-  state.rightName = p2Name;
-  state.onPlayersUpdate?.(state.leftName, state.rightName);
+  state.match.leftName = p1Name;
+  state.match.rightName = p2Name;
+  state.onPlayersUpdate?.(state.match.leftName, state.match.rightName);
 
-  state.isFinalMatch = isFinal;
+  state.match.isFinalMatch = isFinal;
   state.onMatchEndCallback = onMatchEnd;
 
   // Controls same as local2p
-  state.keyDownHandler = (e) => {
-    if (e.key === "w" || e.key === "W")
-      state.playerDzLeft = -state.PADDLE_SPEED;
-    if (e.key === "s" || e.key === "S") state.playerDzLeft = state.PADDLE_SPEED;
-
-    if (e.key === "ArrowUp") state.playerDzRight = -state.PADDLE_SPEED;
-    if (e.key === "ArrowDown") state.playerDzRight = state.PADDLE_SPEED;
-  };
-  state.keyUpHandler = (e) => {
-    if (["w", "W", "s", "S"].includes(e.key)) {
-      state.playerDzLeft = 0;
-    }
-    if (["ArrowUp", "ArrowDown"].includes(e.key)) {
-      state.playerDzRight = 0;
-    }
-  };
-
-  window.addEventListener("keydown", state.keyDownHandler!);
-  window.addEventListener("keyup", state.keyUpHandler!);
+  setupKeyListeners(
+    state,
+    { up: ["w", "W"], down: ["s", "S"] },
+    { up: "ArrowUp", down: "ArrowDown" },
+  );
 }

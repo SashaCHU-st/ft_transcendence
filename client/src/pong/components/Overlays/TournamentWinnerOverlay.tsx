@@ -1,30 +1,5 @@
-// import React from "react";
-
-// interface TournamentWinnerOverlayProps {
-//   winner: string;
-//   onClose: () => void;
-// }
-
-// export function TournamentWinnerOverlay({
-//   winner,
-//   onClose,
-// }: TournamentWinnerOverlayProps) {
-//   return (
-//     <div className="absolute inset-0 z-[60] flex items-center justify-center bg-black bg-opacity-80">
-//       <div className="rounded border-2 border-green-500 p-4 text-center">
-//         <h2 className="mb-4 text-3xl">TOURNAMENT WINNER</h2>
-//         <p className="mb-4 text-xl">{winner}</p>
-//         <button
-//           onClick={onClose}
-//           className="rounded border border-white px-6 py-2"
-//         >
-//           OK
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
+import { useEffect } from "react";
+import { OverlayWrapper, NeonCard, NeonButton } from "./OverlayComponents";
 
 interface TournamentWinnerOverlayProps {
   winner: string;
@@ -35,32 +10,26 @@ export function TournamentWinnerOverlay({
   winner,
   onClose,
 }: TournamentWinnerOverlayProps) {
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        onClose();
+      }
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onClose]);
   return (
-    <div className="
-        absolute
-        inset-0
-        z-50
-        flex
-        items-center
-        justify-center
-        bg-black
-        bg-opacity-90
-      "
-    >
-      <div className="
-          rounded-2xl
-          border-2
-          border-green-500
-          p-6
-          text-center
-          bg-gradient-to-br
-          from-green-900
-          via-teal-800
-          to-blue-900
-          shadow-neon-lg
-        "
+    <OverlayWrapper className="z-50">
+      <NeonCard
+        borderColor="border-green-500"
+        from="from-green-900"
+        via="via-teal-800"
+        to="to-blue-900"
       >
-        <h2 className="
+        <h2
+          className="
             mb-4
             text-3xl
             font-bold
@@ -69,7 +38,8 @@ export function TournamentWinnerOverlay({
         >
           TOURNAMENT WINNER
         </h2>
-        <p className="
+        <p
+          className="
             mb-4
             text-xl
             text-white
@@ -77,23 +47,10 @@ export function TournamentWinnerOverlay({
         >
           {winner}
         </p>
-        <button
-          onClick={onClose}
-          className="
-            mt-2
-            px-6
-            py-2
-            rounded-lg
-            border-2
-            border-green-500
-            shadow-neon-button
-            hover:scale-105
-            transition
-          "
-        >
+        <NeonButton borderColor="border-green-500" onClick={onClose} autoFocus>
           OK
-        </button>
-      </div>
-    </div>
+        </NeonButton>
+      </NeonCard>
+    </OverlayWrapper>
   );
 }

@@ -1,54 +1,11 @@
-// import React from "react";
-
-// interface MatchResultOverlayProps {
-//   winner: string;
-//   loser: string;
-//   isFinal: boolean;
-//   nextPair?: string;
-//   onContinue: () => void;
-// }
-
-// export function MatchResultOverlay({
-//   winner,
-//   loser,
-//   isFinal,
-//   nextPair,
-//   onContinue,
-// }: MatchResultOverlayProps) {
-//   return (
-//     <div className="absolute inset-0 z-[55] flex items-center justify-center bg-black bg-opacity-80">
-//       <div className="rounded border-2 border-yellow-400 p-4 text-center">
-//         <h2 className="mb-2 text-2xl text-yellow-300">Match result</h2>
-//         <p className="mb-4 text-lg">
-//           Winner: {winner}
-//           <br />
-//           Loser: {loser}
-//         </p>
-
-//         {isFinal ? (
-//           <p className="mb-4 text-lg text-green-300">This was final!</p>
-//         ) : nextPair ? (
-//           <p className="text-md mb-4 text-gray-300">Next match: {nextPair}</p>
-//         ) : (
-//           <p className="text-md mb-4 text-gray-300">Next match is coming...</p>
-//         )}
-
-//         <button
-//           onClick={onContinue}
-//           className="rounded border border-white px-6 py-2"
-//         >
-//           Continue
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
-
+import { useEffect } from "react";
+import { OverlayWrapper, NeonCard, NeonButton } from "./OverlayComponents";
 
 interface MatchResultOverlayProps {
   winner: string;
   loser: string;
+  winnerScore: number;
+  loserScore: number;
   isFinal: boolean;
   nextPair?: string;
   onContinue: () => void;
@@ -57,36 +14,32 @@ interface MatchResultOverlayProps {
 export function MatchResultOverlay({
   winner,
   loser,
+  winnerScore,
+  loserScore,
   isFinal,
   nextPair,
   onContinue,
 }: MatchResultOverlayProps) {
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        onContinue();
+      }
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onContinue]);
   return (
-    <div className="
-        absolute
-        inset-0
-        z-50
-        flex
-        items-center
-        justify-center
-        bg-black
-        bg-opacity-90
-      "
-    >
-      <div className="
-          rounded-2xl
-          border-2
-          border-yellow-400
-          p-6
-          text-center
-          bg-gradient-to-br
-          from-green-900
-          via-yellow-800
-          to-amber-900
-          shadow-neon-lg
-        "
+    <OverlayWrapper className="z-50">
+      <NeonCard
+        borderColor="border-yellow-400"
+        from="from-green-900"
+        via="via-yellow-800"
+        to="to-amber-900"
       >
-        <h2 className="
+        <h2
+          className="
             mb-2
             text-2xl
             font-bold
@@ -95,7 +48,8 @@ export function MatchResultOverlay({
         >
           Match result
         </h2>
-        <p className="
+        <p
+          className="
             mb-4
             text-lg
             text-white
@@ -104,9 +58,12 @@ export function MatchResultOverlay({
           Winner: {winner}
           <br />
           Loser: {loser}
+          <br />
+          Score: {winnerScore}:{loserScore}
         </p>
         {isFinal ? (
-          <p className="
+          <p
+            className="
               mb-4
               text-lg
               text-green-300
@@ -115,7 +72,8 @@ export function MatchResultOverlay({
             This was final!
           </p>
         ) : nextPair ? (
-          <p className="
+          <p
+            className="
               mb-4
               text-md
               text-gray-300
@@ -124,7 +82,8 @@ export function MatchResultOverlay({
             Next match: {nextPair}
           </p>
         ) : (
-          <p className="
+          <p
+            className="
               mb-4
               text-md
               text-gray-300
@@ -133,23 +92,10 @@ export function MatchResultOverlay({
             Next match is coming...
           </p>
         )}
-        <button
-          onClick={onContinue}
-          className="
-            mt-2
-            px-6
-            py-2
-            rounded-lg
-            border-2
-            border-yellow-400
-            shadow-neon-button
-            hover:scale-105
-            transition
-          "
-        >
+        <NeonButton borderColor="border-yellow-400" onClick={onContinue} autoFocus>
           Continue
-        </button>
-      </div>
-    </div>
+        </NeonButton>
+      </NeonCard>
+    </OverlayWrapper>
   );
 }

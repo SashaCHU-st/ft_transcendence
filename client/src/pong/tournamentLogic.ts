@@ -1,76 +1,75 @@
-import type { BracketRound, BracketMatch } from "./BracketOverlay";
-import { stripPredTag } from "./utils/utils";
+import type { BracketRound, BracketMatch, PlayerSlot } from "./BracketOverlay";
 
 export function buildSingleElimNoDoubleByeSym(
   players: string[],
 ): BracketRound[] {
-  const n = players.length;
-  let real = players.filter((p) => p !== "BYE");
-  let diff = n - real.length;
+  const round1 = createFirstRound(players);
+  const rounds = createSubsequentRounds(round1);
+  resolveByeWinners(rounds);
+  return rounds;
+}
+
+function createFirstRound(players: string[]): BracketMatch[] {
+  const total = players.length;
+  const real = players.filter((p) => p !== "BYE");
+  let byeCount = total - real.length;
 
   shuffle(real);
 
-  if (diff > real.length) {
-    diff = real.length;
-  }
+  if (byeCount > real.length) byeCount = real.length;
 
-  let leftover = real.length - diff;
-  if (leftover % 2 !== 0 && diff > 0) {
+  let leftover = real.length - byeCount;
+  if (leftover % 2 !== 0 && byeCount > 0) {
     leftover++;
-    diff--;
+    byeCount--;
   }
-  if (leftover < 0) {
-    leftover = 0;
-  }
+  if (leftover < 0) leftover = 0;
 
-  const round1: BracketMatch[] = [];
-  const chosen = real.slice(0, diff);
-  const leftoverPlayers = real.slice(diff);
+  const chosen = real.slice(0, byeCount);
+  const leftoverPlayers = real.slice(byeCount);
 
-  for (let i = 0; i < chosen.length; i++) {
-    round1.push({
-      p1: chosen[i],
-      p2: "BYE",
-      winner: null,
-    });
+  const round: BracketMatch[] = [];
+  for (const p of chosen) {
+    round.push({ p1: { name: p }, p2: { name: "BYE" }, winner: null });
   }
 
   for (let i = 0; i < leftoverPlayers.length; i += 2) {
-    round1.push({
-      p1: leftoverPlayers[i],
-      p2: leftoverPlayers[i + 1],
+    round.push({
+      p1: { name: leftoverPlayers[i] },
+      p2: { name: leftoverPlayers[i + 1] },
       winner: null,
     });
   }
 
-  shuffleRound1(round1);
+  shuffleRound1(round);
+  return round;
+}
 
-  const rounds: BracketRound[] = [];
-  rounds.push(round1);
-
-  let nextArr = round1.map((m) => `WINNER_OF(${m.p1} vs ${m.p2})`);
+function createSubsequentRounds(round1: BracketMatch[]): BracketRound[] {
+  const rounds: BracketRound[] = [round1];
+  let nextArr = round1.map((m) => `WINNER_OF(${m.p1.name} vs ${m.p2.name})`);
   while (nextArr.length > 1) {
     const r: BracketMatch[] = [];
     const tmpNext: string[] = [];
     for (let i = 0; i < nextArr.length; i += 2) {
       const p1 = nextArr[i];
       const p2 = nextArr[i + 1] || "BYE";
-      r.push({ p1, p2, winner: null });
+      r.push({ p1: { name: p1 }, p2: { name: p2 }, winner: null });
       tmpNext.push(`WINNER_OF(${p1} vs ${p2})`);
     }
     rounds.push(r);
     nextArr = tmpNext;
   }
+  return rounds;
+}
 
-  for (let r = 0; r < rounds.length; r++) {
-    for (let m = 0; m < rounds[r].length; m++) {
-      const match = rounds[r][m];
-      match.p1 = replaceAllByePred(match.p1);
-      match.p2 = replaceAllByePred(match.p2);
+function resolveByeWinners(rounds: BracketRound[]): void {
+  for (const round of rounds) {
+    for (const match of round) {
+      match.p1 = replaceAllByePred(match.p1.name);
+      match.p2 = replaceAllByePred(match.p2.name);
     }
   }
-
-  return rounds;
 }
 
 export function shuffle<T>(arr: T[]): void {
@@ -92,18 +91,19 @@ export function findNextPairString(
   const nextM = mIndex + 1;
   if (nextM < rounds[rIndex].length) {
     const nm = rounds[rIndex][nextM];
-    return stripPredTag(nm.p1) + " vs " + stripPredTag(nm.p2);
+    return nm.p1.name + " vs " + nm.p2.name;
   }
   const rr = rIndex + 1;
   if (rr < rounds.length) {
     const nm2 = rounds[rr][0];
-    return stripPredTag(nm2.p1) + " vs " + stripPredTag(nm2.p2);
+    return nm2.p1.name + " vs " + nm2.p2.name;
   }
   return undefined;
 }
 
-function replaceAllByePred(str: string): string {
+function replaceAllByePred(str: string): PlayerSlot {
   let changed = true;
+  let predicted = false;
   while (changed) {
     changed = false;
 
@@ -111,7 +111,8 @@ function replaceAllByePred(str: string): string {
       /WINNER_OF\(\s*([^()]+?)\s+vs\s+BYE\s*\)/,
       (_match, p1) => {
         changed = true;
-        return `(pred) ${p1.trim()}`;
+        predicted = true;
+        return p1.trim();
       },
     );
 
@@ -119,11 +120,16 @@ function replaceAllByePred(str: string): string {
       /WINNER_OF\(\s*BYE\s+vs\s+([^()]+?)\s*\)/,
       (_match, p2) => {
         changed = true;
-        return `(pred) ${p2.trim()}`;
+        predicted = true;
+        return p2.trim();
       },
     );
 
     str = next2;
   }
-  return str;
+
+  if (predicted) {
+    return { name: str, isPredicted: true };
+  }
+  return { name: str };
 }

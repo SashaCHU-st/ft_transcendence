@@ -1,39 +1,6 @@
-// import React from "react";
 
-// interface GameOverOverlayProps {
-//   winnerName: string;
-//   playerScore: number;
-//   aiScore: number;
-//   onOk: () => void;
-// }
-
-// export function GameOverOverlay({
-//   winnerName,
-//   playerScore,
-//   aiScore,
-//   onOk,
-// }: GameOverOverlayProps) {
-//   return (
-//     <div className="absolute inset-0 z-40 flex items-center justify-center bg-black bg-opacity-80">
-//       <div className="rounded border-2 border-pink-500 p-4 text-center">
-//         <h2 className="mb-4 text-3xl">GAME OVER</h2>
-//         <p className="mb-4 text-xl">
-//           Winner: {winnerName}
-//           <br />
-//           Score: {playerScore}:{aiScore}
-//         </p>
-//         <button
-//           onClick={onOk}
-//           className="rounded border border-white px-6 py-2"
-//         >
-//           OK
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
-
+import { useEffect } from "react";
+import { OverlayWrapper, NeonCard, NeonButton } from "./OverlayComponents";
 
 interface GameOverOverlayProps {
   winnerName: string;
@@ -48,32 +15,26 @@ export function GameOverOverlay({
   aiScore,
   onOk,
 }: GameOverOverlayProps) {
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        onOk();
+      }
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onOk]);
   return (
-    <div className={`
-        absolute
-        inset-0
-        z-40
-        flex
-        items-center
-        justify-center
-        bg-black
-        bg-opacity-90
-      `}
-    >
-      <div className={`
-          rounded-2xl
-          border-2
-          border-pink-500
-          p-6
-          text-center
-          bg-gradient-to-br
-          from-pink-900
-          via-red-800
-          to-purple-900
-          shadow-neon-lg
-        `}
+    <OverlayWrapper className="z-40">
+      <NeonCard
+        borderColor="border-pink-500"
+        from="from-pink-900"
+        via="via-red-800"
+        to="to-purple-900"
       >
-        <h2 className={`
+        <h2
+          className={`
             mb-4
             text-3xl
             font-bold
@@ -82,7 +43,8 @@ export function GameOverOverlay({
         >
           GAME OVER
         </h2>
-        <p className={`
+        <p
+          className={`
             mb-4
             text-xl
             text-white
@@ -92,23 +54,11 @@ export function GameOverOverlay({
           <br />
           Score: {playerScore}:{aiScore}
         </p>
-        <button
-          onClick={onOk}
-          className={`
-            mt-2
-            px-6
-            py-2
-            rounded-lg
-            border-2
-            border-pink-500
-            shadow-neon-button
-            hover:scale-105
-            transition
-          `}
+        <NeonButton borderColor="border-pink-500" onClick={onOk}
         >
           OK
-        </button>
-      </div>
-    </div>
+        </NeonButton>
+      </NeonCard>
+    </OverlayWrapper>
   );
 }

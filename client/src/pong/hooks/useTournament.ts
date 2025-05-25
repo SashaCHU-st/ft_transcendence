@@ -5,11 +5,12 @@ import {
 } from "../tournamentLogic";
 import type { BracketRound } from "../BracketOverlay";
 import type { GameAPI } from "../pong";
-import { stripPredTag } from "../utils/utils";
 
 export interface BetweenMatchesData {
   winner: string;
   loser: string;
+  winnerScore: number;
+  loserScore: number;
   isFinal: boolean;
   nextPair?: string;
   rIndex: number;
@@ -29,6 +30,7 @@ export function useTournament(gameApi: GameAPI | null) {
   const [showBracket, setShowBracket] = useState(false);
   const [byeInfo, setByeInfo] = useState<ByeOverlayData | null>(null);
   const [matchInfo, setMatchInfo] = useState<BetweenMatchesData | null>(null);
+  const [tournamentEnded, setTournamentEnded] = useState(false);
 
   function startTourney(players: string[]) {
     let arr = players.map((s) => s.trim()).filter((s) => s.length > 0);
@@ -44,6 +46,7 @@ export function useTournament(gameApi: GameAPI | null) {
     const bracket = buildSingleElimNoDoubleByeSym(arr);
     setRounds(bracket);
     setWinner(null);
+    setTournamentEnded(false);
     startNextMatch(bracket, 0, 0);
   }
 
@@ -57,7 +60,7 @@ export function useTournament(gameApi: GameAPI | null) {
       const nr = rIndex + 1;
       if (nr >= bRounds.length) {
         const finalM = bRounds[rIndex][0];
-        setWinner(finalM.winner || "???");
+        setWinner(finalM.winner ? finalM.winner.name : "???");
       } else {
         startNextMatch(bRounds, nr, 0);
       }
@@ -66,48 +69,65 @@ export function useTournament(gameApi: GameAPI | null) {
 
     const match = bRounds[rIndex][mIndex];
 
-    if (match.p1 === "BYE" && match.p2 === "BYE") {
-      bRounds[rIndex][mIndex].winner = "(No match)";
+    if (match.p1.name === "BYE" && match.p2.name === "BYE") {
+      bRounds[rIndex][mIndex].winner = { name: "(No match)" };
       setRounds([...bRounds]);
       startNextMatch(bRounds, rIndex, mIndex + 1);
       return;
     }
 
-    if (match.p1 === "BYE") {
-      bRounds[rIndex][mIndex].winner = `(pred) ${match.p2}`;
+    if (match.p1.name === "BYE") {
+      bRounds[rIndex][mIndex].winner = {
+        name: match.p2.name,
+        isPredicted: true,
+      };
       setRounds([...bRounds]);
       const nextPair = findNextPairString(bRounds, rIndex, mIndex);
-      setByeInfo({ winner: `(pred) ${match.p2}`, rIndex, mIndex, nextPair });
+      setByeInfo({ winner: match.p2.name, rIndex, mIndex, nextPair });
       return;
     }
-    if (match.p2 === "BYE") {
-      bRounds[rIndex][mIndex].winner = `(pred) ${match.p1}`;
+    if (match.p2.name === "BYE") {
+      bRounds[rIndex][mIndex].winner = {
+        name: match.p1.name,
+        isPredicted: true,
+      };
       setRounds([...bRounds]);
       const nextPair = findNextPairString(bRounds, rIndex, mIndex);
-      setByeInfo({ winner: `(pred) ${match.p1}`, rIndex, mIndex, nextPair });
+      setByeInfo({ winner: match.p1.name, rIndex, mIndex, nextPair });
       return;
     }
 
     const isFinal =
       rIndex === bRounds.length - 1 && mIndex === bRounds[rIndex].length - 1;
-    gameApi?.startTournamentMatch(match.p1, match.p2, isFinal, (w, l) => {
-      const winner = stripPredTag(w);
-      const loser = stripPredTag(l);
-      bRounds[rIndex][mIndex].winner = winner;
+    gameApi?.startTournamentMatch(match.p1.name, match.p2.name, isFinal, (w, l, ws, ls) => {
+      const winner = w;
+      const loser = l;
+      const winnerScore = ws;
+      const loserScore = ls;
+      bRounds[rIndex][mIndex].winner = { name: winner };
       if (rIndex < bRounds.length - 1) {
         const nextMIndex = Math.floor(mIndex / 2);
         if (bRounds[rIndex + 1] && nextMIndex < bRounds[rIndex + 1].length) {
           if (mIndex % 2 === 0) {
-            bRounds[rIndex + 1][nextMIndex].p1 = stripPredTag(winner);
+            bRounds[rIndex + 1][nextMIndex].p1 = { name: winner };
           } else {
-            bRounds[rIndex + 1][nextMIndex].p2 = stripPredTag(winner);
+            bRounds[rIndex + 1][nextMIndex].p2 = { name: winner };
           }
         }
       }
       const updated = [...bRounds];
       setRounds(updated);
       const nextPair = findNextPairString(updated, rIndex, mIndex);
-      setMatchInfo({ winner, loser, isFinal, nextPair, rIndex, mIndex });
+      setMatchInfo({
+        winner,
+        loser,
+        winnerScore,
+        loserScore,
+        isFinal,
+        nextPair,
+        rIndex,
+        mIndex,
+      });
     });
   }
 
@@ -117,15 +137,15 @@ export function useTournament(gameApi: GameAPI | null) {
     setByeInfo(null);
     const clone = [...rounds];
     const w = clone[rIndex][mIndex].winner;
-    const realName = stripPredTag(w ?? "");
-    clone[rIndex][mIndex].winner = realName;
+    const realName = w?.name ?? "";
+    clone[rIndex][mIndex].winner = { name: realName };
     if (rIndex < clone.length - 1) {
       const nextMIndex = Math.floor(mIndex / 2);
       if (clone[rIndex + 1] && nextMIndex < clone[rIndex + 1].length) {
         if (mIndex % 2 === 0) {
-          clone[rIndex + 1][nextMIndex].p1 = realName;
+          clone[rIndex + 1][nextMIndex].p1 = { name: realName };
         } else {
-          clone[rIndex + 1][nextMIndex].p2 = realName;
+          clone[rIndex + 1][nextMIndex].p2 = { name: realName };
         }
       }
     }
@@ -141,8 +161,13 @@ export function useTournament(gameApi: GameAPI | null) {
       startNextMatch(rounds, rIndex, mIndex + 1);
     } else {
       const finalMat = rounds[rIndex][mIndex];
-      setWinner(finalMat.winner || "???");
+      setWinner(finalMat.winner ? finalMat.winner.name : "???");
+      setTournamentEnded(true);
     }
+  }
+
+  function acknowledgeWinner() {
+    setWinner(null);
   }
 
   function resetTourney() {
@@ -150,6 +175,7 @@ export function useTournament(gameApi: GameAPI | null) {
     setWinner(null);
     setByeInfo(null);
     setMatchInfo(null);
+    setTournamentEnded(false);
     setShowBracket(false);
   }
 
@@ -163,6 +189,8 @@ export function useTournament(gameApi: GameAPI | null) {
     startTourney,
     continueBye,
     continueMatch,
+    acknowledgeWinner,
     resetTourney,
+    tournamentEnded,
   } as const;
 }
