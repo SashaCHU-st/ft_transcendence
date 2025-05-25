@@ -36,7 +36,7 @@ export interface GameState {
     mode: GameMode,
     winnerName: string,
     plScore: number,
-    aiScore: number,
+    aiScore: number
   ) => void;
   onPlayersUpdate?: (leftName: string, rightName: string) => void;
 
@@ -44,7 +44,7 @@ export interface GameState {
     winner: string,
     loser: string,
     winnerScore: number,
-    loserScore: number,
+    loserScore: number
   ) => void;
 
   keyDownHandler: ((e: KeyboardEvent) => void) | null;
@@ -62,8 +62,8 @@ export interface GameAPI {
       winner: string,
       loser: string,
       winnerScore: number,
-      loserScore: number,
-    ) => void,
+      loserScore: number
+    ) => void
   ) => void;
   backToMenu: () => void;
 
@@ -80,14 +80,14 @@ export interface PongCallbacks {
     mode: GameMode,
     winnerName: string,
     plScore: number,
-    aiScore: number,
+    aiScore: number
   ) => void;
   onPlayersUpdate?: (leftName: string, rightName: string) => void;
 }
 
 export function initGame(
   canvas: HTMLCanvasElement,
-  callbacks?: PongCallbacks,
+  callbacks?: PongCallbacks
 ): GameAPI {
   const engine = new BABYLON.Engine(canvas, true);
 
@@ -156,7 +156,7 @@ export function initGame(
     fitFieldToCamera(
       sceneObjects.camera,
       state.physics.FIELD_WIDTH,
-      state.physics.FIELD_HEIGHT,
+      state.physics.FIELD_HEIGHT
     );
   };
   window.addEventListener("resize", resizeHandler);
@@ -238,6 +238,9 @@ export function initGame(
       removeAllKeyListeners(state);
     },
   };
+
+  // !! exposing internal state for tests
+  (api as any).__state = state;
 
   return api;
 }
