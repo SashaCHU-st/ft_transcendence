@@ -94,7 +94,7 @@
 
 import { StarryBackground } from "./StarryBackground";
 import "./SpaceBackground.css"
-import noiseImg from "../png_icons/tv-noise2.png";
+import noiseImg from "../png_icons/tv-noise5.png";
 
 interface SpaceBackgroundProps {
   children: React.ReactNode;

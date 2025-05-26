@@ -111,7 +111,7 @@ export function StarryBackground() {
     }
 
     const stars: Star[] = [];
-    const numStars = 100;
+    const numStars = 300;
 
     // Initialize stars at random positions
     for (let i = 0; i < numStars; i++) {
