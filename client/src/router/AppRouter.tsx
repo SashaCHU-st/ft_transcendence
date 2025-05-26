@@ -30,23 +30,45 @@ import MainPage from '../pages/MainPage/MainPage';
 import Profile from '../pages/Profile/Profile';
 import AuthPage from '../pages/AuthPage/AuthPage';
 import PongGame from '../pong/Pong3D';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Layout from '../components/Layout';
+import ProtectedRoute from './ProtectedRoute';
+import { useAuth } from '../context/AuthContext';
 
 const AppRouter = () => {
+  const { isAuthenticated } = useAuth();
   return (
-    <BrowserRouter>
+    
       <Routes>
         <Route element={<Layout />}>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/" element={
+             isAuthenticated ? (
+            <Navigate to="/profile" replace />
+          ) : (
+             <MainPage/>
+          )
+          } />
+          <Route path="/profile" 
+          element={
+            <ProtectedRoute>
+                <Profile />
+            </ProtectedRoute>
+          } 
+          />
           <Route path="/pong" element={<PongGame />} />
-          <Route path="/login" element={<AuthPage mode="login" onClose={() => {}} />} />
+          <Route path="/login" element={
+           // <AuthPage mode="login" onClose={() => {}} />
+           isAuthenticated ? (
+            <Navigate to="/profile" replace />
+          ) : (
+            <AuthPage mode="login" />
+          )
+            } />
           <Route path="/signup" element={<AuthPage mode="signup" onClose={() => {}} />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+   
   );
 };
 

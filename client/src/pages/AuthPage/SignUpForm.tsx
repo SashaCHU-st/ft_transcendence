@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from '../../context/AuthContext';
 
 interface SignUpFormProps {
   onSuccess?: () => void; // Made optional if not always provided
@@ -13,12 +14,14 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
   const [password, setPassword] = useState("");
   const [err, setError] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3000/signup", {
+      const res = await fetch("https://localhost:3000/signup", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -27,10 +30,16 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      localStorage.setItem("token", data.accessToken);
-      console.log("Signed up with JWT:", data.accessToken);
-
+      login(data.accessToken);
+      //localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("id", data.id); // Save user ID
+      // localStorage.setItem("userEmail", data.email);
+      
+      // localStorage.console.log("Signed up with JWT:", data.accessToken);
+      // console.log("User ID saved:", data.id);
+      
       // Call both success handlers if they exist
+      /////khdjdhbdjkhbd
       onSuccess?.();
       closeModal?.();
 
@@ -42,8 +51,8 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
 
   return (
     <div className="p-6 max-w-md mx-auto">
-      <h2 className="text-2xl tracking-wide font-bold mb-5 text-center">
-        Registration
+      <h2 className="text-2xl tracking-[.10em] font-orbitron font-bold mb-5 text-center">
+        REGISTRATION
       </h2>
       <form onSubmit={handleSignUp} className="space-y-4">
         {err && <p className="text-red-500 text-center">{err}</p>}
@@ -58,7 +67,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
           />
           <input
             type="text"
-            placeholder="username"
+            placeholder="Username"
             className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
@@ -84,7 +93,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="w-1/2 bg-indigo-950 hover:bg-rose-950 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+            className="w-1/2 bg-indigo-950 tracking-[.10em] font-orbitron hover:bg-rose-950 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
           >
             Sign Up
           </button>

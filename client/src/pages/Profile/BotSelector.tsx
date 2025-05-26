@@ -29,6 +29,7 @@ const BotSelector: React.FC<BotSelectorProps> = ({ selectedBot, setSelectedBot }
           text-lg
           text-purple-400
           font-extrabold
+		  font-orbitron
           uppercase
           tracking-wide
           drop-shadow-[0_0_8px_white]

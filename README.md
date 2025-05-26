@@ -1,3 +1,4 @@
+# IN PROGRESS....
 # Usage in local computer
 
 ## Steps
@@ -27,7 +28,7 @@ cd client
 npm install
 ```
   
-3.3 Start server
+3.3 Start server   
 ```
 npm run dev
 ```

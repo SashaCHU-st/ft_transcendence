@@ -33,7 +33,7 @@ export const useProfile = () => {
   const fetchAllUsers = useCallback(async () => {
     try {
       console.log("Fetching all users...");
-      const response = await fetch(`http://localhost:3000/users?t=${Date.now()}`, {
+      const response = await fetch(`https://localhost:3000/users?t=${Date.now()}`, {
         headers: {
           "Content-Type": "application/json",
           ...authHeaders,

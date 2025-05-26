@@ -47,7 +47,7 @@ export async function signup(req, reply) {
 
       return reply
         .code(201)
-        .send({ message: "USER created", users, accessToken: token, id:result.lastInsertRowid });
+        .send({ message: "USER created", users, accessToken: token, id:result.lastInsertRowid});
     } else {
       console.log("User already exists");
       return reply.code(400).send({ message: "User already exists" });
@@ -87,7 +87,7 @@ export async function login(req, reply) {
         console.log("ONLINE =>", online.changes);
         return reply
           .code(200)
-          .send({ message: "We are logged in", accessToken: token, id:user.id });
+          .send({ message: "We are logged in", accessToken: token, id:user.id});
       } else {
         return reply.code(400).send({ message: "wrong pass" });
       }
@@ -101,9 +101,9 @@ export async function login(req, reply) {
 }
 
 export async function logout(req, reply) {
-  const { email } = req.body;
+  const { user_id } = req.body;
   try {
-    const user = db.prepare(`SELECT * FROM users WHERE email = ?`).get(email);
+    const user = db.prepare(`SELECT * FROM users WHERE id = ?`).get(user_id);
 
     if (!user) {
       return reply.code(400).send({ message: "No such user" });
@@ -112,8 +112,8 @@ export async function logout(req, reply) {
     console.log("ID=>", user.id);
 
     const offline = db
-      .prepare("UPDATE users SET online = ? WHERE email = ?")
-      .run(0, email);
+      .prepare("UPDATE users SET online = ? WHERE id = ?")
+      .run(0, user_id);
     console.log("Offline =>", offline.changes);
     return reply.code(200).send({ message: "We are logged out" });
   } catch (err) {

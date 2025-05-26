@@ -7,7 +7,7 @@ const HeaderButton = () => {
     <div className="fixed top-4 left-6 z-50">
       <button
         onClick={() => navigate("/")}
-        className="text-transparent bg-clip-text 
+        className="text-transparent bg-clip-text font-orbitron
              bg-gradient-to-r from-purple-400 via-indigo-300 to-cyan-300
              text-xl sm:text-xl md:text-2xl lg:text-3xl font-bold 
              bg-transparent 
