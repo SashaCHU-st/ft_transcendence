@@ -13,6 +13,8 @@ const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch }) => {
     <div
       className="
         flex
+        bg-gray-900
+        bg-opacity-70
         justify-between
         items-center
         px-6
@@ -24,23 +26,26 @@ const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch }) => {
           text-transparent
           bg-clip-text
           bg-gradient-to-r
-          from-red-400
-          via-indigo-300
-          to-green-300
-          text-2xl
-          sm:text-3xl
+          from-red-200
+          via-indigo-200
+          to-green-200
+          text-sm
+          sm:text-base
+          md:text-xl
+          lg:text-2xl
           font-bold
+          font-orbitron
           transition-transform
           duration-300
           ease-in-out
-          hover:scale-110
+          tracking-[.10em]
         "
         style={{
           textShadow:
             "0 0 20px rgba(255, 255, 255, 0.3), 0 0 32px rgba(255, 0, 255, 0.3)",
         }}
       >
-        NEON PONG
+        SUPER PONG
       </div>
       <ProfileActions user={user} onProfileClick={onProfileClick} onSearch={onSearch} />
     </div>

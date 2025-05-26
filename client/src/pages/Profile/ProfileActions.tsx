@@ -82,6 +82,7 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
         - Search and Clear buttons
       */}
       <div className="flex items-center gap-2 flex-col sm:flex-row">
+        <div className="relative w-32 sm:w-40">
         <input
           type="text"
           placeholder="Search user..."
@@ -92,7 +93,10 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
             px-3
             py-1
             rounded-2xl
-            text-sm
+            text-xs
+            sm:text-xs
+            md:text-xs
+            xl:text-sm
             bg-gray-800
             border
             border-emerald-200
@@ -115,31 +119,52 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
               0 0 32px rgba(102, 0, 255, 0.3)
             `,
           }}
+          
         />
+        {searchQuery && (
+          <button
+            onClick={handleClear}
+            className="
+              absolute
+              right-2
+              top-1/2
+              transform
+              -translate-y-1/2
+              text-white
+              text-sm
+              hover:text-red-400
+              transition
+            "
+            aria-label="Clear search"
+          >
+            ✕
+          </button>
+        )}
+        </div>
         <div className="flex gap-2">
           <button
             onClick={handleSearch}
-            className="
-              px-3
-              rounded-2xl
-              text-sm
-              font-bold
-              bg-transparent
-              outline-3
-              outline-offset-2
-              outline-double
-              border
-              border-emerald-200
-              text-white
-              transition-all
-              duration-300
-              ease-in-out
-              hover:scale-110
-            "
+            // className="
+            //   px-3
+            //   rounded-2xl
+            //   text-sm
+            //   font-bold
+            //   bg-transparent
+            //   outline-3
+            //   outline-offset-2
+            //   outline-double
+            //   border
+            //   border-emerald-200
+            //   text-white
+            //   transition-all
+            //   duration-300
+            //   ease-in-out
+            //   hover:scale-110
+            // "
           >
-            Search
+            🔍
           </button>
-          <button
+          {/* <button
             onClick={handleClear}
             className="
               px-3
@@ -160,7 +185,7 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
             "
           >
             Clear
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -172,8 +197,10 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
       <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
         <span
           className={`
-            text-xl
-            sm:text-2xl
+            text-base
+            sm:text-base
+            md:text-xl
+            xl:text-2xl
             font-bold
             ${user.online ? "text-green-400" : "text-gray-400"}
             truncate
@@ -189,16 +216,20 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
             onClick={onProfileClick}
             className="
               px-3
-              py-2
+              py-1
               rounded-2xl
-              text-sm
-              font-bold
-              bg-transparent
-              outline-3
-              outline-offset-2
-              outline-double
+              text-xs
+              sm:text-xs
+              md:text-xs
+              lg:text-xs
+              xl:text-sm
+              bg-gray-800
+              font-orbitron
               border
               border-emerald-200
+              focus:outline-none
+              focus:ring-2
+            focus:ring-indigo-800
               text-white
               transition-all
               duration-300
@@ -214,14 +245,20 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
               px-3
               py-1
               rounded-2xl
-              text-sm
-              font-bold
-              bg-transparent
-              outline-3
-              outline-offset-2
-              outline-double
+              text-xs
+              bg-gray-800
+         
+              sm:text-xs
+              md:text-xs
+              lg:text-xs
+              xl:text-sm
+              
+              font-orbitron
               border
               border-emerald-200
+              focus:outline-none
+              focus:ring-2
+            focus:ring-indigo-800
               text-white
               transition-all
               duration-300
@@ -236,5 +273,6 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
     </div>
   );
 };
+
 
 export default ProfileActions;

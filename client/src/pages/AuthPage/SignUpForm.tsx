@@ -51,8 +51,8 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
 
   return (
     <div className="p-6 max-w-md mx-auto">
-      <h2 className="text-2xl tracking-wide font-bold mb-5 text-center">
-        Registration
+      <h2 className="text-2xl tracking-[.10em] font-orbitron font-bold mb-5 text-center">
+        REGISTRATION
       </h2>
       <form onSubmit={handleSignUp} className="space-y-4">
         {err && <p className="text-red-500 text-center">{err}</p>}
@@ -93,7 +93,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
         <div className="flex justify-center">
           <button
             type="submit"
-            className="w-1/2 bg-indigo-950 hover:bg-rose-950 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
+            className="w-1/2 bg-indigo-950 tracking-[.10em] font-orbitron hover:bg-rose-950 text-white font-medium py-2 px-4 rounded-lg transition duration-300"
           >
             Sign Up
           </button>

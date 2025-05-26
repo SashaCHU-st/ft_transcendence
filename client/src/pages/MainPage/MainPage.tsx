@@ -18,11 +18,11 @@ const MainPage = () => {
               className="w-full h-auto rounded-xl transition-shadow duration-300 ease-in-out"
              
             />
-          <div className="bg-indigo-900 absolute bottom-2 left-1/2 transform -translate-x-1/2">
+          <div className="bg-indigo-900 absolute sm:bottom-2 bottom-2 md:bottom-2 lg:bottom-4 left-1/2 transform -translate-x-1/2">
             <button 
-              className="rounded-lg outline-3 outline-offset-2 outline-double border-4 border-blue-300 px-5 py-2
-                        sm:px-8 md:px-8 sm:py-2 md:py-3 lg:py-5 lg:px-9 xl:py-5 xl:px-10 font-orbitron
-                        font-bold text-transparent sm:text-2xl md:text-3xl lg:text-4xl xl:text-6xl
+              className="rounded-lg outline-3 outline-offset-2 outline-double border-4 border-blue-300 px-5 py-1
+                        font-orbitron lg:px-5 lg:py-3 md:px-5 md:py-1 2xl:px-5 2xl:py-4 xl:py-4
+                        font-bold text-transparent text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl
                         bg-clip-text bg-gradient-to-r from-indigo-300 via-blue-300 to-sky-500
                         hover:from-red-50 hover:via-indigo-200 hover:to-purple-100
                         animate-pulse hover:animate-none
@@ -33,7 +33,7 @@ const MainPage = () => {
               }}
               onClick={() => openModal('login')}
             >
-              NEON PONG
+              SUPER PONG
             </button>
           </div>
         </div>
