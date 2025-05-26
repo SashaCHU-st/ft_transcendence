@@ -43,8 +43,8 @@
 //   );
 // }
 
-
-//!  3 iconki
+// // 
+// !  3 iconki
 
 // import { SpaceBackground } from "./SpaceBackground";
 // import aiIcon from "../png_icons/ai.png";
