@@ -191,7 +191,7 @@ export function SpaceBackground({ children }: SpaceBackgroundProps) {
 }
 
 
-//! dlja smeni png, zakinte novij png fail v png_icon i obnovite nazvanie faila sverhu (import noiseImg from "../png_icons/tv-noise2.png";)
+// //! dlja smeni png, zakinte novij png fail v png_icon i obnovite nazvanie faila sverhu (import noiseImg from "../png_icons/tv-noise2.png";)
 
 
-//! esli etot vareant ne podhodit, togda prosto zakomentirovat ego i ispolzovat versiju s 3 ili 5 knopkami
+// //! esli etot vareant ne podhodit, togda prosto zakomentirovat ego i ispolzovat versiju s 3 ili 5 knopkami
