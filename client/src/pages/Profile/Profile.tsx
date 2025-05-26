@@ -242,7 +242,7 @@ const Profile: React.FC = () => {
   return (
     <SpaceBackground>
       <div className="h-screen 
-      w-full
+       w-full
        text-white 
        flex 
        flex-col 
