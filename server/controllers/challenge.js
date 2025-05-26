@@ -38,7 +38,7 @@ export async function notification(req, reply) {
     if (notification) {
       return reply
         .code(200)
-        .send({ message: "There is request", enemy_id: notification.user_id });
+        .send({ message: "There is request", friends_id: notification.user_id });
     } else {
       return reply.code(400).send({ message: "There is NO request" });
     }
