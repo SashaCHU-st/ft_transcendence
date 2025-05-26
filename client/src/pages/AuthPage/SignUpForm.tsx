@@ -39,6 +39,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
       // console.log("User ID saved:", data.id);
       
       // Call both success handlers if they exist
+      /////khdjdhbdjkhbd
       onSuccess?.();
       closeModal?.();
 
