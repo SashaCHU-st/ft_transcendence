@@ -151,6 +151,7 @@
 // export default Profile;
 
 
+//! dlja preznego fona, zakomentirujte niz i otkrojte verh
 
 import React, { useState } from "react";
 import ProfileModal from "./ProfileModal";
@@ -165,22 +166,28 @@ import { SpaceBackground } from "../../pong/components/SpaceBackground";
 
 // Profile component serves as the main page for user profile management
 const Profile: React.FC = () => {
+  // Destructure user data, state, and handlers from custom useProfile hook
   const {
-    user,
-    friends,
-    players,
-    selectedBot,
-    isModalOpen,
-    isLoading,
-    setSelectedBot,
-    setIsModalOpen,
-    handleSaveProfile,
-    handlePlay,
+    user, // Current user's data
+    friends, // List of friends
+    players, // List of all players
+    selectedBot, // Currently selected bot for gameplay
+    isModalOpen, // State for profile modal visibility
+    isLoading, // Loading state for data fetching
+    setSelectedBot, // Function to update selected bot
+    setIsModalOpen, // Function to toggle profile modal
+    handleSaveProfile, // Handler to save profile changes
+    handlePlay, // Handler to start a game
   } = useProfile();
 
-  const [expandUsername, setExpandUsername] = useState<string | undefined>(undefined);
+  // State to store username for auto-expanding a user card
+  const [expandUsername, setExpandUsername] = useState<string | undefined>(
+    undefined
+  );
 
+  // Handle search for a user by username (case-insensitive)
   const handleSearch = (username: string) => {
+    // Check if the username exists in players or friends lists
     const foundInPlayers = players.find(
       (p) => p.username.toLowerCase() === username.toLowerCase()
     );
@@ -188,44 +195,70 @@ const Profile: React.FC = () => {
       (f) => f.username.toLowerCase() === username.toLowerCase()
     );
 
+    // If found, set expandUsername to trigger card expansion and show success toast
     if (foundInPlayers || foundInFriends) {
       setExpandUsername(username);
       toast.success(`Found user: ${username}`);
     } else {
+      // If not found, clear expandUsername and show error toast
       setExpandUsername(undefined);
       toast.error(`User ${username} not found`);
     }
   };
 
+  // Display loading state while fetching data
   if (isLoading) {
     return (
       <SpaceBackground>
-        <div className="min-h-screen w-full flex items-center justify-center text-white">
+        <div className="h-screen
+                      w-full 
+                      flex 
+                      items-center 
+                      justify-center
+                      text-white">
           Loading data, please wait...
         </div>
       </SpaceBackground>
     );
   }
 
+  // Display error if user data failed to load
   if (!user) {
     return (
       <SpaceBackground>
-        <div className="min-h-screen w-full flex items-center justify-center text-white">
+        <div className="h-screen 
+        w-full 
+        flex 
+        items-center 
+        justify-center
+         text-white">
           Failed to load user data.
         </div>
       </SpaceBackground>
     );
   }
 
+  // Render the main profile page layout
   return (
-    // Wrap profile page in SpaceBackground
     <SpaceBackground>
-      <div className="min-h-screen w-full text-white flex flex-col overflow-y-auto justify-between">
+      <div className="h-screen 
+      w-full
+       text-white 
+       flex 
+       flex-col 
+       overflow-y-auto">
+        {/* Header with user info, profile toggle, and search functionality */}
         <Header
-          user={{ username: user.username, online: user.online, email: user.email }}
+          user={{
+            username: user.username,
+            online: user.online,
+            email: user.email,
+          }}
           onProfileClick={() => setIsModalOpen(true)}
           onSearch={handleSearch}
         />
+
+        {/* Desktop-specific layout for large screens */}
         <DesktopLayout
           user={user}
           friends={friends}
@@ -234,6 +267,8 @@ const Profile: React.FC = () => {
           handlePlay={handlePlay}
           expandUsername={expandUsername}
         />
+
+        {/* Mobile-specific layout for smaller screens */}
         <MobileLayout
           user={user}
           friends={friends}
@@ -242,13 +277,23 @@ const Profile: React.FC = () => {
           handlePlay={handlePlay}
           expandUsername={expandUsername}
         />
-        <BotSelector selectedBot={selectedBot} setSelectedBot={setSelectedBot} />
+
+        {/* Bot selector for choosing game opponent */}
+        <BotSelector
+          selectedBot={selectedBot}
+          setSelectedBot={setSelectedBot}
+        />
       </div>
 
+      {/* Conditionally render profile modal for editing user data */}
       {isModalOpen && (
         <ProfileModal
           onClose={() => setIsModalOpen(false)}
-          userData={{ avatar: user.avatar, username: user.username, name: user.name }}
+          userData={{
+            avatar: user.avatar,
+            username: user.username,
+            name: user.name,
+          }}
           onSave={handleSaveProfile}
         />
       )}
