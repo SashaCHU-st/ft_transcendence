@@ -97,8 +97,9 @@ import "./SpaceBackground.css"
 import noiseImg from "../png_icons/tv-noise5.png";
 
 interface SpaceBackgroundProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
+
 
 export function SpaceBackground({ children }: SpaceBackgroundProps) {
   return (
@@ -121,7 +122,7 @@ export function SpaceBackground({ children }: SpaceBackgroundProps) {
 
 	  {/* full-screen noise overlay */}
 	  <div
-        className="noise-overlay"
+        className="noise-overlay pointer-events-none"
         style={{ backgroundImage: `url(${noiseImg})`, backgroundSize: "cover" }}
       />
 

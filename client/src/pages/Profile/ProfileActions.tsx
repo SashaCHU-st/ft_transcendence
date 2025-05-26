@@ -247,7 +247,8 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
                 <img
                   src="/button_img/user-settings.png" 
                   alt="Settings"
-                  className="w-6 h-6 lg:w-7 lg:h-7 drop-shadow-[0_0_25px_rgba(255,215,0,1)] animate-crown-spin"
+                  className="w-6 h-6 lg:w-7 lg:h-7 drop-shadow-[0_0_25px_rgba(255,215,0,1)] 
+                            animate-crown-spin hover:animate-none"
                 />
               </button>
           <button

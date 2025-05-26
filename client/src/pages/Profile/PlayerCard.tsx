@@ -54,7 +54,7 @@ const PlayerCard: React.FC<Props> = ({ user }) => {
               text-green-400
               border-2
               border-green-500
-              hover:bg-green-600
+              hover:bg-green-800
               hover:text-white
               transition
               duration-300
@@ -62,7 +62,9 @@ const PlayerCard: React.FC<Props> = ({ user }) => {
               hover:shadow-[0_0_18px_#00ff00]
             "
           >
-            Add
+            <span className="text-xl text-green-300 drop-shadow-[0_0_3px_#00ff00]">
+                💚
+            </span>
           </button>
         )}
         {user.onRemove && (

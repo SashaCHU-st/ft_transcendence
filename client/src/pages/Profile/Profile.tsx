@@ -163,14 +163,17 @@ import { useProfile } from "./hooks/useProfile";
 import { toast } from "react-hot-toast";
 // Import the SpaceBackground component
 import { SpaceBackground } from "../../pong/components/SpaceBackground";
+//import { UserInfo } from "./types/UserInfo";
 
 // Profile component serves as the main page for user profile management
 const Profile: React.FC = () => {
   // Destructure user data, state, and handlers from custom useProfile hook
   const {
     user, // Current user's data
+
     friends, // List of friends
     players, // List of all players
+
     selectedBot, // Currently selected bot for gameplay
     isModalOpen, // State for profile modal visibility
     isLoading, // Loading state for data fetching
@@ -180,10 +183,14 @@ const Profile: React.FC = () => {
     handlePlay, // Handler to start a game
   } = useProfile();
 
+  
+
   // State to store username for auto-expanding a user card
   const [expandUsername, setExpandUsername] = useState<string | undefined>(
     undefined
   );
+
+  
 
   // Handle search for a user by username (case-insensitive)
   const handleSearch = (username: string) => {
@@ -266,6 +273,7 @@ const Profile: React.FC = () => {
           selectedBot={selectedBot}
           handlePlay={handlePlay}
           expandUsername={expandUsername}
+          
         />
 
         {/* Mobile-specific layout for smaller screens */}
@@ -300,5 +308,6 @@ const Profile: React.FC = () => {
     </SpaceBackground>
   );
 };
+
 
 export default Profile;
