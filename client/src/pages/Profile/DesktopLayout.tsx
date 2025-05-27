@@ -14,7 +14,8 @@ interface DesktopLayoutProps {
   players: UserInfo[]; // List of other players
   selectedBot: (typeof bots)[0] | null; // Currently selected bot for gameplay
   handlePlay: () => void; // Callback to start the game
-  expandUsername?: string; // Optional username to auto-expand a user's card in UserList
+  expandUsername?: string;
+  
 }
 
 // DesktopLayout component for rendering the profile page layout on desktop screens
@@ -25,6 +26,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   selectedBot,
   handlePlay,
   expandUsername,
+  
 }) => {
   // Render a 6-column grid layout visible only on extra-large screens
   return (

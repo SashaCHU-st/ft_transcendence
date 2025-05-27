@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 //import { getAuthHeaders } from "./types/api";
 import { useAuth } from "../../context/AuthContext";
 
+
 // Define the props accepted by the ProfileActions component
 interface ProfileActionsProps {
   user: Pick<UserInfo, "username" | "online" | "email">; // Basic user info for display and API calls
@@ -212,38 +213,54 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
           {user.username}
         </span>
         <div className="flex gap-3 sm:order-2">
-          <button
+          {/* <button
             onClick={onProfileClick}
             className="
               px-3
               py-1
-              rounded-2xl
+             rounded-2xl
+             font-orbitron
               text-xs
               sm:text-xs
               md:text-xs
               lg:text-xs
               xl:text-sm
-              bg-gray-800
-              font-orbitron
-              border
-              border-emerald-200
-              focus:outline-none
-              focus:ring-2
-            focus:ring-indigo-800
-              text-white
-              transition-all
-              duration-300
-              ease-in-out
-              hover:scale-110
-            "
+           
+               transition-all
+               duration-300
+               ease-in-out
+               hover:scale-125
+             "
           >
-            Profile
+           <img src="/button_img/user-settings.png" 
+                alt="Edit Profile"
+                className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-9 lg:h-9 object-contain"
+           />
           </button>
+        */}
+
+            <button
+                onClick={onProfileClick}
+                className="p-1 rounded-full bg-gray-800 hover:bg-gray-700 transition cursor-pointer"
+                aria-label="Open settings"
+              >
+                <img
+                  src="/button_img/user-settings.png" 
+                  alt="Settings"
+                  className="w-6 h-6 lg:w-7 lg:h-7 drop-shadow-[0_0_25px_rgba(255,215,0,1)] 
+                            animate-crown-spin hover:animate-none"
+                />
+              </button>
           <button
             onClick={logout}
             className="
               px-3
               py-1
+              sm:px-3
+              sm:py-1
+              md:px-3 md:py-1
+              lg:px-3 lg:py-1
+              xl:px-3 xl:py-1
               rounded-2xl
               text-xs
               bg-gray-800

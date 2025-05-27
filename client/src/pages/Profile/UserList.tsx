@@ -12,6 +12,7 @@ interface Props {
   users: UserInfo[];
   variant: "players" | "friends";
   expandUsername?: string;
+   onAdd?: (username: string) => void; 
 }
 
 const UserList: React.FC<Props> = ({ users, variant, expandUsername }) => {
