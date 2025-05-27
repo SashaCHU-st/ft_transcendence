@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { OverlayWrapper, NeonCard, NeonButton } from "./OverlayComponents";
+import { SpaceBackground } from "../SpaceBackground";
 
 interface MatchResultOverlayProps {
   winner: string;
@@ -31,19 +31,28 @@ export function MatchResultOverlay({
     return () => window.removeEventListener("keydown", handleKey);
   }, [onContinue]);
   return (
-    <OverlayWrapper className="z-50">
-      <NeonCard
-        borderColor="border-yellow-400"
-        from="from-green-900"
-        via="via-yellow-800"
-        to="to-amber-900"
+    <SpaceBackground>
+      <div
+        className="
+          relative
+          z-10
+          rounded-2xl
+          border-2
+          border-[#0A7FC9]
+          p-6
+          text-center
+          bg-black
+          bg-opacity-30
+          shadow-[0_0_15px_rgba(0,255,255,0.7)]
+        "
       >
         <h2
           className="
             mb-2
             text-2xl
-            font-bold
-            text-yellow-300
+            font-extrabold
+            text-[#D3E0FB]
+            drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]
           "
         >
           Match result
@@ -52,12 +61,12 @@ export function MatchResultOverlay({
           className="
             mb-4
             text-lg
-            text-white
+            text-[#D3E0FB]
           "
         >
-          Winner: {winner}
+          Winner: <b className="text-[#74C0FC]">{winner}</b>
           <br />
-          Loser: {loser}
+          Loser: <b className="text-[#743b91]">{loser}</b>
           <br />
           Score: {winnerScore}:{loserScore}
         </p>
@@ -66,7 +75,8 @@ export function MatchResultOverlay({
             className="
               mb-4
               text-lg
-              text-green-300
+              text-[#74C0FC]
+              drop-shadow-[0_0_5px_rgba(74,222,128,0.6)]
             "
           >
             This was final!
@@ -76,7 +86,8 @@ export function MatchResultOverlay({
             className="
               mb-4
               text-md
-              text-gray-300
+              text-[#743b91]
+              drop-shadow-[0_0_5px_rgba(147,51,234,0.6)]
             "
           >
             Next match: {nextPair}
@@ -86,16 +97,33 @@ export function MatchResultOverlay({
             className="
               mb-4
               text-md
-              text-gray-300
+              text-[#743b91]
+              drop-shadow-[0_0_5px_rgba(147,51,234,0.6)]
             "
           >
             Next match is coming...
           </p>
         )}
-        <NeonButton borderColor="border-yellow-400" onClick={onContinue} autoFocus>
+        <button
+          onClick={onContinue}
+          className="
+            mt-2
+            px-6
+            py-2
+            rounded-xl
+            border-2
+            border-[#BD0E86]
+            bg-black
+            bg-opacity-30
+            text-[#832264]
+            shadow-[0_0_15px_rgba(255,29,153,0.7)]
+            hover:scale-105
+            transition
+          "
+        >
           Continue
-        </NeonButton>
-      </NeonCard>
-    </OverlayWrapper>
+        </button>
+      </div>
+    </SpaceBackground>
   );
 }

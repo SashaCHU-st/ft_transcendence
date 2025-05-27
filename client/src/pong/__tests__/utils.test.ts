@@ -1,12 +1,7 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import {
-  clamp,
-  resetInput,
-  setupKeyListeners,
-  removeAllKeyListeners,
-} from "../utils";
-import { GameMode } from "../pong";
-import type { GameState } from "../pong";
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { clamp, resetInput, setupKeyListeners, removeAllKeyListeners } from '../utils';
+import { GameMode } from '../pong';
+import type { GameState } from '../pong';
 
 function createState(): GameState {
   return {
@@ -21,8 +16,8 @@ function createState(): GameState {
     match: {
       playerScore: 0,
       aiScore: 0,
-      leftName: "",
-      rightName: "",
+      leftName: '',
+      rightName: '',
       isFinalMatch: false,
     },
     input: {
@@ -41,18 +36,19 @@ function createState(): GameState {
     escMenuOpen: false,
     keyDownHandler: null,
     keyUpHandler: null,
+    goalTimeout: null,
   };
 }
 
-describe("clamp", () => {
-  it("limits value to range", () => {
+describe('clamp', () => {
+  it('limits value to range', () => {
     expect(clamp(10, 0, 5)).toBe(5);
     expect(clamp(-1, 0, 5)).toBe(0);
     expect(clamp(3, 0, 5)).toBe(3);
   });
 });
 
-describe("input helpers", () => {
+describe('input helpers', () => {
   let state: GameState;
 
   beforeEach(() => {
@@ -63,7 +59,7 @@ describe("input helpers", () => {
     removeAllKeyListeners(state);
   });
 
-  it("resetInput clears paddle speeds", () => {
+  it('resetInput clears paddle speeds', () => {
     state.input.playerDzLeft = 2;
     state.input.playerDzRight = 3;
     resetInput(state);
@@ -71,39 +67,35 @@ describe("input helpers", () => {
     expect(state.input.playerDzRight).toBe(0);
   });
 
-  it("setupKeyListeners updates state on key events", () => {
-    setupKeyListeners(state, { up: "w", down: "s" });
-    window.dispatchEvent(new KeyboardEvent("keydown", { key: "w" }));
+  it('setupKeyListeners updates state on key events', () => {
+    setupKeyListeners(state, { up: 'w', down: 's' });
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'w' }));
     expect(state.input.playerDzLeft).toBe(1);
-    window.dispatchEvent(new KeyboardEvent("keyup", { key: "w" }));
+    window.dispatchEvent(new KeyboardEvent('keyup', { key: 'w' }));
     expect(state.input.playerDzLeft).toBe(0);
   });
 
-  it("setupKeyListeners handles right paddle keys", () => {
-    setupKeyListeners(
-      state,
-      { up: "w", down: "s" },
-      { up: "ArrowUp", down: "ArrowDown" }
-    );
-    window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowUp" }));
+  it('setupKeyListeners handles right paddle keys', () => {
+    setupKeyListeners(state, { up: 'w', down: 's' }, { up: 'ArrowUp', down: 'ArrowDown' });
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
     expect(state.input.playerDzRight).toBe(1);
-    window.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowUp" }));
+    window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowUp' }));
     expect(state.input.playerDzRight).toBe(0);
-    window.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown" }));
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
     expect(state.input.playerDzRight).toBe(-1);
-    window.dispatchEvent(new KeyboardEvent("keyup", { key: "ArrowDown" }));
+    window.dispatchEvent(new KeyboardEvent('keyup', { key: 'ArrowDown' }));
     expect(state.input.playerDzRight).toBe(0);
   });
 
-  it("removeAllKeyListeners clears handlers and resets input", () => {
-    setupKeyListeners(state, { up: "w", down: "s" });
-    window.dispatchEvent(new KeyboardEvent("keydown", { key: "w" }));
+  it('removeAllKeyListeners clears handlers and resets input', () => {
+    setupKeyListeners(state, { up: 'w', down: 's' });
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'w' }));
     expect(state.input.playerDzLeft).toBe(1);
     removeAllKeyListeners(state);
     expect(state.keyDownHandler).toBeNull();
     expect(state.keyUpHandler).toBeNull();
     expect(state.input.playerDzLeft).toBe(0);
-    window.dispatchEvent(new KeyboardEvent("keydown", { key: "w" }));
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'w' }));
     expect(state.input.playerDzLeft).toBe(0);
   });
 });

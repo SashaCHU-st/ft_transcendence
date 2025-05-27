@@ -13,14 +13,7 @@
   text-shadow: 0 0 5px white;
 }
 .menu-btn {
-  padding: 0.5rem 2rem;
-  border: 2px solid #888;
-  color: #eee;
-  font-size: 1.25rem;
-  border-radius: 0.5rem;
-}
-.menu-btn:hover {
-  background: #444;
+  font-family: "Orbitron", sans-serif;
 }
 
 
@@ -66,4 +59,23 @@
   background: rgba(0, 50, 100, 0.6);
   border-color: #00a1ff;
   box-shadow: 0 0 10px #00a1ff;
+}
+
+.goal-banner {
+  animation: goal-pop 1s ease-out forwards;
+}
+
+@keyframes goal-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
 }

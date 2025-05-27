@@ -2,6 +2,13 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { stepPhysics, resetBall, resetScores, resetPositions } from '../physics';
 import { GameMode } from '../pong';
 import type { GameState } from '../pong';
+import { boom } from '../scene';
+
+const playPaddleSound = vi.fn();
+
+vi.mock('../sound', () => ({
+  playPaddleSound,
+}));
 
 vi.mock('../scene', async () => {
   const actual = await vi.importActual<any>('../scene');
@@ -10,7 +17,6 @@ vi.mock('../scene', async () => {
     boom: vi.fn(), 
   };
 });
-
 
 function createState(): GameState {
   return {
@@ -45,6 +51,7 @@ function createState(): GameState {
     escMenuOpen: false,
     keyDownHandler: null,
     keyUpHandler: null,
+    goalTimeout: null,
   };
 }
 
@@ -60,6 +67,15 @@ function mesh() {
         this.z = z;
       },
     },
+    scaling: {
+      x: 1,
+      y: 1,
+      z: 1,
+      clone() {
+        return { x: this.x, y: this.y, z: this.z };
+      },
+    },
+    animations: [] as any[],
   };
 }
 
@@ -79,6 +95,7 @@ describe('stepPhysics', () => {
   beforeEach(() => {
     state = createState();
     objs = createObjs();
+    vi.clearAllMocks();
   });
 
   it('bounces ball off vertical bounds', () => {
@@ -89,18 +106,40 @@ describe('stepPhysics', () => {
     expect(objs.ball.position.z).toBeCloseTo(state.physics.FIELD_HEIGHT - 0.5);
   });
 
+  it('plays sound when ball hits paddle', () => {
+    state.input.ballDX = -0.2;
+    objs.leftPaddle.position.x = 0;
+    objs.ball.position.x = 0.5;
+    stepPhysics(state, objs as any, 0.016);
+    expect(playPaddleSound).toHaveBeenCalled();
+  });
+
   it('increments ai score when ball exits left', () => {
+    vi.useFakeTimers();
     objs.ball.position.x = -state.physics.FIELD_WIDTH - 1;
     stepPhysics(state, objs as any, 0.016);
     expect(state.match.aiScore).toBe(1);
+    expect(boom).toHaveBeenCalledTimes(1);
+    expect(state.paused).toBe(true);
+    expect(objs.ball.position.x).toBe(-state.physics.FIELD_WIDTH - 1);
+    vi.runAllTimers();
     expect(objs.ball.position.x).toBe(0);
+    expect(state.paused).toBe(false);
+    vi.useRealTimers();
   });
 
   it('increments player score when ball exits right', () => {
+    vi.useFakeTimers();
     objs.ball.position.x = state.physics.FIELD_WIDTH + 1;
     stepPhysics(state, objs as any, 0.016);
     expect(state.match.playerScore).toBe(1);
+    expect(boom).toHaveBeenCalledTimes(1);
+    expect(state.paused).toBe(true);
+    expect(objs.ball.position.x).toBe(state.physics.FIELD_WIDTH + 1);
+    vi.runAllTimers();
     expect(objs.ball.position.x).toBe(0);
+    expect(state.paused).toBe(false);
+    vi.useRealTimers();
   });
 
   it('ends game when winning score reached', () => {
@@ -119,6 +158,7 @@ describe('reset helpers', () => {
   beforeEach(() => {
     state = createState();
     objs = createObjs();
+    vi.clearAllMocks();
   });
 
   it('resetBall centers ball and randomizes direction', () => {

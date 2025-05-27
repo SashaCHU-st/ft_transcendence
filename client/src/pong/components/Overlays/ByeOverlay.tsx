@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { OverlayWrapper, NeonCard, NeonButton } from "./OverlayComponents";
+import { SpaceBackground } from "../SpaceBackground";
 
 interface ByeOverlayProps {
   winner: string;
@@ -19,47 +19,73 @@ export function ByeOverlay({ winner, nextPair, onContinue }: ByeOverlayProps) {
     return () => window.removeEventListener("keydown", handleKey);
   }, [onContinue]);
   return (
-    <OverlayWrapper className="z-50">
-      <NeonCard
-        borderColor="border-yellow-400"
-        from="from-purple-900"
-        via="via-indigo-800"
-        to="to-pink-900"
+    <SpaceBackground>
+      <div
+        className="
+          relative
+          z-10
+          rounded-2xl
+          border-2
+          border-[#0A7FC9]
+          p-6
+          text-center
+          bg-black
+          bg-opacity-30
+          shadow-[0_0_15px_rgba(0,255,255,0.7)]
+        "
       >
         <h2
-          className={`
+          className="
             mb-4
             text-2xl
-            font-bold
-            text-yellow-300
-          `}
+            font-extrabold
+            text-[#D3E0FB]
+            drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]
+          "
         >
           BYE Match
         </h2>
         <p
-          className={`
+          className="
             mb-4
             text-lg
-            text-white
-          `}
+            text-[#D3E0FB]
+          "
         >
-          Player <b>{winner}</b> gets a pass to next round!
+          Player <b className="text-[#74C0FC]">{winner}</b> gets a pass to next round!
         </p>
         {nextPair && (
           <p
-            className={`
+            className="
               mb-4
               text-md
-              text-gray-300
-            `}
+              text-[#743b91]
+              drop-shadow-[0_0_5px_rgba(147,51,234,0.6)]
+            "
           >
             Next match: {nextPair}
           </p>
         )}
-        <NeonButton borderColor="border-yellow-400" onClick={onContinue} autoFocus>
+        <button
+          onClick={onContinue}
+          className="
+            mt-2
+            px-6
+            py-2
+            rounded-xl
+            border-2
+            border-[#BD0E86]
+            bg-black
+            bg-opacity-30
+            text-[#832264]
+            shadow-[0_0_15px_rgba(255,29,153,0.7)]
+            hover:scale-105
+            transition
+          "
+        >
           Continue
-        </NeonButton>
-      </NeonCard>
-    </OverlayWrapper>
+        </button>
+      </div>
+    </SpaceBackground>
   );
 }

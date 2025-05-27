@@ -1,0 +1,21 @@
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  mix-blend-mode: screen;
+  /* animation: noise-flicker 0.15s steps(2) infinite; */
+}
+
+@keyframes noise-flicker {
+  0%, 100% { opacity: 0.10; }
+  50%      { opacity: 0.16; }
+}
+
+.cosmic-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+  z-index: -1;
+}

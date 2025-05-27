@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StarryBackground } from "../StarryBackground";
+import { SpaceBackground } from "../SpaceBackground";
 
 interface EscMenuProps {
   menuItems: string[];
@@ -26,21 +26,59 @@ export function EscMenu({ menuItems, menuIndex, setMenuIndex, onMenuAction }: Es
     return () => window.removeEventListener("keydown", handleKey);
   }, [menuIndex, menuItems, onMenuAction, setMenuIndex]);
 
+  const styles: Record<string, { base: string; active: string }> = {
+    Resume: {
+      base:
+        "border-[#0A7FC9] text-[#D3E0FB] shadow-[0_0_15px_rgba(0,255,255,0.7)] hover:bg-cyan-900 hover:bg-opacity-30",
+      active: "bg-cyan-900 bg-opacity-30",
+    },
+    "Restart match": {
+      base:
+        "border-[#BD0E86] text-[#832264] shadow-[0_0_15px_rgba(255,29,153,0.7)] hover:bg-pink-900 hover:bg-opacity-30",
+      active: "bg-pink-900 bg-opacity-30",
+    },
+    "Show bracket": {
+      base:
+        "border-[#9010CE] text-[#743b91] shadow-[0_0_12px_rgba(192,38,211,0.7)] hover:bg-purple-900 hover:bg-opacity-30",
+      active: "bg-purple-900 bg-opacity-30",
+    },
+    "Quit to main menu": {
+      base:
+        "border-[#74C0FC] text-[#297db1] shadow-[0_0_15px_rgba(74,192,252,0.7)] hover:bg-blue-900 hover:bg-opacity-30",
+      active: "bg-blue-900 bg-opacity-30",
+    },
+    "Switch game mode": {
+      base:
+        "border-[#74C0FC] text-[#297db1] shadow-[0_0_15px_rgba(74,192,252,0.7)] hover:bg-blue-900 hover:bg-opacity-30",
+      active: "bg-blue-900 bg-opacity-30",
+    },
+    "Exit game": {
+      base:
+        "border-[#BD0E86] text-[#832264] shadow-[0_0_15px_rgba(255,29,153,0.7)] hover:bg-pink-900 hover:bg-opacity-30",
+      active: "bg-pink-900 bg-opacity-30",
+    },
+  };
+
   return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center bg-black bg-opacity-70">
-      <StarryBackground />
-      <div className="flex flex-col items-center space-y-6 text-center">
-        {menuItems.map((text, idx) => (
-          <button
-            key={idx}
-            onMouseEnter={() => setMenuIndex(idx)}
-            onClick={() => onMenuAction(idx)}
-            className={`menu-btn w-64 px-6 py-3 text-lg font-bold text-cyan-300 text-shadow-[0_0_4px_rgba(0,255,255,0.6)] border-2 border-cyan-400 rounded-xl bg-black-600 bg-opacity-80 shadow-[0_0_10px_rgba(0,255,255,0.6)] hover:bg-cyan-800 hover:bg-opacity-35 transition-transform duration-200 hover:scale-105 ${menuIndex === idx ? 'bg-cyan-800 bg-opacity-35 scale-105' : ''}`}
-          >
-            {text}
-          </button>
-        ))}
+    <SpaceBackground>
+      <div className="relative z-10 flex items-center justify-center h-full w-full">
+        <div className="flex flex-col items-center space-y-6 text-center">
+          {menuItems.map((text, idx) => {
+            const style = styles[text] ?? styles["Resume"];
+            return (
+              <button
+                key={idx}
+                onMouseEnter={() => setMenuIndex(idx)}
+                onClick={() => onMenuAction(idx)}
+                className={`menu-btn w-[400px] py-4 text-lg font-bold border-2 rounded-xl bg-black bg-opacity-10 transition-transform duration-200 hover:scale-105 ${style.base} ${menuIndex === idx ? style.active + ' scale-105' : ''}`}
+              >
+                {text}
+              </button>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </SpaceBackground>
   );
 }
+

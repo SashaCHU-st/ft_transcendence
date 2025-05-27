@@ -47,7 +47,9 @@ export function createScene(
     scene,
   ).intensity = 0.8;
 
-  const pipe = new BABYLON.DefaultRenderingPipeline("pipe", true, scene, [camera]);
+  const pipe = new BABYLON.DefaultRenderingPipeline("pipe", true, scene, [
+    camera,
+  ]);
   pipe.bloomEnabled = true;
   pipe.bloomThreshold = 0.3;
   pipe.bloomWeight = 0.2;
@@ -169,6 +171,33 @@ export function boom(scene: BABYLON.Scene, pos: BABYLON.Vector3) {
   ex.minEmitPower = 1;
   ex.maxEmitPower = 2;
   ex.targetStopDuration = 0.2;
+  ex.disposeOnStop = true;
+  ex.start();
+}
+
+export function bigBoom(scene: BABYLON.Scene, pos: BABYLON.Vector3) {
+  const ex = new BABYLON.ParticleSystem("bigBoom", 150, scene);
+  ex.particleTexture = new BABYLON.Texture(
+    "https://assets.babylonjs.com/textures/flare.png",
+    scene,
+  );
+  ex.emitter = pos.clone();
+  ex.minEmitBox = ex.maxEmitBox = new BABYLON.Vector3(0, 0, 0);
+  ex.color1 = new BABYLON.Color4(1, 0.6, 0, 1);
+  ex.color2 = new BABYLON.Color4(1, 1, 0, 1);
+  ex.colorDead = new BABYLON.Color4(0, 0, 0, 0);
+  ex.minSize = 0.3;
+  ex.maxSize = 0.8;
+  ex.minLifeTime = 0.1;
+  ex.maxLifeTime = 0.2;
+  ex.emitRate = 200;
+  ex.blendMode = BABYLON.ParticleSystem.BLENDMODE_ADD;
+  ex.gravity = new BABYLON.Vector3(0, -2, 0);
+  ex.direction1 = new BABYLON.Vector3(-1, 1, -1);
+  ex.direction2 = new BABYLON.Vector3(1, 1, 1);
+  ex.minEmitPower = 2;
+  ex.maxEmitPower = 3;
+  ex.targetStopDuration = 0.1;
   ex.disposeOnStop = true;
   ex.start();
 }

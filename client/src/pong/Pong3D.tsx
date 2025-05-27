@@ -11,6 +11,7 @@ import { StartScreen } from "./components/StartScreen";
 import { TournamentSetup } from "./components/TournamentSetup";
 import { PauseOverlay } from "./components/Overlays/PauseOverlay";
 import { Scoreboard } from "./components/Scoreboard";
+import { GoalBanner } from "./components/GoalBanner";
 import { EscMenu } from "./components/Overlays/EscMenu";
 
 import { useTournament } from "./hooks/useTournament";
@@ -37,6 +38,8 @@ export default function Pong3D() {
   // Score
   const [scoreLeft, setScoreLeft] = useState(0);
   const [scoreRight, setScoreRight] = useState(0);
+  const [showGoal, setShowGoal] = useState(false);
+  const goalTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Pause / ESC
   const [isPaused, setIsPaused] = useState(false);
@@ -110,6 +113,9 @@ export default function Pong3D() {
       onScoreUpdate: (pl, ai) => {
         setScoreLeft(pl);
         setScoreRight(ai);
+        setShowGoal(true);
+        if (goalTimeout.current) clearTimeout(goalTimeout.current);
+        goalTimeout.current = setTimeout(() => setShowGoal(false), 1000);
       },
       onPauseChange: (paused) => {
         setIsPaused(paused);
@@ -247,6 +253,16 @@ export default function Pong3D() {
     setShowStartScreen(false);
     setShowSetup(true);
   }
+
+  function startRemoteDuel() {
+    setShowStartScreen(false);
+    console.warn("Remote duel not implemented");
+  }
+
+  function startRemoteTournament() {
+    setShowStartScreen(false);
+    console.warn("Remote tournament not implemented");
+  }
   function addPlayer() {
     const MAX_PLAYERS = 8;
     if (players.length < MAX_PLAYERS) {
@@ -331,6 +347,12 @@ export default function Pong3D() {
     return () => window.removeEventListener("keydown", handleStart);
   }, [waitingStart, gameApi]);
 
+  useEffect(() => {
+    return () => {
+      if (goalTimeout.current) clearTimeout(goalTimeout.current);
+    };
+  }, []);
+
   return (
     <div
       className="
@@ -358,6 +380,7 @@ export default function Pong3D() {
         scoreLeft={scoreLeft}
         scoreRight={scoreRight}
       />
+      <GoalBanner visible={showGoal} />
       {/* PAUSE overlay */}
       {isPaused && !showMenu && <PauseOverlay waitingStart={waitingStart} />}
       {/* ESC MENU */}
@@ -426,6 +449,8 @@ export default function Pong3D() {
           onSingleAI={startAI}
           onLocal2P={startLocal}
           onTournament={openTournament}
+          onRemoteDuel={startRemoteDuel}
+          onRemoteTournament={startRemoteTournament}
         />
       )}
       {/* TOURNAMENT SETUP */}

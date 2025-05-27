@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { StarryBackground } from "./StarryBackground";
+import { SpaceBackground } from "./SpaceBackground";
 
 interface TournamentSetupProps {
   players: string[];
@@ -89,46 +89,49 @@ export function TournamentSetup({
     emptyError,
   ]);
   return (
-    <div className="absolute inset-0 z-[80] flex items-center justify-center bg-black">
-      <StarryBackground />
-      {/* Neon dialog */}
+    <SpaceBackground>
+      {/* interactive panel (inputs & buttons) with higher z-index */}
       <div
         className="
           relative
-          bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900
-          rounded-3xl
-          p-10
-          border-4 border-pink-400
-          shadow-neon-lg
+          z-10
+          pointer-events-auto
+          rounded-lg
+          border-2
+          border-[#0A7FC9]
+          bg-black
+          bg-opacity-30
+          p-12
           text-center
-          max-w-md w-full
+          shadow-[0_0_15px_rgba(0,255,255,0.7)]
+          w-[80%]
+          max-w-[800px]
         "
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-pink-300 hover:text-red-400 text-lg font-bold"
+          className="absolute top-2 right-2 text-[#0A7FC9] hover:text-red-400 text-lg font-bold"
         >
           ✕
         </button>
         {/* Title */}
         <h2
           className="
-            text-2xl md:text-3xl
-            font-bold
-            text-transparent
-            bg-clip-text bg-gradient-to-r from-pink-300 via-red-400 to-purple-500
-            glow
             mb-6
+            text-4xl
+            font-extrabold
+            text-[#D3E0FB]
+            drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]
           "
         >
           Tournament setup
         </h2>
 
         {/* Input list */}
-        <div className="flex flex-col space-y-3 mb-6">
+        <div className="flex flex-col space-y-4 items-center">
           {players.map((alias, i) => (
-            <div key={i} className="relative">
+            <div key={i} className="relative flex justify-center w-full">
               <input
                 ref={(el) => (inputRefs.current[i] = el)}
                 tabIndex={0}
@@ -136,22 +139,28 @@ export function TournamentSetup({
                 onMouseEnter={() => setIndex(i)}
                 value={alias}
                 onChange={(e) => onChangePlayerName(i, e.target.value)}
+                placeholder={`Player ${i + 1}`}
                 className="
-                  w-full
-                  bg-black bg-opacity-20
-                  border-2 border-pink-400
-                  rounded-lg
-                  px-4 py-2
-                  pr-8
-                  text-white
-                  placeholder-pink-300
-                  focus:outline-none focus:ring-2 focus:ring-pink-500
+                  w-96
+                  rounded-xl
+                  border-2
+                  border-[#297db1]
+                  bg-black
+                  bg-opacity-50
+                  px-4
+                  py-2
+                  text-center
+                  text-[#D3E0FB]
+                  shadow-[0_0_8px_rgba(0,255,255,0.5)]
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-[#0A7FC9]
                   transition
                 "
               />
               <button
                 type="button"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-pink-300 hover:text-red-400"
+                className="absolute right-0 top-1/2 -translate-y-1/2 text-[#297db1] hover:text-red-400"
                 onClick={() => onRemovePlayer(i)}
               >
                 ✕
@@ -172,7 +181,7 @@ export function TournamentSetup({
         )}
 
         {/* Actions */}
-        <div className="flex justify-center gap-6">
+        <div className="mt-8 flex justify-center gap-6">
           <button
             ref={addRef}
             tabIndex={0}
@@ -180,25 +189,25 @@ export function TournamentSetup({
             onMouseEnter={() => setIndex(players.length)}
             onClick={onAddPlayer}
             disabled={players.length >= MAX_PLAYERS}
-            className={`
-              glow
-              neon-button
-              border-2 border-pink-300
+            className="
               rounded-xl
-              px-5 py-2
-              text-pink-300
-              bg-transparent
-              hover:bg-pink-900 hover:bg-opacity-30
-              transition-transform duration-200
+              border-2
+              border-[#9010CE]
+              bg-black
+              bg-opacity-30
+              px-6
+              py-3
+              text-xl
+              font-semibold
+              text-[#743b91]
+              shadow-[0_0_12px_rgba(192,38,211,0.7)]
               hover:scale-105
-              focus:outline-none
-              ${index === players.length ? 'bg-pink-900 bg-opacity-30 scale-105' : ''}
-              ${players.length >= MAX_PLAYERS ? 'opacity-50 cursor-not-allowed' : ''}
-            `}
+              transition
+              disabled:opacity-50 disabled:cursor-not-allowed
+            "
           >
             + Add player
           </button>
-
           <button
             ref={startRef}
             tabIndex={0}
@@ -206,25 +215,22 @@ export function TournamentSetup({
             onMouseEnter={() => setIndex(players.length + 1)}
             onClick={onStartTournament}
             disabled={!validCount || nameError || duplicateError || emptyError}
-            className={`
-              glow
-              neon-button
-              border-2 border-pink-400
+            className="
               rounded-xl
-              px-8 py-3
-              text-xl text-pink-300
-              bg-transparent
-              hover:bg-pink-900 hover:bg-opacity-30
-              transition-transform duration-200
+              border-2
+              border-[#BD0E86]
+              bg-black
+              bg-opacity-30
+              px-10
+              py-3
+              text-2xl
+              font-semibold
+              text-[#832264]
+              shadow-[0_0_15px_rgba(255,29,153,0.7),0_0_24px_rgba(255,29,153,0.4)]
               hover:scale-105
-              focus:outline-none
-              ${index === players.length + 1 ? 'bg-pink-900 bg-opacity-30 scale-105' : ''}
-              ${
-                !validCount || nameError || duplicateError || emptyError
-                  ? 'opacity-50 cursor-not-allowed'
-                  : ''
-              }
-            `}
+              transition
+              disabled:opacity-50 disabled:cursor-not-allowed
+            "
           >
             START
           </button>
@@ -235,6 +241,6 @@ export function TournamentSetup({
           </p>
         )}
       </div>
-    </div>
+    </SpaceBackground>
   );
 }

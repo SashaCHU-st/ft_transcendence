@@ -1,10 +1,11 @@
 // client/src/pong/physics.ts
 import * as BABYLON from "@babylonjs/core";
 import type { SceneObjects } from "./scene";
-import { boom } from "./scene";
+import { boom, bigBoom } from "./scene";
 import { clamp } from "./utils";
 import type { GameState } from "./pong";
 import { GameMode } from "./pong";
+import { playPaddleSound } from "./sound";
 
 export function stepPhysics(state: GameState, objs: SceneObjects, dt: number) {
   if (!state.gameStarted || state.paused) return;
@@ -53,21 +54,23 @@ export function stepPhysics(state: GameState, objs: SceneObjects, dt: number) {
     state.match.aiScore++;
     state.onScoreUpdate?.(state.match.playerScore, state.match.aiScore);
     checkWin(state);
-    resetBall(state, objs);
+    if (state.gameStarted) playGoalAnimation(state, objs);
   } else if (ball.position.x > state.physics.FIELD_WIDTH) {
     state.match.playerScore++;
     state.onScoreUpdate?.(state.match.playerScore, state.match.aiScore);
     checkWin(state);
-    resetBall(state, objs);
+    if (state.gameStarted) playGoalAnimation(state, objs);
   }
 
   if (hitPaddle(ball, leftPaddle, 1)) {
     state.input.ballDX = Math.abs(state.input.ballDX);
     boom(scene, ball.position);
+    playPaddleSound();
   }
   if (hitPaddle(ball, rightPaddle, -1)) {
     state.input.ballDX = -Math.abs(state.input.ballDX);
     boom(scene, ball.position);
+    playPaddleSound();
   }
 }
 
@@ -99,13 +102,9 @@ function endGame(state: GameState, winnerSide: "left" | "right") {
   const loserName =
     winnerSide === "left" ? state.match.rightName : state.match.leftName;
   const winnerScore =
-    winnerSide === "left"
-      ? state.match.playerScore
-      : state.match.aiScore;
+    winnerSide === "left" ? state.match.playerScore : state.match.aiScore;
   const loserScore =
-    winnerSide === "left"
-      ? state.match.aiScore
-      : state.match.playerScore;
+    winnerSide === "left" ? state.match.aiScore : state.match.playerScore;
 
   if (state.currentMode === GameMode.Tournament) {
     // tournament => call onMatchEndCallback
@@ -132,6 +131,27 @@ export function resetBall(state: GameState, objs: SceneObjects) {
     state.physics.BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
 }
 
+export function spawnBall(objs: SceneObjects) {
+  const { ball, scene } = objs;
+  const FR = 60;
+  if (typeof (scene as any).beginAnimation !== "function") return;
+  boom(scene, ball.position);
+  ball.scaling = new BABYLON.Vector3(0, 0, 0);
+  const anim = new BABYLON.Animation(
+    "spawn",
+    "scaling",
+    FR,
+    BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+    BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT,
+  );
+  anim.setKeys([
+    { frame: 0, value: new BABYLON.Vector3(0, 0, 0) },
+    { frame: FR * 0.5, value: new BABYLON.Vector3(1, 1, 1) },
+  ]);
+  ball.animations = [anim];
+  scene.beginAnimation(ball, 0, FR * 0.5, false);
+}
+
 export function resetScores(state: GameState) {
   state.match.playerScore = 0;
   state.match.aiScore = 0;
@@ -142,4 +162,34 @@ export function resetPositions(state: GameState, objs: SceneObjects) {
   leftPaddle.position.set(-state.physics.FIELD_WIDTH + 1.5, 0.5, 0);
   rightPaddle.position.set(state.physics.FIELD_WIDTH - 1.5, 0.5, 0);
   resetBall(state, objs);
+  spawnBall(objs);
+}
+
+export function playGoalAnimation(state: GameState, objs: SceneObjects) {
+  const { ball, scene } = objs;
+  const FR = 60;
+
+  state.paused = true;
+  bigBoom(scene, ball.position);
+  const scaleDown = new BABYLON.Animation(
+    "goalDown",
+    "scaling",
+    FR,
+    BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+    BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT,
+  );
+  scaleDown.setKeys([
+    { frame: 0, value: ball.scaling.clone() },
+    { frame: FR * 0.1, value: new BABYLON.Vector3(0, 0, 0) },
+  ]);
+  ball.animations = [scaleDown];
+  scene.beginAnimation(ball, 0, FR * 0.1, false);
+
+  if (state.goalTimeout) clearTimeout(state.goalTimeout);
+  state.goalTimeout = setTimeout(() => {
+    resetBall(state, objs);
+    spawnBall(objs);
+    state.paused = false;
+    state.goalTimeout = null;
+  }, 1000);
 }
