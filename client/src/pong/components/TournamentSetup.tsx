@@ -91,6 +91,8 @@ export function TournamentSetup({
   return (
     <SpaceBackground>
       {/* interactive panel (inputs & buttons) with higher z-index */}
+    <SpaceBackground>
+      {/* interactive panel (inputs & buttons) with higher z-index */}
       <div
         className="
           relative
@@ -102,7 +104,18 @@ export function TournamentSetup({
           bg-black
           bg-opacity-30
           p-12
+          z-10
+          pointer-events-auto
+          rounded-lg
+          border-2
+          border-[#0A7FC9]
+          bg-black
+          bg-opacity-30
+          p-12
           text-center
+          shadow-[0_0_15px_rgba(0,255,255,0.7)]
+          w-[80%]
+          max-w-[800px]
           shadow-[0_0_15px_rgba(0,255,255,0.7)]
           w-[80%]
           max-w-[800px]
@@ -119,6 +132,10 @@ export function TournamentSetup({
         <h2
           className="
             mb-6
+            text-4xl
+            font-extrabold
+            text-[#D3E0FB]
+            drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]
             text-4xl
             font-extrabold
             text-[#D3E0FB]
@@ -201,6 +218,16 @@ export function TournamentSetup({
               font-semibold
               text-[#743b91]
               shadow-[0_0_12px_rgba(192,38,211,0.7)]
+              border-2
+              border-[#9010CE]
+              bg-black
+              bg-opacity-30
+              px-6
+              py-3
+              text-xl
+              font-semibold
+              text-[#743b91]
+              shadow-[0_0_12px_rgba(192,38,211,0.7)]
               hover:scale-105
               transition
               disabled:opacity-50 disabled:cursor-not-allowed
@@ -227,6 +254,16 @@ export function TournamentSetup({
               font-semibold
               text-[#832264]
               shadow-[0_0_15px_rgba(255,29,153,0.7),0_0_24px_rgba(255,29,153,0.4)]
+              border-2
+              border-[#BD0E86]
+              bg-black
+              bg-opacity-30
+              px-10
+              py-3
+              text-2xl
+              font-semibold
+              text-[#832264]
+              shadow-[0_0_15px_rgba(255,29,153,0.7),0_0_24px_rgba(255,29,153,0.4)]
               hover:scale-105
               transition
               disabled:opacity-50 disabled:cursor-not-allowed
@@ -241,6 +278,7 @@ export function TournamentSetup({
           </p>
         )}
       </div>
+    </SpaceBackground>
     </SpaceBackground>
   );
 }

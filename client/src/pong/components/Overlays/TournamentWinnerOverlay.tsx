@@ -61,12 +61,19 @@ export function TournamentWinnerOverlay({
         </h2>
 
         <p className="text-3xl md:text-4xl font-semibold text-[#69ff6c] drop-shadow-[0_0_15px_rgba(105,255,108,0.8)]">
+
+        <p className="text-3xl md:text-4xl font-semibold text-[#69ff6c] drop-shadow-[0_0_15px_rgba(105,255,108,0.8)]">
           {winner}
         </p>
+
 
         <button
           onClick={onClose}
           className="
+            px-8 py-4 text-xl md:text-2xl font-bold rounded-full bg-transparent
+            animate-neon-border
+            drop-shadow-[0_0_20px_rgba(255,20,147,0.9),0_0_40px_rgba(0,255,255,0.6)]
+            hover:scale-110 transition-transform
             px-8 py-4 text-xl md:text-2xl font-bold rounded-full bg-transparent
             animate-neon-border
             drop-shadow-[0_0_20px_rgba(255,20,147,0.9),0_0_40px_rgba(0,255,255,0.6)]
@@ -77,6 +84,7 @@ export function TournamentWinnerOverlay({
           OK
         </button>
       </div>
+    </SpaceBackground>
     </SpaceBackground>
   );
 }
