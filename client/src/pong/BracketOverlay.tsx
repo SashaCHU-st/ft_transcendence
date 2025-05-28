@@ -1,4 +1,9 @@
-import { SpaceBackground } from "./components/SpaceBackground";
+import { OverlayWrapper } from "./components/Overlays/OverlayWrapper";
+import {
+  OverlayCard,
+  OverlayButton,
+} from "./components/Overlays/OverlayComponents";
+import { useEnterKey } from "./hooks/useEnterKey";
 
 export interface PlayerSlot {
   name: string;
@@ -61,26 +66,11 @@ export default function BracketOverlay({
   }
 
   const totalRounds = rounds.length;
+  useEnterKey(onClose);
 
   return (
-    <SpaceBackground>
-      <div
-        className="
-          relative
-          h-[90%]
-          w-[90%]
-          overflow-auto
-          rounded
-          border-2
-          border-[#0A7FC9]
-          p-4
-          text-white
-          flex
-          flex-col
-          items-center
-          bg-black bg-opacity-30
-          shadow-[0_0_15px_rgba(0,255,255,0.7)]"
-      >
+    <OverlayWrapper>
+      <OverlayCard className="relative h-[90%] w-[90%] overflow-auto flex flex-col items-center">
         <h2
           className="
           mb-4
@@ -252,23 +242,10 @@ export default function BracketOverlay({
           })}
         </div>
 
-        <button
-          onClick={onClose}
-          className="
-            absolute
-            right-4
-            top-4
-            rounded-xl
-            border-2 border-[#0A7FC9]
-            bg-black bg-opacity-30
-            px-4 py-2
-            text-[#297db1]
-            shadow-[0_0_15px_rgba(0,255,255,0.7)]
-            hover:scale-105 transition"
-        >
+        <OverlayButton onClick={onClose} className="absolute right-4 top-4">
           Close
-        </button>
-      </div>
-    </SpaceBackground>
+        </OverlayButton>
+      </OverlayCard>
+    </OverlayWrapper>
   );
 }
