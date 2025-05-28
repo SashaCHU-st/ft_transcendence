@@ -30,6 +30,13 @@ interface BracketOverlayProps {
   onClose: () => void;
 }
 
+function PlayerName({ name, isPredicted }: PlayerSlot) {
+  const classes = isPredicted
+    ? `italic text-orange-300 text-[24px] text-shadow-[0_0_4px_rgba(255,147,0,0.6)]`
+    : `text-[#D3E0FB] text-[24px] text-shadow-[0_0_4px_rgba(211,224,251,0.6)]`;
+  return <div className={classes}>{name || "TBD"}</div>;
+}
+
 export default function BracketOverlay({
   rounds,
   onClose,
@@ -186,22 +193,7 @@ export default function BracketOverlay({
                           ${isCurrent ? highlightStyle : ""}
                         `}
                       >
-                        <div
-                          className={
-                            p1.isPredicted
-                              ? `
-                                italic
-                                text-orange-300
-                                text-[24px]
-                                text-shadow-[0_0_4px_rgba(255,147,0,0.6)]`
-                              : `
-                                text-[#D3E0FB]
-                                text-[24px]
-                                text-shadow-[0_0_4px_rgba(211,224,251,0.6)]`
-                          }
-                        >
-                          {p1.name || "TBD"}
-                        </div>
+                        <PlayerName {...p1} />
                         <div
                           className="
                               text-[18px]
@@ -210,22 +202,7 @@ export default function BracketOverlay({
                         >
                           vs
                         </div>
-                        <div
-                          className={
-                            p2.isPredicted
-                              ? `
-                                italic
-                                text-orange-300
-                                text-[24px]
-                                text-shadow-[0_0_4px_rgba(255,147,0,0.6)]`
-                              : `
-                                text-[#D3E0FB]
-                                text-[24px]
-                                text-shadow-[0_0_4px_rgba(211,224,251,0.6)]`
-                          }
-                        >
-                          {p2.name || "TBD"}
-                        </div>
+                        <PlayerName {...p2} />
                         {match.winner && (
                           <div
                             className="
