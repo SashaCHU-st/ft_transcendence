@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { OverlayWrapper } from "./components/Overlays/OverlayWrapper";
 import {
   OverlayCard,
@@ -33,7 +34,7 @@ export default function BracketOverlay({
   rounds,
   onClose,
 }: BracketOverlayProps) {
-  const currentMatch = (() => {
+  const currentMatch = useMemo(() => {
     for (let r = 0; r < rounds.length; r++) {
       for (let m = 0; m < rounds[r].length; m++) {
         const match = rounds[r][m];
@@ -47,7 +48,7 @@ export default function BracketOverlay({
       }
     }
     return null;
-  })();
+  }, [rounds]);
 
   function getRoundLabel(rIndex: number, totalRounds: number): string {
     const roundStages: Record<number, string[]> = {
