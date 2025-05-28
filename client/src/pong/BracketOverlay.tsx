@@ -113,12 +113,12 @@ export default function BracketOverlay({
                   shadow-[0_0_15px_rgba(255,29,153,0.7),0_0_24px_rgba(255,29,153,0.4)]
                   hover:scale-105 transition`
                 : label === "Semifinals"
-                  ? `
+                ? `
                   border-2 border-[#9010CE]
                   bg-black bg-opacity-30
                   shadow-[0_0_12px_rgba(192,38,211,0.7)]
                   hover:scale-105 transition`
-                  : `
+                : `
                   border-2 border-[#0A7FC9]
                   bg-black bg-opacity-30
                   shadow-[0_0_15px_rgba(0,255,255,0.7),0_0_24px_rgba(0,255,255,0.4)]
@@ -132,7 +132,7 @@ export default function BracketOverlay({
                   flex-col
                   items-center
                   justify-center
-                  min-w-[150px]"
+                  w-[150px]"
               >
                 <h3
                   className="
@@ -162,14 +162,27 @@ export default function BracketOverlay({
                       currentMatch.mIndex === mIndex;
 
                     const highlightStyle =
-                      "border-yellow-300 border-4 ring-4 ring-yellow-300 shadow-[0_0_15px_rgba(255,255,0,0.9)]";
+                      label === "Quarterfinals"
+                        ? `
+                            border-[#FF4CB5] border-4
+                            ring-4 ring-[#FF4CB5]
+                            shadow-[0_0_20px_rgba(255,76,181,0.9),0_0_32px_rgba(255,76,181,0.6)]`
+                        : label === "Semifinals"
+                        ? `
+                            border-[#B94CFF] border-4
+                            ring-4 ring-[#B94CFF]
+                            shadow-[0_0_20px_rgba(185,76,255,0.9),0_0_32px_rgba(185,76,255,0.6)]`
+                        : `
+                            border-[#40BFFF] border-4
+                            ring-4 ring-[#40BFFF]
+                            shadow-[0_0_20px_rgba(64,191,255,0.9),0_0_32px_rgba(64,191,255,0.6)]`;
 
                     return (
                       <div
                         key={mIndex}
                         className={`
                           flex
-                          min-w-[198px]
+                          w-[198px]
                           flex-col
                           items-center
                           rounded-xl
@@ -196,7 +209,7 @@ export default function BracketOverlay({
                         </div>
                         <div
                           className="
-                          text-[21px]
+                              text-[18px]
                           text-[#743b91]
                           text-shadow-[0_0_4px_rgba(147,51,234,0.6)]"
                         >
@@ -222,7 +235,7 @@ export default function BracketOverlay({
                           <div
                             className="
                             mt-3
-                            text-[21px]
+                              text-[18px]
                             text-[#74C0FC]
                             text-shadow-[0_0_4px_rgba(74,222,128,0.6)]"
                           >
