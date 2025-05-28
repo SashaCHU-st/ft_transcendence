@@ -1,4 +1,4 @@
-import { SpaceBackground } from "../SpaceBackground";
+import { OverlayWrapper } from "./OverlayWrapper";
 import { useEnterKey } from "../../hooks/useEnterKey";
 import { OverlayCard, OverlayButton } from "./OverlayComponents";
 
@@ -23,7 +23,7 @@ export function MatchResultOverlay({
 }: MatchResultOverlayProps) {
   useEnterKey(onContinue);
   return (
-    <SpaceBackground>
+    <OverlayWrapper>
       <OverlayCard>
         <h2
           className="
@@ -85,6 +85,6 @@ export function MatchResultOverlay({
         )}
         <OverlayButton onClick={onContinue}>Continue</OverlayButton>
       </OverlayCard>
-    </SpaceBackground>
+    </OverlayWrapper>
   );
 }

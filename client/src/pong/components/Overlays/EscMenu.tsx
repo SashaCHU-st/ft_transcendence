@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { SpaceBackground } from "../SpaceBackground";
+import { OverlayWrapper } from "./OverlayWrapper";
 
 interface EscMenuProps {
   menuItems: string[];
@@ -60,25 +60,23 @@ export function EscMenu({ menuItems, menuIndex, setMenuIndex, onMenuAction }: Es
   };
 
   return (
-    <SpaceBackground>
-      <div className="relative z-10 flex items-center justify-center h-full w-full">
-        <div className="flex flex-col items-center space-y-6 text-center">
-          {menuItems.map((text, idx) => {
-            const style = styles[text] ?? styles["Resume"];
-            return (
-              <button
-                key={idx}
-                onMouseEnter={() => setMenuIndex(idx)}
-                onClick={() => onMenuAction(idx)}
-                className={`menu-btn w-[400px] py-4 text-lg font-bold border-2 rounded-xl bg-black bg-opacity-10 transition-transform duration-200 hover:scale-105 ${style.base} ${menuIndex === idx ? style.active + ' scale-105' : ''}`}
-              >
-                {text}
-              </button>
-            );
-          })}
-        </div>
+    <OverlayWrapper>
+      <div className="flex flex-col items-center space-y-6 text-center">
+        {menuItems.map((text, idx) => {
+          const style = styles[text] ?? styles["Resume"];
+          return (
+            <button
+              key={idx}
+              onMouseEnter={() => setMenuIndex(idx)}
+              onClick={() => onMenuAction(idx)}
+              className={`menu-btn w-[400px] py-4 text-lg font-bold border-2 rounded-xl bg-black bg-opacity-10 transition-transform duration-200 hover:scale-105 ${style.base} ${menuIndex === idx ? style.active + ' scale-105' : ''}`}
+            >
+              {text}
+            </button>
+          );
+        })}
       </div>
-    </SpaceBackground>
+    </OverlayWrapper>
   );
 }
 

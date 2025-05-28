@@ -1,4 +1,4 @@
-import { SpaceBackground } from "../SpaceBackground";
+import { OverlayWrapper } from "./OverlayWrapper";
 import { useEnterKey } from "../../hooks/useEnterKey";
 import { OverlayCard, OverlayButton } from "./OverlayComponents";
 
@@ -17,7 +17,7 @@ export function GameOverOverlay({
 }: GameOverOverlayProps) {
   useEnterKey(onOk);
   return (
-    <SpaceBackground>
+    <OverlayWrapper>
       <OverlayCard>
         <h2
           className="
@@ -43,6 +43,6 @@ export function GameOverOverlay({
         </p>
         <OverlayButton onClick={onOk}>OK</OverlayButton>
       </OverlayCard>
-    </SpaceBackground>
+    </OverlayWrapper>
   );
 }

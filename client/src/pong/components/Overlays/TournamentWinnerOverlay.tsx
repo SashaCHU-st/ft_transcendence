@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { SpaceBackground } from "../SpaceBackground";
+import { OverlayWrapper } from "./OverlayWrapper";
 import { useEnterKey } from "../../hooks/useEnterKey";
 import crownIcon from "../../png_icons/crown.png";
 import "./TournamentWinnerOverlay.css";
@@ -26,7 +26,7 @@ export function TournamentWinnerOverlay({
   );
 
   return (
-    <SpaceBackground>
+    <OverlayWrapper>
       {/* Fireworks */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         {fireworks.map((style, i) => (
@@ -71,6 +71,6 @@ export function TournamentWinnerOverlay({
           OK
         </button>
       </div>
-    </SpaceBackground>
+    </OverlayWrapper>
   );
 }
