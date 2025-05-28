@@ -181,6 +181,7 @@ const Profile: React.FC = () => {
     setIsModalOpen, // Function to toggle profile modal
     handleSaveProfile, // Handler to save profile changes
     handlePlay, // Handler to start a game
+    handleRemove
   } = useProfile();
 
   
@@ -202,7 +203,7 @@ const Profile: React.FC = () => {
       (f) => f.username.toLowerCase() === username.toLowerCase()
     );
 
-    // If found, set expandUsername to trigger card expansion and show success toast
+    //If found, set expandUsername to trigger card expansion and show success toast
     if (foundInPlayers || foundInFriends) {
       setExpandUsername(username);
       toast.success(`Found user: ${username}`);
@@ -273,7 +274,7 @@ const Profile: React.FC = () => {
           selectedBot={selectedBot}
           handlePlay={handlePlay}
           expandUsername={expandUsername}
-          
+           handleRemove={handleRemove}
         />
 
         {/* Mobile-specific layout for smaller screens */}

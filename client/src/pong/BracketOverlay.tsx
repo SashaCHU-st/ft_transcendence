@@ -208,6 +208,7 @@ export default function BracketOverlay({
 				{/* Rounds container: Displays all rounds, either stacked (mobile) or side-by-side (desktop) */}
 				<div className="
 					flex
+					flex-wrap
 					flex-col
 					md:flex-row
 					justify-center

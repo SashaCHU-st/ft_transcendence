@@ -26,3 +26,52 @@ export async function addfavorites(req, reply) {
     return reply.code(500).send({ message: "Something went wrong" });
   }
 }
+
+// export async function  favorites(request, reply) {
+//     console.log();
+//     try{
+//       const favoritesUser = db.prepare(`SELECT * FROM favorites`).run();
+
+//       return reply.code(200).send({  favoritesUser });
+
+//     }catch (err) {
+//     console.error("Database error:", err.message);
+//     return reply.code(500).send({ message: "Something went wrong" });
+//   }
+// }
+
+export async function favorites(request, reply) {
+  const user_id = request.query.user_id;
+  if (!user_id) {
+    return reply.code(400).send({ message: "user_id is required" });
+  }
+
+  try {
+    const favoritesUser = db
+      .prepare(`SELECT * FROM favorites WHERE user_id = ?`)
+      .all(user_id);
+
+    return reply.code(200).send({ favoritesUser });
+  } catch (err) {
+    console.error("Database error:", err.message);
+    return reply.code(500).send({ message: "Something went wrong" });
+  }
+}
+
+export async function deletefavorites(req, reply) {
+  console.log("we in delete");
+
+  const {user_id, username} = req.body;
+
+  try
+  {
+    const deleteFav = db
+    .prepare(`DELETE FROM favorites WHERE user_id = ? AND username =?`)
+    .run(user_id, username)
+
+    return reply.code(200).send({ deleteFav });
+  }catch (err) {
+    console.error("Database error:", err.message);
+    return reply.code(500).send({ message: "Something went wrong" });
+  }
+}

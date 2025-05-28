@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import PlayerCard from "./PlayerCard";
 import { CardWrapper } from "./types/ui";
 import { UserInfo } from "./types/UserInfo";
+import { addToFavorites } from "./AddFavorites";
+//import { deleteFromFavorites } from "./DeleteFavorites";
 
 // Props definition for UserList component
 // - users: array of UserInfo objects to display
@@ -12,13 +14,14 @@ interface Props {
   users: UserInfo[];
   variant: "players" | "friends";
   expandUsername?: string;
-   onAdd?: (username: string) => void; 
+  onAdd?: (username: string) => void;
+  onRemove?: (username: string)=> void;
 }
 
-const UserList: React.FC<Props> = ({ users, variant, expandUsername }) => {
+const UserList: React.FC<Props> = ({ users, variant, expandUsername, onRemove}) => {
   // State for tracking which card index is expanded
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-
+ 
   // When expandUsername changes, find matching user and auto-expand
   useEffect(() => {
     if (expandUsername) {
@@ -37,8 +40,26 @@ const UserList: React.FC<Props> = ({ users, variant, expandUsername }) => {
   };
 
   // Stub handlers for friend/player actions
-  const handleAdd = (username: string) => console.log(`Add ${username}`);
-  const handleRemove = (username: string) => console.log(`Remove ${username}`);
+ // const handleAdd = (username: string) => console.log(`Add ${username}`);
+   const handleAdd = async (username: string) => {
+    try {
+       await addToFavorites(username);
+      console.log(`Added ${username} to favorites`);
+      
+    } catch (err) {
+      console.error("Failed to add favorite:", err);
+    }
+  };
+  // const handleRemove = async (username: string) => {
+  //   try{
+  //     await deleteFromFavorites(username);
+     
+  //     console.log(`Remove ${username}`);
+  //   }catch (err) {
+  //     console.error("Failed to delete from favorite:", err);
+  //   }
+
+  // }
   const handleChallenge = (username: string) => console.log(`Challenge ${username}`);
 
   // If no users, render nothing
@@ -75,13 +96,13 @@ const UserList: React.FC<Props> = ({ users, variant, expandUsername }) => {
             ? user.avatar
             : "/prof_img/avatar1.png";
 
-        // Attach action callbacks based on list variant
+            // Attach action callbacks based on list variant
         const userWithActions: UserInfo = {
           ...user,
           avatar: avatarSrc,
           onRemove:
-            variant === "friends"
-              ? () => handleRemove(user.username)
+            variant === "friends" && onRemove
+              ? () => onRemove(user.username)
               : undefined,
           onChallenge: () => handleChallenge(user.username),
           onAdd:
