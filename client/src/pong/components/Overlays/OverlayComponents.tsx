@@ -19,21 +19,21 @@ interface OverlayButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
   children: React.ReactNode;
-  color?: "magenta" | "cyan";
+  color?: "magenta" | "blue";
 }
 
 const colorClasses: Record<string, string> = {
   magenta: `
     border-[#BD0E86]
-    bg-black bg-opacity-30
+    bg-black bg-opacity-40
     text-[#832264]
     shadow-[0_0_15px_rgba(255,29,153,0.7)]
     hover:scale-105 transition
   `,
-  cyan: `
-    border-[#0A7FC9]
-    bg-black bg-opacity-30
-    text-[#0A7FC9]
+  blue: `
+    border-[#40BFFF]
+    bg-black bg-opacity-40
+    text-[#40BFFF]
     shadow-[0_0_15px_rgba(0,255,255,0.7)]
     hover:scale-105 transition
   `,
@@ -45,12 +45,12 @@ const colorClasses: Record<string, string> = {
  * A stylized button component for overlays with color variants.
  *
  * Props:
- * - color: "magenta" | "cyan" (optional) — defines button theme. Defaults to "magenta".
+ * - color: "magenta" | "blue" (optional) — defines button theme. Defaults to "magenta".
  * - className: (optional) — append custom classes if needed.
  *
  * Example usage:
  * <OverlayButton>Play again</OverlayButton>         // magenta (default)
- * <OverlayButton color="cyan">Close</OverlayButton> // cyan themed
+ * <OverlayButton color="blue">Close</OverlayButton> // blue themed
  */
 export function OverlayButton({
   children,

@@ -192,7 +192,7 @@ export default function BracketOverlay({
         </div>
 
         <OverlayButton
-          color="cyan"
+          color="blue"
           onClick={onClose}
           className="absolute right-4 top-4"
         >
