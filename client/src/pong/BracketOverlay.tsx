@@ -45,18 +45,19 @@ export default function BracketOverlay({
   })();
 
   function getRoundLabel(rIndex: number, totalRounds: number): string {
-    if (totalRounds === 1) {
-      return "Final";
-    } else if (totalRounds === 2) {
-      if (rIndex === 0) return "Semifinals";
-      return "Final";
-    } else if (totalRounds === 3) {
-      if (rIndex === 0) return "Quarterfinals";
-      if (rIndex === 1) return "Semifinals";
-      return "Final";
-    } else {
-      return `Round ${rIndex + 1}`;
+    const roundStages: Record<number, string[]> = {
+      1: ["Final"],
+      2: ["Semifinals", "Final"],
+      3: ["Quarterfinals", "Semifinals", "Final"],
+    };
+
+    const stages = roundStages[totalRounds];
+
+    if (stages && rIndex < stages.length) {
+      return stages[rIndex];
     }
+
+    return `Round ${rIndex + 1}`;
   }
 
   const totalRounds = rounds.length;
