@@ -83,7 +83,7 @@ export const updateUserProfile = async (
     }
   } catch (error: any) {
     if (error.response && error.response.data && error.response.data.errors) {
-      throw error.response.data.errors; // выбрасываем объект ошибок
+      throw error.response.data.errors; 
     }
     throw error;
   }
