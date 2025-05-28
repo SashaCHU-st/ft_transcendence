@@ -69,6 +69,39 @@ export default function BracketOverlay({
   const totalRounds = rounds.length;
   useEnterKey(onClose);
 
+  const matchStyles: Record<string, string> = {
+    Quarterfinals: `
+                  border-2 border-[#BD0E86]
+                  bg-black bg-opacity-30
+                  shadow-[0_0_15px_rgba(255,29,153,0.7),0_0_24px_rgba(255,29,153,0.4)]
+                  hover:scale-105 transition`,
+    Semifinals: `
+                  border-2 border-[#9010CE]
+                  bg-black bg-opacity-30
+                  shadow-[0_0_12px_rgba(192,38,211,0.7)]
+                  hover:scale-105 transition`,
+    Final: `
+                  border-2 border-[#0A7FC9]
+                  bg-black bg-opacity-30
+                  shadow-[0_0_15px_rgba(0,255,255,0.7),0_0_24px_rgba(0,255,255,0.4)]
+                  hover:scale-105 transition`,
+  };
+
+  const highlightStyles: Record<string, string> = {
+    Quarterfinals: `
+                            border-[#FF4CB5] border-4
+                            ring-4 ring-[#FF4CB5]
+                            shadow-[0_0_20px_rgba(255,76,181,0.9),0_0_32px_rgba(255,76,181,0.6)]`,
+    Semifinals: `
+                            border-[#B94CFF] border-4
+                            ring-4 ring-[#B94CFF]
+                            shadow-[0_0_20px_rgba(185,76,255,0.9),0_0_32px_rgba(185,76,255,0.6)]`,
+    Final: `
+                            border-[#40BFFF] border-4
+                            ring-4 ring-[#40BFFF]
+                            shadow-[0_0_20px_rgba(64,191,255,0.9),0_0_32px_rgba(64,191,255,0.6)]`,
+  };
+
   return (
     <OverlayWrapper>
       <OverlayCard className="relative h-[90%] w-[90%] overflow-auto flex flex-col items-center">
@@ -97,24 +130,7 @@ export default function BracketOverlay({
         >
           {rounds.map((round, rIndex) => {
             const label = getRoundLabel(rIndex, totalRounds);
-            const matchStyle =
-              label === "Quarterfinals"
-                ? `
-                  border-2 border-[#BD0E86]
-                  bg-black bg-opacity-30
-                  shadow-[0_0_15px_rgba(255,29,153,0.7),0_0_24px_rgba(255,29,153,0.4)]
-                  hover:scale-105 transition`
-                : label === "Semifinals"
-                ? `
-                  border-2 border-[#9010CE]
-                  bg-black bg-opacity-30
-                  shadow-[0_0_12px_rgba(192,38,211,0.7)]
-                  hover:scale-105 transition`
-                : `
-                  border-2 border-[#0A7FC9]
-                  bg-black bg-opacity-30
-                  shadow-[0_0_15px_rgba(0,255,255,0.7),0_0_24px_rgba(0,255,255,0.4)]
-                  hover:scale-105 transition`;
+            const matchStyle = matchStyles[label] ?? matchStyles.Final;
 
             return (
               <div
@@ -154,20 +170,7 @@ export default function BracketOverlay({
                       currentMatch.mIndex === mIndex;
 
                     const highlightStyle =
-                      label === "Quarterfinals"
-                        ? `
-                            border-[#FF4CB5] border-4
-                            ring-4 ring-[#FF4CB5]
-                            shadow-[0_0_20px_rgba(255,76,181,0.9),0_0_32px_rgba(255,76,181,0.6)]`
-                        : label === "Semifinals"
-                        ? `
-                            border-[#B94CFF] border-4
-                            ring-4 ring-[#B94CFF]
-                            shadow-[0_0_20px_rgba(185,76,255,0.9),0_0_32px_rgba(185,76,255,0.6)]`
-                        : `
-                            border-[#40BFFF] border-4
-                            ring-4 ring-[#40BFFF]
-                            shadow-[0_0_20px_rgba(64,191,255,0.9),0_0_32px_rgba(64,191,255,0.6)]`;
+                      highlightStyles[label] ?? highlightStyles.Final;
 
                     return (
                       <div
