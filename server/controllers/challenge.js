@@ -1,7 +1,7 @@
 import db from "../database/database.js";
 
 export async function challenge(req, reply) {
-  console.log("we in challenge");
+
 
   const { user_id, username } = req.body;
 
@@ -9,8 +9,6 @@ export async function challenge(req, reply) {
     const friends_id = db
       .prepare(`SELECT * FROM users WHERE username = ?`)
       .get(username);
-    console.log(friends_id);
-    console.log("FRIENDS_ID=>", friends_id.id);
     const sendRequest = db
       .prepare(`INSERT INTO challenge (user_id, friends_id) VALUES (?,?)`)
       .run(user_id, friends_id.id);
@@ -31,9 +29,6 @@ export async function notification(req, reply) {
         `SELECT * FROM challenge WHERE friends_id = ? AND confirmReq = 0`,
       )
       .get(user_id);
-    const whoSentReq = notification.user_id;
-    console.log(notification.user_id);
-    console.log(notification.friends_id);
 
     if (notification) {
       return reply
@@ -49,7 +44,6 @@ export async function notification(req, reply) {
 }
 
 export async function accept(req, reply) {
-  console.log("WE IN ACCEPT");
   const { user_id, friends_id } = req.body;
 
   try {
@@ -67,7 +61,6 @@ export async function accept(req, reply) {
 }
 
 export async function decline(req, reply) {
-  console.log("WE IN DECLINE");
   const { user_id, friends_id } = req.body;
 
   try {

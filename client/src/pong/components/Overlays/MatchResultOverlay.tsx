@@ -1,5 +1,11 @@
-import { useEffect } from "react";
-import { SpaceBackground } from "../SpaceBackground";
+import { OverlayWrapper } from "./OverlayWrapper";
+import { useEnterKey } from "../../hooks/useEnterKey";
+import {
+  OverlayCard,
+  OverlayButton,
+  OverlayHeading,
+  OverlayText,
+} from "./OverlayComponents";
 
 interface MatchResultOverlayProps {
   winner: string;
@@ -20,56 +26,18 @@ export function MatchResultOverlay({
   nextPair,
   onContinue,
 }: MatchResultOverlayProps) {
-  useEffect(() => {
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        onContinue();
-      }
-    }
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onContinue]);
+  useEnterKey(onContinue);
   return (
-    <SpaceBackground>
-      <div
-        className="
-          relative
-          z-10
-          rounded-2xl
-          border-2
-          border-[#0A7FC9]
-          p-6
-          text-center
-          bg-black
-          bg-opacity-30
-          shadow-[0_0_15px_rgba(0,255,255,0.7)]
-        "
-      >
-        <h2
-          className="
-            mb-2
-            text-2xl
-            font-extrabold
-            text-[#D3E0FB]
-            drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]
-          "
-        >
-          Match result
-        </h2>
-        <p
-          className="
-            mb-4
-            text-lg
-            text-[#D3E0FB]
-          "
-        >
+    <OverlayWrapper>
+      <OverlayCard>
+        <OverlayHeading className="mb-2 text-2xl">Match result</OverlayHeading>
+        <OverlayText className="text-lg">
           Winner: <b className="text-[#74C0FC]">{winner}</b>
           <br />
           Loser: <b className="text-[#743b91]">{loser}</b>
           <br />
           Score: {winnerScore}:{loserScore}
-        </p>
+        </OverlayText>
         {isFinal ? (
           <p
             className="
@@ -104,26 +72,8 @@ export function MatchResultOverlay({
             Next match is coming...
           </p>
         )}
-        <button
-          onClick={onContinue}
-          className="
-            mt-2
-            px-6
-            py-2
-            rounded-xl
-            border-2
-            border-[#BD0E86]
-            bg-black
-            bg-opacity-30
-            text-[#832264]
-            shadow-[0_0_15px_rgba(255,29,153,0.7)]
-            hover:scale-105
-            transition
-          "
-        >
-          Continue
-        </button>
-      </div>
-    </SpaceBackground>
+        <OverlayButton onClick={onContinue}>Continue</OverlayButton>
+      </OverlayCard>
+    </OverlayWrapper>
   );
 }

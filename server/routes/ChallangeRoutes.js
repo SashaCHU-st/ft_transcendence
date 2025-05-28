@@ -1,47 +1,30 @@
 import { challengeSchema, notificationSchema, acceptSchema } from "../schema/challenge.schema.js";
 import { challenge,notification,accept,decline } from "../controllers/challenge.js";
+import { validatedValues } from "../utils/validate.js";
+
 async function challengeRoutes(fastify) {
   fastify.post("/challenge", async (req, reply) => {
     const validated = challengeSchema.safeParse(req.body);
-    if (!validated.success) {
-      return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
-      });
-    }
-    return challenge({ ...req, body: validated.data }, reply);
+    const data =await validatedValues(validated, reply);
+    return challenge({ ...req, body: data }, reply);
   });
 
   fastify.post("/notification",async (req, reply) => {
     const validated = notificationSchema.safeParse(req.body);
-    if (!validated.success) {
-      return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
-      });
-    }
-    return notification({ ...req, body: validated.data }, reply);
+    const data =await validatedValues(validated, reply);
+    return notification({ ...req, body: data }, reply);
   });
 
   fastify.post("/acceptRequest",async (req, reply) => {
     const validated = acceptSchema.safeParse(req.body);
-    if (!validated.success) {
-      return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
-      });
-    }
-    return accept({ ...req, body: validated.data }, reply);
+    const data =await validatedValues(validated, reply);
+    return accept({ ...req, body: data }, reply);
   });
+
   fastify.delete("/declineRequest",async (req, reply) => {
     const validated = acceptSchema.safeParse(req.body);
-    if (!validated.success) {
-      return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
-      });
-    }
-    return decline({ ...req, body: validated.data }, reply);
+    const data =await validatedValues(validated, reply);
+    return decline({ ...req, body: data }, reply);
   });
 }
 

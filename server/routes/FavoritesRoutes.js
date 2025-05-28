@@ -1,16 +1,12 @@
 import { favoritesSchema } from "../schema/favorites.schema.js";
 import { addfavorites } from "../controllers/favorites.js";
+import { validatedValues } from "../utils/validate.js";
 
 async function favoriteRoutes(fastify) {
   fastify.post("/addfavorites", async (req, reply) => {
     const validated = favoritesSchema.safeParse(req.body);
-    if (!validated.success) {
-      return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
-      });
-    }
-    return addfavorites({ ...req, body: validated.data }, reply);
+    const data =await validatedValues(validated, reply);
+    return addfavorites({ ...req, body: data }, reply);
   });
 }
 
