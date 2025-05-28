@@ -1,5 +1,6 @@
 import { SpaceBackground } from "../SpaceBackground";
 import { useEnterKey } from "../../hooks/useEnterKey";
+import { OverlayCard, OverlayButton } from "./OverlayComponents";
 
 interface GameOverOverlayProps {
   winnerName: string;
@@ -17,20 +18,7 @@ export function GameOverOverlay({
   useEnterKey(onOk);
   return (
     <SpaceBackground>
-      <div
-        className="
-          relative
-          z-10
-          rounded-2xl
-          border-2
-          border-[#0A7FC9]
-          p-6
-          text-center
-          bg-black
-          bg-opacity-30
-          shadow-[0_0_15px_rgba(0,255,255,0.7)]
-        "
-      >
+      <OverlayCard>
         <h2
           className="
             mb-4
@@ -53,26 +41,8 @@ export function GameOverOverlay({
           <br />
           Score: {playerScore}:{aiScore}
         </p>
-        <button
-          onClick={onOk}
-          className="
-            mt-2
-            px-6
-            py-2
-            rounded-xl
-            border-2
-            border-[#BD0E86]
-            bg-black
-            bg-opacity-30
-            text-[#832264]
-            shadow-[0_0_15px_rgba(255,29,153,0.7)]
-            hover:scale-105
-            transition
-          "
-        >
-          OK
-        </button>
-      </div>
+        <OverlayButton onClick={onOk}>OK</OverlayButton>
+      </OverlayCard>
     </SpaceBackground>
   );
 }

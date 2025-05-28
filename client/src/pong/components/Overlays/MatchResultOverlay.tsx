@@ -1,5 +1,6 @@
 import { SpaceBackground } from "../SpaceBackground";
 import { useEnterKey } from "../../hooks/useEnterKey";
+import { OverlayCard, OverlayButton } from "./OverlayComponents";
 
 interface MatchResultOverlayProps {
   winner: string;
@@ -23,20 +24,7 @@ export function MatchResultOverlay({
   useEnterKey(onContinue);
   return (
     <SpaceBackground>
-      <div
-        className="
-          relative
-          z-10
-          rounded-2xl
-          border-2
-          border-[#0A7FC9]
-          p-6
-          text-center
-          bg-black
-          bg-opacity-30
-          shadow-[0_0_15px_rgba(0,255,255,0.7)]
-        "
-      >
+      <OverlayCard>
         <h2
           className="
             mb-2
@@ -95,26 +83,8 @@ export function MatchResultOverlay({
             Next match is coming...
           </p>
         )}
-        <button
-          onClick={onContinue}
-          className="
-            mt-2
-            px-6
-            py-2
-            rounded-xl
-            border-2
-            border-[#BD0E86]
-            bg-black
-            bg-opacity-30
-            text-[#832264]
-            shadow-[0_0_15px_rgba(255,29,153,0.7)]
-            hover:scale-105
-            transition
-          "
-        >
-          Continue
-        </button>
-      </div>
+        <OverlayButton onClick={onContinue}>Continue</OverlayButton>
+      </OverlayCard>
     </SpaceBackground>
   );
 }
