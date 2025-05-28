@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { SpaceBackground } from "../SpaceBackground";
+import { useEnterKey } from "../../hooks/useEnterKey";
 
 interface GameOverOverlayProps {
   winnerName: string;
@@ -14,16 +14,7 @@ export function GameOverOverlay({
   aiScore,
   onOk,
 }: GameOverOverlayProps) {
-  useEffect(() => {
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        onOk();
-      }
-    }
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onOk]);
+  useEnterKey(onOk);
   return (
     <SpaceBackground>
       <div

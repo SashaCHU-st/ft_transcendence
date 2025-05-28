@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { SpaceBackground } from "../SpaceBackground";
+import { useEnterKey } from "../../hooks/useEnterKey";
 import crownIcon from "../../png_icons/crown.png";
 import "./TournamentWinnerOverlay.css";
 
@@ -12,16 +12,7 @@ export function TournamentWinnerOverlay({
   winner,
   onClose,
 }: TournamentWinnerOverlayProps) {
-  useEffect(() => {
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        onClose();
-      }
-    }
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
+  useEnterKey(onClose);
 
   return (
     <SpaceBackground>

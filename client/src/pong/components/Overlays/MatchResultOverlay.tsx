@@ -1,5 +1,5 @@
-import { useEffect } from "react";
 import { SpaceBackground } from "../SpaceBackground";
+import { useEnterKey } from "../../hooks/useEnterKey";
 
 interface MatchResultOverlayProps {
   winner: string;
@@ -20,16 +20,7 @@ export function MatchResultOverlay({
   nextPair,
   onContinue,
 }: MatchResultOverlayProps) {
-  useEffect(() => {
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        onContinue();
-      }
-    }
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onContinue]);
+  useEnterKey(onContinue);
   return (
     <SpaceBackground>
       <div
