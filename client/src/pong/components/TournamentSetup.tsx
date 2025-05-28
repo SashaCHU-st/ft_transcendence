@@ -47,8 +47,8 @@ export function TournamentSetup({
       index < players.length
         ? inputRefs.current[index]
         : index === players.length
-          ? addRef.current
-          : startRef.current;
+        ? addRef.current
+        : startRef.current;
     el?.focus();
   }, [index, players.length]);
 
@@ -74,6 +74,9 @@ export function TournamentSetup({
           if (validCount && !nameError && !duplicateError && !emptyError)
             onStartTournament();
         }
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        onClose();
       }
     };
     window.addEventListener("keydown", handleKey);
@@ -91,10 +94,10 @@ export function TournamentSetup({
   return (
     <SpaceBackground>
       {/* interactive panel (inputs & buttons) with higher z-index */}
-    <SpaceBackground>
-      {/* interactive panel (inputs & buttons) with higher z-index */}
-      <div
-        className="
+      <SpaceBackground>
+        {/* interactive panel (inputs & buttons) with higher z-index */}
+        <div
+          className="
           relative
           z-10
           pointer-events-auto
@@ -120,17 +123,17 @@ export function TournamentSetup({
           w-[80%]
           max-w-[800px]
         "
-      >
-        {/* Close button */}
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-[#0A7FC9] hover:text-red-400 text-lg font-bold"
         >
-          ✕
-        </button>
-        {/* Title */}
-        <h2
-          className="
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-2 right-2 text-[#0A7FC9] hover:text-red-400 text-lg font-bold"
+          >
+            ✕
+          </button>
+          {/* Title */}
+          <h2
+            className="
             mb-6
             text-4xl
             font-extrabold
@@ -141,24 +144,24 @@ export function TournamentSetup({
             text-[#D3E0FB]
             drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]
           "
-        >
-          Tournament setup
-        </h2>
+          >
+            Tournament setup
+          </h2>
 
-        {/* Input list */}
-        <div className="flex flex-col space-y-4 items-center">
-          {players.map((alias, i) => (
-            <div key={i} className="relative flex justify-center w-full">
-              <input
-                ref={(el) => (inputRefs.current[i] = el)}
-                tabIndex={0}
-                onFocus={() => setIndex(i)}
-                onMouseEnter={() => setIndex(i)}
-                value={alias}
-                onChange={(e) => onChangePlayerName(i, e.target.value)}
-                placeholder={`Player ${i + 1}`}
-                className="
-                  w-96
+          {/* Input list */}
+          <div className="flex flex-col space-y-4 items-center">
+            {players.map((alias, i) => (
+              <div key={i} className="relative w-96">
+                <input
+                  ref={(el) => (inputRefs.current[i] = el)}
+                  tabIndex={0}
+                  onFocus={() => setIndex(i)}
+                  onMouseEnter={() => setIndex(i)}
+                  value={alias}
+                  onChange={(e) => onChangePlayerName(i, e.target.value)}
+                  placeholder={`Player ${i + 1}`}
+                  className="
+                  w-full
                   rounded-xl
                   border-2
                   border-[#297db1]
@@ -166,6 +169,7 @@ export function TournamentSetup({
                   bg-opacity-50
                   px-4
                   py-2
+                  pr-8
                   text-center
                   text-[#D3E0FB]
                   shadow-[0_0_8px_rgba(0,255,255,0.5)]
@@ -174,39 +178,40 @@ export function TournamentSetup({
                   focus:ring-[#0A7FC9]
                   transition
                 "
-              />
-              <button
-                type="button"
-                className="absolute right-0 top-1/2 -translate-y-1/2 text-[#297db1] hover:text-red-400"
-                onClick={() => onRemovePlayer(i)}
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-        </div>
-        {nameError && (
-          <p className="text-red-400 text-sm mb-1">
-            Allowed characters: letters, numbers, spaces, underscores and dashes
-          </p>
-        )}
-        {duplicateError && (
-          <p className="text-red-400 text-sm mb-1">Names must be unique</p>
-        )}
-        {emptyError && (
-          <p className="text-red-400 text-sm mb-1">Name cannot be empty</p>
-        )}
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#297db1] hover:text-red-400"
+                  onClick={() => onRemovePlayer(i)}
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
+          {nameError && (
+            <p className="text-red-400 text-sm mb-1">
+              Allowed characters: letters, numbers, spaces, underscores and
+              dashes
+            </p>
+          )}
+          {duplicateError && (
+            <p className="text-red-400 text-sm mb-1">Names must be unique</p>
+          )}
+          {emptyError && (
+            <p className="text-red-400 text-sm mb-1">Name cannot be empty</p>
+          )}
 
-        {/* Actions */}
-        <div className="mt-8 flex justify-center gap-6">
-          <button
-            ref={addRef}
-            tabIndex={0}
-            onFocus={() => setIndex(players.length)}
-            onMouseEnter={() => setIndex(players.length)}
-            onClick={onAddPlayer}
-            disabled={players.length >= MAX_PLAYERS}
-            className="
+          {/* Actions */}
+          <div className="mt-8 flex justify-center gap-6">
+            <button
+              ref={addRef}
+              tabIndex={0}
+              onFocus={() => setIndex(players.length)}
+              onMouseEnter={() => setIndex(players.length)}
+              onClick={onAddPlayer}
+              disabled={players.length >= MAX_PLAYERS}
+              className="
               rounded-xl
               border-2
               border-[#9010CE]
@@ -232,17 +237,19 @@ export function TournamentSetup({
               transition
               disabled:opacity-50 disabled:cursor-not-allowed
             "
-          >
-            + Add player
-          </button>
-          <button
-            ref={startRef}
-            tabIndex={0}
-            onFocus={() => setIndex(players.length + 1)}
-            onMouseEnter={() => setIndex(players.length + 1)}
-            onClick={onStartTournament}
-            disabled={!validCount || nameError || duplicateError || emptyError}
-            className="
+            >
+              + Add player
+            </button>
+            <button
+              ref={startRef}
+              tabIndex={0}
+              onFocus={() => setIndex(players.length + 1)}
+              onMouseEnter={() => setIndex(players.length + 1)}
+              onClick={onStartTournament}
+              disabled={
+                !validCount || nameError || duplicateError || emptyError
+              }
+              className="
               rounded-xl
               border-2
               border-[#BD0E86]
@@ -268,17 +275,17 @@ export function TournamentSetup({
               transition
               disabled:opacity-50 disabled:cursor-not-allowed
             "
-          >
-            START
-          </button>
+            >
+              START
+            </button>
+          </div>
+          {!validCount && (
+            <p className="mt-4 text-pink-200 text-sm">
+              Enter between {MIN_PLAYERS} and {MAX_PLAYERS} players
+            </p>
+          )}
         </div>
-        {!validCount && (
-          <p className="mt-4 text-pink-200 text-sm">
-            Enter between {MIN_PLAYERS} and {MAX_PLAYERS} players
-          </p>
-        )}
-      </div>
-    </SpaceBackground>
+      </SpaceBackground>
     </SpaceBackground>
   );
 }
