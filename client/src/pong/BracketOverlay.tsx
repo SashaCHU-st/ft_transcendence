@@ -6,6 +6,24 @@ import {
 } from "./components/Overlays/OverlayComponents";
 import { useEnterKey } from "./hooks/useEnterKey";
 
+/**
+ * Centralised style definitions for easier tuning
+ */
+const textStyles = {
+  playerName: {
+    base: "text-[#D3E0FB] text-[20px] md:text-[18px] text-shadow-[0_0_4px_rgba(211,224,251,0.6)]",
+    predicted:
+      "italic text-orange-300 text-[20px] md:text-[18px] text-shadow-[0_0_4px_rgba(255,147,0,0.6)]",
+  },
+  vs: "text-[16px] md:text-[18px] text-[#743b91] text-shadow-[0_0_4px_rgba(147,51,234,0.6)]",
+  winner:
+    "mt-3 text-[16px] md:text-[18px] text-[#74C0FC] text-shadow-[0_0_4px_rgba(74,222,128,0.6)]",
+  roundLabel:
+    "mb-2 text-lg font-semibold text-[#D3E0FB] drop-shadow-[0_0_5px_rgba(211,224,251,0.6)]",
+  heading:
+    "mb-4 text-center text-2xl font-extrabold text-[#D3E0FB] drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]",
+};
+
 export interface PlayerSlot {
   name: string;
   isPredicted?: boolean;
@@ -32,8 +50,8 @@ interface BracketOverlayProps {
 
 function PlayerName({ name, isPredicted }: PlayerSlot) {
   const classes = isPredicted
-    ? `italic text-orange-300 text-[20px] md:text-[24px] text-shadow-[0_0_4px_rgba(255,147,0,0.6)]`
-    : `text-[#D3E0FB] text-[20px] md:text-[24px] text-shadow-[0_0_4px_rgba(211,224,251,0.6)]`;
+    ? textStyles.playerName.predicted
+    : textStyles.playerName.base;
   return <div className={classes}>{name || "TBD"}</div>;
 }
 
@@ -112,28 +130,14 @@ export default function BracketOverlay({
   return (
     <OverlayWrapper>
       <OverlayCard className="relative h-[90%] w-[90%] overflow-auto flex flex-col items-center">
-        <h2
-          className="
-          mb-4
-          text-center
-          text-2xl
-          font-extrabold
-          text-[#D3E0FB]
-          drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]"
-        >
-          COSMIC TOURNAMENT
-        </h2>
+        <h2 className={textStyles.heading}>COSMIC TOURNAMENT</h2>
 
         <div
           className="
-            flex
-            flex-col
-            md:flex-row
-            justify-center
-            items-center
+            flex flex-col md:flex-row
+            justify-center items-center
             gap-8 md:gap-20
-            w-full
-            h-full"
+            w-full h-full"
         >
           {rounds.map((round, rIndex) => {
             const label = getRoundLabel(rIndex, totalRounds);
@@ -143,34 +147,14 @@ export default function BracketOverlay({
               <div
                 key={rIndex}
                 className="
-                  flex
-                  flex-col
-                  items-center
-                  justify-center
+                  flex flex-col items-center justify-center
                   w-full sm:w-[150px]"
               >
-                <h3
-                  className="
-                  mb-2
-                  text-lg
-                  font-semibold
-                  text-[#D3E0FB]
-                  drop-shadow-[0_0_5px_rgba(211,224,251,0.6)]"
-                >
-                  {label}
-                </h3>
+                <h3 className={textStyles.roundLabel}>{label}</h3>
 
-                <div
-                  className="
-                    flex
-                    flex-col
-                    items-center
-                    justify-center
-                    gap-10"
-                >
+                <div className="flex flex-col items-center justify-center gap-10">
                   {round.map((match, mIndex) => {
-                    const p1 = match.p1;
-                    const p2 = match.p2;
+                    const { p1, p2 } = match;
                     const isCurrent =
                       currentMatch &&
                       currentMatch.rIndex === rIndex &&
@@ -183,34 +167,18 @@ export default function BracketOverlay({
                       <div
                         key={mIndex}
                         className={`
-                          flex
+                          flex flex-col items-center
                           w-full sm:w-[198px]
-                          flex-col
-                          items-center
-                          rounded-xl
-                          p-4
+                          rounded-xl p-4
                           ${matchStyle}
                           ${isCurrent ? highlightStyle : ""}
                         `}
                       >
                         <PlayerName {...p1} />
-                        <div
-                          className="
-                              text-[16px] sm:text-[18px]
-                          text-[#743b91]
-                          text-shadow-[0_0_4px_rgba(147,51,234,0.6)]"
-                        >
-                          vs
-                        </div>
+                        <div className={textStyles.vs}>vs</div>
                         <PlayerName {...p2} />
                         {match.winner && (
-                          <div
-                            className="
-                            mt-3
-                              text-[16px] sm:text-[18px]
-                            text-[#74C0FC]
-                            text-shadow-[0_0_4px_rgba(74,222,128,0.6)]"
-                          >
+                          <div className={textStyles.winner}>
                             Winner: {match.winner.name}
                           </div>
                         )}
@@ -223,7 +191,11 @@ export default function BracketOverlay({
           })}
         </div>
 
-        <OverlayButton onClick={onClose} className="absolute right-4 top-4">
+        <OverlayButton
+          color="cyan"
+          onClick={onClose}
+          className="absolute right-4 top-4"
+        >
           Close
         </OverlayButton>
       </OverlayCard>
