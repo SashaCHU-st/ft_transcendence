@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { SpaceBackground } from "../SpaceBackground";
 import { useEnterKey } from "../../hooks/useEnterKey";
 import crownIcon from "../../png_icons/crown.png";
@@ -14,20 +15,22 @@ export function TournamentWinnerOverlay({
 }: TournamentWinnerOverlayProps) {
   useEnterKey(onClose);
 
+  const fireworks = useMemo<React.CSSProperties[]>(
+    () =>
+      Array.from({ length: 70 }, () => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${(Math.random() * 3).toFixed(2)}s`,
+      })),
+    []
+  );
+
   return (
     <SpaceBackground>
       {/* Fireworks */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {[...Array(70)].map((_, i) => (
-          <div
-            key={i}
-            className="animate-firework"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${(Math.random() * 3).toFixed(2)}s`,
-            }}
-          />
+        {fireworks.map((style, i) => (
+          <div key={i} className="animate-firework" style={style} />
         ))}
       </div>
 
