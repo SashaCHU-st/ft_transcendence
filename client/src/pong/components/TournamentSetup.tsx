@@ -15,6 +15,7 @@ interface TournamentSetupProps {
 
 const MAX_PLAYERS = 8;
 const MIN_PLAYERS = 2;
+const MAX_NAME_LENGTH = 10;
 
 export function TournamentSetup({
   players,
@@ -31,6 +32,8 @@ export function TournamentSetup({
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const addRef = useRef<HTMLButtonElement>(null);
   const startRef = useRef<HTMLButtonElement>(null);
+
+  const lengthLimitReached = players.some((p) => p.length >= MAX_NAME_LENGTH);
 
   const allFilled = players.every((p) => p.trim().length > 0);
   const validCount =
@@ -160,6 +163,7 @@ export function TournamentSetup({
                   value={alias}
                   onChange={(e) => onChangePlayerName(i, e.target.value)}
                   placeholder={`Player ${i + 1}`}
+                  maxLength={MAX_NAME_LENGTH}
                   className="
                   w-full
                   rounded-xl
@@ -200,6 +204,11 @@ export function TournamentSetup({
           )}
           {emptyError && (
             <p className="text-red-400 text-sm mb-1">Name cannot be empty</p>
+          )}
+          {lengthLimitReached && (
+            <p className="text-yellow-300 text-sm mb-1">
+              Maximum of {MAX_NAME_LENGTH} characters reached
+            </p>
           )}
 
           {/* Actions */}
