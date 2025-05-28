@@ -16,12 +16,8 @@ async function profileRoutes(fastify) {
     },
     async (req, reply) => {
       const validated = ProfileSchema.safeParse(req.body);
-      if (!validated.success) {
-        return reply.code(400).send({
-        message:validated.error.errors[0].message ,
-        });
-      }
-      return updateProfile({ ...req, body: validated.data }, reply);
+      const data =await validatedValues(validated, reply);
+      return updateProfile({ ...req, body: data }, reply);
     }
   );
 
@@ -32,18 +28,11 @@ async function profileRoutes(fastify) {
       config: {
         multipart: true,
       },
-    },
-    async (req, reply) => {
+    },async (req, reply) => {
       const data = await req.file();
-      // const email = pic.fields?.email.value;
-      // console.log("email:", email);
       if (!data) {
         return reply.code(400).send({ message: "No picture uploaded" });
       }
-
-      // if (!email) {
-      //   return reply.code(400).send({ message: "No email provided" });
-      // }
       return uploadPicture(data, reply);
     }
   );

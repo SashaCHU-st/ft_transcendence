@@ -7,8 +7,6 @@ export async function statisticsAll(request, reply) {
 }
 
 export async function statisticsUser(req, reply) {
-  console.log("WE IN USER STATISTICS");
-
   const { user_id } = req.body;
 
   try {
@@ -35,12 +33,8 @@ export async function win(req, reply) {
   try {
     const winUser = db.prepare(`SELECT * FROM users WHERE id = ?`).get(user_id);
 
-    console.log("Wins =>", winUser.wins);
-    console.log("Updated=>", winUser.wins + 1);
-    const haha = winUser.wins + 1;
-    const updateWins = db
-      .prepare(`UPDATE users SET wins = ? WHERE id = ?`)
-      .run(haha, user_id);
+    const winValue = winUser.wins + 1;
+    const updateWins = db.prepare(`UPDATE users SET wins = ? WHERE id = ?`).run(winValue, user_id);
 
     return reply.code(200).send({ updateWins });
   } catch (err) {
@@ -50,15 +44,11 @@ export async function win(req, reply) {
 }
 
 export async function loseUser(req, reply) {
-    console.log("WE IN WIN");
-  
     const { user_id } = req.body;
   
     try {
       const loseUser = db.prepare(`SELECT * FROM users WHERE id = ?`).get(user_id);
-  
-      console.log("Wins =>", loseUser.losses);
-      console.log("Updated=>", loseUser.losses + 1);
+
       const haha = loseUser.losses + 1;
       const updateLoses = db
         .prepare(`UPDATE users SET losses = ? WHERE id = ?`)

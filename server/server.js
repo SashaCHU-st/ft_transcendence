@@ -20,7 +20,6 @@ const fastify = Fastify({
     cert: fs.readFileSync(path.resolve("cert", "cert.pem")),
   },
 });
-////ldijjhcdjkhbdjkdhbdjkhbdcjkh
 // JWT
 fastify.register(jwt, { secret: "kuku" });
 
