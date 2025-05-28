@@ -1,5 +1,6 @@
-import { useEffect } from "react";
-import { SpaceBackground } from "../SpaceBackground";
+import { useMemo } from "react";
+import { OverlayWrapper } from "./OverlayWrapper";
+import { useEnterKey } from "../../hooks/useEnterKey";
 import crownIcon from "../../png_icons/crown.png";
 import "./TournamentWinnerOverlay.css";
 
@@ -12,31 +13,24 @@ export function TournamentWinnerOverlay({
   winner,
   onClose,
 }: TournamentWinnerOverlayProps) {
-  useEffect(() => {
-    function handleKey(e: KeyboardEvent) {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        onClose();
-      }
-    }
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [onClose]);
+  useEnterKey(onClose);
+
+  const fireworks = useMemo<React.CSSProperties[]>(
+    () =>
+      Array.from({ length: 70 }, () => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${(Math.random() * 3).toFixed(2)}s`,
+      })),
+    []
+  );
 
   return (
-    <SpaceBackground>
+    <OverlayWrapper>
       {/* Fireworks */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {[...Array(70)].map((_, i) => (
-          <div
-            key={i}
-            className="animate-firework"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              animationDelay: `${(Math.random() * 3).toFixed(2)}s`,
-            }}
-          />
+        {fireworks.map((style, i) => (
+          <div key={i} className="animate-firework" style={style} />
         ))}
       </div>
 
@@ -77,6 +71,6 @@ export function TournamentWinnerOverlay({
           OK
         </button>
       </div>
-    </SpaceBackground>
+    </OverlayWrapper>
   );
 }

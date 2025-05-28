@@ -32,11 +32,7 @@ export function SpaceBackground({
 }: SpaceBackgroundProps) {
   return (
     <div
-      className="absolute inset-0 z-[80] overflow-hidden flex items-center justify-center"
-      style={{
-        background:
-          "radial-gradient(ellipse at bottom, #0a0e2a 0%, #000000 100%)",
-      }}
+      className="absolute inset-0 z-[80] overflow-hidden flex items-center justify-center space-gradient"
     >
       {/* animated starry backdrop */}
       {stars && <StarryBackground />}
@@ -56,8 +52,8 @@ export function SpaceBackground({
       {gradients && (
         <div className="pointer-events-none z-0">
           <div className="cosmic-circle bg-blue-500 w-96 h-96 -left-40 -top-40" />
-          <div className="cosmic-circle bg-purple-600 w-80 h-80 -right-40 bottom-20" />
-          <div className="cosmic-circle bg-pink-500 w-64 h-64 right-40 top-1/3" />
+          <div className="cosmic-circle bg-purple-600 w-96 h-96 opacity-20 -right-40 bottom-20" />
+          <div className="cosmic-circle bg-pink-500 w-64 h-64 opacity-15 right-40 top-1/3" />
         </div>
       )}
 
