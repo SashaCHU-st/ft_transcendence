@@ -32,8 +32,8 @@ interface BracketOverlayProps {
 
 function PlayerName({ name, isPredicted }: PlayerSlot) {
   const classes = isPredicted
-    ? `italic text-orange-300 text-[24px] text-shadow-[0_0_4px_rgba(255,147,0,0.6)]`
-    : `text-[#D3E0FB] text-[24px] text-shadow-[0_0_4px_rgba(211,224,251,0.6)]`;
+    ? `italic text-orange-300 text-[20px] md:text-[24px] text-shadow-[0_0_4px_rgba(255,147,0,0.6)]`
+    : `text-[#D3E0FB] text-[20px] md:text-[24px] text-shadow-[0_0_4px_rgba(211,224,251,0.6)]`;
   return <div className={classes}>{name || "TBD"}</div>;
 }
 
@@ -131,7 +131,7 @@ export default function BracketOverlay({
             md:flex-row
             justify-center
             items-center
-            gap-20
+            gap-8 md:gap-20
             w-full
             h-full"
         >
@@ -147,7 +147,7 @@ export default function BracketOverlay({
                   flex-col
                   items-center
                   justify-center
-                  w-[150px]"
+                  w-full sm:w-[150px]"
               >
                 <h3
                   className="
@@ -184,7 +184,7 @@ export default function BracketOverlay({
                         key={mIndex}
                         className={`
                           flex
-                          w-[198px]
+                          w-full sm:w-[198px]
                           flex-col
                           items-center
                           rounded-xl
@@ -196,7 +196,7 @@ export default function BracketOverlay({
                         <PlayerName {...p1} />
                         <div
                           className="
-                              text-[18px]
+                              text-[16px] sm:text-[18px]
                           text-[#743b91]
                           text-shadow-[0_0_4px_rgba(147,51,234,0.6)]"
                         >
@@ -207,7 +207,7 @@ export default function BracketOverlay({
                           <div
                             className="
                             mt-3
-                              text-[18px]
+                              text-[16px] sm:text-[18px]
                             text-[#74C0FC]
                             text-shadow-[0_0_4px_rgba(74,222,128,0.6)]"
                           >
