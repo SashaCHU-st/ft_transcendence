@@ -14,6 +14,7 @@ const api: AxiosInstance = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
+    toast.error(error.response?.data.message)/// need to fix
     if (error.response?.status === 401) {
       toast.error("Session expired. Please log in again.");
       localStorage.removeItem("token");
@@ -55,32 +56,38 @@ export const updateUserProfile = async (
   avatar?: string,
   headers: { Authorization: string } | {} = getAuthHeaders(),
 ): Promise<void> => {
-  const updates: Partial<UserInfo> = {};
-  if (profileUpdates.name) updates.name = profileUpdates.name;
-  if (profileUpdates.username) updates.username = profileUpdates.username;
-  if (profileUpdates.password) updates.password = profileUpdates.password;
+  try {
+    const updates: Partial<UserInfo> = {};
+    if (profileUpdates.name) updates.name = profileUpdates.name;
+    if (profileUpdates.username) updates.username = profileUpdates.username;
+    if (profileUpdates.password) updates.password = profileUpdates.password;
 
-  if (Object.keys(updates).length > 0) {
-    await api.patch("/updateProfile", updates, { headers });
-  }
+    if (Object.keys(updates).length > 0) {
+      await api.patch("/updateProfile", updates, { headers });
+    }
 
-  if (avatar && avatar.startsWith("data:image")) {
-    const base64Data = avatar.split(",")[1];
-    const blob = await (
-      await fetch(`data:image/jpeg;base64,${base64Data}`)
-    ).blob();
-    const formData = new FormData();
-    formData.append("file", blob, "avatar.jpg");
+    if (avatar && avatar.startsWith("data:image")) {
+      const base64Data = avatar.split(",")[1];
+      const blob = await (
+        await fetch(`data:image/jpeg;base64,${base64Data}`)
+      ).blob();
+      const formData = new FormData();
+      formData.append("file", blob, "avatar.jpg");
 
-    await api.post("/uploadPicture", formData, {
-      headers: {
-        ...headers,
-        "Content-Type": "multipart/form-data",
-      },
-    });
+      await api.post("/uploadPicture", formData, {
+        headers: {
+          ...headers,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+    }
+  } catch (error: any) {
+    if (error.response && error.response.data && error.response.data.errors) {
+      throw error.response.data.errors; // выбрасываем объект ошибок
+    }
+    throw error;
   }
 };
-
 export const saveGameResult = async (
   matchResult: MatchResult,
   headers: { Authorization: string } | {} = getAuthHeaders(),

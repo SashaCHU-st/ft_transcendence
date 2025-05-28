@@ -18,8 +18,7 @@ async function profileRoutes(fastify) {
       const validated = ProfileSchema.safeParse(req.body);
       if (!validated.success) {
         return reply.code(400).send({
-          message: "Validation error",
-          errors: validated.error.errors,
+        message:validated.error.errors[0].message ,
         });
       }
       return updateProfile({ ...req, body: validated.data }, reply);

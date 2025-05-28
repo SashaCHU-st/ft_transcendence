@@ -5,8 +5,7 @@ async function challengeRoutes(fastify) {
     const validated = challengeSchema.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
+        message:validated.error.errors[0].message ,
       });
     }
     return challenge({ ...req, body: validated.data }, reply);
@@ -16,8 +15,7 @@ async function challengeRoutes(fastify) {
     const validated = notificationSchema.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
+        message:validated.error.errors[0].message ,
       });
     }
     return notification({ ...req, body: validated.data }, reply);
@@ -27,8 +25,7 @@ async function challengeRoutes(fastify) {
     const validated = acceptSchema.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
+        message:validated.error.errors[0].message ,
       });
     }
     return accept({ ...req, body: validated.data }, reply);
@@ -37,8 +34,7 @@ async function challengeRoutes(fastify) {
     const validated = acceptSchema.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
+        message:validated.error.errors[0].message ,
       });
     }
     return decline({ ...req, body: validated.data }, reply);

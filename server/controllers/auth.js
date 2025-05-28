@@ -1,20 +1,18 @@
 import db from "../database/database.js"; // Using better-sqlite3
-import bcrypt, { hash } from "bcrypt";
+import bcrypt from "bcrypt";
 
+export async function hashedPassword(password) {
+  return await bcrypt.hash(password, 10);
+}
 export async function signup(req, reply) {
   console.log("We are in SIGNUP middleware");
 
   const { name, username, email, password } = req.body;
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  // Validate request body
   if (!name || !password || !email || !username) {
     return reply
       .code(400)
       .send({ message: "No pass or name or email or username" });
   }
-
   try {
     const hasUser = db
       .prepare("SELECT * FROM users WHERE email = ? OR username = ?")
@@ -24,7 +22,7 @@ export async function signup(req, reply) {
       const users = db.prepare(
         "INSERT INTO users (name, username, email, password) VALUES (?, ?, ?, ?)"
       );
-      const result = users.run(name, username, email, hashedPassword);
+      const result = users.run(name, username, email,await hashedPassword(password));
       const token = req.jwt.sign({
         id: result.lastInsertRowid,
       });
@@ -32,8 +30,6 @@ export async function signup(req, reply) {
       console.log("TOKEN_ID", token);
 
       console.log("USER_ID =>", result.lastInsertRowid);
-
-      // Set user online
       const online = db
         .prepare(`UPDATE users SET online = ? WHERE id = ?`)
         .run(1, result.lastInsertRowid);

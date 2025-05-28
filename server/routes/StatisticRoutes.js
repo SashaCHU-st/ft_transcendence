@@ -21,8 +21,7 @@ async function statistics(fastify) {
 
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
+        message:validated.error.errors[0].message ,
       });
     }
     return win({ ...req, body: validated.data }, reply);
@@ -32,8 +31,7 @@ async function statistics(fastify) {
 
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
+        message:validated.error.errors[0].message ,
       });
     }
     return loseUser({ ...req, body: validated.data }, reply);

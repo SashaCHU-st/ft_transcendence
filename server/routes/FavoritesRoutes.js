@@ -6,8 +6,7 @@ async function favoriteRoutes(fastify) {
     const validated = favoritesSchema.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
-        errors: validated.error.errors,
+        message:validated.error.errors[0].message ,
       });
     }
     return addfavorites({ ...req, body: validated.data }, reply);
