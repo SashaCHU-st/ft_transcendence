@@ -28,6 +28,11 @@
   z-index: -1;
 }
 
+/* base gradient background */
+.space-gradient {
+  background: radial-gradient(ellipse at bottom, #050b33 0%, #1b133d 100%);
+}
+
 
 
 /*animation: noise-flicker 0.15s steps(2) infinite;*/

@@ -32,11 +32,7 @@ export function SpaceBackground({
 }: SpaceBackgroundProps) {
   return (
     <div
-      className="absolute inset-0 z-[80] overflow-hidden flex items-center justify-center"
-      style={{
-        background:
-          "radial-gradient(ellipse at bottom, #0a0e2a 0%, #000000 100%)",
-      }}
+      className="absolute inset-0 z-[80] overflow-hidden flex items-center justify-center space-gradient"
     >
       {/* animated starry backdrop */}
       {stars && <StarryBackground />}
