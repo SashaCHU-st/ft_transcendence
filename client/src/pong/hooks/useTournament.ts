@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   buildSingleElimNoDoubleByeSym,
-  findNextPairString,
+  findNextPair,
 } from "../tournamentLogic";
 import type { BracketRound } from "../BracketOverlay";
 import type { GameAPI } from "../pong";
@@ -81,8 +81,14 @@ export function useTournament(gameApi: GameAPI | null) {
         name: match.p2.name,
         isPredicted: true,
       };
+      if (match.nextMatch && match.nextSlot) {
+        match.nextMatch[match.nextSlot] = {
+          name: match.p2.name,
+          isPredicted: true,
+        };
+      }
       setRounds([...bRounds]);
-      const nextPair = findNextPairString(bRounds, rIndex, mIndex);
+      const nextPair = findNextPair(bRounds, rIndex, mIndex);
       setByeInfo({ winner: match.p2.name, rIndex, mIndex, nextPair });
       return;
     }
@@ -91,8 +97,14 @@ export function useTournament(gameApi: GameAPI | null) {
         name: match.p1.name,
         isPredicted: true,
       };
+      if (match.nextMatch && match.nextSlot) {
+        match.nextMatch[match.nextSlot] = {
+          name: match.p1.name,
+          isPredicted: true,
+        };
+      }
       setRounds([...bRounds]);
-      const nextPair = findNextPairString(bRounds, rIndex, mIndex);
+      const nextPair = findNextPair(bRounds, rIndex, mIndex);
       setByeInfo({ winner: match.p1.name, rIndex, mIndex, nextPair });
       return;
     }
@@ -105,19 +117,12 @@ export function useTournament(gameApi: GameAPI | null) {
       const winnerScore = ws;
       const loserScore = ls;
       bRounds[rIndex][mIndex].winner = { name: winner };
-      if (rIndex < bRounds.length - 1) {
-        const nextMIndex = Math.floor(mIndex / 2);
-        if (bRounds[rIndex + 1] && nextMIndex < bRounds[rIndex + 1].length) {
-          if (mIndex % 2 === 0) {
-            bRounds[rIndex + 1][nextMIndex].p1 = { name: winner };
-          } else {
-            bRounds[rIndex + 1][nextMIndex].p2 = { name: winner };
-          }
-        }
+      if (match.nextMatch && match.nextSlot) {
+        match.nextMatch[match.nextSlot] = { name: winner };
       }
       const updated = [...bRounds];
       setRounds(updated);
-      const nextPair = findNextPairString(updated, rIndex, mIndex);
+      const nextPair = findNextPair(updated, rIndex, mIndex);
       setMatchInfo({
         winner,
         loser,
@@ -139,15 +144,9 @@ export function useTournament(gameApi: GameAPI | null) {
     const w = clone[rIndex][mIndex].winner;
     const realName = w?.name ?? "";
     clone[rIndex][mIndex].winner = { name: realName };
-    if (rIndex < clone.length - 1) {
-      const nextMIndex = Math.floor(mIndex / 2);
-      if (clone[rIndex + 1] && nextMIndex < clone[rIndex + 1].length) {
-        if (mIndex % 2 === 0) {
-          clone[rIndex + 1][nextMIndex].p1 = { name: realName };
-        } else {
-          clone[rIndex + 1][nextMIndex].p2 = { name: realName };
-        }
-      }
+    const match = clone[rIndex][mIndex];
+    if (match.nextMatch && match.nextSlot) {
+      match.nextMatch[match.nextSlot] = { name: realName };
     }
     setRounds(clone);
     startNextMatch(clone, rIndex, mIndex + 1);

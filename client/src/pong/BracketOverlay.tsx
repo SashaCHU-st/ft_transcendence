@@ -10,6 +10,10 @@ export interface BracketMatch {
   p1: PlayerSlot;
   p2: PlayerSlot;
   winner: PlayerSlot | null; // name of winner if match played
+  /** reference to the match in the next round */
+  nextMatch?: BracketMatch;
+  /** which slot of the next match this winner fills */
+  nextSlot?: "p1" | "p2";
 }
 
 /** Round: array of matches */
@@ -188,7 +192,7 @@ export default function BracketOverlay({
                                 text-shadow-[0_0_4px_rgba(211,224,251,0.6)]`
                           }
                         >
-                          {p1.name}
+                          {p1.name || "TBD"}
                         </div>
                         <div
                           className="
@@ -212,7 +216,7 @@ export default function BracketOverlay({
                                 text-shadow-[0_0_4px_rgba(211,224,251,0.6)]`
                           }
                         >
-                          {p2.name}
+                          {p2.name || "TBD"}
                         </div>
                         {match.winner && (
                           <div

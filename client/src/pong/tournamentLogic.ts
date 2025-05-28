@@ -1,11 +1,10 @@
-import type { BracketRound, BracketMatch, PlayerSlot } from "./BracketOverlay";
+import type { BracketRound, BracketMatch } from "./BracketOverlay";
 
 export function buildSingleElimNoDoubleByeSym(
   players: string[],
 ): BracketRound[] {
   const round1 = createFirstRound(players);
   const rounds = createSubsequentRounds(round1);
-  resolveByeWinners(rounds);
   return rounds;
 }
 
@@ -47,29 +46,39 @@ function createFirstRound(players: string[]): BracketMatch[] {
 
 function createSubsequentRounds(round1: BracketMatch[]): BracketRound[] {
   const rounds: BracketRound[] = [round1];
-  let nextArr = round1.map((m) => `WINNER_OF(${m.p1.name} vs ${m.p2.name})`);
-  while (nextArr.length > 1) {
-    const r: BracketMatch[] = [];
-    const tmpNext: string[] = [];
-    for (let i = 0; i < nextArr.length; i += 2) {
-      const p1 = nextArr[i];
-      const p2 = nextArr[i + 1] || "BYE";
-      r.push({ p1: { name: p1 }, p2: { name: p2 }, winner: null });
-      tmpNext.push(`WINNER_OF(${p1} vs ${p2})`);
+  let prev = round1;
+  while (prev.length > 1) {
+    const nextRound: BracketMatch[] = [];
+    for (let i = 0; i < prev.length; i += 2) {
+      const m1 = prev[i];
+      const m2 = prev[i + 1];
+      const nextMatch: BracketMatch = {
+        p1: predictFrom(m1),
+        p2: m2 ? predictFrom(m2) : { name: "" },
+        winner: null,
+      };
+      m1.nextMatch = nextMatch;
+      m1.nextSlot = "p1";
+      if (m2) {
+        m2.nextMatch = nextMatch;
+        m2.nextSlot = "p2";
+      }
+      nextRound.push(nextMatch);
     }
-    rounds.push(r);
-    nextArr = tmpNext;
+    rounds.push(nextRound);
+    prev = nextRound;
   }
   return rounds;
 }
 
-function resolveByeWinners(rounds: BracketRound[]): void {
-  for (const round of rounds) {
-    for (const match of round) {
-      match.p1 = replaceAllByePred(match.p1.name);
-      match.p2 = replaceAllByePred(match.p2.name);
-    }
+function predictFrom(match: BracketMatch) {
+  if (match.p1.name === "BYE" && match.p2.name !== "BYE") {
+    return { name: match.p2.name, isPredicted: true };
   }
+  if (match.p2.name === "BYE" && match.p1.name !== "BYE") {
+    return { name: match.p1.name, isPredicted: true };
+  }
+  return { name: "" };
 }
 
 export function shuffle<T>(arr: T[]): void {
@@ -83,53 +92,23 @@ export function shuffleRound1(round: BracketMatch[]): void {
   shuffle(round);
 }
 
-export function findNextPairString(
+export function findNextPair(
   rounds: BracketRound[],
   rIndex: number,
   mIndex: number,
 ): string | undefined {
-  const nextM = mIndex + 1;
-  if (nextM < rounds[rIndex].length) {
-    const nm = rounds[rIndex][nextM];
-    return nm.p1.name + " vs " + nm.p2.name;
-  }
-  const rr = rIndex + 1;
-  if (rr < rounds.length) {
-    const nm2 = rounds[rr][0];
-    return nm2.p1.name + " vs " + nm2.p2.name;
+  for (let r = rIndex; r < rounds.length; r++) {
+    for (let m = r === rIndex ? mIndex + 1 : 0; m < rounds[r].length; m++) {
+      const nm = rounds[r][m];
+      if (
+        nm.p1.name !== "" &&
+        nm.p2.name !== "" &&
+        nm.p1.name !== "BYE" &&
+        nm.p2.name !== "BYE"
+      ) {
+        return nm.p1.name + " vs " + nm.p2.name;
+      }
+    }
   }
   return undefined;
-}
-
-function replaceAllByePred(str: string): PlayerSlot {
-  let changed = true;
-  let predicted = false;
-  while (changed) {
-    changed = false;
-
-    const next1 = str.replace(
-      /WINNER_OF\(\s*([^()]+?)\s+vs\s+BYE\s*\)/,
-      (_match, p1) => {
-        changed = true;
-        predicted = true;
-        return p1.trim();
-      },
-    );
-
-    const next2 = next1.replace(
-      /WINNER_OF\(\s*BYE\s+vs\s+([^()]+?)\s*\)/,
-      (_match, p2) => {
-        changed = true;
-        predicted = true;
-        return p2.trim();
-      },
-    );
-
-    str = next2;
-  }
-
-  if (predicted) {
-    return { name: str, isPredicted: true };
-  }
-  return { name: str };
 }

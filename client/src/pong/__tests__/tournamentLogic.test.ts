@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { buildSingleElimNoDoubleByeSym, findNextPairString } from '../tournamentLogic';
+import { buildSingleElimNoDoubleByeSym, findNextPair } from '../tournamentLogic';
 import type { BracketRound } from '../BracketOverlay';
 
 describe('buildSingleElimNoDoubleByeSym', () => {
@@ -15,7 +15,7 @@ describe('buildSingleElimNoDoubleByeSym', () => {
   });
 });
 
-describe('findNextPairString', () => {
+describe('findNextPair', () => {
   it('returns next match string in bracket', () => {
     const rounds: BracketRound[] = [
       [
@@ -23,10 +23,10 @@ describe('findNextPairString', () => {
         { p1: { name: 'C' }, p2: { name: 'D' }, winner: null },
       ],
       [
-        { p1: { name: 'WINNER_OF(A vs B)' }, p2: { name: 'WINNER_OF(C vs D)' }, winner: null },
+        { p1: { name: '' }, p2: { name: '' }, winner: null },
       ],
     ];
-    const next = findNextPairString(rounds, 0, 0);
+    const next = findNextPair(rounds, 0, 0);
     expect(next).toBe('C vs D');
   });
 });
