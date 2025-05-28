@@ -32,3 +32,27 @@ export function OverlayButton({ children, className = "", ...rest }: OverlayButt
   );
 }
 
+interface OverlayHeadingProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function OverlayHeading({ children, className = "" }: OverlayHeadingProps) {
+  return (
+    <h2
+      className={`mb-4 font-extrabold text-[#D3E0FB] drop-shadow-[0_0_10px_rgba(211,224,251,0.8)] ${className}`}
+    >
+      {children}
+    </h2>
+  );
+}
+
+interface OverlayTextProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+export function OverlayText({ children, className = "" }: OverlayTextProps) {
+  return <p className={`mb-4 text-[#D3E0FB] ${className}`}>{children}</p>;
+}
+

@@ -1,6 +1,11 @@
 import { useEnterKey } from "../../hooks/useEnterKey";
 import { OverlayWrapper } from "./OverlayWrapper";
-import { OverlayCard, OverlayButton } from "./OverlayComponents";
+import {
+  OverlayCard,
+  OverlayButton,
+  OverlayHeading,
+  OverlayText,
+} from "./OverlayComponents";
 
 interface ByeOverlayProps {
   winner: string;
@@ -13,27 +18,10 @@ export function ByeOverlay({ winner, nextPair, onContinue }: ByeOverlayProps) {
   return (
     <OverlayWrapper>
       <OverlayCard>
-        <h2
-          className="
-            mb-4
-            text-2xl
-            font-extrabold
-            text-[#D3E0FB]
-            drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]
-          "
-        >
-          BYE Match
-        </h2>
-        <p
-          className="
-            mb-4
-            text-lg
-            text-[#D3E0FB]
-          "
-        >
-          Player <b className="text-[#74C0FC]">{winner}</b> gets a pass to next
-          round!
-        </p>
+        <OverlayHeading className="text-2xl">BYE Match</OverlayHeading>
+        <OverlayText className="text-lg">
+          Player <b className="text-[#74C0FC]">{winner}</b> gets a pass to next round!
+        </OverlayText>
         {nextPair && (
           <p
             className="

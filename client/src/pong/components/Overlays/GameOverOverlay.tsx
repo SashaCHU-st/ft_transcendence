@@ -1,6 +1,11 @@
 import { OverlayWrapper } from "./OverlayWrapper";
 import { useEnterKey } from "../../hooks/useEnterKey";
-import { OverlayCard, OverlayButton } from "./OverlayComponents";
+import {
+  OverlayCard,
+  OverlayButton,
+  OverlayHeading,
+  OverlayText,
+} from "./OverlayComponents";
 
 interface GameOverOverlayProps {
   winnerName: string;
@@ -19,28 +24,12 @@ export function GameOverOverlay({
   return (
     <OverlayWrapper>
       <OverlayCard>
-        <h2
-          className="
-            mb-4
-            text-3xl
-            font-extrabold
-            text-[#D3E0FB]
-            drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]
-          "
-        >
-          GAME OVER
-        </h2>
-        <p
-          className="
-            mb-4
-            text-xl
-            text-[#D3E0FB]
-          "
-        >
+        <OverlayHeading className="text-3xl">GAME OVER</OverlayHeading>
+        <OverlayText className="text-xl">
           Winner: <b className="text-[#74C0FC]">{winnerName}</b>
           <br />
           Score: {playerScore}:{aiScore}
-        </p>
+        </OverlayText>
         <OverlayButton onClick={onOk}>OK</OverlayButton>
       </OverlayCard>
     </OverlayWrapper>

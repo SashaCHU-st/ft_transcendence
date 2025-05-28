@@ -1,6 +1,11 @@
 import { OverlayWrapper } from "./OverlayWrapper";
 import { useEnterKey } from "../../hooks/useEnterKey";
-import { OverlayCard, OverlayButton } from "./OverlayComponents";
+import {
+  OverlayCard,
+  OverlayButton,
+  OverlayHeading,
+  OverlayText,
+} from "./OverlayComponents";
 
 interface MatchResultOverlayProps {
   winner: string;
@@ -25,30 +30,14 @@ export function MatchResultOverlay({
   return (
     <OverlayWrapper>
       <OverlayCard>
-        <h2
-          className="
-            mb-2
-            text-2xl
-            font-extrabold
-            text-[#D3E0FB]
-            drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]
-          "
-        >
-          Match result
-        </h2>
-        <p
-          className="
-            mb-4
-            text-lg
-            text-[#D3E0FB]
-          "
-        >
+        <OverlayHeading className="mb-2 text-2xl">Match result</OverlayHeading>
+        <OverlayText className="text-lg">
           Winner: <b className="text-[#74C0FC]">{winner}</b>
           <br />
           Loser: <b className="text-[#743b91]">{loser}</b>
           <br />
           Score: {winnerScore}:{loserScore}
-        </p>
+        </OverlayText>
         {isFinal ? (
           <p
             className="
