@@ -8,7 +8,7 @@ interface OverlayCardProps {
 export function OverlayCard({ children, className = "" }: OverlayCardProps) {
   return (
     <div
-      className={`relative z-10 rounded-2xl border-2 border-[#0A7FC9] p-6 text-center bg-black bg-opacity-30 shadow-[0_0_15px_rgba(0,255,255,0.7)] ${className}`}
+      className={`pointer-events-auto relative z-10 rounded-2xl border-2 border-[#0A7FC9] p-6 text-center bg-black bg-opacity-30 shadow-[0_0_15px_rgba(0,255,255,0.7)] ${className}`}
     >
       {children}
     </div>
@@ -19,7 +19,7 @@ interface OverlayButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string;
   children: React.ReactNode;
-  color?: "magenta" | "blue";
+  color?: "magenta" | "blue" | "green";
 }
 
 const colorClasses: Record<string, string> = {
@@ -37,6 +37,13 @@ const colorClasses: Record<string, string> = {
     shadow-[0_0_15px_rgba(0,255,255,0.7)]
     hover:scale-105 transition
   `,
+  green: `
+    border-[#00ffaa]
+    bg-black bg-opacity-40
+    text-[#00ffaa]
+    shadow-[0_0_15px_rgba(0,255,200,0.5)]
+    hover:scale-105 transition
+  `,
 };
 
 /**
@@ -45,7 +52,7 @@ const colorClasses: Record<string, string> = {
  * A stylized button component for overlays with color variants.
  *
  * Props:
- * - color: "magenta" | "blue" (optional) — defines button theme. Defaults to "magenta".
+ * - color: "magenta" | "blue" | "green" (optional) — defines button theme. Defaults to "magenta".
  * - className: (optional) — append custom classes if needed.
  *
  * Example usage:
@@ -60,6 +67,7 @@ export function OverlayButton({
 }: OverlayButtonProps) {
   return (
     <button
+      type="button"
       {...rest}
       className={`
         mt-2 px-6 py-2 rounded-xl border-2

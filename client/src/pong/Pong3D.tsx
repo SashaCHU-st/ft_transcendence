@@ -13,6 +13,7 @@ import { PauseOverlay } from "./components/Overlays/PauseOverlay";
 import { Scoreboard } from "./components/Scoreboard";
 import { GoalBanner } from "./components/GoalBanner";
 import { EscMenu } from "./components/Overlays/EscMenu";
+import { OnlinePlayOverlay } from "./components/Overlays/OnlinePlayOverlay";
 
 import { useTournament } from "./hooks/useTournament";
 import "./pongGame.css";
@@ -50,6 +51,7 @@ export default function Pong3D() {
   // Main menu / tournament
   const [showStartScreen, setShowStartScreen] = useState(!startMode);
   const [showSetup, setShowSetup] = useState(startMode === GameMode.Tournament);
+  const [showOnline, setShowOnline] = useState(false);
   const [players, setPlayers] = useState<string[]>(["Player 1", "Player 2"]);
   const [nameError, setNameError] = useState(false);
   const [duplicateError, setDuplicateError] = useState(false);
@@ -198,10 +200,10 @@ export default function Pong3D() {
       if (!winner) {
         arr.push("Show bracket");
       }
-      arr.push("Switch game mode", "Exit game");
+      arr.push("Switch game mode", "Quit to profile");
       return arr;
     }
-    return ["Resume", "Restart match", "Switch game mode", "Exit game"];
+    return ["Resume", "Restart match", "Switch game mode", "Quit to profile"];
   }
   function menuAction(idx: number) {
     const arr = getMenuItems();
@@ -215,7 +217,7 @@ export default function Pong3D() {
       setShowBracket(true);
     } else if (chosen === "Switch game mode") {
       resetAllToMainMenu();
-    } else if (chosen === "Exit game") {
+    } else if (chosen === "Quit to profile") {
       navigate("/profile");
     }
   }
@@ -256,13 +258,14 @@ export default function Pong3D() {
 
   function startRemoteDuel() {
     setShowStartScreen(false);
-    console.warn("Remote duel not implemented");
+    setShowOnline(true);
   }
 
-  function startRemoteTournament() {
-    setShowStartScreen(false);
-    console.warn("Remote tournament not implemented");
+  function closeOnline() {
+    setShowOnline(false);
+    setShowStartScreen(true);
   }
+
   function addPlayer() {
     const MAX_PLAYERS = 8;
     if (players.length < MAX_PLAYERS) {
@@ -450,9 +453,13 @@ export default function Pong3D() {
           onLocal2P={startLocal}
           onTournament={openTournament}
           onRemoteDuel={startRemoteDuel}
-          onRemoteTournament={startRemoteTournament}
+          onClose={() => {
+            setShowStartScreen(false);
+            setShowMenu(true);
+          }}
         />
       )}
+      {showOnline && <OnlinePlayOverlay onClose={closeOnline} />}
       {/* TOURNAMENT SETUP */}
       {showSetup && (
         <TournamentSetup
@@ -475,3 +482,4 @@ export default function Pong3D() {
     </div>
   );
 }
+

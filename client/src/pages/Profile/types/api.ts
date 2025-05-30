@@ -95,12 +95,15 @@ export const saveGameResult = async (
   await api.post("/game/result", matchResult, { headers });
 };
 
-export const getUserIdFromToken = (): string | null => {
+export const getUserIdFromToken = (): number | null => {
   const token = localStorage.getItem("token");
   if (!token) return null;
   try {
     const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload.id ? String(payload.id) : null;
+    const id = payload.id;
+    if (typeof id === "number") return id;
+    const parsed = Number(id);
+    return Number.isNaN(parsed) ? null : parsed;
   } catch {
     return null;
   }
@@ -110,7 +113,7 @@ export const recordWin = async (
   headers: { Authorization: string } | {} = getAuthHeaders(),
 ): Promise<void> => {
   const id = getUserIdFromToken();
-  if (!id) throw new Error("No user id");
+  if (id === null) throw new Error("No user id");
   await api.post("/winUser", { user_id: id }, { headers });
 };
 
@@ -118,6 +121,6 @@ export const recordLoss = async (
   headers: { Authorization: string } | {} = getAuthHeaders(),
 ): Promise<void> => {
   const id = getUserIdFromToken();
-  if (!id) throw new Error("No user id");
+  if (id === null) throw new Error("No user id");
   await api.post("/loseUser", { user_id: id }, { headers });
 };
