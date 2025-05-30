@@ -150,7 +150,7 @@ export function StartScreen({
           px-4
         "
       >
-        SPACE PONG
+        SUPER PONG
       </h1>
 
       {/* action buttons arranged vertically */}
