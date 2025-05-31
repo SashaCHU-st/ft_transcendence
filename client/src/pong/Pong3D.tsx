@@ -18,7 +18,6 @@ import { OnlinePlayOverlay } from "./components/Overlays/OnlinePlayOverlay";
 import { useTournament } from "./hooks/useTournament";
 import "./pongGame.css";
 
-
 const INVALID_NAME_REGEX = /[^a-zA-Z0-9 _-]/;
 
 type MatchOverData = {
@@ -154,7 +153,6 @@ export default function Pong3D() {
     };
   }, []);
 
-
   useEffect(() => {
     if (!gameApi) return;
     const query = new URLSearchParams(location.search);
@@ -180,7 +178,7 @@ export default function Pong3D() {
       if (e.key === "ArrowUp") {
         e.preventDefault();
         setMenuIndex(
-          (i) => (i - 1 + getMenuItems().length) % getMenuItems().length,
+          (i) => (i - 1 + getMenuItems().length) % getMenuItems().length
         );
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -195,15 +193,19 @@ export default function Pong3D() {
   }, [showMenu, menuIndex]);
 
   function getMenuItems() {
-    if (rounds.length > 0) {
-      const arr = ["Resume"];
-      if (!winner) {
-        arr.push("Show bracket");
+    const active = (gameApi as any)?.__state?.gameStarted;
+    if (active) {
+      if (rounds.length > 0) {
+        const arr = ["Resume"];
+        if (!winner) {
+          arr.push("Show bracket");
+        }
+        arr.push("Switch game mode", "Quit to profile");
+        return arr;
       }
-      arr.push("Switch game mode", "Quit to profile");
-      return arr;
+      return ["Resume", "Restart match", "Switch game mode", "Quit to profile"];
     }
-    return ["Resume", "Restart match", "Switch game mode", "Quit to profile"];
+    return ["Switch game mode", "Quit to profile"];
   }
   function menuAction(idx: number) {
     const arr = getMenuItems();
@@ -482,4 +484,3 @@ export default function Pong3D() {
     </div>
   );
 }
-
