@@ -16,6 +16,7 @@ export function startSinglePlayerAI(state: GameState, scene: SceneObjects) {
   resetPositions(state, scene);
   state.gameStarted = true;
   state.paused = true;
+  state.manualPaused = true;
   state.escMenuOpen = false;
   state.onPauseChange?.(true);
   state.onEscMenuChange?.(false);
@@ -39,6 +40,7 @@ export function startLocal2P(state: GameState, scene: SceneObjects) {
   resetPositions(state, scene);
   state.gameStarted = true;
   state.paused = true;
+  state.manualPaused = true;
   state.escMenuOpen = false;
   state.onPauseChange?.(true);
   state.onEscMenuChange?.(false);
@@ -80,6 +82,7 @@ export function startTournamentLocal2P(
 
   state.gameStarted = true;
   state.paused = true;
+  state.manualPaused = true;
   state.escMenuOpen = false;
   state.onPauseChange?.(true);
   state.onEscMenuChange?.(false);

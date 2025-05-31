@@ -1,22 +1,21 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+// Define mocks before importing tested modules
+vi.mock('../sound', () => ({
+  playPaddleSound: vi.fn(),
+}));
+
+
+vi.mock('../scene', () => ({
+  boom: vi.fn(),
+  bigBoom: vi.fn(),
+}));
+
 import { stepPhysics, resetBall, resetScores, resetPositions } from '../physics';
 import { GameMode } from '../pong';
 import type { GameState } from '../pong';
-import { boom } from '../scene';
+import { boom, bigBoom } from '../scene';
+import { playPaddleSound } from '../sound';
 
-const playPaddleSound = vi.fn();
-
-vi.mock('../sound', () => ({
-  playPaddleSound,
-}));
-
-vi.mock('../scene', async () => {
-  const actual = await vi.importActual<any>('../scene');
-  return {
-    ...actual,
-    boom: vi.fn(), 
-  };
-});
 
 function createState(): GameState {
   return {
@@ -48,6 +47,7 @@ function createState(): GameState {
     gameStarted: true,
     currentMode: GameMode.AI,
     paused: false,
+    manualPaused: false,
     escMenuOpen: false,
     keyDownHandler: null,
     keyUpHandler: null,
@@ -81,7 +81,7 @@ function mesh() {
 
 function createObjs() {
   return {
-    scene: {},
+    scene: { beginAnimation: vi.fn() },
     leftPaddle: mesh(),
     rightPaddle: mesh(),
     ball: mesh(),
@@ -119,7 +119,7 @@ describe('stepPhysics', () => {
     objs.ball.position.x = -state.physics.FIELD_WIDTH - 1;
     stepPhysics(state, objs as any, 0.016);
     expect(state.match.aiScore).toBe(1);
-    expect(boom).toHaveBeenCalledTimes(1);
+    expect(bigBoom).toHaveBeenCalledTimes(1);
     expect(state.paused).toBe(true);
     expect(objs.ball.position.x).toBe(-state.physics.FIELD_WIDTH - 1);
     vi.runAllTimers();
@@ -133,7 +133,7 @@ describe('stepPhysics', () => {
     objs.ball.position.x = state.physics.FIELD_WIDTH + 1;
     stepPhysics(state, objs as any, 0.016);
     expect(state.match.playerScore).toBe(1);
-    expect(boom).toHaveBeenCalledTimes(1);
+    expect(bigBoom).toHaveBeenCalledTimes(1);
     expect(state.paused).toBe(true);
     expect(objs.ball.position.x).toBe(state.physics.FIELD_WIDTH + 1);
     vi.runAllTimers();

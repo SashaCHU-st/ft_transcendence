@@ -27,6 +27,8 @@ export interface GameState {
   gameStarted: boolean;
   currentMode: GameMode;
   paused: boolean;
+  /** Whether the pause was initiated by the player */
+  manualPaused: boolean;
   escMenuOpen: boolean;
 
   onScoreUpdate?: (plScore: number, aiScore: number) => void;
@@ -124,6 +126,7 @@ export function initGame(
     gameStarted: false,
     currentMode: GameMode.AI,
     paused: false,
+    manualPaused: false,
     escMenuOpen: false,
 
     onScoreUpdate: callbacks?.onScoreUpdate,
@@ -171,11 +174,14 @@ export function initGame(
       if (!state.escMenuOpen) {
         state.escMenuOpen = true;
         state.paused = true;
+        state.manualPaused = true;
         state.onPauseChange?.(true);
         state.onEscMenuChange?.(true);
       } else {
+        if (state.goalTimeout) return; // keep paused until goal reset
         state.escMenuOpen = false;
         state.paused = false;
+        state.manualPaused = false;
         state.onPauseChange?.(false);
         state.onEscMenuChange?.(false);
       }
@@ -183,7 +189,12 @@ export function initGame(
     }
     if (e.code === "Space") {
       if (state.escMenuOpen) return;
+      if (state.goalTimeout) {
+        state.manualPaused = true;
+        return;
+      }
       state.paused = !state.paused;
+      state.manualPaused = state.paused;
       state.onPauseChange?.(state.paused);
     }
   };
@@ -192,12 +203,15 @@ export function initGame(
   const api: GameAPI = {
     startSinglePlayerAI: () => {
       startSinglePlayerAI(state, sceneObjects);
+      state.manualPaused = true;
     },
     startLocal2P: () => {
       startLocal2P(state, sceneObjects);
+      state.manualPaused = true;
     },
     startTournamentMatch: (p1, p2, isF, cb) => {
       startTournamentLocal2P(state, sceneObjects, p1, p2, isF, cb);
+      state.manualPaused = true;
     },
     backToMenu: () => {
       removeAllKeyListeners(state);
@@ -205,6 +219,7 @@ export function initGame(
       resetPositions(state, sceneObjects);
       state.gameStarted = false;
       state.paused = false;
+      state.manualPaused = false;
       state.escMenuOpen = false;
       state.onPauseChange?.(false);
       state.onEscMenuChange?.(false);
@@ -217,6 +232,7 @@ export function initGame(
 
       state.gameStarted = true;
       state.paused = true;
+      state.manualPaused = true;
       state.escMenuOpen = false;
       state.onPauseChange?.(true);
       state.onEscMenuChange?.(false);
@@ -228,7 +244,9 @@ export function initGame(
       }
     },
     unpause: () => {
+      if (state.goalTimeout) return;
       state.paused = false;
+      state.manualPaused = false;
       state.escMenuOpen = false;
       state.onPauseChange?.(false);
       state.onEscMenuChange?.(false);

@@ -33,6 +33,7 @@ function createState(): GameState {
     gameStarted: false,
     currentMode: GameMode.AI,
     paused: false,
+    manualPaused: false,
     escMenuOpen: false,
     keyDownHandler: null,
     keyUpHandler: null,

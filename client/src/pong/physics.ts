@@ -189,7 +189,8 @@ export function playGoalAnimation(state: GameState, objs: SceneObjects) {
   state.goalTimeout = setTimeout(() => {
     resetBall(state, objs);
     spawnBall(objs);
-    state.paused = false;
     state.goalTimeout = null;
+    state.paused = state.manualPaused;
+    state.onPauseChange?.(state.paused);
   }, 1000);
 }
