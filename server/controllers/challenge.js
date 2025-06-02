@@ -31,7 +31,10 @@ export async function notification(req, reply) {
         `SELECT * FROM challenge WHERE friends_id = ? AND confirmReq = 0`,
       )
       .get(user_id);
-    const whoSentReq = notification.user_id;
+     if (!notification) {
+      return reply.code(200).send({ message: "No challenge found" });
+    }
+    //const whoSentReq = notification.user_id;
     console.log(notification.user_id);
     console.log(notification.friends_id);
 

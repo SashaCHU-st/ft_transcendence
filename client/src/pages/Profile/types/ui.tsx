@@ -15,6 +15,7 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
         bg-white
         text-black
         font-bold
+        font-orbitron
         py-2
         px-8
         rounded

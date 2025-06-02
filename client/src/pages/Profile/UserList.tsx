@@ -4,6 +4,8 @@ import PlayerCard from "./PlayerCard";
 import { CardWrapper } from "./types/ui";
 import { UserInfo } from "./types/UserInfo";
 import { addToFavorites } from "./AddFavorites";
+import { askForChallenge } from "./Challenge";
+import { toast } from "react-hot-toast";
 //import { deleteFromFavorites } from "./DeleteFavorites";
 
 // Props definition for UserList component
@@ -16,6 +18,7 @@ interface Props {
   expandUsername?: string;
   onAdd?: (username: string) => void;
   onRemove?: (username: string)=> void;
+  onChallenge?: (username: string)=> void;
 }
 
 const UserList: React.FC<Props> = ({ users, variant, expandUsername, onRemove}) => {
@@ -50,17 +53,17 @@ const UserList: React.FC<Props> = ({ users, variant, expandUsername, onRemove}) 
       console.error("Failed to add favorite:", err);
     }
   };
-  // const handleRemove = async (username: string) => {
-  //   try{
-  //     await deleteFromFavorites(username);
-     
-  //     console.log(`Remove ${username}`);
-  //   }catch (err) {
-  //     console.error("Failed to delete from favorite:", err);
-  //   }
-
-  // }
-  const handleChallenge = (username: string) => console.log(`Challenge ${username}`);
+ 
+  const handleChallenge = async (username: string) => {
+    try{
+       await askForChallenge(username);
+        console.log(`${username} asked for challenge`);
+        toast.success(`You asked ${username} for challenge`);
+    } catch (err) {
+      console.error("Failed to add favorite:", err);
+      toast.error(`Failed to ask ${username} for challenge`);
+    }
+  };
 
   // If no users, render nothing
   if (users.length === 0) {

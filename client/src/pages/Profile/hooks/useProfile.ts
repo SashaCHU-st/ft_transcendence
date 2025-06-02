@@ -15,6 +15,9 @@ export const useProfile = () => {
   const [players, setPlayers] = useState<UserInfo[]>([]);
   const navigate = useNavigate();
   const isFetchingRef = useRef(false);
+  const [notification, setNotification] = useState<null | { user_id: string; username: string }>(null);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
+
 
   const authHeaders = useMemo(() => getAuthHeaders(), []);
 
@@ -26,10 +29,37 @@ export const useProfile = () => {
     }
   };
 
+  const checkNotifications = useCallback(async () => {
+        const currentUserId = localStorage.getItem("id");
+        if (!currentUserId) return;
+        try {
+          const res = await fetch(`https://localhost:3000/notification`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: currentUserId }),
+          });
+          if (!res)
+              return;
+
+          const data = await res.json();
+          if (res.ok && data.friends_id) {
+            const allUsers = [...friends, ...players];
+            const challenger = allUsers.find(u => u.id === String(data.friends_id));
+            
+            setNotification({ user_id: data.friends_id, username: challenger?.username || "Unknown"});
+            setIsNotificationModalOpen(true);
+            
+          }
+        } catch (err) {
+          console.error("Notification check failed:", err);
+        }
+      }, []);
+
+
   const fetchAllUsers = useCallback(async () => {
     try {
       const currentUserId = localStorage.getItem("id");
-      //if (!currentUserId) throw new Error("No user ID found in localStorage.");
+      if (!currentUserId) return;
 
       const res = await fetch(`https://localhost:3000/users?t=${Date.now()}`, {
         headers: { "Content-Type": "application/json", ...authHeaders },
@@ -37,8 +67,11 @@ export const useProfile = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to fetch users");
 
+     
+     
       let currentUser: UserInfo | null = null;
 
+      
       const mappedUsers: UserInfo[] = data.users.map((u: any) => {
         let avatar = "/prof_img/avatar1.png";
         if (u.image) {
@@ -63,7 +96,8 @@ export const useProfile = () => {
           history: [],
         };
 
-        if (userInfo.id === currentUserId) currentUser = userInfo;
+        if (userInfo.id === currentUserId) 
+          currentUser = userInfo;
 
         return userInfo;
       });
@@ -113,6 +147,7 @@ export const useProfile = () => {
     setIsLoading(true);
     try {
       await fetchAllUsers();
+      await checkNotifications();
     } catch (err) {
       toast.error("Error loading data. Please log in again.");
       localStorage.removeItem("token");
@@ -121,7 +156,7 @@ export const useProfile = () => {
       setIsLoading(false);
       isFetchingRef.current = false;
     }
-  }, [fetchAllUsers, navigate]);
+  }, [fetchAllUsers, navigate, checkNotifications]);
 
   const saveUserData = useCallback(
     async (updatedUser: UserInfo) => {
@@ -140,6 +175,46 @@ export const useProfile = () => {
     },
     [user, authHeaders, fetchAllUsers]
   );
+
+    const handleAcceptChallenge = async () => {
+      if (!user || !notification) return;
+
+      try {
+        await fetch(`https://localhost:3000/acceptRequest`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: user.id, friends_id: notification.user_id }),
+        });
+
+        toast.success("Challenge accepted!");
+      } catch (err) {
+        toast.error("Failed to accept challenge.");
+        console.error(err);
+      } finally {
+        setIsNotificationModalOpen(false);
+        setNotification(null);
+      }
+    };
+
+    const handleDeclineChallenge = async () => {
+      if (!user || !notification) return;
+
+      try {
+        await fetch(`https://localhost:3000/declineRequest`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: user.id, friends_id: notification.user_id }),
+        });
+
+        toast.success("Challenge declined.");
+      } catch (err) {
+        toast.error("Failed to decline challenge.");
+        console.error(err);
+      } finally {
+        setIsNotificationModalOpen(false);
+        setNotification(null);
+      }
+    };
 
    const handleRemove = async (username: string) => {
       try{
@@ -192,8 +267,10 @@ export const useProfile = () => {
   const handlePlay = useCallback(() => {
     const opponent = selectedBot || bots[Math.floor(Math.random() * bots.length)];
     const result = Math.random() > 0.5 ? "win" : "loss";
+
     handleGameEnd(result, opponent.name);
     if (!selectedBot) setSelectedBot(null);
+    navigate("/pong?mode=ai");
   }, [selectedBot, handleGameEnd]);
 
   useEffect(() => {
@@ -218,6 +295,11 @@ export const useProfile = () => {
     handleSaveProfile,
     handlePlay,
     handleRemove,
+    notification,
+    isNotificationModalOpen,
+    handleAcceptChallenge,
+    handleDeclineChallenge,
+    setIsNotificationModalOpen,
   };
 };
 

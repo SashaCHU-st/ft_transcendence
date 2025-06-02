@@ -13,6 +13,7 @@ async function favoriteRoutes(fastify) {
     }
     return addfavorites({ ...req, body: validated.data }, reply);
   });
+  
     fastify.get("/favorites", favorites);
 
     fastify.delete("/deletefavorites", async (req, reply) => {

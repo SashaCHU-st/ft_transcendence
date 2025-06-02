@@ -15,7 +15,7 @@ interface DesktopLayoutProps {
   selectedBot: (typeof bots)[0] | null; // Currently selected bot for gameplay
   handlePlay: () => void; // Callback to start the game
   expandUsername?: string;
-   handleRemove: (username: string) => void;
+  handleRemove: (username: string) => void;
 }
 
 // DesktopLayout component for rendering the profile page layout on desktop screens
