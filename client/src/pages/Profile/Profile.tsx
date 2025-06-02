@@ -150,7 +150,6 @@
 
 // export default Profile;
 
-
 //! dlja preznego fona, zakomentirujte niz i otkrojte verh
 
 import React, { useState } from "react";
@@ -163,6 +162,7 @@ import { useProfile } from "./hooks/useProfile";
 import { toast } from "react-hot-toast";
 // Import the SpaceBackground component
 import { SpaceBackground } from "../../pong/components/SpaceBackground";
+import ChatModal from "./ChatModal";
 //import { UserInfo } from "./types/UserInfo";
 
 // Profile component serves as the main page for user profile management
@@ -183,14 +183,12 @@ const Profile: React.FC = () => {
     handlePlay, // Handler to start a game
   } = useProfile();
 
-  
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   // State to store username for auto-expanding a user card
   const [expandUsername, setExpandUsername] = useState<string | undefined>(
     undefined
   );
-
-  
 
   // Handle search for a user by username (case-insensitive)
   const handleSearch = (username: string) => {
@@ -217,12 +215,14 @@ const Profile: React.FC = () => {
   if (isLoading) {
     return (
       <SpaceBackground>
-        <div className="h-screen
+        <div
+          className="h-screen
                       w-full 
                       flex 
                       items-center 
                       justify-center
-                      text-white">
+                      text-white"
+        >
           Loading data, please wait...
         </div>
       </SpaceBackground>
@@ -233,12 +233,14 @@ const Profile: React.FC = () => {
   if (!user) {
     return (
       <SpaceBackground>
-        <div className="h-screen 
+        <div
+          className="h-screen 
         w-full 
         flex 
         items-center 
         justify-center
-         text-white">
+         text-white"
+        >
           Failed to load user data.
         </div>
       </SpaceBackground>
@@ -248,12 +250,14 @@ const Profile: React.FC = () => {
   // Render the main profile page layout
   return (
     <SpaceBackground>
-      <div className="h-screen 
+      <div
+        className="h-screen 
        w-full
        text-white 
        flex 
        flex-col 
-       overflow-y-auto">
+       overflow-y-auto"
+      >
         {/* Header with user info, profile toggle, and search functionality */}
         <Header
           user={{
@@ -263,6 +267,7 @@ const Profile: React.FC = () => {
           }}
           onProfileClick={() => setIsModalOpen(true)}
           onSearch={handleSearch}
+          onOpenChat={() => setIsChatOpen(true)}
         />
 
         {/* Desktop-specific layout for large screens */}
@@ -273,7 +278,6 @@ const Profile: React.FC = () => {
           selectedBot={selectedBot}
           handlePlay={handlePlay}
           expandUsername={expandUsername}
-          
         />
 
         {/* Mobile-specific layout for smaller screens */}
@@ -305,9 +309,10 @@ const Profile: React.FC = () => {
           onSave={handleSaveProfile}
         />
       )}
+
+      {isChatOpen && <ChatModal onClose={() => setIsChatOpen(false)} />}
     </SpaceBackground>
   );
 };
-
 
 export default Profile;

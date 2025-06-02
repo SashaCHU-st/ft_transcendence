@@ -6,7 +6,8 @@ interface StartScreenProps {
   onSingleAI: () => void;
   onLocal2P: () => void;
   onTournament: () => void;
-  onRemoteDuel: () => void;
+  /** Open the online play modal */
+  onOnlinePlay: () => void;
   onClose: () => void;
 }
 
@@ -14,7 +15,7 @@ export function StartScreen({
   onSingleAI,
   onLocal2P,
   onTournament,
-  onRemoteDuel,
+  onOnlinePlay,
   onClose,
 }: StartScreenProps) {
   const [index, setIndex] = useState(0);
@@ -39,7 +40,7 @@ export function StartScreen({
         else setIndex((i) => (i + 1) % total);
       } else if (e.key === "Enter") {
         e.preventDefault();
-        [onSingleAI, onLocal2P, onTournament, onRemoteDuel][index]();
+        [onSingleAI, onLocal2P, onTournament, onOnlinePlay][index]();
       } else if (e.key === "Escape") {
         e.preventDefault();
         onClose();
@@ -47,7 +48,7 @@ export function StartScreen({
     }
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [index, onClose, onSingleAI, onLocal2P, onTournament, onRemoteDuel]);
+  }, [index, onClose, onSingleAI, onLocal2P, onTournament, onOnlinePlay]);
   return (
     <SpaceBackground>
       {/* Close button */}
@@ -222,13 +223,13 @@ export function StartScreen({
             LOCAL TOURNAMENT
           </button>
 
-          {/* Remote Duel */}
+          {/* Online play */}
           <button
             ref={(el) => (btnRefs.current[3] = el)}
             tabIndex={0}
             onFocus={() => setIndex(3)}
             onMouseEnter={() => setIndex(3)}
-            onClick={onRemoteDuel}
+            onClick={onOnlinePlay}
             className={`
               w-full flex items-center justify-center gap-4 whitespace-nowrap
               rounded-xl border-2 border-[#0AC9B7]

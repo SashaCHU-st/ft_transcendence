@@ -57,6 +57,46 @@ export function startLocal2P(state: GameState, scene: SceneObjects) {
 }
 
 /**
+ * REMOTE 2P
+ */
+export async function startRemote2P(
+  state: GameState,
+  scene: SceneObjects,
+  url = "wss://localhost:3000/ws",
+) {
+  removeAllKeyListeners(state);
+
+  state.currentMode = GameMode.Remote2P;
+  resetScores(state);
+  // Reset scores for React so the UI starts from 0:0
+  state.onScoreUpdate?.(state.match.playerScore, state.match.aiScore);
+  resetPositions(state, scene, false);
+  // Clear any stale remote game data from previous sessions
+  state.remoteState = null;
+  state.remoteBallDX = 0;
+  state.remotePrevBallDX = 0;
+  state.gameStarted = true;
+  state.paused = true;
+  state.manualPaused = true;
+  state.escMenuOpen = false;
+  state.onPauseChange?.(true);
+  state.onEscMenuChange?.(false);
+
+  state.match.leftName = "YOU";
+  state.match.rightName = "OPPONENT";
+  state.onPlayersUpdate?.(state.match.leftName, state.match.rightName);
+
+  // Connection handled in remote.ts
+  const { connect } = await import("./remote");
+  let connectUrl = url;
+  const id = localStorage.getItem("id");
+  if (id) {
+    connectUrl += url.includes("?") ? `&user_id=${id}` : `?user_id=${id}`;
+  }
+  state.remoteCleanup = connect(state, connectUrl, scene);
+}
+
+/**
  * TOURNAMENT match (p1Name, p2Name)
  */
 export function startTournamentLocal2P(

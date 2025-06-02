@@ -5,6 +5,7 @@ import favoriteRoutes from "./routes/FavoritesRoutes.js";
 import profileRoutes from "./routes/ProfileRoutes.js";
 import statisticsRoutes from "./routes/StatisticRoutes.js";
 import challengeRoutes from "./routes/ChallangeRoutes.js";
+import { initWsServer } from "./remote/wsServer.js";
 import cors from "@fastify/cors";
 import dotenv from "dotenv";
 import jwt from "@fastify/jwt";
@@ -56,6 +57,7 @@ fastify.register(challengeRoutes);
 const start = async () => {
   try {
     await fastify.listen({ port: process.env.PORT || 3000 });
+    initWsServer(fastify.server);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

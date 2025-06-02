@@ -11,6 +11,7 @@ interface ProfileActionsProps {
   user: Pick<UserInfo, "username" | "online" | "email">; // Basic user info for display and API calls
   onProfileClick: () => void;                           // Callback to open profile modal
   onSearch?: (username: string) => void;                // Optional callback for search action
+  onOpenChat: () => void;                               // Callback to open chat
 }
 
 // Main component rendering search, user info, and action buttons
@@ -18,6 +19,7 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
   user,
   onProfileClick,
   onSearch,
+  onOpenChat,
 }) => {
   //const navigate = useNavigate();               // Hook for navigation after logout
   const [searchQuery, setSearchQuery] = useState("");  // Local state for search input
@@ -213,6 +215,13 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
           {user.username}
         </span>
         <div className="flex gap-3 sm:order-2">
+          <button
+            onClick={onOpenChat}
+            className="p-1 rounded-full bg-gray-800 hover:bg-gray-700 transition cursor-pointer"
+            aria-label="Open chat"
+          >
+            <i className="fas fa-comments text-blue-300 w-6 h-6" />
+          </button>
           {/* <button
             onClick={onProfileClick}
             className="

@@ -10,6 +10,7 @@ import { TournamentWinnerOverlay } from "./components/Overlays/TournamentWinnerO
 import { StartScreen } from "./components/StartScreen";
 import { TournamentSetup } from "./components/TournamentSetup";
 import { PauseOverlay } from "./components/Overlays/PauseOverlay";
+import { RemoteStatusOverlay } from "./components/Overlays/RemoteStatusOverlay";
 import { Scoreboard } from "./components/Scoreboard";
 import { GoalBanner } from "./components/GoalBanner";
 import { EscMenu } from "./components/Overlays/EscMenu";
@@ -18,6 +19,7 @@ import { OnlinePlayOverlay } from "./components/Overlays/OnlinePlayOverlay";
 import { useTournament } from "./hooks/useTournament";
 import "./pongGame.css";
 
+
 const INVALID_NAME_REGEX = /[^a-zA-Z0-9 _-]/;
 
 type MatchOverData = {
@@ -25,6 +27,7 @@ type MatchOverData = {
   winnerName: string;
   playerScore: number;
   aiScore: number;
+  message?: string;
 };
 
 export default function Pong3D() {
@@ -40,12 +43,15 @@ export default function Pong3D() {
   const [scoreRight, setScoreRight] = useState(0);
   const [showGoal, setShowGoal] = useState(false);
   const goalTimeout = useRef<NodeJS.Timeout | null>(null);
+  const prevScore = useRef({ left: 0, right: 0 });
 
   // Pause / ESC
   const [isPaused, setIsPaused] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [menuIndex, setMenuIndex] = useState(0);
   const [waitingStart, setWaitingStart] = useState(false);
+  const [remoteWaiting, setRemoteWaiting] = useState(false);
+  const [remoteCountdown, setRemoteCountdown] = useState<number | null>(null);
 
   // Main menu / tournament
   const [showStartScreen, setShowStartScreen] = useState(!startMode);
@@ -114,9 +120,14 @@ export default function Pong3D() {
       onScoreUpdate: (pl, ai) => {
         setScoreLeft(pl);
         setScoreRight(ai);
-        setShowGoal(true);
-        if (goalTimeout.current) clearTimeout(goalTimeout.current);
-        goalTimeout.current = setTimeout(() => setShowGoal(false), 1000);
+        const changed =
+          pl !== prevScore.current.left || ai !== prevScore.current.right;
+        prevScore.current = { left: pl, right: ai };
+        if (changed) {
+          setShowGoal(true);
+          if (goalTimeout.current) clearTimeout(goalTimeout.current);
+          goalTimeout.current = setTimeout(() => setShowGoal(false), 1000);
+        }
       },
       onPauseChange: (paused) => {
         setIsPaused(paused);
@@ -125,12 +136,13 @@ export default function Pong3D() {
         setShowMenu(show);
         if (show) setMenuIndex(0);
       },
-      onMatchOver: (mode, winner, plScore, aiScore) => {
+      onMatchOver: (mode, winner, plScore, aiScore, message) => {
         setMatchOver({
           mode,
           winnerName: winner,
           playerScore: plScore,
           aiScore,
+          message,
         });
 
         if (mode === GameMode.AI) {
@@ -145,6 +157,13 @@ export default function Pong3D() {
         setLeftLabel(l);
         setRightLabel(r);
       },
+      onRemoteWaitingChange: (w) => {
+        setRemoteWaiting(w);
+      },
+      onRemoteCountdown: (sec) => {
+        if (sec <= 0) setRemoteCountdown(null);
+        else setRemoteCountdown(sec);
+      },
     };
     const game = initGame(canvasRef.current, callbacks);
     setGameApi(game);
@@ -152,6 +171,7 @@ export default function Pong3D() {
       game.dispose();
     };
   }, []);
+
 
   useEffect(() => {
     if (!gameApi) return;
@@ -178,7 +198,7 @@ export default function Pong3D() {
       if (e.key === "ArrowUp") {
         e.preventDefault();
         setMenuIndex(
-          (i) => (i - 1 + getMenuItems().length) % getMenuItems().length
+          (i) => (i - 1 + getMenuItems().length) % getMenuItems().length,
         );
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
@@ -193,8 +213,13 @@ export default function Pong3D() {
   }, [showMenu, menuIndex]);
 
   function getMenuItems() {
-    const active = (gameApi as any)?.__state?.gameStarted;
+    const state = (gameApi as any)?.__state;
+    const active = state?.gameStarted;
+    const mode = state?.currentMode;
     if (active) {
+      if (mode === GameMode.Remote2P) {
+        return ["Back to match", "Quit match"];
+      }
       if (rounds.length > 0) {
         const arr = ["Resume"];
         if (!winner) {
@@ -210,14 +235,18 @@ export default function Pong3D() {
   function menuAction(idx: number) {
     const arr = getMenuItems();
     const chosen = arr[idx];
-    if (chosen === "Resume") {
+    if (chosen === "Resume" || chosen === "Back to match") {
       gameApi?.unpause?.();
     } else if (chosen === "Restart match") {
+      // Clear previous score to avoid spurious goal banners
+      prevScore.current = { left: 0, right: 0 };
       gameApi?.restartCurrentMatch?.();
       setWaitingStart(true);
     } else if (chosen === "Show bracket") {
       setShowBracket(true);
     } else if (chosen === "Switch game mode") {
+      resetAllToMainMenu();
+    } else if (chosen === "Quit match") {
       resetAllToMainMenu();
     } else if (chosen === "Quit to profile") {
       navigate("/profile");
@@ -228,17 +257,21 @@ export default function Pong3D() {
     setShowStartScreen(true);
     setScoreLeft(0);
     setScoreRight(0);
+    prevScore.current = { left: 0, right: 0 };
     setLeftLabel("PLAYER");
     setRightLabel("AI");
     resetTourney();
     gameApi?.backToMenu();
     setWaitingStart(false);
+    setRemoteWaiting(false);
+    setRemoteCountdown(null);
   }
 
   // --- MAIN SCREEN
   function startAI() {
     setShowStartScreen(false);
     gameApi?.startSinglePlayerAI();
+    prevScore.current = { left: 0, right: 0 };
     setLeftLabel("YOU");
     setRightLabel("AI");
     setWaitingStart(true);
@@ -246,6 +279,7 @@ export default function Pong3D() {
   function startLocal() {
     setShowStartScreen(false);
     gameApi?.startLocal2P();
+    prevScore.current = { left: 0, right: 0 };
     setLeftLabel("PLAYER 1");
     setRightLabel("PLAYER 2");
     setWaitingStart(true);
@@ -258,15 +292,35 @@ export default function Pong3D() {
     setShowSetup(true);
   }
 
-  function startRemoteDuel() {
+  function openOnline() {
     setShowStartScreen(false);
     setShowOnline(true);
   }
 
   function closeOnline() {
     setShowOnline(false);
-    setShowStartScreen(true);
+    resetAllToMainMenu();
   }
+
+  function startRandomMatch() {
+    setShowOnline(false);
+    startRemoteDuel();
+  }
+
+  function startRemoteDuel() {
+    setShowStartScreen(false);
+    // Reset score tracking before starting a new remote game
+    prevScore.current = { left: 0, right: 0 };
+    gameApi?.startRemote2P();
+    // Reset UI scores before the server sends the initial state
+    setScoreLeft(0);
+    setScoreRight(0);
+    setLeftLabel("YOU");
+    setRightLabel("OPPONENT");
+    setRemoteWaiting(true);
+    setRemoteCountdown(null);
+  }
+
 
   function addPlayer() {
     const MAX_PLAYERS = 8;
@@ -293,6 +347,7 @@ export default function Pong3D() {
     if (!validateNames(players)) return;
     setShowSetup(false);
     setShowStartScreen(false);
+    prevScore.current = { left: 0, right: 0 };
     startTourney(players);
     setWaitingStart(true);
   }
@@ -344,6 +399,7 @@ export default function Pong3D() {
   // Unpause on any key when waiting to start
   useEffect(() => {
     if (!waitingStart) return;
+    if ((gameApi as any)?.__state?.currentMode === GameMode.Remote2P) return;
     function handleStart() {
       setWaitingStart(false);
       gameApi?.unpause?.();
@@ -388,6 +444,10 @@ export default function Pong3D() {
       <GoalBanner visible={showGoal} />
       {/* PAUSE overlay */}
       {isPaused && !showMenu && <PauseOverlay waitingStart={waitingStart} />}
+      {/* Remote status overlay */}
+      {(remoteWaiting || remoteCountdown !== null) && (
+        <RemoteStatusOverlay waiting={remoteWaiting} countdown={remoteCountdown} />
+      )}
       {/* ESC MENU */}
       {showMenu && (
         <EscMenu
@@ -415,6 +475,7 @@ export default function Pong3D() {
           winnerName={matchOver.winnerName}
           playerScore={matchOver.playerScore}
           aiScore={matchOver.aiScore}
+          message={matchOver.message}
           onOk={closeMatchOver}
         />
       )}
@@ -454,14 +515,20 @@ export default function Pong3D() {
           onSingleAI={startAI}
           onLocal2P={startLocal}
           onTournament={openTournament}
-          onRemoteDuel={startRemoteDuel}
+          onOnlinePlay={openOnline}
           onClose={() => {
             setShowStartScreen(false);
             setShowMenu(true);
           }}
         />
       )}
-      {showOnline && <OnlinePlayOverlay onClose={closeOnline} />}
+      {/* ONLINE PLAY */}
+      {showOnline && (
+        <OnlinePlayOverlay
+          onClose={closeOnline}
+          onRandomMatch={startRandomMatch}
+        />
+      )}
       {/* TOURNAMENT SETUP */}
       {showSetup && (
         <TournamentSetup
@@ -484,3 +551,4 @@ export default function Pong3D() {
     </div>
   );
 }
+

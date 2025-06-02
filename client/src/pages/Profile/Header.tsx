@@ -6,9 +6,10 @@ interface HeaderProps {
   user: Pick<UserInfo, "username" | "online" | "email">;
   onProfileClick: () => void;
   onSearch?: (username: string) => void;
+  onOpenChat: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch }) => {
+const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onOpenChat }) => {
   return (
     <div
       className="
@@ -47,7 +48,12 @@ const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch }) => {
       >
         SUPER PONG
       </div>
-      <ProfileActions user={user} onProfileClick={onProfileClick} onSearch={onSearch} />
+      <ProfileActions
+        user={user}
+        onProfileClick={onProfileClick}
+        onSearch={onSearch}
+        onOpenChat={onOpenChat}
+      />
     </div>
   );
 };

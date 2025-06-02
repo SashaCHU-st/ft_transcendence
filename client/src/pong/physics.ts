@@ -11,6 +11,46 @@ export function stepPhysics(state: GameState, objs: SceneObjects, dt: number) {
   if (!state.gameStarted || state.paused) return;
   const { leftPaddle, rightPaddle, ball, scene } = objs;
 
+  if (state.currentMode === GameMode.Remote2P) {
+    const s = state.remoteState;
+    if (s) {
+      const scoreChanged =
+        s.leftScore !== state.match.playerScore ||
+        s.rightScore !== state.match.aiScore;
+      leftPaddle.position.z = s.leftPaddleZ;
+      rightPaddle.position.z = s.rightPaddleZ;
+      ball.position.x = s.ballX;
+      ball.position.z = s.ballZ;
+
+      if (
+        typeof state.remoteBallDX === 'number' &&
+        typeof state.remotePrevBallDX === 'number'
+      ) {
+        const leftX = -state.physics.FIELD_WIDTH + 1.5;
+        const rightX = state.physics.FIELD_WIDTH - 1.5;
+        if (
+          Math.sign(state.remoteBallDX) !== Math.sign(state.remotePrevBallDX)
+        ) {
+          if (
+            Math.abs(ball.position.x - leftX) < 1.2 ||
+            Math.abs(ball.position.x - rightX) < 1.2
+          ) {
+            playPaddleSound();
+          }
+        }
+        state.remotePrevBallDX = state.remoteBallDX;
+      }
+
+      state.match.playerScore = s.leftScore;
+      state.match.aiScore = s.rightScore;
+      if (scoreChanged) {
+        state.onScoreUpdate?.(state.match.playerScore, state.match.aiScore);
+        playRemoteGoalAnimation(state, objs);
+      }
+    }
+    return;
+  }
+
   leftPaddle.position.z = clamp(
     leftPaddle.position.z + state.input.playerDzLeft,
     -state.physics.FIELD_HEIGHT + 1.5,
@@ -125,10 +165,16 @@ function endGame(state: GameState, winnerSide: "left" | "right") {
 export function resetBall(state: GameState, objs: SceneObjects) {
   const { ball } = objs;
   ball.position.set(0, 0.5, 0);
-  state.input.ballDX =
-    state.physics.BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
-  state.input.ballDZ =
-    state.physics.BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
+  const dx = state.physics.BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
+  const dz = state.physics.BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
+  state.input.ballDX = 0;
+  state.input.ballDZ = 0;
+  if (state.ballSpawnTimeout) clearTimeout(state.ballSpawnTimeout);
+  state.ballSpawnTimeout = setTimeout(() => {
+    state.input.ballDX = dx;
+    state.input.ballDZ = dz;
+    state.ballSpawnTimeout = null;
+  }, 1000);
 }
 
 export function spawnBall(objs: SceneObjects) {
@@ -157,12 +203,16 @@ export function resetScores(state: GameState) {
   state.match.aiScore = 0;
 }
 
-export function resetPositions(state: GameState, objs: SceneObjects) {
+export function resetPositions(
+  state: GameState,
+  objs: SceneObjects,
+  animate = true,
+) {
   const { leftPaddle, rightPaddle } = objs;
   leftPaddle.position.set(-state.physics.FIELD_WIDTH + 1.5, 0.5, 0);
   rightPaddle.position.set(state.physics.FIELD_WIDTH - 1.5, 0.5, 0);
   resetBall(state, objs);
-  spawnBall(objs);
+  if (animate) spawnBall(objs);
 }
 
 export function playGoalAnimation(state: GameState, objs: SceneObjects) {
@@ -189,6 +239,37 @@ export function playGoalAnimation(state: GameState, objs: SceneObjects) {
   state.goalTimeout = setTimeout(() => {
     resetBall(state, objs);
     spawnBall(objs);
+    state.goalTimeout = null;
+    state.paused = state.manualPaused;
+    state.onPauseChange?.(state.paused);
+  }, 1000);
+}
+
+export function playRemoteGoalAnimation(state: GameState, objs: SceneObjects) {
+  const { ball, scene } = objs;
+  const FR = 60;
+
+  state.paused = true;
+  bigBoom(scene, ball.position);
+  const scaleDown = new BABYLON.Animation(
+    "remoteGoalDown",
+    "scaling",
+    FR,
+    BABYLON.Animation.ANIMATIONTYPE_VECTOR3,
+    BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT,
+  );
+  scaleDown.setKeys([
+    { frame: 0, value: ball.scaling.clone() },
+    { frame: FR * 0.1, value: new BABYLON.Vector3(0, 0, 0) },
+  ]);
+  ball.animations = [scaleDown];
+  scene.beginAnimation(ball, 0, FR * 0.1, false);
+
+  // Spawn the ball immediately so it waits one second before moving
+  spawnBall(objs);
+
+  if (state.goalTimeout) clearTimeout(state.goalTimeout);
+  state.goalTimeout = setTimeout(() => {
     state.goalTimeout = null;
     state.paused = state.manualPaused;
     state.onPauseChange?.(state.paused);

@@ -38,6 +38,7 @@ function createState(): GameState {
     keyDownHandler: null,
     keyUpHandler: null,
     goalTimeout: null,
+    ballSpawnTimeout: null,
   };
 }
 

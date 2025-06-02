@@ -124,6 +124,7 @@ function createState(): GameState {
     keyDownHandler: null,
     keyUpHandler: null,
     goalTimeout: null,
+    ballSpawnTimeout: null,
   };
 }
 
@@ -251,5 +252,21 @@ describe('manual pause during goal animation', () => {
     vi.runAllTimers();
     expect(state.paused).toBe(true);
     vi.useRealTimers();
+  });
+});
+
+describe('remote esc menu', () => {
+  it('opens menu without pausing', () => {
+    api.__state.currentMode = GameMode.Remote2P;
+    api.__state.gameStarted = true;
+    api.__state.paused = false;
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(api.__state.escMenuOpen).toBe(true);
+    expect(api.__state.paused).toBe(false);
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    expect(api.__state.escMenuOpen).toBe(false);
+    expect(api.__state.paused).toBe(false);
   });
 });

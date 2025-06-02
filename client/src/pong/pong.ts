@@ -7,13 +7,22 @@ import {
   startSinglePlayerAI,
   startLocal2P,
   startTournamentLocal2P,
+  startRemote2P as startRemote2PMode,
 } from "./modes";
 import { removeAllKeyListeners } from "./utils";
+import {
+  FIELD_WIDTH,
+  FIELD_HEIGHT,
+  PADDLE_SPEED,
+  BALL_SPEED,
+  WINNING_SCORE,
+} from "../../../shared/constants.js";
 
 export enum GameMode {
   AI = "ai",
   Local2P = "local2p",
   Tournament = "tournament",
+  Remote2P = "remote2p",
 }
 
 export interface GameState {
@@ -39,8 +48,13 @@ export interface GameState {
     winnerName: string,
     plScore: number,
     aiScore: number,
+    message?: string,
   ) => void;
   onPlayersUpdate?: (leftName: string, rightName: string) => void;
+
+  /** Remote play events */
+  onRemoteWaitingChange?: (waiting: boolean) => void;
+  onRemoteCountdown?: (seconds: number) => void;
 
   onMatchEndCallback?: (
     winner: string,
@@ -53,11 +67,29 @@ export interface GameState {
   keyUpHandler: ((e: KeyboardEvent) => void) | null;
 
   goalTimeout: ReturnType<typeof setTimeout> | null;
+  /** Delay timer for ball movement after spawn */
+  ballSpawnTimeout: ReturnType<typeof setTimeout> | null;
+
+  /** Remote play fields */
+  ws?: WebSocket;
+  playerSide?: "left" | "right";
+  remoteState?: {
+    ballX: number;
+    ballZ: number;
+    leftPaddleZ: number;
+    rightPaddleZ: number;
+    leftScore: number;
+    rightScore: number;
+  } | null;
+  remoteBallDX?: number;
+  remotePrevBallDX?: number;
+  remoteCleanup?: () => void;
 }
 
 export interface GameAPI {
   startSinglePlayerAI: () => void;
   startLocal2P: () => void;
+  startRemote2P: (url?: string) => void;
   startTournamentMatch: (
     p1Name: string,
     p2Name: string,
@@ -85,8 +117,11 @@ export interface PongCallbacks {
     winnerName: string,
     plScore: number,
     aiScore: number,
+    message?: string,
   ) => void;
   onPlayersUpdate?: (leftName: string, rightName: string) => void;
+  onRemoteWaitingChange?: (waiting: boolean) => void;
+  onRemoteCountdown?: (seconds: number) => void;
 }
 
 export function initGame(
@@ -97,12 +132,12 @@ export function initGame(
 
   const state: GameState = {
     physics: {
-      FIELD_WIDTH: 20,
-      FIELD_HEIGHT: 10,
-      PADDLE_SPEED: 0.3,
+      FIELD_WIDTH,
+      FIELD_HEIGHT,
+      PADDLE_SPEED,
       AI_SPEED: 0.3,
-      BALL_SPEED: 0.25,
-      WINNING_SCORE: 3,
+      BALL_SPEED,
+      WINNING_SCORE,
     },
     match: {
       playerScore: 0,
@@ -134,12 +169,22 @@ export function initGame(
     onEscMenuChange: callbacks?.onEscMenuChange,
     onMatchOver: callbacks?.onMatchOver,
     onPlayersUpdate: callbacks?.onPlayersUpdate,
+    onRemoteWaitingChange: callbacks?.onRemoteWaitingChange,
+    onRemoteCountdown: callbacks?.onRemoteCountdown,
 
     onMatchEndCallback: undefined,
 
     keyDownHandler: null,
     keyUpHandler: null,
     goalTimeout: null,
+    ballSpawnTimeout: null,
+
+    ws: undefined,
+    playerSide: undefined,
+    remoteState: null,
+    remoteBallDX: 0,
+    remotePrevBallDX: 0,
+    remoteCleanup: undefined,
   };
 
   const sceneObjects: SceneObjects = createScene(engine, canvas, state.physics);
@@ -171,6 +216,11 @@ export function initGame(
   const keydownHandler = (e: KeyboardEvent) => {
     if (!state.gameStarted) return;
     if (e.key === "Escape") {
+      if (state.currentMode === GameMode.Remote2P) {
+        state.escMenuOpen = !state.escMenuOpen;
+        state.onEscMenuChange?.(state.escMenuOpen);
+        return;
+      }
       if (!state.escMenuOpen) {
         state.escMenuOpen = true;
         state.paused = true;
@@ -188,6 +238,7 @@ export function initGame(
       return;
     }
     if (e.code === "Space") {
+      if (state.currentMode === GameMode.Remote2P) return;
       if (state.escMenuOpen) return;
       if (state.goalTimeout) {
         state.manualPaused = true;
@@ -209,6 +260,10 @@ export function initGame(
       startLocal2P(state, sceneObjects);
       state.manualPaused = true;
     },
+    startRemote2P: (url) => {
+      void startRemote2PMode(state, sceneObjects, url);
+      state.manualPaused = true;
+    },
     startTournamentMatch: (p1, p2, isF, cb) => {
       startTournamentLocal2P(state, sceneObjects, p1, p2, isF, cb);
       state.manualPaused = true;
@@ -217,6 +272,15 @@ export function initGame(
       removeAllKeyListeners(state);
       resetScores(state);
       resetPositions(state, sceneObjects);
+      if (state.remoteCleanup) {
+        state.remoteCleanup();
+        state.remoteCleanup = undefined;
+      } else if (state.ws) {
+        try {
+          state.ws.close();
+        } catch {}
+        state.ws = undefined;
+      }
       state.gameStarted = false;
       state.paused = false;
       state.manualPaused = false;
@@ -237,10 +301,17 @@ export function initGame(
       state.onPauseChange?.(true);
       state.onEscMenuChange?.(false);
 
+      if (state.currentMode === GameMode.Remote2P && state.remoteCleanup) {
+        state.remoteCleanup();
+        state.remoteCleanup = undefined;
+      }
+
       if (state.currentMode === GameMode.AI) {
         startSinglePlayerAI(state, sceneObjects);
       } else if (state.currentMode === GameMode.Local2P) {
         startLocal2P(state, sceneObjects);
+      } else if (state.currentMode === GameMode.Remote2P) {
+        void startRemote2PMode(state, sceneObjects);
       }
     },
     unpause: () => {
@@ -257,6 +328,10 @@ export function initGame(
       window.removeEventListener("resize", resizeHandler);
       window.removeEventListener("keydown", keydownHandler);
       removeAllKeyListeners(state);
+      if (state.remoteCleanup) {
+        state.remoteCleanup();
+        state.remoteCleanup = undefined;
+      }
     },
   };
 

@@ -52,6 +52,10 @@ function createState(): GameState {
     keyDownHandler: null,
     keyUpHandler: null,
     goalTimeout: null,
+    ballSpawnTimeout: null,
+    remoteState: null,
+    remoteBallDX: 0,
+    remotePrevBallDX: 0,
   };
 }
 
@@ -114,6 +118,22 @@ describe('stepPhysics', () => {
     expect(playPaddleSound).toHaveBeenCalled();
   });
 
+  it('plays sound when remote ball bounces', () => {
+    state.currentMode = GameMode.Remote2P;
+    state.remotePrevBallDX = -0.2;
+    state.remoteBallDX = 0.2;
+    state.remoteState = {
+      ballX: -state.physics.FIELD_WIDTH + 1.5,
+      ballZ: 0,
+      leftPaddleZ: 0,
+      rightPaddleZ: 0,
+      leftScore: 0,
+      rightScore: 0,
+    };
+    stepPhysics(state, objs as any, 0.016);
+    expect(playPaddleSound).toHaveBeenCalled();
+  });
+
   it('increments ai score when ball exits left', () => {
     vi.useFakeTimers();
     objs.ball.position.x = -state.physics.FIELD_WIDTH - 1;
@@ -162,13 +182,18 @@ describe('reset helpers', () => {
   });
 
   it('resetBall centers ball and randomizes direction', () => {
+    vi.useFakeTimers();
     vi.spyOn(Math, 'random').mockReturnValueOnce(0.8).mockReturnValueOnce(0.2);
     resetBall(state, objs as any);
     expect(objs.ball.position.x).toBe(0);
     expect(objs.ball.position.y).toBe(0.5);
     expect(objs.ball.position.z).toBe(0);
+    expect(state.input.ballDX).toBe(0);
+    expect(state.input.ballDZ).toBe(0);
+    vi.runAllTimers();
     expect(state.input.ballDX).toBe(state.physics.BALL_SPEED);
     expect(state.input.ballDZ).toBe(-state.physics.BALL_SPEED);
+    vi.useRealTimers();
   });
 
   it('resetScores zeros both scores', () => {

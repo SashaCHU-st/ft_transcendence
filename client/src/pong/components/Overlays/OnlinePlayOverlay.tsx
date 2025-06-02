@@ -10,11 +10,13 @@ import { PlayersTab } from "./PlayersTab";
 
 interface OnlinePlayOverlayProps {
   onClose: () => void;
+  /** Start a random remote duel */
+  onRandomMatch: () => void;
 }
 
 type Tab = "quick" | "tournaments" | "players";
 
-export function OnlinePlayOverlay({ onClose }: OnlinePlayOverlayProps) {
+export function OnlinePlayOverlay({ onClose, onRandomMatch }: OnlinePlayOverlayProps) {
   const tabValues: Tab[] = ["quick", "tournaments", "players"];
   const [tab, setTab] = useState<Tab>("quick");
   const [index, setIndex] = useState(0);
@@ -100,7 +102,7 @@ export function OnlinePlayOverlay({ onClose }: OnlinePlayOverlayProps) {
           </TabButton>
         </div>
 
-        {tab === "quick" && <QuickPlayTab />}
+        {tab === "quick" && <QuickPlayTab onRandomMatch={onRandomMatch} />}
         {tab === "tournaments" && <TournamentsTab />}
         {tab === "players" && <PlayersTab onClose={onClose} />}
       </OverlayCard>
