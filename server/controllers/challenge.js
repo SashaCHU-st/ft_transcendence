@@ -37,11 +37,12 @@ export async function notification(req, reply) {
     //const whoSentReq = notification.user_id;
     console.log(notification.user_id);
     console.log(notification.friends_id);
+    const friend = db.prepare(`SELECT * FROM users WHERE id = ?`). get(notification.user_id);
 
     if (notification) {
       return reply
         .code(200)
-        .send({ message: "There is request", friends_id: notification.user_id });
+        .send({ message: "There is request", friends_id: notification.user_id, friend: friend.username  });
     } else {
       return reply.code(400).send({ message: "There is NO request" });
     }

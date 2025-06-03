@@ -43,17 +43,15 @@ export const useProfile = () => {
 
           const data = await res.json();
           if (res.ok && data.friends_id) {
-            const allUsers = [...friends, ...players];
-            const challenger = allUsers.find(u => u.id === String(data.friends_id));
-            
-            setNotification({ user_id: data.friends_id, username: challenger?.username || "Unknown"});
+            console.log("Frind username: ",data.friend);
+            console.log("Frind'sID: ",data.friends_id);
+            setNotification({ user_id: data.friends_id, username: data.friend});
             setIsNotificationModalOpen(true);
-            
           }
         } catch (err) {
           console.error("Notification check failed:", err);
         }
-      }, []);
+  }, []);
 
 
   const fetchAllUsers = useCallback(async () => {
@@ -67,11 +65,8 @@ export const useProfile = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to fetch users");
 
-     
-     
       let currentUser: UserInfo | null = null;
 
-      
       const mappedUsers: UserInfo[] = data.users.map((u: any) => {
         let avatar = "/prof_img/avatar1.png";
         if (u.image) {
