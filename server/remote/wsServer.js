@@ -4,9 +4,12 @@ import PlayerQueue from './playerQueue.js';
 import { createEndMessage } from '../../shared/messages.js';
 import { startGame } from './gameStarter.js';
 import db from '../database/database.js';
+import jwt from 'jsonwebtoken';
 
-export function initWsServer(server) {
-  const wss = new WebSocketServer({ server, path: '/ws' });
+const JWT_SECRET = process.env.JWT_SECRET_KEY || 'kuku';
+
+export function initWsServer() {
+  const wss = new WebSocketServer({ noServer: true });
   const waiting = new PlayerQueue();
 
   wss.on('connection', (ws, req) => {
@@ -14,7 +17,27 @@ export function initWsServer(server) {
     if (queryIdx !== -1) {
       const params = new URLSearchParams(req.url.slice(queryIdx));
       const idParam = params.get('user_id');
-      if (idParam) {
+      const token = params.get('token');
+      if (token) {
+        try {
+          const payload = jwt.verify(token, JWT_SECRET);
+          const idFromToken = payload.id;
+          const parsedId = parseInt(idParam || '', 10);
+          if (idFromToken && (!idParam || parsedId === idFromToken)) {
+            ws.user_id = idFromToken;
+            const row = db
+              .prepare('SELECT username FROM users WHERE id = ?')
+              .get(ws.user_id);
+            if (row) ws.username = row.username;
+          } else {
+            ws.close();
+            return;
+          }
+        } catch {
+          ws.close();
+          return;
+        }
+      } else if (idParam) {
         ws.user_id = parseInt(idParam, 10);
         try {
           const row = db
@@ -82,4 +105,5 @@ export function initWsServer(server) {
     }
   });
 
+  return wss;
 }

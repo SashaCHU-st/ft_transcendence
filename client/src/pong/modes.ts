@@ -90,8 +90,12 @@ export async function startRemote2P(
   const { connect } = await import("./remote");
   let connectUrl = url;
   const id = localStorage.getItem("id");
+  const token = localStorage.getItem("token");
   if (id) {
     connectUrl += url.includes("?") ? `&user_id=${id}` : `?user_id=${id}`;
+  }
+  if (token) {
+    connectUrl += connectUrl.includes("?") ? `&token=${token}` : `?token=${token}`;
   }
   state.remoteCleanup = connect(state, connectUrl, scene);
 }

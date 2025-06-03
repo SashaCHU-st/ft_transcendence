@@ -124,3 +124,36 @@ export const recordLoss = async (
   if (id === null) throw new Error("No user id");
   await api.post("/loseUser", { user_id: id }, { headers });
 };
+
+export interface ChatMessage {
+  id: number;
+  sender_id: number;
+  receiver_id: number;
+  text: string;
+  created_at: string;
+}
+
+export const sendChatMessage = async (
+  fromId: number,
+  toId: number,
+  text: string,
+  headers: { Authorization: string } | {} = getAuthHeaders(),
+): Promise<void> => {
+  await api.post(
+    "/messages",
+    { fromId, toId, text },
+    { headers },
+  );
+};
+
+export const fetchChatMessages = async (
+  user1: number,
+  user2: number,
+  headers: { Authorization: string } | {} = getAuthHeaders(),
+): Promise<ChatMessage[]> => {
+  const response = await api.get(
+    `/messages?user1=${user1}&user2=${user2}`,
+    { headers },
+  );
+  return response.data.messages as ChatMessage[];
+};

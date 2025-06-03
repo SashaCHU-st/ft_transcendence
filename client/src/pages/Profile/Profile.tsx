@@ -163,6 +163,7 @@ import { toast } from "react-hot-toast";
 // Import the SpaceBackground component
 import { SpaceBackground } from "../../pong/components/SpaceBackground";
 import ChatModal from "./ChatModal";
+import { ChatProvider } from "../../context/ChatContext";
 //import { UserInfo } from "./types/UserInfo";
 
 // Profile component serves as the main page for user profile management
@@ -249,7 +250,7 @@ const Profile: React.FC = () => {
 
   // Render the main profile page layout
   return (
-    <SpaceBackground>
+    <SpaceBackground stars={false}>
       <div
         className="h-screen 
        w-full
@@ -310,7 +311,15 @@ const Profile: React.FC = () => {
         />
       )}
 
-      {isChatOpen && <ChatModal onClose={() => setIsChatOpen(false)} />}
+      {isChatOpen && (
+        <ChatProvider currentUserId={user.id}>
+          <ChatModal
+            onClose={() => setIsChatOpen(false)}
+            currentUserId={user.id}
+            players={players.filter((p) => p.id !== user.id)}
+          />
+        </ChatProvider>
+      )}
     </SpaceBackground>
   );
 };

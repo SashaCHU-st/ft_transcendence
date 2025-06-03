@@ -49,6 +49,22 @@ db.exec(`
   );
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    text TEXT NOT NULL,
+    created_at TEXT DEFAULT (datetime('now')),
+    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id)
+  );
+`);
+
+// Add indexes to optimize lookups by sender and receiver
+db.exec("CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON messages(sender_id);");
+db.exec("CREATE INDEX IF NOT EXISTS idx_messages_receiver_id ON messages(receiver_id);");
+
 
 
 console.log("Database initialized and favorites table is ready.");

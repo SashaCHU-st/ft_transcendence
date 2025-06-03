@@ -5,7 +5,9 @@ import favoriteRoutes from "./routes/FavoritesRoutes.js";
 import profileRoutes from "./routes/ProfileRoutes.js";
 import statisticsRoutes from "./routes/StatisticRoutes.js";
 import challengeRoutes from "./routes/ChallangeRoutes.js";
+import messageRoutes from "./routes/MessageRoutes.js";
 import { initWsServer } from "./remote/wsServer.js";
+import { initChatWsServer } from "./chatWsServer.js";
 import cors from "@fastify/cors";
 import dotenv from "dotenv";
 import jwt from "@fastify/jwt";
@@ -52,12 +54,27 @@ fastify.register(favoriteRoutes);
 fastify.register(profileRoutes);
 fastify.register(statisticsRoutes);
 fastify.register(challengeRoutes);
+fastify.register(messageRoutes);
 
 // Server start
 const start = async () => {
   try {
     await fastify.listen({ port: process.env.PORT || 3000 });
-    initWsServer(fastify.server);
+    const gameWss = initWsServer();
+    const chatWss = initChatWsServer();
+
+    fastify.server.on('upgrade', (req, socket, head) => {
+      const pathname = req.url.split('?')[0];
+      if (pathname === '/ws') {
+        gameWss.handleUpgrade(req, socket, head, ws => {
+          gameWss.emit('connection', ws, req);
+        });
+      } else if (pathname === '/chat') {
+        chatWss.handleUpgrade(req, socket, head, ws => {
+          chatWss.emit('connection', ws, req);
+        });
+      }
+    });
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

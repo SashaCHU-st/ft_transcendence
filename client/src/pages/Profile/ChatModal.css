@@ -1,0 +1,43 @@
+.message-bubble {
+  max-width: 70%;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: rgba(0, 0, 0, 0.4);
+  color: #e9f4fb;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.message-bubble.sent {
+  align-self: flex-end;
+  border: 1px solid #40bfff;
+  background-color: rgba(64, 191, 255, 0.2);
+}
+
+.message-bubble.received {
+  align-self: flex-start;
+  border: 1px solid #bd0e86;
+  background-color: rgba(189, 14, 134, 0.2);
+}
+
+.conversation-item {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  color: #d3e0fb;
+  margin-bottom: 0.25rem;
+}
+
+.conversation-item:hover {
+  background-color: rgba(0, 162, 255, 0.1);
+  color: #00a1ff;
+}
+.search-input {
+  background-color: #1f2937;
+  color: #e9f4fb;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+.search-input::placeholder {
+  color: #9ca3af;
+}
