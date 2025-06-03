@@ -16,6 +16,7 @@ interface MobileLayoutProps {
   handlePlay: () => void;
   expandUsername?: string;
   handleRemove: (username: string) => void;
+  handleAdd: (username: string) => void;
 }
 
 const MobileLayout: React.FC<MobileLayoutProps> = ({
@@ -26,6 +27,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   handlePlay,
   expandUsername,
   handleRemove,
+  handleAdd,
 }) => {
   return (
     <div
@@ -90,7 +92,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           >
             Friends
           </h2>
-          <UserList users={friends} variant="friends" expandUsername={expandUsername} onRemove={handleRemove}/>
+          <UserList users={friends} variant="friends" expandUsername={expandUsername} onRemove={handleRemove} onAdd={handleAdd}/>
         </div>
         <div
           className="
@@ -113,7 +115,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           >
             Players
           </h2>
-          <UserList users={players} variant="players" expandUsername={expandUsername} />
+          <UserList users={players} variant="players" expandUsername={expandUsername}  onAdd={handleAdd}/>
         </div>
       </div>
       <div

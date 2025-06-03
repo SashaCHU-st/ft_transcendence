@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
-//import { toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { UserInfo, MatchResult } from "./UserInfo";
 
 const BASE_URL = "https://localhost:3000";
@@ -14,7 +14,7 @@ const api: AxiosInstance = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    toast.error(error.response?.data.message)/// need to fix
+    //toast.error(error.response?.data.message)/// need to fix
     if (error.response?.status === 401) {
       toast.error("Session expired. Please log in again.");
       localStorage.removeItem("token");

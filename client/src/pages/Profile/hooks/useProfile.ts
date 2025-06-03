@@ -5,6 +5,7 @@ import { UserInfo, MatchResult } from "../types/UserInfo";
 import { updateUserProfile, getAuthHeaders, saveGameResult } from "../types/api";
 import { bots } from "../types/botsData";
 import { deleteFromFavorites } from "../DeleteFavorites";
+import { addToFavorites } from "../AddFavorites";
 
 export const useProfile = () => {
   const [selectedBot, setSelectedBot] = useState<(typeof bots)[0] | null>(null);
@@ -15,9 +16,11 @@ export const useProfile = () => {
   const [players, setPlayers] = useState<UserInfo[]>([]);
   const navigate = useNavigate();
   const isFetchingRef = useRef(false);
-  const [notification, setNotification] = useState<null | { user_id: string; username: string }>(null);
+  //const [notification, setNotification] = useState<null | { user_id: string; username: string }>(null);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
-
+  const [notifications, setNotifications] = useState<
+  { user_id: string; username: string }[]
+>([]);
 
   const authHeaders = useMemo(() => getAuthHeaders(), []);
 
@@ -29,30 +32,78 @@ export const useProfile = () => {
     }
   };
 
-  const checkNotifications = useCallback(async () => {
-        const currentUserId = localStorage.getItem("id");
-        if (!currentUserId) return;
-        try {
-          const res = await fetch(`https://localhost:3000/notification`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: currentUserId }),
-          });
-          if (!res)
-              return;
+  // const checkNotifications = useCallback(async () => {
+  //       const currentUserId = localStorage.getItem("id");
+  //       if (!currentUserId) return;
+  //       try {
+  //         const res = await fetch(`https://localhost:3000/notification`, {
+  //           method: "POST",
+  //           headers: { "Content-Type": "application/json" },
+  //           body: JSON.stringify({ user_id: currentUserId }),
+  //         });
+  //         if (!res)
+  //             return;
+  //         console.log("Notification is working good!!!!!");
+  //         const data = await res.json();
+  //         console.log("Check the data: ", data);
+  //         // if (res.ok && data.friends_id) {
+  //         //   console.log("Frind username: ",data.friend);
+  //         //   console.log("Frind'sID: ",data.friends_id);
+  //         //   setNotification({ user_id: data.friends_id, username: data.friend});
+  //         //   setIsNotificationModalOpen(true);
+  //         // }
 
-          const data = await res.json();
-          if (res.ok && data.friends_id) {
-            console.log("Frind username: ",data.friend);
-            console.log("Frind'sID: ",data.friends_id);
-            setNotification({ user_id: data.friends_id, username: data.friend});
-            setIsNotificationModalOpen(true);
-          }
-        } catch (err) {
-          console.error("Notification check failed:", err);
+  //          if (data.friends_id) {
+  //             const exists = notifications.some(
+  //               (n) => n.user_id === data.friends_id
+  //             );
+
+  //             if (!exists) {
+  //               setNotifications((prev) => [
+  //                 ...prev,
+  //                 { user_id: data.friends_id, username: data.friend },
+  //               ]);
+  //               setIsNotificationModalOpen(true);
+  //             }
+  //       }
+  //       } catch (err) {
+  //         console.error("Notification check failed:", err);
+  //       }
+  // }, []);
+
+ const checkNotifications = useCallback(async () => {
+    const currentUserId = localStorage.getItem("id");
+    if (!currentUserId) return;
+
+    try {
+      const res = await fetch(`https://localhost:3000/notification`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ user_id: currentUserId }),
+      });
+      if (!res.ok) return;
+
+      const data = await res.json();
+      console.log("Check data.notif: ", data.notification);
+      // Assuming data.notification is an array of notifications from backend
+      if (data.notification && Array.isArray(data.notification)) {
+        // Extract unique new notifications by friends_id
+        const newNotifications = data.notification.filter((notif: any) => {
+          return !notifications.some(n => n.user_id === notif.user_id);
+        }).map((notif: any) => ({
+          user_id: notif.user_id,
+          username: notif.username // or whatever your backend provides for username
+        }));
+
+        if (newNotifications.length > 0) {
+          setNotifications(prev => [...prev, ...newNotifications]);
+          setIsNotificationModalOpen(true);
         }
-  }, []);
-
+      }
+    } catch (err) {
+      console.error("Notification check failed:", err);
+    }
+  }, [notifications, setNotifications, setIsNotificationModalOpen]);
 
   const fetchAllUsers = useCallback(async () => {
     try {
@@ -99,7 +150,8 @@ export const useProfile = () => {
 
       //if (!currentUser) throw new Error("Current user not found in users list.");
 
-     
+      
+      
 
       // Fetch favorites
       const favRes = await fetch(`https://localhost:3000/favorites?user_id=${currentUserId}`, {
@@ -120,7 +172,7 @@ export const useProfile = () => {
       setUser(currentUser);
       setPlayers(playersList);
       setFriends(favoriteUsers);
-      fetchAllUsers();
+      //fetchAllUsers();
     } catch (err: any) {
       console.error("Error fetching users:", err);
       toast.error(err.message || "Failed to load users.");
@@ -142,6 +194,7 @@ export const useProfile = () => {
     setIsLoading(true);
     try {
       await fetchAllUsers();
+      console.log("I am in loading before check notification");
       await checkNotifications();
     } catch (err) {
       toast.error("Error loading data. Please log in again.");
@@ -171,14 +224,15 @@ export const useProfile = () => {
     [user, authHeaders, fetchAllUsers]
   );
 
-    const handleAcceptChallenge = async () => {
-      if (!user || !notification) return;
+    const handleAcceptChallenge = async (userId: string) => {
+      // if (!user || !notification) return;
 
       try {
         await fetch(`https://localhost:3000/acceptRequest`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: user.id, friends_id: notification.user_id }),
+          //body: JSON.stringify({ user_id: user.id, friends_id: notification.user_id }),
+           body: JSON.stringify({ user_id: localStorage.getItem("id"), friends_id: userId }),
         });
 
         toast.success("Challenge accepted!");
@@ -186,30 +240,60 @@ export const useProfile = () => {
         toast.error("Failed to accept challenge.");
         console.error(err);
       } finally {
-        setIsNotificationModalOpen(false);
-        setNotification(null);
-      }
+        // setIsNotificationModalOpen(false);
+        // setNotification(null);
+
+        setNotifications((prev) => prev.filter((n) => n.user_id !== userId));
+        if (notifications.length <= 1) setIsNotificationModalOpen(false);
+        }
     };
 
-    const handleDeclineChallenge = async () => {
-      if (!user || !notification) return;
+    // const handleDeclineChallenge = async () => {
+    //   if (!user || !notification) return;
 
+    //   try {
+    //     await fetch(`https://localhost:3000/declineRequest`, {
+    //       method: "DELETE",
+    //       headers: { "Content-Type": "application/json" },
+    //       body: JSON.stringify({ user_id: user.id, friends_id: notification.user_id }),
+    //     });
+
+    //     toast.success("Challenge declined.");
+    //   } catch (err) {
+    //     toast.error("Failed to decline challenge.");
+    //     console.error(err);
+    //   } finally {
+    //     setIsNotificationModalOpen(false);
+    //     setNotification(null);
+    //   }
+    // };
+    const handleDeclineChallenge = async (userId: string) => {
       try {
         await fetch(`https://localhost:3000/declineRequest`, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: user.id, friends_id: notification.user_id }),
+          body: JSON.stringify({ user_id: localStorage.getItem("id"), friends_id: userId }),
         });
-
         toast.success("Challenge declined.");
       } catch (err) {
         toast.error("Failed to decline challenge.");
         console.error(err);
       } finally {
-        setIsNotificationModalOpen(false);
-        setNotification(null);
+        setNotifications((prev) => prev.filter((n) => n.user_id !== userId));
+        if (notifications.length <= 1) setIsNotificationModalOpen(false);
       }
     };
+
+    const handleAdd = async (username: string) => {
+         try {
+           await addToFavorites(username);
+           console.log(`Added ${username} to favorites`);
+           toast.success(`${username} added to favorites`);
+           await fetchAllUsers();
+         } catch (err) {
+           console.error("Failed to add favorite:", err);
+         }
+       };
 
    const handleRemove = async (username: string) => {
       try{
@@ -219,6 +303,7 @@ export const useProfile = () => {
 
         toast.success(`${username} removed from favorites`);
         console.log(`Remove ${username}`);
+        await fetchAllUsers();
       }catch (err:any) {
         console.error("Failed to delete from favorite:", err);
         toast.error(err.message || "Failed to remove from favorites");
@@ -290,11 +375,12 @@ export const useProfile = () => {
     handleSaveProfile,
     handlePlay,
     handleRemove,
-    notification,
+    notifications,
     isNotificationModalOpen,
     handleAcceptChallenge,
     handleDeclineChallenge,
     setIsNotificationModalOpen,
+    handleAdd,
   };
 };
 

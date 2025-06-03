@@ -8,7 +8,8 @@ export const challengeSchema = z.object({
 
 export const notificationSchema = z.object({
    // user_id:z.number()
-    user_id:z.string()
+    //user_id:z.string()
+     user_id: z.coerce.number(),
 });
 
 export const acceptSchema = z.object({

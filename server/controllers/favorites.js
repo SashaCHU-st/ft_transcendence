@@ -74,20 +74,20 @@ export async function favorites(request, reply) {
   }
 }
 
-export async function deletefavorites(req, reply) {
-  console.log("we in delete");
+// export async function deletefavorites(req, reply) {
+//   console.log("we in delete");
 
-  const {user_id, username} = req.body;
+//   const {user_id, username} = req.body;
 
-  try
-  {
-    const deleteFav = db
-    .prepare(`DELETE FROM favorites WHERE user_id = ? AND username =?`)
-    .run(user_id, username)
+//   try
+//   {
+//     const deleteFav = db
+//     .prepare(`DELETE FROM favorites WHERE user_id = ? AND username =?`)
+//     .run(user_id, username)
 
-    return reply.code(200).send({ deleteFav });
-  }catch (err) {
-    console.error("Database error:", err.message);
-    return reply.code(500).send({ message: "Something went wrong" });
-  }
-}
+//     return reply.code(200).send({ deleteFav });
+//   }catch (err) {
+//     console.error("Database error:", err.message);
+//     return reply.code(500).send({ message: "Something went wrong" });
+//   }
+// }

@@ -1,6 +1,6 @@
 import { favoritesSchema } from "../schema/favorites.schema.js";
-import { addfavorites, deletefavorites } from "../controllers/favorites.js";
-import { validatedValues } from "../utils/validate.js";
+// import { addfavorites, deletefavorites } from "../controllers/favorites.js";
+// import { validatedValues } from "../utils/validate.js";
 import { addfavorites, favorites, deletefavorites } from "../controllers/favorites.js";
 
 async function favoriteRoutes(fastify) {

@@ -29,15 +29,22 @@ export async function notification(req, reply) {
         `SELECT * FROM challenge WHERE friends_id = ? AND confirmReq = 0`,
       )
       .all(user_id);
-
+      
       console.log("notification", notification);
-    if (notification) {
-      return reply
-        .code(200)
-        .send({ message: "There is request", friends_id: notification.user_id, notification:notification});
-    } else {
-      return reply.code(400).send({ message: "There is NO request" });
-    }
+
+      if (notification.length === 0) {
+        return reply.code(200).send({ message: "No challenge found", notification: [] });
+      } else {
+        return reply.code(200).send({ message: "There is request",friends_id: notification.user_id, notification });
+      }
+
+    // if (notification && notification.length > 0) {
+    //   return reply
+    //     .code(200)
+    //     .send({ message: "There is request", friends_id: notification.user_id, notification:notification});
+    // } else {
+    //   return reply.code(400).send({ message: "There is NO request",  notification: [] });
+    // }
   } catch (err) {
     console.error("Database error:", err.message);
     return reply.code(500).send({ message: "Something went wrong" });

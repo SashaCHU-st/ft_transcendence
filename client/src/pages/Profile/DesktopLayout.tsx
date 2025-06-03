@@ -16,6 +16,7 @@ interface DesktopLayoutProps {
   handlePlay: () => void; // Callback to start the game
   expandUsername?: string;
   handleRemove: (username: string) => void;
+  handleAdd: (username: string) => void;
 }
 
 // DesktopLayout component for rendering the profile page layout on desktop screens
@@ -27,6 +28,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   handlePlay,
   expandUsername,
   handleRemove,
+  handleAdd,
   
 }) => {
   // Render a 6-column grid layout visible only on extra-large screens
@@ -66,7 +68,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           FRIENDS
         </h2>
         {/* Render list of friends with optional auto-expansion */}
-        <UserList users={friends} variant="friends" expandUsername={expandUsername}  onRemove={handleRemove} />
+        <UserList users={friends} variant="friends" expandUsername={expandUsername}  onRemove={handleRemove} onAdd={handleAdd} />
       </div>
 
       {/* Video section (decorative animation) */}
@@ -192,7 +194,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           PLAYERS
         </h2>
         {/* Render list of players with optional auto-expansion */}
-        <UserList users={players} variant="players" expandUsername={expandUsername} />
+        <UserList users={players} variant="players" expandUsername={expandUsername}  onAdd={handleAdd}/>
       </div>
     </div>
   );
