@@ -2,6 +2,7 @@ import { challengeSchema, notificationSchema, acceptSchema } from "../schema/cha
 import { challenge,notification,accept,decline } from "../controllers/challenge.js";
 import { validatedValues } from "../utils/validate.js";
 
+
 async function challengeRoutes(fastify) {
   fastify.post("/challenge", async (req, reply) => {
     const validated = challengeSchema.safeParse(req.body);
@@ -20,7 +21,7 @@ async function challengeRoutes(fastify) {
     const data =await validatedValues(validated, reply);
     return accept({ ...req, body: data }, reply);
   });
-
+  
   fastify.delete("/declineRequest",async (req, reply) => {
     const validated = acceptSchema.safeParse(req.body);
     const data =await validatedValues(validated, reply);

@@ -91,114 +91,187 @@ export default function BracketOverlay({
     return `Round ${rIndex + 1}`;
   }
 
-  const totalRounds = rounds.length;
-  useEnterKey(onClose);
+	const totalRounds = rounds.length;
 
-  const matchStyles: Record<string, string> = {
-    Quarterfinals: `
-                  border-2 border-[#BD0E86]
-                  bg-black bg-opacity-30
-                  shadow-[0_0_15px_rgba(255,29,153,0.7),0_0_24px_rgba(255,29,153,0.4)]
-                  hover:scale-105 transition`,
-    Semifinals: `
-                  border-2 border-[#9010CE]
-                  bg-black bg-opacity-30
-                  shadow-[0_0_12px_rgba(192,38,211,0.7)]
-                  hover:scale-105 transition`,
-    Final: `
-                  border-2 border-[#0A7FC9]
-                  bg-black bg-opacity-30
-                  shadow-[0_0_15px_rgba(0,255,255,0.7),0_0_24px_rgba(0,255,255,0.4)]
-                  hover:scale-105 transition`,
-  };
+	// Main render: Returns the bracket overlay with a space background and tournament structure
+	return (
+		<SpaceBackground>
+			{/* Main container: Displays the bracket with a semi-transparent background and scrollable content */}
+			<div className="
+				relative
+				h-[90%]
+				w-[90%]
+				overflow-auto
+				rounded
+				border-2
+				border-[#0A7FC9]
+				p-4
+				text-white
+				flex
+				flex-col
+				items-center
+				bg-black bg-opacity-30
+				shadow-[0_0_15px_rgba(0,255,255,0.7)]">
 
-  const highlightStyles: Record<string, string> = {
-    Quarterfinals: `
-                            border-[#FF4CB5] border-4
-                            ring-4 ring-[#FF4CB5]
-                            shadow-[0_0_20px_rgba(255,76,181,0.9),0_0_32px_rgba(255,76,181,0.6)]`,
-    Semifinals: `
-                            border-[#B94CFF] border-4
-                            ring-4 ring-[#B94CFF]
-                            shadow-[0_0_20px_rgba(185,76,255,0.9),0_0_32px_rgba(185,76,255,0.6)]`,
-    Final: `
-                            border-[#40BFFF] border-4
-                            ring-4 ring-[#40BFFF]
-                            shadow-[0_0_20px_rgba(64,191,255,0.9),0_0_32px_rgba(64,191,255,0.6)]`,
-  };
+				{/* Title: Shows the bracket title with a glowing effect */}
+				<h2 className="
+					mb-4
+					text-center
+					text-2xl
+					font-extrabold
+					text-[#D3E0FB]
+					drop-shadow-[0_0_10px_rgba(211,224,251,0.8)]">
+					Single-Elimination Bracket
+				</h2>
 
-  return (
-    <OverlayWrapper>
-      <OverlayCard className="relative h-[90%] w-[90%] overflow-auto flex flex-col items-center">
-        <h2 className={textStyles.heading}>COSMIC TOURNAMENT</h2>
+				{/* Rounds container: Displays all rounds, either stacked (mobile) or side-by-side (desktop) */}
+				<div className="
+					flex
+					flex-wrap
+					flex-col
+					md:flex-row
+					justify-center
+					items-center
+					gap-20
+					w-full
+					h-full">
+					{rounds.map((round, rIndex) => {
+						const label = getRoundLabel(rIndex, totalRounds);
 
-        <div
-          className="
-            flex flex-col md:flex-row
-            justify-center items-center
-            gap-8 md:gap-20
-            w-full h-full"
-        >
-          {rounds.map((round, rIndex) => {
-            const label = getRoundLabel(rIndex, totalRounds);
-            const matchStyle = matchStyles[label] ?? matchStyles.Final;
+						// Match styling: Applies different styles based on round (Quarterfinals, Semifinals, Final) 
+						const matchStyle =
+							label === "Quarterfinals"
+								? `
+							border-2 border-[#BD0E86]
+							bg-black bg-opacity-30
+							shadow-[0_0_15px_rgba(255,29,153,0.7),0_0_24px_rgba(255,29,153,0.4)]
+							hover:scale-105 transition`
+											: label === "Semifinals"
+												? `
+							border-2 border-[#9010CE]
+							bg-black bg-opacity-30
+							shadow-[0_0_12px_rgba(192,38,211,0.7)]
+							hover:scale-105 transition`
+												: `
+							border-2 border-[#0A7FC9]
+							bg-black bg-opacity-30
+							shadow-[0_0_15px_rgba(0,255,255,0.7),0_0_24px_rgba(0,255,255,0.4)]
+							hover:scale-105 transition`;
 
-            return (
-              <div
-                key={rIndex}
-                className="
-                  flex flex-col items-center justify-center
-                  w-full sm:w-[150px]"
-              >
-                <h3 className={textStyles.roundLabel}>{label}</h3>
+						// Round render: Returns a single round with its label and matches
+						return (
+							<div key={rIndex} className="
+										flex
+										flex-col
+										items-center
+										justify-center
+										min-w-[150px]">
+								{/* Round label: Displays the round name (e.g., Quarterfinals) */}
+								<h3 className="
+										mb-2
+										text-lg
+										font-semibold
+										text-[#D3E0FB]
+										drop-shadow-[0_0_5px_rgba(211,224,251,0.6)]">
+									{label}
+								</h3>
 
-                <div className="flex flex-col items-center justify-center gap-10">
-                  {round.map((match, mIndex) => {
-                    const { p1, p2 } = match;
-                    const isCurrent =
-                      currentMatch &&
-                      currentMatch.rIndex === rIndex &&
-                      currentMatch.mIndex === mIndex;
+								{/* Matches container: Displays all matches in the round */}
+								<div className="
+                    				flex
+                    				flex-col
+                    				items-center
+                    				justify-center
+                    				gap-10">
+									{round.map((match, mIndex) => {
+										const p1 = parsePredName(match.p1);
+										const p2 = parsePredName(match.p2);
 
-                    const highlightStyle =
-                      highlightStyles[label] ?? highlightStyles.Final;
+										// Match render: Returns a single match with player names and winner
+										return (
+											<div key={mIndex} className={`
+												flex
+												min-w-[198px]
+												flex-col
+												items-center
+												rounded-xl
+												p-4
+												${matchStyle}`}>
 
-                    return (
-                      <div
-                        key={mIndex}
-                        className={`
-                          flex flex-col items-center
-                          w-full sm:w-[198px]
-                          rounded-xl p-4
-                          ${matchStyle}
-                          ${isCurrent ? highlightStyle : ""}
-                        `}
-                      >
-                        <PlayerName {...p1} />
-                        <div className={textStyles.vs}>vs</div>
-                        <PlayerName {...p2} />
-                        {match.winner && (
-                          <div className={textStyles.winner}>
-                            Winner: {match.winner.name}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+												{/* Player 1: Displays the first player's name, styled differently if predicted */}
+												<div
+													className={
+														p1.isPred
+															? `
+												italic
+												text-orange-300
+												text-[24px]
+												text-shadow-[0_0_4px_rgba(255,147,0,0.6)]`
+																			: `
+												text-[#D3E0FB]
+												text-[24px]
+												text-shadow-[0_0_4px_rgba(211,224,251,0.6)]`} >
+													{p1.display}
+												</div>
 
-        <OverlayButton
-          color="blue"
-          onClick={onClose}
-          className="absolute right-4 top-4"
-        >
-          Close
-        </OverlayButton>
-      </OverlayCard>
-    </OverlayWrapper>
-  );
+												{/* Versus: Displays "vs" between player names */}
+												<div className="
+												text-[21px]
+												text-[#743b91]
+												text-shadow-[0_0_4px_rgba(147,51,234,0.6)]">
+													vs
+												</div>
+
+												{/* Player 2: Displays the second player's name, styled differently if predicted */}
+												<div className={ p2.isPred
+															? `
+												italic
+												text-orange-300
+												text-[24px]
+												text-shadow-[0_0_4px_rgba(255,147,0,0.6)]`
+																			: `
+												text-[#D3E0FB]
+												text-[24px]
+												text-shadow-[0_0_4px_rgba(211,224,251,0.6)]`}>
+													{p2.display}
+												</div>
+												
+												{/* Winner: Displays the winner's name if the match has a winner */}
+												{match.winner && (
+													<div className="
+														mt-3
+														text-[21px]
+														text-[#74C0FC]
+														text-shadow-[0_0_4px_rgba(74,222,128,0.6)]">
+														Winner: {match.winner}
+													</div>
+												)}
+											</div>
+										);
+									})}
+								</div>
+							</div>
+						);
+					})}
+				</div>
+				
+				{/* Close button: Triggers the onClose callback to dismiss the overlay */}
+				<button
+					onClick={onClose}
+					className="
+					absolute
+					right-4
+					top-4
+					rounded-xl
+					border-2 border-[#0A7FC9]
+					bg-black bg-opacity-30
+					px-4 py-2
+					text-[#297db1]
+					shadow-[0_0_15px_rgba(0,255,255,0.7)]
+					hover:scale-105 transition">
+					Close
+				</button>
+			</div>
+		</SpaceBackground>
+	);
 }

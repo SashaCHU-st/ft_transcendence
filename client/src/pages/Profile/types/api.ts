@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosError } from "axios";
-import { toast } from "react-hot-toast";
+//import { toast } from "react-hot-toast";
 import { UserInfo, MatchResult } from "./UserInfo";
 
 const BASE_URL = "https://localhost:3000";
@@ -23,33 +23,45 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error: AxiosError) => {
+//     if (error.response?.status === 401) {
+//       toast.error("Session expired. Please log in again.");
+//       localStorage.removeItem("token");
+//       window.location.href = "/login";
+//     }
+//     return Promise.reject(error);
+//   },
+// );
 
 export const getAuthHeaders = (): { Authorization: string } | {} => {
   const token = localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-export const fetchUserData = async (
-  headers: { Authorization: string } | {} = getAuthHeaders(),
-): Promise<UserInfo> => {
-  const response = await api.get("/users/me", { headers });
-  const currentUser = response.data.user;
+// export const fetchUserData = async (
+//   headers: { Authorization: string } | {} = getAuthHeaders(),
+// ): Promise<UserInfo> => {
+//   const response = await api.get("/users/me", { headers });
+//   const currentUser = response.data.user;
 
-  return {
-    id: String(currentUser.id || "unknown"),
-    username: currentUser.username || currentUser.name || "Unknown",
-    avatar: currentUser.image
-      ? `data:image/jpeg;base64,${currentUser.image}`
-      : "/prof_img/avatar1.png",
-    email: currentUser.email || "",
-    name: currentUser.name || "",
-    password: currentUser.password || "",
-    wins: currentUser.wins || 0,
-    losses: currentUser.losses || 0,
-    online: !!currentUser.online,
-    history: currentUser.history || [],
-  };
-};
+//   return {
+//     id: String(currentUser.id || "unknown"),
+//     username: currentUser.username || currentUser.name || "Unknown",
+//     avatar: currentUser.image
+//       ? `data:image/jpeg;base64,${currentUser.image}`
+//       : "/prof_img/avatar1.png",
+//     email: currentUser.email || "",
+//     name: currentUser.name || "",
+//     password: currentUser.password || "",
+//     wins: currentUser.wins || 0,
+//     losses: currentUser.losses || 0,
+//     online: !!currentUser.online,
+//     history: currentUser.history || [],
+//   };
+// };
+
 
 export const updateUserProfile = async (
   profileUpdates: Partial<UserInfo>,

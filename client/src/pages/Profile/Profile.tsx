@@ -160,7 +160,6 @@ import MobileLayout from "./MobileLayout";
 import BotSelector from "./BotSelector";
 import { useProfile } from "./hooks/useProfile";
 import { toast } from "react-hot-toast";
-// Import the SpaceBackground component
 import { SpaceBackground } from "../../pong/components/SpaceBackground";
 import ChatModal from "./ChatModal";
 //import { UserInfo } from "./types/UserInfo";
@@ -181,6 +180,12 @@ const Profile: React.FC = () => {
     setIsModalOpen, // Function to toggle profile modal
     handleSaveProfile, // Handler to save profile changes
     handlePlay, // Handler to start a game
+    handleRemove,
+    notification,
+    isNotificationModalOpen,
+    handleAcceptChallenge,
+    handleDeclineChallenge,
+   
   } = useProfile();
 
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -200,7 +205,7 @@ const Profile: React.FC = () => {
       (f) => f.username.toLowerCase() === username.toLowerCase()
     );
 
-    // If found, set expandUsername to trigger card expansion and show success toast
+    //If found, set expandUsername to trigger card expansion and show success toast
     if (foundInPlayers || foundInFriends) {
       setExpandUsername(username);
       toast.success(`Found user: ${username}`);
@@ -278,6 +283,7 @@ const Profile: React.FC = () => {
           selectedBot={selectedBot}
           handlePlay={handlePlay}
           expandUsername={expandUsername}
+          handleRemove={handleRemove}
         />
 
         {/* Mobile-specific layout for smaller screens */}
@@ -288,6 +294,7 @@ const Profile: React.FC = () => {
           selectedBot={selectedBot}
           handlePlay={handlePlay}
           expandUsername={expandUsername}
+          handleRemove={handleRemove}
         />
 
         {/* Bot selector for choosing game opponent */}
@@ -311,6 +318,32 @@ const Profile: React.FC = () => {
       )}
 
       {isChatOpen && <ChatModal onClose={() => setIsChatOpen(false)} />}
+          />
+        )}
+
+        {isNotificationModalOpen && notification && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+              <div className="bg-white rounded-xl p-6 text-center text-black w-full max-w-sm">
+                <h2 className="text-lg text-indigo-950 font-orbitron font-bold mb-4">CHALLENGE REQUEST</h2>
+                <p className="mb-6 font-orbitron">{notification.username} ({notification.user_id}) has challenged you to a game!</p>
+                <div className="flex justify-center gap-2">
+                  <button
+                    onClick={handleDeclineChallenge}
+                    className="px-4 py-2 font-orbitron bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+                  >
+                    DECLINE
+                  </button>
+                  <button
+                    onClick={handleAcceptChallenge}
+                    className="px-4 py-2 font-orbitron bg-green-500 text-white rounded hover:bg-green-600"
+                  >
+                    ACCEPT
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        
     </SpaceBackground>
   );
 };

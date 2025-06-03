@@ -15,6 +15,7 @@ interface MobileLayoutProps {
   selectedBot: (typeof bots)[0] | null;
   handlePlay: () => void;
   expandUsername?: string;
+  handleRemove: (username: string) => void;
 }
 
 const MobileLayout: React.FC<MobileLayoutProps> = ({
@@ -24,6 +25,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   selectedBot,
   handlePlay,
   expandUsername,
+  handleRemove,
 }) => {
   return (
     <div
@@ -88,7 +90,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           >
             Friends
           </h2>
-          <UserList users={friends} variant="friends" expandUsername={expandUsername} />
+          <UserList users={friends} variant="friends" expandUsername={expandUsername} onRemove={handleRemove}/>
         </div>
         <div
           className="

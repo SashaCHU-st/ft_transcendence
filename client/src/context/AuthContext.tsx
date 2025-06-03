@@ -55,7 +55,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         body: JSON.stringify({ user_id }),
       });
 
-      console.log("!!!!!!!!!");
       const responseData = await response.json();
       console.log("HERE=>", responseData);
       if (!response.ok) throw new Error("Failed to logout");
