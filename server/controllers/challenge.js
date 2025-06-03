@@ -28,12 +28,13 @@ export async function notification(req, reply) {
       .prepare(
         `SELECT * FROM challenge WHERE friends_id = ? AND confirmReq = 0`,
       )
-      .get(user_id);
+      .all(user_id);
 
+      console.log("notification", notification);
     if (notification) {
       return reply
         .code(200)
-        .send({ message: "There is request", friends_id: notification.user_id });
+        .send({ message: "There is request", friends_id: notification.user_id, notification:notification});
     } else {
       return reply.code(400).send({ message: "There is NO request" });
     }
