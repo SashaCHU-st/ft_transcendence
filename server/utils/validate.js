@@ -5,7 +5,6 @@ if (!validated.success) {
     reply.code(400).send({ message });
     throw new Error("Validation failed");
   }
-  console.log("ddddd",validated.data)
   return validated.data;
 }
 
