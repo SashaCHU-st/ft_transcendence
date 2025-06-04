@@ -13,19 +13,28 @@ const api: AxiosInstance = axios.create({
 
 api.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
-    //toast.error(error.response?.data.message)/// need to fix
+  (error: AxiosError<any>) => {
+    const backendMessage =
+      error.response?.data?.message ||
+      error.message ||
+      "Something went wrong";
+
     if (error.response?.status === 401) {
       toast.error("Session expired. Please log in again.");
       localStorage.removeItem("token");
       window.location.href = "/login";
+    } else {
+      toast.error(backendMessage);
     }
+
     return Promise.reject(error);
   },
 );
+
 // api.interceptors.response.use(
 //   (response) => response,
 //   (error: AxiosError) => {
+//     //toast.error(error.response?.data.message)/// need to fix
 //     if (error.response?.status === 401) {
 //       toast.error("Session expired. Please log in again.");
 //       localStorage.removeItem("token");
@@ -34,6 +43,7 @@ api.interceptors.response.use(
 //     return Promise.reject(error);
 //   },
 // );
+
 
 export const getAuthHeaders = (): { Authorization: string } | {} => {
   const token = localStorage.getItem("token");
@@ -136,3 +146,5 @@ export const recordLoss = async (
   if (id === null) throw new Error("No user id");
   await api.post("/loseUser", { user_id: id }, { headers });
 };
+
+export default api;

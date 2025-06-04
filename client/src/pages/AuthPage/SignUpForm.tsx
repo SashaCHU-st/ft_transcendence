@@ -60,6 +60,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
           <input
             type="text"
             placeholder="Name"
+            autoFocus
             className="w-full bg-black text-white bg-opacity-30 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={name}
             onChange={(e) => setName(e.target.value)}

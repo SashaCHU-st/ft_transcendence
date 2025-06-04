@@ -12,6 +12,10 @@ export async function challenge(req, reply) {
         // console.log("MMMMMMM=>")
         // console.log("UUUU=>", user_id)
         // console.log("UUUU=>", friends_id.id)
+
+      if (!friends_id) {
+        return reply.code(404).send({ message: "User not found" });
+      }
       const alreadyChallengedBefore = db.prepare(`SELECT * FROM challenge WHERE user_id = ? AND friends_id = ?`).get(user_id, friends_id.id)
       // console.log("NNNNNN=>", alreadyChallengedBefore)
       if(!alreadyChallengedBefore)

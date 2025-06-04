@@ -57,12 +57,13 @@ const UserList: React.FC<Props> = ({ users, variant, expandUsername, onRemove, o
  
   const handleChallenge = async (username: string) => {
     try{
-       await askForChallenge(username);
-        console.log(`${username} asked for challenge`);
-        toast.success(`You asked ${username} for challenge`);
-    } catch (err) {
-      console.error("Failed to add favorite:", err);
-      toast.error(`Failed to ask ${username} for challenge`);
+      await askForChallenge(username);
+      console.log(`${username} asked for challenge`);
+      toast.success(`You asked ${username} for challenge`);
+    } catch (err:any) {
+      console.error("Failed to ask for challenge:", err);
+      //toast.error(`Failed to ask ${username} for challenge`);
+      throw err;
     }
   };
 

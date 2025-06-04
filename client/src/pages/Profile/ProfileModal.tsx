@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { UserInfo } from "./types/UserInfo";
 import { toast } from "react-hot-toast";
@@ -19,7 +18,8 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   const [username, setUsername] = useState(userData.username);
   const [name, setName] = useState(userData.name);
   const [password, setPassword] = useState("");
-  const MAX_FILE_SIZE = 10 * 1024 * 1024; // Maximum file size: 10 MB
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // Maximum file size: 2 MB
+  const [showPassword, setShowPassword] = useState(false);
 
   // Handler for avatar change
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,6 +84,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             text-2xl
             font-bold
             text-center
+            font-orbitron
           `}
           // Header: centered "Edit Profile" text
         >
@@ -146,6 +147,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             placeholder="Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            autoFocus
             className={`
               w-full
               p-2
@@ -217,25 +219,35 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
           >
             New Password
           </label>
-          <input
-            type="password"
-            placeholder="New Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={`
-              w-full
-              p-2
-              rounded
-              bg-gray-800
-              border
-              border-gray-600
-              text-white
-              focus:outline-none
-              focus:ring-2
-              focus:ring-indigo-800
-            `}
-            // Input for entering a new password
-          />
+          <div className="relative">
+            <input
+              //type="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="New Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={`
+                w-full
+                p-2
+                rounded
+                bg-gray-800
+                border
+                border-gray-600
+                text-white
+                focus:outline-none
+                focus:ring-2
+                focus:ring-indigo-800
+              `}
+              // Input for entering a new password
+            />
+             <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-2 text-gray-400 hover:text-white focus:outline-none"
+              >
+                {showPassword ? "🙈" : "👁️"}
+            </button>
+          </div>
         </div>
 
         <div
@@ -255,6 +267,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               bg-gray-600
               hover:bg-gray-700
               rounded
+              font-orbitron
             `}
             // Cancel button: closes the modal
           >
@@ -269,6 +282,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               hover:bg-green-600
               text-white
               rounded
+              font-orbitron
             `}
             // Save button: saves changes
           >
