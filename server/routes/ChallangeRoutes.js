@@ -12,9 +12,6 @@ async function challengeRoutes(fastify) {
 
   fastify.post("/notification",async (req, reply) => {
     const validated = notificationSchema.safeParse(req.body);
-
-    console.log("Incoming req.body:", req.body);
-    console.log("Validation result:", validated);
     
     const data =await validatedValues(validated, reply);
     return notification({ ...req, body: data }, reply);

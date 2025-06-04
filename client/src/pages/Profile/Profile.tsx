@@ -359,7 +359,9 @@ const Profile: React.FC = () => {
                     className="border border-indigo-200 rounded-lg p-4 bg-white shadow"
                   >
                     <p className="mb-4 font-orbitron">
-                      {notif.username} ({notif.user_id}) has challenged you to a game!
+                      {notif.username}  
+                      {/* ({notif.user_id})  */}
+                       has challenged you to a game!
                     </p>
                     <div className="flex justify-center gap-2">
                       <button
