@@ -163,16 +163,15 @@ import { toast } from "react-hot-toast";
 import { SpaceBackground } from "../../pong/components/SpaceBackground";
 import ChatModal from "./ChatModal";
 //import { UserInfo } from "./types/UserInfo";
+import NotificationModal from "./NotificationModal";
 
 // Profile component serves as the main page for user profile management
 const Profile: React.FC = () => {
   // Destructure user data, state, and handlers from custom useProfile hook
   const {
     user, // Current user's data
-
     friends, // List of friends
     players, // List of all players
-
     selectedBot, // Currently selected bot for gameplay
     isModalOpen, // State for profile modal visibility
     isLoading, // Loading state for data fetching
@@ -319,68 +318,13 @@ const Profile: React.FC = () => {
           onSave={handleSaveProfile}
         />
       )}
-
-     
-          {/* />
-        )} */}
-
-        {/* {isNotificationModalOpen && notifications && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-              <div className="bg-white rounded-xl p-6 text-center text-black w-full max-w-sm">
-                <h2 className="text-lg text-indigo-950 font-orbitron font-bold mb-4">CHALLENGE REQUEST</h2>
-                <p className="mb-6 font-orbitron">{notifications[0].username} ({notifications[0].user_id}) has challenged you to a game!</p>
-                <div className="flex justify-center gap-2">
-                  <button
-                    //onClick={handleDeclineChallenge}
-                    onClick={() => handleDeclineChallenge(notifications[0].user_id)}
-                    className="px-4 py-2 font-orbitron bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-                  >
-                    DECLINE
-                  </button>
-                  <button
-                    //onClick={handleAcceptChallenge}
-                    onClick={() => handleAcceptChallenge(notifications[0].user_id)}
-                    className="px-4 py-2 font-orbitron bg-green-500 text-white rounded hover:bg-green-600"
-                  >
-                    ACCEPT
-                  </button>
-                </div>
-              </div>
-            </div>
-          )} */}
-
           {isNotificationModalOpen && notifications.length > 0 && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-              <div className="bg-white rounded-xl p-6 text-center text-black w-full max-w-md max-h-[80vh] overflow-y-auto space-y-6">
-                <h2 className="text-lg text-indigo-950 font-orbitron font-bold mb-4">CHALLENGE REQUESTS</h2>
-                {notifications.map((notif) => (
-                  <div
-                    key={notif.user_id}
-                    className="border border-indigo-200 rounded-lg p-4 bg-white shadow"
-                  >
-                    <p className="mb-4 font-orbitron">
-                      {notif.username}  
-                      {/* ({notif.user_id})  */}
-                       has challenged you to a game!
-                    </p>
-                    <div className="flex justify-center gap-2">
-                      <button
-                        onClick={() => handleDeclineChallenge(notif.user_id)}
-                        className="px-4 py-2 font-orbitron bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-                      >
-                        DECLINE
-                      </button>
-                      <button
-                        onClick={() => handleAcceptChallenge(notif.user_id)}
-                        className="px-4 py-2 font-orbitron bg-green-500 text-white rounded hover:bg-green-600"
-                      >
-                        ACCEPT
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <NotificationModal
+              notifications={notifications}
+              onAccept={handleAcceptChallenge}
+              onDecline={handleDeclineChallenge}
+            />
+
           )}
 
          {isChatOpen && <ChatModal onClose={() => setIsChatOpen(false)} />}

@@ -172,7 +172,6 @@ export const useProfile = () => {
       setUser(currentUser);
       setPlayers(playersList);
       setFriends(favoriteUsers);
-      //fetchAllUsers();
     } catch (err: any) {
       console.error("Error fetching users:", err);
       toast.error(err.message || "Failed to load users.");
@@ -225,14 +224,12 @@ export const useProfile = () => {
   );
 
     const handleAcceptChallenge = async (userId: string) => {
-      // if (!user || !notification) return;
-
       try {
         await fetch(`https://localhost:3000/acceptRequest`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           //body: JSON.stringify({ user_id: user.id, friends_id: notification.user_id }),
-           body: JSON.stringify({ user_id: localStorage.getItem("id"), friends_id: userId }),
+           body: JSON.stringify({ user_id: user?.id, friends_id: userId }),
         });
 
         toast.success("Challenge accepted!");
@@ -284,16 +281,16 @@ export const useProfile = () => {
       }
     };
 
-    const handleAdd = async (username: string) => {
-         try {
-           await addToFavorites(username);
-           console.log(`Added ${username} to favorites`);
-           toast.success(`${username} added to favorites`);
-           await fetchAllUsers();
-         } catch (err) {
-           console.error("Failed to add favorite:", err);
-         }
-       };
+  const handleAdd = async (username: string) => {
+      try {
+        await addToFavorites(username);
+        console.log(`Added ${username} to favorites`);
+        toast.success(`${username} added to favorites`);
+        await fetchAllUsers();
+      } catch (err) {
+        console.error("Failed to add favorite:", err);
+      }
+  };
 
    const handleRemove = async (username: string) => {
       try{
