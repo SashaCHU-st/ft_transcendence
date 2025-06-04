@@ -85,6 +85,8 @@ export const useProfile = () => {
 
       const data = await res.json();
       console.log("Check data.notif: ", data.notification);
+      console.log("kuku1 ", data.kuku1);
+      console.log("kuku2 ", data.kuku2);
       // Assuming data.notification is an array of notifications from backend
       if (data.notification && Array.isArray(data.notification)) {
         // Extract unique new notifications by friends_id

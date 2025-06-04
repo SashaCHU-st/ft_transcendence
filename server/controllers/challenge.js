@@ -47,16 +47,85 @@ export async function notification(req, reply) {
       .all(user_id);
 
     console.log("notifications =>", notification);
+    const kuku1 = db.prepare(`SELECT * FROM challenge WHERE user_id = ? AND confirmReq = 1 AND ok = 0`).get(user_id)
+
+    console.log("You did not see that =>", kuku1)
+    // if(kuku1)
+    // {
+
+    //   return reply.code(200).send({ message: "CHALLENGE ACCREPTED ", friend:kuku1.friends_id});
+    // }
+    
+    const kuku2= db.prepare(`SELECT * FROM challenge WHERE user_id = ? AND confirmReq = 1 AND ok = 1`).get(user_id)
+    console.log("kuku2", kuku2)
+    // if(kuku2)
+    // {
+    //   console.log("OOOOOOOOOOOOOOOO")
+    //   return reply.code(200).send({ message: "CHALLENGE ACCREPTED BEFORE"});
+
+    // }
+    
       if (notification.length === 0) {
-        return reply.code(200).send({ message: "No challenge found", notification: [] });
+        console.log("FFFFFFFFFFFFF")
+        return reply.code(200).send({ message: "No challenge found", notification: [], kuku1, kuku2 });
       } else {
-        return reply.code(200).send({ message: "There is request",friends_id: notification.user_id, notification });
+        return reply.code(200).send({ message: "There is request",friends_id: notification.user_id, notification, kuku1, kuku2 });
       }
 
   } catch (err) {
     console.error("Database error:", err.message);
     return reply.code(500).send({ message: "Something went wrong" });
   }
+}
+
+// export async function  notifyAboutAccept(req, reply) {
+
+//   console.log("We in SEEEE")
+
+//   const {user_id} = req.body;
+
+//   try
+//   {
+//     const kuku1 = db.prepare(`SELECT * FROM challenge WHERE user_id = ? AND confirmReq = 1 AND ok = 0`).get(user_id)
+
+//     console.log("YYYYY=>", kuku1)
+//     if(kuku1)
+//     {
+
+//       return reply.code(200).send({ message: "CHALLENGE ACCREPTED ", friend:kuku1.friends_id});
+//     }
+    
+//     const kuku2= db.prepare(`SELECT * FROM challenge WHERE user_id = ? AND confirmReq = 1 AND ok = 1`).get(user_id)
+//     if(kuku2)
+//     {
+//       console.log("OOOOOOOOOOOOOOOO")
+//       return reply.code(200).send({ message: "CHALLENGE ACCREPTED BEFORE"});
+
+//     }
+  
+//   } catch (err) {
+//     console.error("Database error:", err.message);
+//     return reply.code(500).send({ message: "Something went wrong" });
+//   }
+// }
+
+export async function sawAccept(req, reply) {
+
+
+  const {user_id, friends_id} = req.body
+
+  try
+  {
+    const sawOk = db.prepare(`UPDATE challenge SET ok = 1 WHERE user_id = ? AND friends_id = ?`).run(user_id, friends_id)
+
+    console.log("SSSS=>", sawOk)
+    
+      return reply.code(200).send({ message: "Saw ok", sawOk});
+  }catch (err) {
+    console.error("Database error:", err.message);
+    return reply.code(500).send({ message: "Something went wrong" });
+  }
+  
 }
 
 export async function accept(req, reply) {
