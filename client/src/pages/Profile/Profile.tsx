@@ -186,7 +186,6 @@ const Profile: React.FC = () => {
     handleAcceptChallenge,
     handleDeclineChallenge,
     handleAdd,
-   
   } = useProfile();
 
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -319,14 +318,14 @@ const Profile: React.FC = () => {
           onSave={handleSaveProfile}
         />
       )}
-          {isNotificationModalOpen && notifications.length > 0 && (
-            <NotificationModal
-              notifications={notifications}
-              onAccept={handleAcceptChallenge}
-              onDecline={handleDeclineChallenge}
-            />
+      {isNotificationModalOpen && notifications.length > 0 && (
+        <NotificationModal
+          notifications={notifications}
+          onAccept={handleAcceptChallenge}
+          onDecline={handleDeclineChallenge}
+        />
+      )}
 
-<<<<<<< HEAD
       {isChatOpen && (
         <ChatProvider currentUserId={user.id}>
           <ChatModal
@@ -336,11 +335,6 @@ const Profile: React.FC = () => {
           />
         </ChatProvider>
       )}
-=======
-          )}
-
-         {isChatOpen && <ChatModal onClose={() => setIsChatOpen(false)} />}
->>>>>>> origin/testing
     </SpaceBackground>
   );
 };
