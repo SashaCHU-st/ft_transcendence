@@ -250,7 +250,7 @@ const Profile: React.FC = () => {
 
   // Render the main profile page layout
   return (
-    <SpaceBackground stars>
+    <SpaceBackground>
       <div
         className="h-screen 
        w-full

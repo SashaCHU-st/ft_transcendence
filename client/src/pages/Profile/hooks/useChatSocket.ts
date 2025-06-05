@@ -5,6 +5,7 @@ export function useChatSocket(
   userId: string,
   onChatMessage: (msg: ChatMessage) => void,
   onStatusChange?: (connected: boolean) => void,
+  onError?: (err: { code: number; message: string }) => void,
 ): WebSocket | null {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const reconnectRef = useRef<NodeJS.Timeout | null>(null);
@@ -28,6 +29,8 @@ export function useChatSocket(
           const data = JSON.parse(ev.data);
           if (data.type === "chat") {
             onChatMessage(data.message as ChatMessage);
+          } else if (data.type === "error") {
+            onError?.(data as { code: number; message: string });
           }
         } catch {
           // ignore parse errors
@@ -79,7 +82,7 @@ export function useChatSocket(
       }
       onStatusChange?.(false);
     };
-  }, [userId, onChatMessage]);
+  }, [userId, onChatMessage, onStatusChange, onError]);
 
   return socket;
 }

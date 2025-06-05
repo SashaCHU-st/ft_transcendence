@@ -130,6 +130,8 @@ export interface ChatMessage {
   sender_id: number;
   receiver_id: number;
   text: string;
+  /** 1 when sent while blocked, otherwise 0 */
+  blocked: number;
   created_at: string;
 }
 
@@ -149,11 +151,33 @@ export const sendChatMessage = async (
 export const fetchChatMessages = async (
   user1: number,
   user2: number,
+  viewerId: number,
   headers: { Authorization: string } | {} = getAuthHeaders(),
 ): Promise<ChatMessage[]> => {
   const response = await api.get(
-    `/messages?user1=${user1}&user2=${user2}`,
+    `/messages?user1=${user1}&user2=${user2}&viewerId=${viewerId}`,
     { headers },
   );
   return response.data.messages as ChatMessage[];
+};
+
+export const blockUserRequest = async (
+  blockedId: number,
+  headers: { Authorization: string } | {} = getAuthHeaders(),
+): Promise<void> => {
+  await api.post('/block', { blockedId }, { headers });
+};
+
+export const unblockUserRequest = async (
+  blockedId: number,
+  headers: { Authorization: string } | {} = getAuthHeaders(),
+): Promise<void> => {
+  await api.post('/unblock', { blockedId }, { headers });
+};
+
+export const fetchBlockedUsers = async (
+  headers: { Authorization: string } | {} = getAuthHeaders(),
+): Promise<number[]> => {
+  const response = await api.get('/blocked', { headers });
+  return response.data.blocked as number[];
 };

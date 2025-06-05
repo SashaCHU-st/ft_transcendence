@@ -1,13 +1,14 @@
 import { WebSocketServer } from 'ws';
 import jwt from 'jsonwebtoken';
-import { handleChatMessage, MAX_MESSAGE_LENGTH } from './services/chatMessages.js';
+import { handleChatMessage } from './services/chatMessages.js';
+import HttpError from './utils/http-error.js';
 
 const JWT_SECRET = process.env.JWT_SECRET_KEY || 'kuku';
 
 
 const clients = new Map(); // userId -> WebSocket
 
-export function broadcastChatMessage(message) {
+export function broadcastChatMessage(message, { toReceiver = true } = {}) {
   const send = (ws) => {
     try {
       ws.send(JSON.stringify({ type: 'chat', message }));
@@ -18,9 +19,11 @@ export function broadcastChatMessage(message) {
 
   const fromWs = clients.get(message.sender_id);
   if (fromWs && fromWs.readyState === fromWs.OPEN) send(fromWs);
-  const toWs = clients.get(message.receiver_id);
-  if (toWs && toWs.readyState === toWs.OPEN && toWs !== fromWs)
-    send(toWs);
+  if (toReceiver) {
+    const toWs = clients.get(message.receiver_id);
+    if (toWs && toWs.readyState === toWs.OPEN && toWs !== fromWs)
+      send(toWs);
+  }
 }
 
 export function initChatWsServer() {
@@ -65,8 +68,16 @@ export function initChatWsServer() {
       if (msg.type !== 'chat') return;
       const fromId = ws.user_id;
       const toId = parseInt(msg.toId, 10);
-      const { error } = handleChatMessage(fromId, toId, msg.text);
-      if (error) {
+      try {
+        handleChatMessage(fromId, toId, msg.text);
+      } catch (err) {
+        const code = err instanceof HttpError ? err.code : 500;
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        try {
+          ws.send(JSON.stringify({ type: 'error', code, message }));
+        } catch (sendErr) {
+          console.error('Error sending ws error:', sendErr.message);
+        }
         return;
       }
     });

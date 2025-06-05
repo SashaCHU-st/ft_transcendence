@@ -8,6 +8,7 @@ import {
   OverlayHeading,
 } from "../../pong/components/Overlays/OverlayComponents";
 import "./ChatModal.css";
+import { MAX_MESSAGE_LENGTH } from "../../../../shared/chatConstants.js";
 
 interface ChatModalProps {
   onClose: () => void;
@@ -16,15 +17,15 @@ interface ChatModalProps {
 }
 
 const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }) => {
-  const { state, selectUser, sendMessage } = useChatContext();
-  const { conversations, selected } = state;
+  const { state, selectUser, sendMessage, blockUser, unblockUser } = useChatContext();
+  const { conversations, selected, blockedByMe } = state;
   const messages = selected ? conversations[Number(selected.id)] || [] : [];
+  const blockedByYou = selected ? blockedByMe.includes(Number(selected.id)) : false;
+  const isBlocked = blockedByYou;
   const [input, setInput] = useState("");
   const [cooldown, setCooldown] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const cooldownRef = useRef<NodeJS.Timeout | null>(null);
-
-  const MAX_LENGTH = 500;
   const COOLDOWN_MS = 500;
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
   }, [messages]);
 
   const handleSend = () => {
-    if (!input.trim() || !selected || cooldown) return;
+    if (!input.trim() || !selected || cooldown || isBlocked) return;
     const text = input.trim();
     setInput("");
     setCooldown(true);
@@ -51,6 +52,16 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
 
   const handleKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") handleSend();
+  };
+
+  const handleBlockToggle = () => {
+    if (!selected) return;
+    if (blockedByYou) {
+      unblockUser(Number(selected.id));
+    } else {
+      setInput("");
+      blockUser(Number(selected.id));
+    }
   };
 
   return (
@@ -69,6 +80,17 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
         <div className="flex flex-1 overflow-hidden rounded-lg bg-black bg-opacity-40">
           <ChatUserList players={players} onSelect={selectUser} />
           <div className="chat-area flex flex-col flex-1">
+            {selected && (
+              <div className="p-2 border-b border-gray-700 flex justify-between items-center">
+                <span>{selected.username}</span>
+                <button
+                  onClick={handleBlockToggle}
+                  className="text-sm text-blue-400 hover:text-blue-200"
+                >
+                  {blockedByYou ? 'Unblock' : 'Block'}
+                </button>
+              </div>
+            )}
             <div
               className="chat-messages flex-1 p-2 overflow-y-auto flex flex-col"
               ref={messagesEndRef}
@@ -92,6 +114,9 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
             </div>
             {selected && (
               <div className="chat-input-container p-2 border-t border-gray-700">
+                {blockedByYou && (
+                  <div className="text-center text-gray-400 mb-1">You've blocked this user. You can no longer send messages.</div>
+                )}
                 <div className="flex items-end">
                   <input
                     className="search-input flex-grow mr-2"
@@ -99,11 +124,12 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKey}
                     placeholder="Type a message..."
-                    maxLength={MAX_LENGTH}
+                    maxLength={MAX_MESSAGE_LENGTH}
+                    disabled={isBlocked}
                   />
                   <button
                     onClick={handleSend}
-                    disabled={input.trim().length === 0 || cooldown}
+                    disabled={input.trim().length === 0 || cooldown || isBlocked}
                     className="bg-gray-900 border border-blue-400 text-white px-4 py-2 rounded-lg shadow-blue-500 hover:bg-gray-800 disabled:opacity-50"
                     aria-label="Send message"
                   >
@@ -111,7 +137,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
                   </button>
                 </div>
                 <div className="text-right text-xs text-gray-400 mt-1">
-                  {MAX_LENGTH - input.length} left
+                  {MAX_MESSAGE_LENGTH - input.length} left
                 </div>
               </div>
             )}

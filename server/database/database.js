@@ -1,6 +1,8 @@
 import Database from "better-sqlite3";
 
 const db = new Database("./database/database.db");
+// Ensure SQLite enforces foreign key constraints
+db.pragma('foreign_keys = ON');
 //nickname uniqy and email
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
@@ -55,15 +57,37 @@ db.exec(`
     sender_id INTEGER NOT NULL,
     receiver_id INTEGER NOT NULL,
     text TEXT NOT NULL,
+    blocked BOOLEAN NOT NULL DEFAULT 0,
     created_at TEXT DEFAULT (datetime('now')),
     FOREIGN KEY (sender_id) REFERENCES users(id),
     FOREIGN KEY (receiver_id) REFERENCES users(id)
   );
 `);
 
+// If the messages table existed before the blocked column was introduced,
+// add it so newer queries don't fail.
+const messageColumns = db.prepare('PRAGMA table_info(messages);').all();
+const hasBlockedColumn = messageColumns.some((c) => c.name === 'blocked');
+if (!hasBlockedColumn) {
+  db.exec('ALTER TABLE messages ADD COLUMN blocked BOOLEAN NOT NULL DEFAULT 0;');
+}
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS blocks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    blocker_id INTEGER NOT NULL,
+    blocked_id INTEGER NOT NULL,
+    UNIQUE(blocker_id, blocked_id),
+    FOREIGN KEY (blocker_id) REFERENCES users(id),
+    FOREIGN KEY (blocked_id) REFERENCES users(id)
+  );
+`);
+
 // Add indexes to optimize lookups by sender and receiver
 db.exec("CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON messages(sender_id);");
 db.exec("CREATE INDEX IF NOT EXISTS idx_messages_receiver_id ON messages(receiver_id);");
+db.exec("CREATE INDEX IF NOT EXISTS idx_blocks_blocker_id ON blocks(blocker_id);");
+db.exec("CREATE INDEX IF NOT EXISTS idx_blocks_blocked_id ON blocks(blocked_id);");
 
 
 

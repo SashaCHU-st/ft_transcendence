@@ -3,9 +3,9 @@
 This document describes the basic scenarios for working with the chat API.
 
 ## POST `/messages`
-Send a direct message to another user. The request body must contain:
+Send a direct message to another user. The sender id is determined from the
+authenticated JWT, so the body only needs:
 
-- `fromId` – the sender user id
 - `toId` – the receiver user id
 - `text` – message text
 
@@ -19,6 +19,37 @@ On success the server responds with HTTP `201` and returns the id of the stored 
 
 If any parameter is missing or the text is longer than 500 characters the server
 returns `400` with a message describing the error.
+
+## POST `/block`
+Block another user. The authenticated user's id is taken from the JWT token,
+so the request body only requires:
+
+- `blockedId` – id of the user to block
+
+If the block record is created a response with status `201` is returned.
+When the users were already blocked the server responds with `200`.
+
+## POST `/unblock`
+Unblock a previously blocked user. Uses the same body as `/block`.
+Returns `200` when the block existed and was removed, otherwise `404`.
+
+If one user has blocked the other, messages are still accepted but only echoed
+back to the sender. The receiver will not see them.
+
+## GET `/blocked`
+Retrieve the list of users that the authenticated account has blocked. The
+request must include a valid JWT; the server uses it to determine the user
+ID, so no query parameters are required.
+
+The response contains an array of user ids:
+
+```json
+{
+  "blocked": [1, 4, 7]
+}
+```
+
+If the request succeeds the server returns `200`.
 
 ## GET `/messages`
 Retrieve the chat history between two users. The query parameters are:

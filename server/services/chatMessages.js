@@ -1,24 +1,28 @@
 import db from '../database/database.js';
 import { broadcastChatMessage } from '../chatWsServer.js';
-
-export const MAX_MESSAGE_LENGTH = 500;
+import { isBlocked } from './blocks.js';
+import HttpError from '../utils/http-error.js';
+import { MAX_MESSAGE_LENGTH } from '../../shared/chatConstants.js';
+export { MAX_MESSAGE_LENGTH };
 
 /**
  * Validate, store and broadcast a chat message.
  * @param {number} fromId
  * @param {number} toId
  * @param {string} text
- * @returns {{ message?: object, error?: string, status: number }}
+ * @returns {object} The stored message
  */
 export function handleChatMessage(fromId, toId, text) {
   const cleanText = text?.trim();
   if (!fromId || !toId || !cleanText) {
-    return { error: 'Missing parameters', status: 400 };
+    throw new HttpError('Missing parameters', 400);
   }
+
+  const blocked = isBlocked(fromId, toId);
 
   if (cleanText.length > MAX_MESSAGE_LENGTH) {
     console.warn(`Message from ${fromId} exceeds max length: ${cleanText.length}`);
-    return { error: 'Message too long', status: 400 };
+    throw new HttpError('Message too long', 400);
   }
 
   if (/[<>]/.test(cleanText)) {
@@ -27,20 +31,21 @@ export function handleChatMessage(fromId, toId, text) {
 
   try {
     const stmt = db.prepare(
-      'INSERT INTO messages (sender_id, receiver_id, text) VALUES (?, ?, ?)'
+      'INSERT INTO messages (sender_id, receiver_id, text, blocked) VALUES (?, ?, ?, ?)'
     );
-    const result = stmt.run(fromId, toId, cleanText);
+    const result = stmt.run(fromId, toId, cleanText, blocked ? 1 : 0);
     const message = {
       id: result.lastInsertRowid,
       sender_id: fromId,
       receiver_id: toId,
       text: cleanText,
+      blocked: blocked ? 1 : 0,
       created_at: new Date().toISOString(),
     };
-    broadcastChatMessage(message);
-    return { message, status: 201 };
+    broadcastChatMessage(message, { toReceiver: !blocked });
+    return message;
   } catch (err) {
     console.error('Error handling chat message:', err.message);
-    return { error: 'Failed to send message', status: 500 };
+    throw new HttpError('Failed to send message', 500);
   }
 }

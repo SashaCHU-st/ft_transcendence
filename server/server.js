@@ -6,6 +6,7 @@ import profileRoutes from "./routes/ProfileRoutes.js";
 import statisticsRoutes from "./routes/StatisticRoutes.js";
 import challengeRoutes from "./routes/ChallangeRoutes.js";
 import messageRoutes from "./routes/MessageRoutes.js";
+import blockRoutes from "./routes/BlockRoutes.js";
 import { initWsServer } from "./remote/wsServer.js";
 import { initChatWsServer } from "./chatWsServer.js";
 import cors from "@fastify/cors";
@@ -55,6 +56,7 @@ fastify.register(profileRoutes);
 fastify.register(statisticsRoutes);
 fastify.register(challengeRoutes);
 fastify.register(messageRoutes);
+fastify.register(blockRoutes);
 
 // Server start
 const start = async () => {
