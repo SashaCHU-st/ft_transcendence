@@ -13,48 +13,66 @@ const api: AxiosInstance = axios.create({
 
 api.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
-    toast.error(error.response?.data.message)/// need to fix
+  (error: AxiosError<any>) => {
+    const backendMessage =
+      error.response?.data?.message || error.message || "Something went wrong";
+
     if (error.response?.status === 401) {
       toast.error("Session expired. Please log in again.");
       localStorage.removeItem("token");
       window.location.href = "/login";
+    } else {
+      toast.error(backendMessage);
     }
+
     return Promise.reject(error);
-  },
+  }
 );
+
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error: AxiosError) => {
+//     //toast.error(error.response?.data.message)/// need to fix
+//     if (error.response?.status === 401) {
+//       toast.error("Session expired. Please log in again.");
+//       localStorage.removeItem("token");
+//       window.location.href = "/login";
+//     }
+//     return Promise.reject(error);
+//   },
+// );
 
 export const getAuthHeaders = (): { Authorization: string } | {} => {
   const token = localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-export const fetchUserData = async (
-  headers: { Authorization: string } | {} = getAuthHeaders(),
-): Promise<UserInfo> => {
-  const response = await api.get("/users/me", { headers });
-  const currentUser = response.data.user;
+// export const fetchUserData = async (
+//   headers: { Authorization: string } | {} = getAuthHeaders(),
+// ): Promise<UserInfo> => {
+//   const response = await api.get("/users/me", { headers });
+//   const currentUser = response.data.user;
 
-  return {
-    id: String(currentUser.id || "unknown"),
-    username: currentUser.username || currentUser.name || "Unknown",
-    avatar: currentUser.image
-      ? `data:image/jpeg;base64,${currentUser.image}`
-      : "/prof_img/avatar1.png",
-    email: currentUser.email || "",
-    name: currentUser.name || "",
-    password: currentUser.password || "",
-    wins: currentUser.wins || 0,
-    losses: currentUser.losses || 0,
-    online: !!currentUser.online,
-    history: currentUser.history || [],
-  };
-};
+//   return {
+//     id: String(currentUser.id || "unknown"),
+//     username: currentUser.username || currentUser.name || "Unknown",
+//     avatar: currentUser.image
+//       ? `data:image/jpeg;base64,${currentUser.image}`
+//       : "/prof_img/avatar1.png",
+//     email: currentUser.email || "",
+//     name: currentUser.name || "",
+//     password: currentUser.password || "",
+//     wins: currentUser.wins || 0,
+//     losses: currentUser.losses || 0,
+//     online: !!currentUser.online,
+//     history: currentUser.history || [],
+//   };
+// };
 
 export const updateUserProfile = async (
   profileUpdates: Partial<UserInfo>,
   avatar?: string,
-  headers: { Authorization: string } | {} = getAuthHeaders(),
+  headers: { Authorization: string } | {} = getAuthHeaders()
 ): Promise<void> => {
   try {
     const updates: Partial<UserInfo> = {};
@@ -83,14 +101,14 @@ export const updateUserProfile = async (
     }
   } catch (error: any) {
     if (error.response && error.response.data && error.response.data.errors) {
-      throw error.response.data.errors; 
+      throw error.response.data.errors;
     }
     throw error;
   }
 };
 export const saveGameResult = async (
   matchResult: MatchResult,
-  headers: { Authorization: string } | {} = getAuthHeaders(),
+  headers: { Authorization: string } | {} = getAuthHeaders()
 ): Promise<void> => {
   await api.post("/game/result", matchResult, { headers });
 };
@@ -110,7 +128,7 @@ export const getUserIdFromToken = (): number | null => {
 };
 
 export const recordWin = async (
-  headers: { Authorization: string } | {} = getAuthHeaders(),
+  headers: { Authorization: string } | {} = getAuthHeaders()
 ): Promise<void> => {
   const id = getUserIdFromToken();
   if (id === null) throw new Error("No user id");
@@ -118,7 +136,7 @@ export const recordWin = async (
 };
 
 export const recordLoss = async (
-  headers: { Authorization: string } | {} = getAuthHeaders(),
+  headers: { Authorization: string } | {} = getAuthHeaders()
 ): Promise<void> => {
   const id = getUserIdFromToken();
   if (id === null) throw new Error("No user id");
@@ -139,45 +157,42 @@ export const sendChatMessage = async (
   fromId: number,
   toId: number,
   text: string,
-  headers: { Authorization: string } | {} = getAuthHeaders(),
+  headers: { Authorization: string } | {} = getAuthHeaders()
 ): Promise<void> => {
-  await api.post(
-    "/messages",
-    { fromId, toId, text },
-    { headers },
-  );
+  await api.post("/messages", { fromId, toId, text }, { headers });
 };
 
 export const fetchChatMessages = async (
   user1: number,
   user2: number,
   viewerId: number,
-  headers: { Authorization: string } | {} = getAuthHeaders(),
+  headers: { Authorization: string } | {} = getAuthHeaders()
 ): Promise<ChatMessage[]> => {
   const response = await api.get(
     `/messages?user1=${user1}&user2=${user2}&viewerId=${viewerId}`,
-    { headers },
+    { headers }
   );
   return response.data.messages as ChatMessage[];
 };
 
 export const blockUserRequest = async (
   blockedId: number,
-  headers: { Authorization: string } | {} = getAuthHeaders(),
+  headers: { Authorization: string } | {} = getAuthHeaders()
 ): Promise<void> => {
-  await api.post('/block', { blockedId }, { headers });
+  await api.post("/block", { blockedId }, { headers });
 };
 
 export const unblockUserRequest = async (
   blockedId: number,
-  headers: { Authorization: string } | {} = getAuthHeaders(),
+  headers: { Authorization: string } | {} = getAuthHeaders()
 ): Promise<void> => {
-  await api.post('/unblock', { blockedId }, { headers });
+  await api.post("/unblock", { blockedId }, { headers });
 };
 
 export const fetchBlockedUsers = async (
-  headers: { Authorization: string } | {} = getAuthHeaders(),
+  headers: { Authorization: string } | {} = getAuthHeaders()
 ): Promise<number[]> => {
-  const response = await api.get('/blocked', { headers });
+  const response = await api.get("/blocked", { headers });
   return response.data.blocked as number[];
 };
+export default api;

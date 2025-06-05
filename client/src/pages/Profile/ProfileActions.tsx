@@ -147,48 +147,9 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
         <div className="flex gap-2">
           <button
             onClick={handleSearch}
-            // className="
-            //   px-3
-            //   rounded-2xl
-            //   text-sm
-            //   font-bold
-            //   bg-transparent
-            //   outline-3
-            //   outline-offset-2
-            //   outline-double
-            //   border
-            //   border-emerald-200
-            //   text-white
-            //   transition-all
-            //   duration-300
-            //   ease-in-out
-            //   hover:scale-110
-            // "
           >
             🔍
           </button>
-          {/* <button
-            onClick={handleClear}
-            className="
-              px-3
-              rounded-2xl
-              text-sm
-              font-bold
-              bg-transparent
-              outline-3
-              outline-offset-2
-              outline-double
-              border
-              border-red-400
-              text-white
-              transition-all
-              duration-300
-              ease-in-out
-              hover:scale-110
-            "
-          >
-            Clear
-          </button> */}
         </div>
       </div>
 
@@ -222,31 +183,7 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
           >
             <i className="fas fa-comments text-blue-300 w-6 h-6" />
           </button>
-          {/* <button
-            onClick={onProfileClick}
-            className="
-              px-3
-              py-1
-             rounded-2xl
-             font-orbitron
-              text-xs
-              sm:text-xs
-              md:text-xs
-              lg:text-xs
-              xl:text-sm
-           
-               transition-all
-               duration-300
-               ease-in-out
-               hover:scale-125
-             "
-          >
-           <img src="/button_img/user-settings.png" 
-                alt="Edit Profile"
-                className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-9 lg:h-9 object-contain"
-           />
-          </button>
-        */}
+         
 
             <button
                 onClick={onProfileClick}

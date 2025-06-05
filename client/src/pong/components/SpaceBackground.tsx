@@ -18,7 +18,7 @@ import noiseImg from "../png_icons/tv-noise5.png";
 //! shum na ekrane
 
 export interface SpaceBackgroundProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   stars?: boolean;
   noise?: boolean;
   gradients?: boolean;

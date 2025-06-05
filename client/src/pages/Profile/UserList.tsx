@@ -3,6 +3,11 @@ import React, { useState, useEffect } from "react";
 import PlayerCard from "./PlayerCard";
 import { CardWrapper } from "./types/ui";
 import { UserInfo } from "./types/UserInfo";
+//import { addToFavorites } from "./AddFavorites";
+import { askForChallenge } from "./Challenge";
+import { toast } from "react-hot-toast";
+//import { deleteFromFavorites } from "./DeleteFavorites";
+
 
 // Props definition for UserList component
 // - users: array of UserInfo objects to display
@@ -12,13 +17,15 @@ interface Props {
   users: UserInfo[];
   variant: "players" | "friends";
   expandUsername?: string;
-   onAdd?: (username: string) => void; 
+  onAdd?: (username: string) => void;
+  onRemove?: (username: string)=> void;
+  onChallenge?: (username: string)=> void;
 }
 
-const UserList: React.FC<Props> = ({ users, variant, expandUsername }) => {
+const UserList: React.FC<Props> = ({ users, variant, expandUsername, onRemove, onAdd}) => {
   // State for tracking which card index is expanded
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-
+ 
   // When expandUsername changes, find matching user and auto-expand
   useEffect(() => {
     if (expandUsername) {
@@ -37,9 +44,28 @@ const UserList: React.FC<Props> = ({ users, variant, expandUsername }) => {
   };
 
   // Stub handlers for friend/player actions
-  const handleAdd = (username: string) => console.log(`Add ${username}`);
-  const handleRemove = (username: string) => console.log(`Remove ${username}`);
-  const handleChallenge = (username: string) => console.log(`Challenge ${username}`);
+ // const handleAdd = (username: string) => console.log(`Add ${username}`);
+  //  const handleAdd = async (username: string) => {
+  //   try {
+  //     await addToFavorites(username);
+  //     console.log(`Added ${username} to favorites`);
+  //     //await fetchAllUsers();
+  //   } catch (err) {
+  //     console.error("Failed to add favorite:", err);
+  //   }
+  // };
+ 
+  const handleChallenge = async (username: string) => {
+    try{
+      await askForChallenge(username);
+      console.log(`${username} asked for challenge`);
+      toast.success(`You asked ${username} for challenge`);
+    } catch (err:any) {
+      console.error("Failed to ask for challenge:", err);
+      //toast.error(`Failed to ask ${username} for challenge`);
+      throw err;
+    }
+  };
 
   // If no users, render nothing
   if (users.length === 0) {
@@ -75,18 +101,18 @@ const UserList: React.FC<Props> = ({ users, variant, expandUsername }) => {
             ? user.avatar
             : "/prof_img/avatar1.png";
 
-        // Attach action callbacks based on list variant
+            // Attach action callbacks based on list variant
         const userWithActions: UserInfo = {
           ...user,
           avatar: avatarSrc,
           onRemove:
-            variant === "friends"
-              ? () => handleRemove(user.username)
+            variant === "friends" && onRemove
+              ? () => onRemove(user.username)
               : undefined,
           onChallenge: () => handleChallenge(user.username),
           onAdd:
-            variant === "players"
-              ? () => handleAdd(user.username)
+            variant === "players" && onAdd
+              ? () => onAdd(user.username)
               : undefined,
         };
 

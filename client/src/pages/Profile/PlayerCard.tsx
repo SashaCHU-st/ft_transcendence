@@ -1,4 +1,5 @@
 import React from "react";
+//import React, { useState } from "react";
 import UserHeader from "./UserHeader";
 import { UserInfo } from "./types/UserInfo";
 
@@ -7,6 +8,7 @@ interface Props {
 }
 
 const PlayerCard: React.FC<Props> = ({ user }) => {
+
   return (
     <div
       className="
@@ -39,7 +41,8 @@ const PlayerCard: React.FC<Props> = ({ user }) => {
           pt-2
         "
       >
-        {user.onAdd && (
+      
+          {user.onAdd && (
           <button
             onClick={(e) => {
               e.stopPropagation();
@@ -67,6 +70,7 @@ const PlayerCard: React.FC<Props> = ({ user }) => {
             </span>
           </button>
         )}
+      
         {user.onRemove && (
           <button
             onClick={(e) => {

@@ -13,9 +13,14 @@ const MainPage = () => {
       <div className="absolute inset-0 -z-10">
         <SpaceBackground />
       </div>
-
       {/* CONTENT on top */}
       <div className="container mx-auto flex flex-col items-center justify-center h-full relative z-10">
+       <h1 className="animate-pulse [animation-duration:3s] p-16 text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold font-orbitron"
+        style={{ textShadow: '0 0 12px #007BFF, 0 0 20px #007BFF' }}
+        >
+          SUPER PONG
+        </h1>
+       
         <div className="relative w-full">
           <video
             src={mainVideo}
@@ -25,22 +30,24 @@ const MainPage = () => {
             playsInline
             className="w-full h-auto rounded-xl transition-shadow duration-300 ease-in-out"
           />
-          <div className="bg-indigo-900 absolute sm:bottom-2 bottom-2 md:bottom-2 lg:bottom-4 left-1/2 transform -translate-x-1/2 z-20">
+          <div className=" absolute sm:bottom-2 bottom-2 md:bottom-2 lg:bottom-4 
+                  right-20 sm:right-32 md:right-44 lg:right-64 xl:right-72 2xl:right-96 
+                  transform -translate-x-1/2 z-20">
             <button
-              className="rounded-lg outline-3 outline-offset-2 outline-double border-4 border-blue-300 px-5 py-1
-                        font-orbitron lg:px-5 lg:py-3 md:px-5 md:py-1 2xl:px-5 2xl:py-4 xl:py-4
-                        font-bold text-transparent text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl
+              className="rounded-3xl outline-3 outline-offset-2 outline-double border-4 border-blue-300 px-4 py-2
+                        lg:px-4 lg:py-2 md:px-4 md:py-2 2xl:px-4 2xl:py-3 xl:py-3
+                        font-bold text-transparent text-md sm:text-lg md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl
                         bg-clip-text bg-gradient-to-r from-indigo-300 via-blue-300 to-sky-500
                         hover:from-red-50 hover:via-indigo-200 hover:to-purple-100
-                        animate-pulse hover:animate-none
-                        transition-all duration-300 ease-in-out hover:scale-110 w-full sm:w-auto text-center"
+                        animate-bounce [animation-duration:1s] hover:animate-none
+                        transition-all ease-in-out hover:scale-110 w-full sm:w-auto text-center"
               style={{
                 textShadow: '2px 2px 10px rgba(209, 255, 249, 0.6)',
                 boxShadow: '0 0 15px 6px rgba(117, 184, 255, 0.5)'
               }}
               onClick={() => openModal('login')}
             >
-              SUPER PONG
+              GO
             </button>
           </div>
         </div>

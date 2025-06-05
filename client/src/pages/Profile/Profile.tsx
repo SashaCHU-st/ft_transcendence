@@ -160,21 +160,19 @@ import MobileLayout from "./MobileLayout";
 import BotSelector from "./BotSelector";
 import { useProfile } from "./hooks/useProfile";
 import { toast } from "react-hot-toast";
-// Import the SpaceBackground component
 import { SpaceBackground } from "../../pong/components/SpaceBackground";
 import ChatModal from "./ChatModal";
 import { ChatProvider } from "../../context/ChatContext";
 //import { UserInfo } from "./types/UserInfo";
+import NotificationModal from "./NotificationModal";
 
 // Profile component serves as the main page for user profile management
 const Profile: React.FC = () => {
   // Destructure user data, state, and handlers from custom useProfile hook
   const {
     user, // Current user's data
-
     friends, // List of friends
     players, // List of all players
-
     selectedBot, // Currently selected bot for gameplay
     isModalOpen, // State for profile modal visibility
     isLoading, // Loading state for data fetching
@@ -182,6 +180,13 @@ const Profile: React.FC = () => {
     setIsModalOpen, // Function to toggle profile modal
     handleSaveProfile, // Handler to save profile changes
     handlePlay, // Handler to start a game
+    handleRemove,
+    notifications,
+    isNotificationModalOpen,
+    handleAcceptChallenge,
+    handleDeclineChallenge,
+    handleAdd,
+   
   } = useProfile();
 
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -201,7 +206,7 @@ const Profile: React.FC = () => {
       (f) => f.username.toLowerCase() === username.toLowerCase()
     );
 
-    // If found, set expandUsername to trigger card expansion and show success toast
+    //If found, set expandUsername to trigger card expansion and show success toast
     if (foundInPlayers || foundInFriends) {
       setExpandUsername(username);
       toast.success(`Found user: ${username}`);
@@ -279,6 +284,8 @@ const Profile: React.FC = () => {
           selectedBot={selectedBot}
           handlePlay={handlePlay}
           expandUsername={expandUsername}
+          handleRemove={handleRemove}
+          handleAdd={handleAdd}
         />
 
         {/* Mobile-specific layout for smaller screens */}
@@ -289,6 +296,8 @@ const Profile: React.FC = () => {
           selectedBot={selectedBot}
           handlePlay={handlePlay}
           expandUsername={expandUsername}
+          handleRemove={handleRemove}
+          handleAdd={handleAdd}
         />
 
         {/* Bot selector for choosing game opponent */}
@@ -310,7 +319,14 @@ const Profile: React.FC = () => {
           onSave={handleSaveProfile}
         />
       )}
+          {isNotificationModalOpen && notifications.length > 0 && (
+            <NotificationModal
+              notifications={notifications}
+              onAccept={handleAcceptChallenge}
+              onDecline={handleDeclineChallenge}
+            />
 
+<<<<<<< HEAD
       {isChatOpen && (
         <ChatProvider currentUserId={user.id}>
           <ChatModal
@@ -320,6 +336,11 @@ const Profile: React.FC = () => {
           />
         </ChatProvider>
       )}
+=======
+          )}
+
+         {isChatOpen && <ChatModal onClose={() => setIsChatOpen(false)} />}
+>>>>>>> origin/testing
     </SpaceBackground>
   );
 };

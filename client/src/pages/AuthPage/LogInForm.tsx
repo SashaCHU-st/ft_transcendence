@@ -47,6 +47,7 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
           <input
             type="email"
             placeholder="Email"
+            autoFocus
             className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none 
                     focus:ring-2 focus:ring-indigo-800"
             value={email}
