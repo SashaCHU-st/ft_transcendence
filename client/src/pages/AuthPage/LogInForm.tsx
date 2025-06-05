@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useAuth } from '../../context/AuthContext';
+import { validateEmail, validatePassword } from "../../utils/InputValidation";
 
 const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const [email, setEmail] = useState("");
@@ -10,9 +11,19 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+    setEmailError(emailError);
+    setPasswordError(passwordError);
+    if (emailError || passwordError)
+        return;
+
     try {
       const res = await fetch("https://localhost:3000/login", {
         method: "POST",
@@ -24,11 +35,8 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
-      //localStorage.setItem("token", data.accessToken); // Store JWT token
       login(data.accessToken);
       localStorage.setItem("id", data.id); // Save user ID
-      // localStorage.setItem("userEmail", data.email);
-      // console.log("User Email:", data.email);
       console.log("User ID saved:", data.id);
       
       toast.success("Successfully logged in!");
@@ -36,12 +44,15 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
       navigate("/profile");
     } catch (error: any) {
       setError(error.message || "Login failed");
+      //toast.error(error.message || "Login failed");
     }
   };
 
   return (
     <div className="p-6 max-w-md mx-auto">
-      <h2 className="text-2xl font-bold font-orbitron mb-5 text-center tracking-[.10em]">LOGIN</h2>
+      <h2 className="text-2xl font-bold font-orbitron mb-5 text-center tracking-[.10em]">
+        LOGIN
+      </h2>
       <form onSubmit={handleLogin} className="space-y-4">
         {err && <p className="text-red-500">{err}</p>}
         <div className="space-y-2">
@@ -52,9 +63,13 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
             className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none 
                     focus:ring-2 focus:ring-indigo-800"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) =>{ 
+              setEmail(e.target.value); 
+              setEmailError(validateEmail(e.target.value));
+            }}
             required
           />
+          {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
            <div className="relative">
             <input
               //type="password"
@@ -63,9 +78,14 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
               className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none 
                       focus:ring-2 focus:ring-indigo-800"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setPassword(value);
+                setPasswordError(validatePassword(value));
+              }}
               required
             />
+            {passwordError && (<p className="text-red-500 text-sm">{passwordError}</p>)}
             <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
@@ -73,7 +93,7 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
                 >
                   {showPassword ? "🙈" : "👁️"}
               </button>
-            </div>
+           </div>
         </div>
         <div className="flex justify-center">
           <button
