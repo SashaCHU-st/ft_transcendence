@@ -52,7 +52,7 @@
 
 #### Live Chat ★★★ (Major)
 - [x] Direct messages between users
-- [ ] Ability to block other users
+- [x] Ability to block other users
 - [ ] Invite users to play Pong via chat
 - [ ] Tournament notifications through chat
 - [ ] Access other players' profiles from chat

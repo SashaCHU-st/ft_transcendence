@@ -92,8 +92,8 @@ Server-side pong: Replace basic Pong with server-side Pong and implement an API 
 - [ ] Consistent customization across games
 
 ### Live Chat (Major) ★★★
-- [ ] Direct messages between users
-- [ ] Ability to block other users
+- [x] Direct messages between users
+- [x] Ability to block other users
 - [ ] Invite users to play from chat
 - [ ] Tournament notifications in chat
 - [ ] Links to user profiles
