@@ -9,6 +9,7 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
   const [err, setError] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,15 +55,25 @@ const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none 
-                    focus:ring-2 focus:ring-indigo-800"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+           <div className="relative">
+            <input
+              //type="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none 
+                      focus:ring-2 focus:ring-indigo-800"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-2 text-gray-400 hover:text-white focus:outline-none"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
         </div>
         <div className="flex justify-center">
           <button
