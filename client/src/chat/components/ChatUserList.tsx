@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { UserInfo } from "./types/UserInfo";
+import { UserInfo } from "../../pages/Profile/types/UserInfo";
 import "./ChatModal.css";
 
 interface Props {
@@ -11,9 +11,9 @@ const ChatUserList: React.FC<Props> = ({ players, onSelect }) => {
   const [search, setSearch] = useState("");
 
   return (
-    <div className="conversations-list p-2 overflow-y-auto border-r border-gray-700 w-56">
+    <div className="conversations-list p-2 overflow-y-auto border-r border-gray-700 w-56 font-ubuntu">
       <input
-        className="search-input w-full mb-2"
+        className="search-input w-full mb-2 font-ubuntu"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search user..."
@@ -23,7 +23,7 @@ const ChatUserList: React.FC<Props> = ({ players, onSelect }) => {
         .map((u) => (
           <div
             key={u.id}
-            className="conversation-item cursor-pointer hover:text-blue-300"
+            className="conversation-item cursor-pointer hover:text-blue-300 font-ubuntu"
             onClick={() => {
               onSelect(u);
               setSearch("");

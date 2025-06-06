@@ -1,13 +1,14 @@
 import React from "react";
 
-interface OverlayCardProps {
+interface OverlayCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   className?: string;
 }
 
-export function OverlayCard({ children, className = "" }: OverlayCardProps) {
+export function OverlayCard({ children, className = "", ...rest }: OverlayCardProps) {
   return (
     <div
+      {...rest}
       className={`pointer-events-auto relative z-10 rounded-2xl border-2 border-[#0A7FC9] p-6 text-center bg-black bg-opacity-30 shadow-[0_0_15px_rgba(0,255,255,0.7)] ${className}`}
     >
       {children}
@@ -46,6 +47,21 @@ const colorClasses: Record<string, string> = {
   `,
 };
 
+const outlineColorClasses: Record<string, string> = {
+  magenta: `
+    border-2 border-[#BD0E86]
+    shadow-[0_0_15px_rgba(255,29,153,0.7)]
+  `,
+  blue: `
+    border-2 border-[#40BFFF]
+    shadow-[0_0_15px_rgba(0,255,255,0.7)]
+  `,
+  green: `
+    border-2 border-[#00ffaa]
+    shadow-[0_0_15px_rgba(0,255,200,0.5)]
+  `,
+};
+
 /**
  * OverlayButton
  *
@@ -78,6 +94,20 @@ export function OverlayButton({
       {children}
     </button>
   );
+}
+
+/**
+ * overlayOutlineClass
+ *
+ * Returns Tailwind classes for a neon border around any element.
+ *
+ * Example usage:
+ * <div className={overlayOutlineClass("blue")}>...</div>
+ */
+export function overlayOutlineClass(
+  color: "magenta" | "blue" | "green" = "magenta"
+) {
+  return outlineColorClasses[color] || "";
 }
 
 interface OverlayHeadingProps {

@@ -6,17 +6,17 @@ import React, {
   useCallback,
   useEffect,
 } from 'react';
-import { UserInfo } from '../pages/Profile/types/UserInfo';
+import { UserInfo } from '../../pages/Profile/types/UserInfo';
 import {
   ChatMessage,
   fetchChatMessages,
   blockUserRequest,
   unblockUserRequest,
   fetchBlockedUsers,
-} from '../pages/Profile/types/api';
+} from '../../pages/Profile/types/api';
 import { sendMessage as sendChat, sendViaSocket } from '../services/chatService';
 import { toast } from 'react-hot-toast';
-import { useChatSocket } from '../pages/Profile/hooks/useChatSocket';
+import { useChatSocket } from '../hooks/useChatSocket';
 
 interface ChatState {
   selected: UserInfo | null;

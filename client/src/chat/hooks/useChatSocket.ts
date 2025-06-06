@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChatMessage } from "../types/api";
+import { ChatMessage } from "../../pages/Profile/types/api";
 
 export function useChatSocket(
   userId: string,

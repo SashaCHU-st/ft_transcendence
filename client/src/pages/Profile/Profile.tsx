@@ -161,8 +161,8 @@ import BotSelector from "./BotSelector";
 import { useProfile } from "./hooks/useProfile";
 import { toast } from "react-hot-toast";
 import { SpaceBackground } from "../../pong/components/SpaceBackground";
-import ChatModal from "./ChatModal";
-import { ChatProvider } from "../../context/ChatContext";
+import ChatModal from "../../chat/components/ChatModal";
+import { ChatProvider } from "../../chat/context/ChatContext";
 //import { UserInfo } from "./types/UserInfo";
 import NotificationModal from "./NotificationModal";
 

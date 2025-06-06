@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import { UserInfo } from "./types/UserInfo";
-import { useChatContext } from "../../context/ChatContext";
+import { useEscapeKey } from "../../pong/hooks/useEscapeKey";
+import { UserInfo } from "../../pages/Profile/types/UserInfo";
+import { useChatContext } from "../context/ChatContext";
 import ChatUserList from "./ChatUserList";
 import { OverlayWrapper } from "../../pong/components/Overlays/OverlayWrapper";
 import {
@@ -9,6 +10,7 @@ import {
 } from "../../pong/components/Overlays/OverlayComponents";
 import "./ChatModal.css";
 import { MAX_MESSAGE_LENGTH } from "../../../../shared/chatConstants.js";
+import ChatProfileModal from "./ChatProfileModal";
 
 interface ChatModalProps {
   onClose: () => void;
@@ -24,9 +26,12 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
   const isBlocked = blockedByYou;
   const [input, setInput] = useState("");
   const [cooldown, setCooldown] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const cooldownRef = useRef<NodeJS.Timeout | null>(null);
   const COOLDOWN_MS = 500;
+
+  useEscapeKey(onClose);
 
   useEffect(() => {
     return () => {
@@ -65,16 +70,17 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
   };
 
   return (
+    <>
     <OverlayWrapper>
       <OverlayCard className="w-[90%] max-w-[800px] h-[80vh] flex flex-col overflow-hidden border-[#00a1ff] bg-gradient-to-br from-[#0a0e2a] to-black shadow-[0_0_20px_#00a1ff,0_0_40px_#00a1ff]">
         <button
           onClick={onClose}
           aria-label="Close"
-          className="absolute top-2 right-4 text-[#0A7FC9] hover:text-pink-500 text-lg font-bold"
+          className="absolute top-2 right-4 text-[#0A7FC9] hover:text-pink-500 text-lg font-bold font-orbitron"
         >
           ✕
         </button>
-        <OverlayHeading className="text-2xl mb-4 text-[#e9f4fb] drop-shadow-[0_0_10px_#00a1ff]">
+        <OverlayHeading className="text-2xl mb-4 text-[#e9f4fb] drop-shadow-[0_0_10px_#00a1ff] font-orbitron">
           Chat
         </OverlayHeading>
         <div className="flex flex-1 overflow-hidden rounded-lg bg-black bg-opacity-40">
@@ -82,17 +88,27 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
           <div className="chat-area flex flex-col flex-1">
             {selected && (
               <div className="p-2 border-b border-gray-700 flex justify-between items-center">
-                <span>{selected.username}</span>
-                <button
-                  onClick={handleBlockToggle}
-                  className="text-sm text-blue-400 hover:text-blue-200"
-                >
-                  {blockedByYou ? 'Unblock' : 'Block'}
-                </button>
+                <span className="font-orbitron">{selected.username}</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setShowProfile(true)}
+                    className="text-sm text-blue-400 hover:text-blue-200 font-orbitron flex items-center border border-blue-400 rounded px-2 py-1"
+                  >
+                    <i className="fa-solid fa-user mr-1" />
+                    Profile
+                  </button>
+                  <button
+                    onClick={handleBlockToggle}
+                    className="text-sm text-blue-400 hover:text-blue-200 font-orbitron flex items-center border border-blue-400 rounded px-2 py-1"
+                  >
+                    <i className={`fa-solid ${blockedByYou ? 'fa-unlock' : 'fa-ban'} mr-1`} />
+                    {blockedByYou ? 'Unblock' : 'Block'}
+                  </button>
+                </div>
               </div>
             )}
             <div
-              className="chat-messages flex-1 p-2 overflow-y-auto flex flex-col"
+              className="chat-messages flex-1 p-2 overflow-y-auto flex flex-col font-ubuntu"
               ref={messagesEndRef}
             >
               {selected ? (
@@ -103,7 +119,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
                       m.sender_id === Number(currentUserId) ? "sent" : "received"
                     }`}
                   >
-                    <p className="break-words">{m.text}</p>
+                    <p className="break-words font-ubuntu">{m.text}</p>
                   </div>
                 ))
               ) : (
@@ -119,7 +135,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
                 )}
                 <div className="flex items-end">
                   <input
-                    className="search-input flex-grow mr-2"
+                    className="search-input flex-grow mr-2 font-ubuntu"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKey}
@@ -130,7 +146,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
                   <button
                     onClick={handleSend}
                     disabled={input.trim().length === 0 || cooldown || isBlocked}
-                    className="bg-gray-900 border border-blue-400 text-white px-4 py-2 rounded-lg shadow-blue-500 hover:bg-gray-800 disabled:opacity-50"
+                    className="bg-gray-900 border border-blue-400 text-white px-4 py-2 rounded-lg shadow-blue-500 hover:bg-gray-800 disabled:opacity-50 font-orbitron"
                     aria-label="Send message"
                   >
                     <i className="fa-solid fa-paper-plane" />
@@ -145,6 +161,15 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
         </div>
       </OverlayCard>
     </OverlayWrapper>
+    {showProfile && selected && (
+      <ChatProfileModal
+        user={selected}
+        onClose={() => setShowProfile(false)}
+        blocked={blockedByYou}
+        onToggleBlock={handleBlockToggle}
+      />
+    )}
+    </>
   );
 };
 
