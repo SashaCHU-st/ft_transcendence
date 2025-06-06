@@ -11,6 +11,8 @@ import {
 import "./ChatModal.css";
 import { MAX_MESSAGE_LENGTH } from "../../../../shared/chatConstants.js";
 import ChatProfileModal from "./ChatProfileModal";
+import { askForChallenge } from "../../pages/Profile/Challenge";
+import { toast } from "react-hot-toast";
 
 interface ChatModalProps {
   onClose: () => void;
@@ -69,6 +71,16 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
     }
   };
 
+  const handleChallenge = async () => {
+    if (!selected) return;
+    try {
+      await askForChallenge(selected.username);
+      toast.success(`Challenge sent to ${selected.username}`);
+    } catch {
+      toast.error("Failed to send challenge");
+    }
+  };
+
   return (
     <>
     <OverlayWrapper>
@@ -96,6 +108,13 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
                   >
                     <i className="fa-solid fa-user mr-1" />
                     Profile
+                  </button>
+                  <button
+                    onClick={handleChallenge}
+                    className="text-sm text-blue-400 hover:text-blue-200 font-orbitron flex items-center border border-blue-400 rounded px-2 py-1"
+                  >
+                    <i className="fa-solid fa-gamepad mr-1" />
+                    Invite
                   </button>
                   <button
                     onClick={handleBlockToggle}

@@ -66,7 +66,7 @@ const ChatProfileModal: React.FC<ChatProfileModalProps> = ({
         aria-labelledby="chat-profile-title"
         className="w-[90%] max-w-lg mx-4 pb-10 text-white font-ubuntu overflow-hidden text-left bg-gray-800/10 backdrop-blur-md p-0"
       >
-        <div className="relative z-10 bg-gray-950 p-6 flex flex-col md:flex-row items-center gap-6 border-b-2 border-blue-400/50">
+        <div className="relative z-10 bg-gray-950 pb-6 flex flex-col md:flex-row items-center gap-6 border-b-2 border-blue-400/50">
           <div className="relative">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-cyan-400">
               <Avatar
