@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { initGame, GameAPI, PongCallbacks, GameMode } from "./pong";
+import { initGame, GameAPI, PongCallbacks, GameMode, type GameState } from "./pong";
 import { recordWin, recordLoss } from "../pages/Profile/types/api";
-import BracketOverlay, { BracketRound } from "./BracketOverlay";
+import BracketOverlay from "./BracketOverlay";
 import { ByeOverlay } from "./components/Overlays/ByeOverlay";
 import { MatchResultOverlay } from "./components/Overlays/MatchResultOverlay";
 import { GameOverOverlay } from "./components/Overlays/GameOverOverlay";
@@ -18,6 +18,8 @@ import { OnlinePlayOverlay } from "./components/Overlays/OnlinePlayOverlay";
 
 import { useTournament } from "./hooks/useTournament";
 import "./pongGame.css";
+
+type GameApiWithState = GameAPI & { __state?: GameState };
 
 
 const INVALID_NAME_REGEX = /[^a-zA-Z0-9 _-]/;
@@ -76,7 +78,7 @@ export default function Pong3D() {
   }
 
   // Babylon Game API
-  const [gameApi, setGameApi] = useState<GameAPI | null>(null);
+  const [gameApi, setGameApi] = useState<GameApiWithState | null>(null);
 
   // Single mode
   const [matchOver, setMatchOver] = useState<MatchOverData | null>(null);
@@ -222,8 +224,8 @@ export default function Pong3D() {
     return () => window.removeEventListener("keydown", handleKey);
   }, [showMenu, menuIndex]);
 
-  function getMenuItems() {
-    const state = (gameApi as any)?.__state;
+    function getMenuItems() {
+      const state = gameApi?.__state;
     const active = state?.gameStarted;
     const mode = state?.currentMode;
     if (active) {
@@ -407,9 +409,9 @@ export default function Pong3D() {
   }, [showBracket, tournamentEnded]);
 
   // Unpause on any key when waiting to start
-  useEffect(() => {
-    if (!waitingStart) return;
-    if ((gameApi as any)?.__state?.currentMode === GameMode.Remote2P) return;
+    useEffect(() => {
+      if (!waitingStart) return;
+      if (gameApi?.__state?.currentMode === GameMode.Remote2P) return;
     function handleStart() {
       setWaitingStart(false);
       gameApi?.unpause?.();

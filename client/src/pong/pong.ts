@@ -275,10 +275,12 @@ export function initGame(
       if (state.remoteCleanup) {
         state.remoteCleanup();
         state.remoteCleanup = undefined;
-      } else if (state.ws) {
-        try {
-          state.ws.close();
-        } catch {}
+        } else if (state.ws) {
+          try {
+            state.ws.close();
+          } catch {
+            /* ignore close errors */
+          }
         state.ws = undefined;
       }
       state.gameStarted = false;
@@ -336,7 +338,7 @@ export function initGame(
   };
 
   // Expose internal state for tests
-  (api as any).__state = state;
+  (api as GameAPI & { __state: GameState }).__state = state;
 
   return api;
 }

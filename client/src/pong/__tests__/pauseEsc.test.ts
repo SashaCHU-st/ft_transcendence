@@ -47,7 +47,7 @@ vi.mock('@babylonjs/core', () => {
   class Animation {
     static ANIMATIONTYPE_VECTOR3 = 0;
     static ANIMATIONLOOPMODE_CONSTANT = 0;
-    keys: any[] = [];
+    keys: { frame: number; value: unknown }[] = [];
     constructor(
       public name: string,
       public prop: string,
@@ -55,7 +55,7 @@ vi.mock('@babylonjs/core', () => {
       public type: number,
       public loop: number,
     ) {}
-    setKeys(keys: any[]) {
+    setKeys(keys: { frame: number; value: unknown }[]) {
       this.keys = keys;
     }
   }
@@ -80,13 +80,14 @@ import { initGame, GameMode } from '../pong';
 import type { GameAPI } from '../pong';
 import { playGoalAnimation } from '../physics';
 import type { GameState } from '../pong';
+import type { SceneObjects } from '../scene';
 
 
-let api: GameAPI & { __state: any };
+let api: GameAPI & { __state: GameState };
 
 beforeEach(() => {
   const canvas = document.createElement('canvas');
-  api = initGame(canvas) as any;
+  api = initGame(canvas) as GameAPI & { __state: GameState };
 });
 
 function createState(): GameState {
@@ -148,11 +149,11 @@ function mesh() {
         return { x: this.x, y: this.y, z: this.z };
       },
     },
-    animations: [] as any[],
+    animations: [] as Animation[],
   };
 }
 
-function createObjs() {
+function createObjs(): SceneObjects {
   return {
     scene: { beginAnimation: vi.fn() },
     leftPaddle: mesh(),
@@ -218,11 +219,11 @@ describe('unpause api', () => {
 });
 
 describe('goal timeout lock', () => {
-  beforeEach(() => {
-    api.startSinglePlayerAI();
-    api.__state.goalTimeout = {} as any;
-    api.__state.paused = true;
-  });
+    beforeEach(() => {
+      api.startSinglePlayerAI();
+      api.__state.goalTimeout = {} as unknown as ReturnType<typeof setTimeout>;
+      api.__state.paused = true;
+    });
 
   it('ignores space key', () => {
     window.dispatchEvent(new KeyboardEvent('keydown', { code: 'Space' }));
@@ -245,9 +246,9 @@ describe('goal timeout lock', () => {
 describe('manual pause during goal animation', () => {
   it('remains paused after timeout', () => {
     vi.useFakeTimers();
-    const state = createState();
-    const objs = createObjs();
-    playGoalAnimation(state as any, objs as any);
+      const state = createState();
+      const objs = createObjs();
+      playGoalAnimation(state, objs);
     state.manualPaused = true;
     vi.runAllTimers();
     expect(state.paused).toBe(true);

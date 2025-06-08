@@ -13,8 +13,10 @@ vi.mock('../scene', () => ({
 import { stepPhysics, resetBall, resetScores, resetPositions } from '../physics';
 import { GameMode } from '../pong';
 import type { GameState } from '../pong';
-import { boom, bigBoom } from '../scene';
+import type { SceneObjects } from '../scene';
+import { bigBoom } from '../scene';
 import { playPaddleSound } from '../sound';
+import type { Animation } from '@babylonjs/core';
 
 
 function createState(): GameState {
@@ -79,11 +81,11 @@ function mesh() {
         return { x: this.x, y: this.y, z: this.z };
       },
     },
-    animations: [] as any[],
+    animations: [] as Animation[],
   };
 }
 
-function createObjs() {
+function createObjs(): SceneObjects {
   return {
     scene: { beginAnimation: vi.fn() },
     leftPaddle: mesh(),
@@ -105,7 +107,7 @@ describe('stepPhysics', () => {
   it('bounces ball off vertical bounds', () => {
     state.input.ballDZ = 1;
     objs.ball.position.z = state.physics.FIELD_HEIGHT - 0.5;
-    stepPhysics(state, objs as any, 0.016);
+      stepPhysics(state, objs, 0.016);
     expect(state.input.ballDZ).toBe(-1);
     expect(objs.ball.position.z).toBeCloseTo(state.physics.FIELD_HEIGHT - 0.5);
   });
@@ -114,7 +116,7 @@ describe('stepPhysics', () => {
     state.input.ballDX = -0.2;
     objs.leftPaddle.position.x = 0;
     objs.ball.position.x = 0.5;
-    stepPhysics(state, objs as any, 0.016);
+      stepPhysics(state, objs, 0.016);
     expect(playPaddleSound).toHaveBeenCalled();
   });
 
@@ -130,14 +132,14 @@ describe('stepPhysics', () => {
       leftScore: 0,
       rightScore: 0,
     };
-    stepPhysics(state, objs as any, 0.016);
+      stepPhysics(state, objs, 0.016);
     expect(playPaddleSound).toHaveBeenCalled();
   });
 
   it('increments ai score when ball exits left', () => {
     vi.useFakeTimers();
     objs.ball.position.x = -state.physics.FIELD_WIDTH - 1;
-    stepPhysics(state, objs as any, 0.016);
+      stepPhysics(state, objs, 0.016);
     expect(state.match.aiScore).toBe(1);
     expect(bigBoom).toHaveBeenCalledTimes(1);
     expect(state.paused).toBe(true);
@@ -151,7 +153,7 @@ describe('stepPhysics', () => {
   it('increments player score when ball exits right', () => {
     vi.useFakeTimers();
     objs.ball.position.x = state.physics.FIELD_WIDTH + 1;
-    stepPhysics(state, objs as any, 0.016);
+      stepPhysics(state, objs, 0.016);
     expect(state.match.playerScore).toBe(1);
     expect(bigBoom).toHaveBeenCalledTimes(1);
     expect(state.paused).toBe(true);
@@ -165,7 +167,7 @@ describe('stepPhysics', () => {
   it('ends game when winning score reached', () => {
     state.match.playerScore = state.physics.WINNING_SCORE - 1;
     objs.ball.position.x = state.physics.FIELD_WIDTH + 1;
-    stepPhysics(state, objs as any, 0.016);
+      stepPhysics(state, objs, 0.016);
     expect(state.gameStarted).toBe(false);
     expect(state.match.playerScore).toBe(state.physics.WINNING_SCORE);
   });
@@ -184,7 +186,7 @@ describe('reset helpers', () => {
   it('resetBall centers ball and randomizes direction', () => {
     vi.useFakeTimers();
     vi.spyOn(Math, 'random').mockReturnValueOnce(0.8).mockReturnValueOnce(0.2);
-    resetBall(state, objs as any);
+      resetBall(state, objs);
     expect(objs.ball.position.x).toBe(0);
     expect(objs.ball.position.y).toBe(0.5);
     expect(objs.ball.position.z).toBe(0);
@@ -208,7 +210,7 @@ describe('reset helpers', () => {
     objs.leftPaddle.position.x = 5;
     objs.rightPaddle.position.x = 5;
     vi.spyOn(Math, 'random').mockReturnValue(0.6);
-    resetPositions(state, objs as any);
+      resetPositions(state, objs);
     expect(objs.leftPaddle.position.x).toBe(-state.physics.FIELD_WIDTH + 1.5);
     expect(objs.rightPaddle.position.x).toBe(state.physics.FIELD_WIDTH - 1.5);
     expect(objs.ball.position.x).toBe(0);
