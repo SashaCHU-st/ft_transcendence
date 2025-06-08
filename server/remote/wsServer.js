@@ -7,6 +7,8 @@ import { broadcastSystemMessage } from '../chatWsServer.js';
 import { randomUUID } from 'crypto';
 import { SYSTEM_MESSAGE_TTL_MS } from '../../shared/chatConstants.js';
 import wsAuth from '../utils/wsAuth.js';
+import { URLSearchParams } from 'node:url';
+import { setInterval, clearInterval } from 'node:timers';
 
 export function initWsServer() {
   const wss = new WebSocketServer({ noServer: true });
@@ -75,12 +77,14 @@ export function initWsServer() {
       const loserId = ws.user_id ?? ws.id;
       updateStats(winnerId, loserId);
 
-      try {
-        winnerWs.send(
-          JSON.stringify(createEndMessage(winnerSide, state, 'opponent_left')),
-        );
-        winnerWs.close();
-      } catch {}
+        try {
+          winnerWs.send(
+            JSON.stringify(createEndMessage(winnerSide, state, 'opponent_left')),
+          );
+          winnerWs.close();
+        } catch {
+          // Ignore errors if the winner disconnects early
+        }
 
       game.stop();
     });

@@ -7,6 +7,12 @@ import {
   WINNING_SCORE,
 } from '../../shared/constants.js';
 import { createStateMessage, createEndMessage } from '../../shared/messages.js';
+import {
+  setInterval,
+  clearInterval,
+  setTimeout,
+  clearTimeout,
+} from 'node:timers';
 
 function clamp(v, min, max) {
   return Math.min(max, Math.max(min, v));
