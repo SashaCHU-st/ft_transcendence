@@ -8,7 +8,6 @@ import { OverlayWrapper } from "../../pong/components/Overlays/OverlayWrapper";
 import {
   OverlayCard,
   OverlayHeading,
-  OverlayButton,
   overlayOutlineClass,
 } from "../../pong/components/Overlays/OverlayComponents";
 import "./ChatModal.css";
