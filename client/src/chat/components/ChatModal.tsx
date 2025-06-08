@@ -3,10 +3,13 @@ import { useEscapeKey } from "../../pong/hooks/useEscapeKey";
 import { UserInfo } from "../../pages/Profile/types/UserInfo";
 import { useChatContext } from "../context/ChatContext";
 import ChatUserList from "./ChatUserList";
+import SystemNotification from "./SystemNotification";
 import { OverlayWrapper } from "../../pong/components/Overlays/OverlayWrapper";
 import {
   OverlayCard,
   OverlayHeading,
+  OverlayButton,
+  overlayOutlineClass,
 } from "../../pong/components/Overlays/OverlayComponents";
 import "./ChatModal.css";
 import { MAX_MESSAGE_LENGTH } from "../../../../shared/chatConstants.js";
@@ -96,7 +99,20 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
           Chat
         </OverlayHeading>
         <div className="flex flex-1 overflow-hidden rounded-lg bg-black bg-opacity-40">
-          <ChatUserList players={players} onSelect={selectUser} />
+          <div className="flex flex-col w-56 border-r border-gray-700">
+            <ChatUserList players={players} onSelect={selectUser} />
+            {state.systemMessages.size > 0 && (
+              <div
+                className={`system-messages p-2 overflow-y-auto text-xs text-blue-300 font-orbitron bg-black bg-opacity-30 rounded-md mt-2 ${overlayOutlineClass("blue")}`}
+              >
+                {Array.from(state.systemMessages.values()).map((msg) => (
+                  <div key={msg.id} className="mb-2">
+                    <SystemNotification id={msg.id} type={msg.type} text={msg.text} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <div className="chat-area flex flex-col flex-1">
             {selected && (
               <div className="p-2 border-b border-gray-700 flex justify-between items-center">

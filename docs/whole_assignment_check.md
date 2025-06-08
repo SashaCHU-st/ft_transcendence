@@ -95,7 +95,7 @@ Server-side pong: Replace basic Pong with server-side Pong and implement an API 
 - [x] Direct messages between users
 - [x] Ability to block other users
 - [ ] Invite users to play from chat
-- [ ] Tournament notifications in chat
+- [x] Tournament notifications in chat
 - [x] Links to user profiles
 
 ### AI Opponent (Major) ★★★

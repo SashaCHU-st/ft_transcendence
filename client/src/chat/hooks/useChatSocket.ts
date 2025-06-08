@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { ChatMessage } from "../../pages/Profile/types/api";
+import type { SystemNotification } from "../../../../shared/chatConstants.js";
+import { ChatMessageTypes } from "../../../../shared/chatMessageTypes.js";
 
 export function useChatSocket(
   userId: string,
   onChatMessage: (msg: ChatMessage) => void,
   onStatusChange?: (connected: boolean) => void,
   onError?: (err: { code: number; message: string }) => void,
+  onSystemMessage?: (msg: SystemNotification) => void,
+  onSystemRemove?: (id: string) => void,
 ): WebSocket | null {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const reconnectRef = useRef<NodeJS.Timeout | null>(null);
@@ -27,9 +31,13 @@ export function useChatSocket(
       ws.onmessage = (ev) => {
         try {
           const data = JSON.parse(ev.data);
-          if (data.type === "chat") {
+          if (data.type === ChatMessageTypes.CHAT) {
             onChatMessage(data.message as ChatMessage);
-          } else if (data.type === "error") {
+          } else if (data.type === ChatMessageTypes.SYSTEM) {
+            onSystemMessage?.(data.message as SystemNotification);
+          } else if (data.type === ChatMessageTypes.SYSTEM_REMOVE) {
+            onSystemRemove?.(data.id as string);
+          } else if (data.type === ChatMessageTypes.ERROR) {
             onError?.(data as { code: number; message: string });
           }
         } catch {
@@ -82,7 +90,7 @@ export function useChatSocket(
       }
       onStatusChange?.(false);
     };
-  }, [userId, onChatMessage, onStatusChange, onError]);
+  }, [userId, onChatMessage, onStatusChange, onError, onSystemMessage, onSystemRemove]);
 
   return socket;
 }

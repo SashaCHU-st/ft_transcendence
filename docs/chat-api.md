@@ -87,3 +87,32 @@ receiver as JSON:
 ```
 
 Clients should listen for these events to update the chat window without polling.
+
+### System notifications
+Apart from user messages the WebSocket delivers short-lived notifications using
+the `system` message type. A notification payload looks like this:
+
+```json
+{
+  "type": "system",
+  "message": {
+    "id": "abc123",
+    "type": "info",
+    "text": "Waiting for an opponent"
+  }
+}
+```
+
+Each notification includes an `id`, a `type` describing its category and a
+`text` field. Notifications automatically expire after
+`SYSTEM_MESSAGE_TTL_MS` milliseconds (60 seconds). When a notification is
+cleared — either because it expired or was removed by the server — clients
+receive a second event instructing them to delete it:
+
+```json
+{
+  "type": "system_remove",
+  "id": "abc123"
+}
+```
+

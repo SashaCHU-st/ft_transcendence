@@ -3,49 +3,32 @@ import { updateStats } from './gameLogic.js';
 import PlayerQueue from './playerQueue.js';
 import { createEndMessage } from '../../shared/messages.js';
 import { startGame } from './gameStarter.js';
-import db from '../database/database.js';
-import jwt from 'jsonwebtoken';
-
-const JWT_SECRET = process.env.JWT_SECRET_KEY || 'kuku';
+import { broadcastSystemMessage } from '../chatWsServer.js';
+import { randomUUID } from 'crypto';
+import { SYSTEM_MESSAGE_TTL_MS } from '../../shared/chatConstants.js';
+import wsAuth from '../utils/wsAuth.js';
 
 export function initWsServer() {
   const wss = new WebSocketServer({ noServer: true });
   const waiting = new PlayerQueue();
+  const refreshInterval = SYSTEM_MESSAGE_TTL_MS - 1000;
 
   wss.on('connection', (ws, req) => {
+    let token;
     const queryIdx = req.url.indexOf('?');
     if (queryIdx !== -1) {
       const params = new URLSearchParams(req.url.slice(queryIdx));
-      const idParam = params.get('user_id');
-      const token = params.get('token');
-      if (token) {
-        try {
-          const payload = jwt.verify(token, JWT_SECRET);
-          const idFromToken = payload.id;
-          const parsedId = parseInt(idParam || '', 10);
-          if (idFromToken && (!idParam || parsedId === idFromToken)) {
-            ws.user_id = idFromToken;
-            const row = db
-              .prepare('SELECT username FROM users WHERE id = ?')
-              .get(ws.user_id);
-            if (row) ws.username = row.username;
-          } else {
-            ws.close();
-            return;
-          }
-        } catch {
-          ws.close();
-          return;
-        }
-      } else if (idParam) {
-        ws.user_id = parseInt(idParam, 10);
-        try {
-          const row = db
-            .prepare('SELECT username FROM users WHERE id = ?')
-            .get(ws.user_id);
-          if (row) ws.username = row.username;
-        } catch {}
-      }
+      token = params.get('token');
+    }
+
+    const info = wsAuth(req);
+    if (token && !info) {
+      ws.close();
+      return;
+    }
+    if (info) {
+      ws.user_id = info.userId;
+      if (info.username) ws.username = info.username;
     }
     ws.on('message', (data) => {
       let msg;
@@ -63,6 +46,12 @@ export function initWsServer() {
     ws.on('close', () => {
       // Remove from waiting queue if still waiting
       waiting.remove(ws);
+      if (ws.waitingMessage) {
+        broadcastSystemMessage(ws.waitingMessage, { remove: true });
+        ws.waitingMessage = null;
+        if (ws.waitingRefresh) clearInterval(ws.waitingRefresh);
+        ws.waitingRefresh = null;
+      }
 
       const game = ws.game;
       if (!game || game.ended) return;
@@ -98,10 +87,47 @@ export function initWsServer() {
 
     if (waiting.size > 0) {
       const other = waiting.dequeue();
-      if (other) startGame(other, ws);
-      else waiting.enqueue(ws);
+      if (other) {
+        if (other.waitingMessage) {
+          broadcastSystemMessage(other.waitingMessage, { remove: true });
+          other.waitingMessage = null;
+          if (other.waitingRefresh) clearInterval(other.waitingRefresh);
+          other.waitingRefresh = null;
+        }
+        startGame(other, ws);
+      } else {
+        waiting.enqueue(ws);
+        const name = ws.username || `Player-${ws.user_id ?? ws.id}`;
+        ws.waitingMessage = {
+          id: randomUUID(),
+          type: 'waiting',
+          text: `${name} is waiting for an opponent`,
+        };
+        broadcastSystemMessage(ws.waitingMessage);
+        ws.waitingRefresh = setInterval(() => {
+          if (ws.waitingMessage) {
+            broadcastSystemMessage(ws.waitingMessage);
+          } else if (ws.waitingRefresh) {
+            clearInterval(ws.waitingRefresh);
+          }
+        }, refreshInterval);
+      }
     } else {
       waiting.enqueue(ws);
+      const name = ws.username || `Player-${ws.user_id ?? ws.id}`;
+      ws.waitingMessage = {
+        id: randomUUID(),
+        type: 'waiting',
+        text: `${name} is waiting for an opponent`,
+      };
+      broadcastSystemMessage(ws.waitingMessage);
+      ws.waitingRefresh = setInterval(() => {
+        if (ws.waitingMessage) {
+          broadcastSystemMessage(ws.waitingMessage);
+        } else if (ws.waitingRefresh) {
+          clearInterval(ws.waitingRefresh);
+        }
+      }, refreshInterval);
     }
   });
 

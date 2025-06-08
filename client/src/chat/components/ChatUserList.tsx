@@ -11,7 +11,7 @@ const ChatUserList: React.FC<Props> = ({ players, onSelect }) => {
   const [search, setSearch] = useState("");
 
   return (
-    <div className="conversations-list p-2 overflow-y-auto border-r border-gray-700 w-56 font-ubuntu">
+    <div className="conversations-list p-2 overflow-y-auto flex-1 font-ubuntu">
       <input
         className="search-input w-full mb-2 font-ubuntu"
         value={search}

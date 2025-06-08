@@ -5,6 +5,7 @@ import React, {
   ReactNode,
   useCallback,
   useEffect,
+  useRef,
 } from 'react';
 import { UserInfo } from '../../pages/Profile/types/UserInfo';
 import {
@@ -17,6 +18,13 @@ import {
 import { sendMessage as sendChat, sendViaSocket } from '../services/chatService';
 import { toast } from 'react-hot-toast';
 import { useChatSocket } from '../hooks/useChatSocket';
+import {
+  SYSTEM_MESSAGE_TTL_MS,
+  MAX_SYSTEM_MESSAGES,
+} from '../../../../shared/chatConstants.js';
+import type { SystemNotification } from '../../../../shared/chatConstants.js';
+
+interface SystemMessage extends SystemNotification {}
 
 interface ChatState {
   selected: UserInfo | null;
@@ -28,6 +36,8 @@ interface ChatState {
   connected: boolean;
   /** Users this client has blocked */
   blockedByMe: number[];
+  /** System notifications to show in chat */
+  systemMessages: Map<string, SystemMessage>;
   }
 
 type Action =
@@ -37,7 +47,10 @@ type Action =
   | { type: 'setConnected'; payload: boolean }
   | { type: 'blockByMe'; userId: number }
   | { type: 'unblockByMe'; userId: number }
-  | { type: 'setBlockedByMe'; ids: number[] };
+  | { type: 'setBlockedByMe'; ids: number[] }
+  | { type: 'setSystemMessages'; payload: Map<string, SystemMessage> }
+  | { type: 'addSystemMessage'; payload: SystemMessage }
+  | { type: 'removeSystemMessage'; payload: string };
 
 interface ChatContextType {
   state: ChatState;
@@ -49,7 +62,7 @@ interface ChatContextType {
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
-function chatReducer(state: ChatState, action: Action): ChatState {
+export function chatReducer(state: ChatState, action: Action): ChatState {
   switch (action.type) {
     case 'select':
       return { ...state, selected: action.payload };
@@ -81,6 +94,22 @@ function chatReducer(state: ChatState, action: Action): ChatState {
       };
     case 'setBlockedByMe':
       return { ...state, blockedByMe: action.ids };
+    case 'setSystemMessages':
+      return { ...state, systemMessages: action.payload };
+    case 'addSystemMessage': {
+      const msgs = new Map(state.systemMessages);
+      msgs.set(action.payload.id, action.payload);
+      if (msgs.size > MAX_SYSTEM_MESSAGES) {
+        const firstKey = msgs.keys().next().value;
+        msgs.delete(firstKey);
+      }
+      return { ...state, systemMessages: msgs };
+    }
+    case 'removeSystemMessage': {
+      const msgs = new Map(state.systemMessages);
+      msgs.delete(action.payload);
+      return { ...state, systemMessages: msgs };
+    }
     default:
       return state;
   }
@@ -92,7 +121,16 @@ export const ChatProvider = ({ children, currentUserId }: { children: ReactNode;
     conversations: {},
     connected: false,
     blockedByMe: [],
+    systemMessages: new Map<string, SystemMessage>(),
   });
+
+  const systemTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const systemMessagesRef = useRef(state.systemMessages);
+
+  useEffect(() => {
+    systemMessagesRef.current = state.systemMessages;
+  }, [state.systemMessages]);
+
 
   const handleIncoming = useCallback(
     (msg: ChatMessage) => {
@@ -106,7 +144,56 @@ export const ChatProvider = ({ children, currentUserId }: { children: ReactNode;
     dispatch({ type: 'setConnected', payload: connected });
   }, []);
 
-  const socket = useChatSocket(currentUserId, handleIncoming, handleStatus);
+  const handleSystem = useCallback((msg: SystemNotification) => {
+    const msgs = new Map(systemMessagesRef.current);
+    const existingTimer = systemTimers.current.get(msg.id);
+    if (existingTimer) {
+      clearTimeout(existingTimer);
+      systemTimers.current.delete(msg.id);
+    } else if (msgs.size >= MAX_SYSTEM_MESSAGES && !msgs.has(msg.id)) {
+      const firstKey = msgs.keys().next().value as string;
+      msgs.delete(firstKey);
+      const oldTimer = systemTimers.current.get(firstKey);
+      if (oldTimer) {
+        clearTimeout(oldTimer);
+        systemTimers.current.delete(firstKey);
+      }
+    }
+
+    msgs.set(msg.id, msg);
+    systemMessagesRef.current = msgs;
+    dispatch({ type: 'setSystemMessages', payload: msgs });
+
+    const timer = setTimeout(() => {
+      systemTimers.current.delete(msg.id);
+      const updated = new Map(systemMessagesRef.current);
+      updated.delete(msg.id);
+      systemMessagesRef.current = updated;
+      dispatch({ type: 'setSystemMessages', payload: updated });
+    }, SYSTEM_MESSAGE_TTL_MS);
+    systemTimers.current.set(msg.id, timer);
+  }, []);
+
+  const handleSystemRemove = useCallback((id: string) => {
+    const timer = systemTimers.current.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      systemTimers.current.delete(id);
+    }
+    const msgs = new Map(systemMessagesRef.current);
+    msgs.delete(id);
+    systemMessagesRef.current = msgs;
+    dispatch({ type: 'setSystemMessages', payload: msgs });
+  }, []);
+
+  const socket = useChatSocket(
+    currentUserId,
+    handleIncoming,
+    handleStatus,
+    undefined,
+    handleSystem,
+    handleSystemRemove,
+  );
 
   const selectUser = useCallback((user: UserInfo | null) => {
     dispatch({ type: 'select', payload: user });
@@ -132,6 +219,13 @@ export const ChatProvider = ({ children, currentUserId }: { children: ReactNode;
     const otherId = Number(state.selected.id);
     loadMessages(otherId);
   }, [state.selected, loadMessages]);
+
+  useEffect(() => {
+    return () => {
+      systemTimers.current.forEach((t) => clearTimeout(t));
+      systemTimers.current.clear();
+    };
+  }, []);
 
   const sendMessage = useCallback(
     async (text: string) => {

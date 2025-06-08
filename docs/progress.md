@@ -54,7 +54,7 @@
 - [x] Direct messages between users
 - [x] Ability to block other users
 - [ ] Invite users to play Pong via chat
-- [ ] Tournament notifications through chat
+- [x] Tournament notifications through chat
 - [x] Access other players' profiles from chat
 
 ### AI‑Algo

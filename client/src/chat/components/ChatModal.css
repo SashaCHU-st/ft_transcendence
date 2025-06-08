@@ -41,3 +41,16 @@
 .search-input::placeholder {
   color: #9ca3af;
 }
+
+.system-messages {
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+  font-family: 'Orbitron', sans-serif;
+  color: #d3e0fb;
+}
+
+.match-heading {
+  color: #40bfff;
+  text-shadow: 0 0 6px rgba(64, 191, 255, 0.9);
+}

@@ -188,6 +188,16 @@ export default function Pong3D() {
     } else if (mode === GameMode.Tournament) {
       setShowStartScreen(false);
       setShowSetup(true);
+    } else if (mode === GameMode.Remote2P) {
+      setShowStartScreen(false);
+      prevScore.current = { left: 0, right: 0 };
+      gameApi.startRemote2P();
+      setScoreLeft(0);
+      setScoreRight(0);
+      setLeftLabel("YOU");
+      setRightLabel("OPPONENT");
+      setRemoteWaiting(true);
+      setRemoteCountdown(null);
     }
   }, [gameApi, location.search]);
 
