@@ -16,6 +16,7 @@ export function initWsServer() {
   const refreshInterval = SYSTEM_MESSAGE_TTL_MS - 1000;
 
   wss.on('connection', (ws, req) => {
+    ws.id = randomUUID();
     let token;
     const queryIdx = req.url.indexOf('?');
     if (queryIdx !== -1) {
@@ -90,7 +91,7 @@ export function initWsServer() {
     });
 
     if (waiting.size > 0) {
-      const other = waiting.dequeue();
+      const other = waiting.dequeueDifferent(ws.user_id);
       if (other) {
         if (other.waitingMessage) {
           broadcastSystemMessage(other.waitingMessage, { remove: true });
