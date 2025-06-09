@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../context/AuthContext';
+import { validateEmail, validatePassword, validateName, validateUsername } from "../../utils/InputValidation";
 
 interface SignUpFormProps {
   onSuccess?: () => void; // Made optional if not always provided
@@ -15,9 +16,27 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
   const [err, setError] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+    const nameError = validateName(name);
+    const usernameError = validateUsername(username);
+    setEmailError(emailError);
+    setPasswordError(passwordError);
+    setNameError(nameError);
+    setUsernameError(usernameError);
+
+    if (emailError || passwordError || nameError || usernameError)
+      return;
+
     try {
       const res = await fetch("https://localhost:3000/signup", {
         method: "POST",
@@ -31,15 +50,7 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
       if (!res.ok) throw new Error(data.message);
 
       login(data.accessToken);
-      //localStorage.setItem("token", data.accessToken);
-      localStorage.setItem("id", data.id); // Save user ID
-      // localStorage.setItem("userEmail", data.email);
-      
-      // localStorage.console.log("Signed up with JWT:", data.accessToken);
-      // console.log("User ID saved:", data.id);
-      
-      // Call both success handlers if they exist
-      /////khdjdhbdjkhbd
+      localStorage.setItem("id", data.id);
       onSuccess?.();
       closeModal?.();
 
@@ -63,33 +74,66 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
             autoFocus
             className="w-full bg-black text-white bg-opacity-30 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            //onChange={(e) => setName(e.target.value)}
+             onChange={(e) => {
+              const value = e.target.value;
+              setName(value);
+              setNameError(validateName(value));
+            }}
             required
           />
+          {nameError && (<p className="text-red-500 text-sm">{nameError}</p>)}
           <input
             type="text"
             placeholder="Username"
             className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            //onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setUsername(value);
+              setUsernameError(validateUsername(value));
+            }}
             required
           />
+          {usernameError && (<p className="text-red-500 text-sm">{usernameError}</p>)}
           <input
             type="email"
             placeholder="Email"
             className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            //onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) =>{ 
+                setEmail(e.target.value); 
+                setEmailError(validateEmail(e.target.value));
+            }}
             required
           />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          {emailError && <p className="text-red-500 text-sm">{emailError}</p>}
+          <div className="relative">
+            <input
+              //type="password"
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              className="w-full px-4 py-2 bg-black text-white bg-opacity-30 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-800"
+              value={password}
+              //onChange={(e) => setPassword(e.target.value)}
+               onChange={(e) => {
+                const value = e.target.value;
+                setPassword(value);
+                setPasswordError(validatePassword(value));
+              }}
+              required
+            />
+            {passwordError && (<p className="text-red-500 text-sm">{passwordError}</p>)}
+            <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-2 text-gray-400 hover:text-white focus:outline-none"
+                >
+                  {showPassword ? "🙈" : "👁️"}
+              </button>
+          </div>
         </div>
         <div className="flex justify-center">
           <button

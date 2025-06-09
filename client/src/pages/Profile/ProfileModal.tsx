@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { UserInfo } from "./types/UserInfo";
 import { toast } from "react-hot-toast";
+import { validatePassword, validateName, validateUsername } from "../../utils/InputValidation";
 
 interface ProfileModalProps {
   onClose: () => void;
@@ -20,6 +21,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   const [password, setPassword] = useState("");
   const MAX_FILE_SIZE = 2 * 1024 * 1024; // Maximum file size: 2 MB
   const [showPassword, setShowPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+
 
   // Handler for avatar change
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,6 +45,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 
   // Handler for saving changes
   const handleSave = () => {
+    const passwordError = validatePassword(password);
+    const nameError = validateName(name);
+    const usernameError = validateUsername(username);
+    setPasswordError(passwordError);
+    setNameError(nameError);
+    setUsernameError(usernameError);
+    
+    if (passwordError || nameError || usernameError)
+      return;
+
     if (name.length < 2) {
       toast.error("Name must be at least 2 characters long.");
       return;
@@ -146,7 +161,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             type="text"
             placeholder="Name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            //onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+                const value = e.target.value;
+                setName(value);
+                setNameError(validateName(value));
+            }}
             autoFocus
             className={`
               w-full
@@ -162,6 +182,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             `}
             // Text input for editing the name
           />
+          {nameError && (<p className="text-red-500 text-sm">{nameError}</p>)}
         </div>
 
         <div
@@ -185,7 +206,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             type="text"
             placeholder="Username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            //onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => {
+                const value = e.target.value;
+                setUsername(value);
+                setUsernameError(validateUsername(value));
+            }}
             className={`
               w-full
               p-2
@@ -200,6 +226,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             `}
             // Text input for editing the username
           />
+          {usernameError && (<p className="text-red-500 text-sm">{usernameError}</p>)}
         </div>
 
         <div
@@ -225,7 +252,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               type={showPassword ? "text" : "password"}
               placeholder="New Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              //onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                  const value = e.target.value;
+                  setPassword(value);
+                  setPasswordError(validatePassword(value));
+              }}
               className={`
                 w-full
                 p-2
@@ -240,6 +272,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               `}
               // Input for entering a new password
             />
+            {passwordError && (<p className="text-red-500 text-sm">{passwordError}</p>)}
              <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}

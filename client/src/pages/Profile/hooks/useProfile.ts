@@ -36,18 +36,23 @@ export const useProfile = () => {
     if (!currentUserId) return;
 
     try {
-      // const res = await fetch(`https://localhost:3000/notification`, {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ user_id: currentUserId }),
-      // });
-      // if (!res.ok) return;
-
-      // const data = await res.json();
       const res = await api.post("/notification", { user_id: currentUserId });
       const data = res.data;
 
       console.log("Check data.notif: ", data.notification);
+      console.log("kuku1 ", data.acceptedUsers);
+      /// DEBUG 
+      // console.log("Friends id =>>>> ", data.acceptedUsers[0].friends_id);
+      // console.log("Friends id =>>>> ", data.acceptedUsers[1].friends_id);
+      // console.log("kuku2 ", data.acceptedSeen);
+
+      ////DEBUGGGGG
+      // console.log("Username", data.usernames);
+      // console.log("Username 1 ", data.usernames[0].username);
+      // console.log("Username 2", data.usernames[1].username);
+
+      // console.log("username 2", data.accptedFromPartner[1].username);
+      // console.log("kuku2 ", data.alreadySeenAccept[0].friends_id);
      
       if (data.notification && Array.isArray(data.notification)) {
         // Extract unique new notifications by friends_id
@@ -81,7 +86,7 @@ export const useProfile = () => {
       const { data } = await api.get(`/users?t=${Date.now()}`, {
       headers: authHeaders,
     });
-      
+       
       let currentUser: UserInfo | null = null;
 
       const mappedUsers: UserInfo[] = data.users.map((u: any) => {
