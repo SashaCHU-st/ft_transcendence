@@ -86,7 +86,7 @@ export const useProfile = () => {
       const { data } = await api.get(`/users?t=${Date.now()}`, {
       headers: authHeaders,
     });
-      
+       
       let currentUser: UserInfo | null = null;
 
       const mappedUsers: UserInfo[] = data.users.map((u: any) => {

@@ -7,16 +7,13 @@ export async function challenge(req, reply) {
     const friends_id = db
       .prepare(`SELECT * FROM users WHERE username = ?`)
       .get(username);
-    // console.log("MMMMMMM=>")
-    // console.log("UUUU=>", user_id)
-    // console.log("UUUU=>", friends_id.id)
 
     if (!friends_id) {
       return reply.code(404).send({ message: "User not found" });
     }
     const alreadyChallengedBefore = db
-      .prepare(`SELECT * FROM challenge WHERE user_id = ? AND friends_id = ?`)
-      .get(user_id, friends_id.id);
+      .prepare(`SELECT * FROM challenge WHERE user_id = ? AND friends_id = ? OR friends_id = ? AND user_id = ?`)
+      .get(user_id, friends_id.id, user_id, friends_id.id);
     // console.log("NNNNNN=>", alreadyChallengedBefore)
     if (!alreadyChallengedBefore) {
       const sendRequest = db
@@ -30,7 +27,7 @@ export async function challenge(req, reply) {
         .code(400)
         .send({
           message:
-            "You already called once, wait when partner will accept or decline",
+            "Challenge has been called once",
         });
     }
   } catch (err) {
