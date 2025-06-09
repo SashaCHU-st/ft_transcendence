@@ -21,21 +21,20 @@ async function challengeRoutes(fastify) {
     const data =await validatedValues(validated, reply);
     return accept({ ...req, body: data }, reply);
   });
-  //   fastify.post("/notifyAboutAccept",async (req, reply) => {
-  //   const validated = acceptSchema.safeParse(req.body);
-  //   const data =await validatedValues(validated, reply);
-  //   return notifyAboutAccept({ ...req, body: data }, reply);
-  // });
+  
+  fastify.post("/declineRequest",async (req, reply) => {
+    console.log("kuku111111111111111111111111111111111111111111111111111111111111")
+    const validated = acceptSchema.safeParse(req.body);
+    console.log("kuku222222222222222222222222222222222222222222")
+
+    const data =await validatedValues(validated, reply);
+console.log("KKKKKK=>", data)
+    return decline({ ...req, body: data }, reply);
+  });
   fastify.post("/sawAccept",async (req, reply) => {
     const validated = acceptSchema.safeParse(req.body);
     const data =await validatedValues(validated, reply);
     return sawAccept({ ...req, body: data }, reply);
-  });
-  
-  fastify.delete("/declineRequest",async (req, reply) => {
-    const validated = acceptSchema.safeParse(req.body);
-    const data =await validatedValues(validated, reply);
-    return decline({ ...req, body: data }, reply);
   });
 }
 

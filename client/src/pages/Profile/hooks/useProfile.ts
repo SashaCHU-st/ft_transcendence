@@ -7,6 +7,7 @@ import { bots } from "../types/botsData";
 import { deleteFromFavorites } from "../DeleteFavorites";
 import { addToFavorites } from "../AddFavorites";
 import api from "../types/api";
+import { ColorSplitterBlock } from "@babylonjs/core";
 
 
 export const useProfile = () => {
@@ -40,16 +41,19 @@ export const useProfile = () => {
       const data = res.data;
 
       console.log("Check data.notif: ", data.notification);
-      console.log("kuku1 ", data.acceptedUsers);
+      console.log("THEY ACCEPPTED ", data.acceptedUsers);
+      console.log("THEY DID NOT ACCPTED", data.notAcceptedUsers);
+
       /// DEBUG 
       // console.log("Friends id =>>>> ", data.acceptedUsers[0].friends_id);
       // console.log("Friends id =>>>> ", data.acceptedUsers[1].friends_id);
       // console.log("kuku2 ", data.acceptedSeen);
-
+      
       ////DEBUGGGGG
       // console.log("Username", data.usernames);
       // console.log("Username 1 ", data.usernames[0].username);
       // console.log("Username 2", data.usernames[1].username);
+      // console.log("USERNAME THAT DID  NT ACCEPT", data.usernamesNotAccepted[0].username);
 
       // console.log("username 2", data.accptedFromPartner[1].username);
       // console.log("kuku2 ", data.alreadySeenAccept[0].friends_id);
@@ -195,12 +199,6 @@ export const useProfile = () => {
 
     const handleAcceptChallenge = async (userId: string) => {
       try {
-        // await fetch(`https://localhost:3000/acceptRequest`, {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   //body: JSON.stringify({ user_id: user.id, friends_id: notification.user_id }),
-        //    body: JSON.stringify({ user_id: user?.id, friends_id: userId }),
-        // });
         await api.post("/acceptRequest", {
         user_id: user?.id,
         friends_id: userId,
@@ -218,40 +216,14 @@ export const useProfile = () => {
         if (notifications.length <= 1) setIsNotificationModalOpen(false);
         }
     };
-
-    // const handleDeclineChallenge = async () => {
-    //   if (!user || !notification) return;
-
-    //   try {
-    //     await fetch(`https://localhost:3000/declineRequest`, {
-    //       method: "DELETE",
-    //       headers: { "Content-Type": "application/json" },
-    //       body: JSON.stringify({ user_id: user.id, friends_id: notification.user_id }),
-    //     });
-
-    //     toast.success("Challenge declined.");
-    //   } catch (err) {
-    //     toast.error("Failed to decline challenge.");
-    //     console.error(err);
-    //   } finally {
-    //     setIsNotificationModalOpen(false);
-    //     setNotification(null);
-    //   }
-    // };
     const handleDeclineChallenge = async (userId: string) => {
       try {
-        // await fetch(`https://localhost:3000/declineRequest`, {
-        //   method: "DELETE",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify({ user_id: localStorage.getItem("id"), friends_id: userId }),
-        // });
-
-         await api.delete("/declineRequest", {
-          data: {
+         await api.post("/declineRequest", { 
           user_id: user?.id,
           friends_id: userId,
-        },
+        
       });
+
         toast.success("Challenge declined.");
       } catch (err:any) {
         //toast.error(err.message || "Failed to decline challenge.");
@@ -262,6 +234,7 @@ export const useProfile = () => {
         if (notifications.length <= 1) setIsNotificationModalOpen(false);
       }
     };
+
 
   const handleAdd = async (username: string) => {
       try {

@@ -36,28 +36,6 @@ export async function challenge(req, reply) {
   }
 }
 
-// export async function notification(req, reply) {
-//   const { user_id } = req.body;
-//   try {
-//      const notification = db.prepare(`
-//          SELECT challenge.*, users.username
-//          FROM challenge
-//          JOIN users ON challenge.user_id = users.id
-//          WHERE challenge.friends_id = ? AND challenge.confirmReq = 0`)
-//       .all(user_id);
-
-//     if (notification.length === 0) {
-//         console.log("FFFFFFFFFFFFF")
-//         return reply.code(200).send({ message: "No challenge found", notification: [] });
-//       } else {
-//         return reply.code(200).send({ message: "There is request",friends_id: notification.user_id, notification });
-//       }
-//   } catch (err) {
-//     console.error("Database error:", err.message);
-//     return reply.code(500).send({ message: "Something went wrong" });
-//   }
-// }
-
 export async function notification(req, reply) {
   const { user_id } = req.body;
 
@@ -68,7 +46,7 @@ export async function notification(req, reply) {
         SELECT challenge.*, users.username
         FROM challenge 
         JOIN users ON challenge.user_id = users.id 
-        WHERE challenge.friends_id = ? AND challenge.confirmReq = 0`
+        WHERE challenge.friends_id = ? AND challenge.confirmReq = 2`
       )
       .all(user_id);
 
@@ -79,6 +57,14 @@ export async function notification(req, reply) {
       FROM challenge
       JOIN users ON challenge.user_id = users.id 
       WHERE challenge.user_id = ? AND challenge.confirmReq = 1 AND challenge.ok = 0`
+      )
+      .all(user_id);
+
+      const notAcceptedFromPartner = db.prepare(
+        `SELECT challenge.*, users.username
+      FROM challenge
+      JOIN users ON challenge.user_id = users.id 
+      WHERE challenge.user_id = ? AND challenge.confirmReq = 0 AND challenge.ok = 0`
       )
       .all(user_id);
 
@@ -93,9 +79,19 @@ export async function notification(req, reply) {
     const usernames = acceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
-    console.log("Usernames", usernames);
 
-    // console.log("BBBBB=>",acceptedUsers[0].partner.username)
+        const notAcceptedUsers = notAcceptedFromPartner.map((ch) => {
+      return {
+        ...ch,
+        partner: db
+          .prepare(`SELECT username FROM users WHERE id = ?`)
+          .get(ch.friends_id),
+      };
+    });
+    const usernamesNotAccepted = notAcceptedUsers.map((user) => ({
+      username: user.partner.username,
+    }));
+    console.log("Usernames not accepted", usernamesNotAccepted);
 
     const acceptedSeen = db
       .prepare(
@@ -104,8 +100,7 @@ export async function notification(req, reply) {
       FROM challenge
       JOIN users ON challenge.friends_id = users.id
       WHERE challenge.user_id = ? AND challenge.confirmReq = 1 AND challenge.ok = 1
-    `
-      )
+    `)
       .all(user_id);
 
     console.log("SSSSSSSSSSSSS=>", acceptedSeen);
@@ -113,7 +108,7 @@ export async function notification(req, reply) {
     if (notification.length === 0) {
       console.log("FFFFFFFFFFFFF");
       return reply.code(200).send({
-          message: "No challenge found",notification: [],acceptedUsers, acceptedSeen, usernames});
+          message: "No challenge found",notification: [],acceptedUsers,notAcceptedUsers, acceptedSeen, usernames,usernamesNotAccepted});
     } else {
       return reply.code(200).send({message: "There is request", friends_id: notification.user_id, notification});
     }
@@ -123,36 +118,6 @@ export async function notification(req, reply) {
   }
 }
 
-// export async function  notifyAboutAccept(req, reply) {
-
-//   console.log("We in SEEEE")
-
-//   const {user_id} = req.body;
-
-//   try
-//   {
-//     const kuku1 = db.prepare(`SELECT * FROM challenge WHERE user_id = ? AND confirmReq = 1 AND ok = 0`).get(user_id)
-
-//     console.log("YYYYY=>", kuku1)
-//     if(kuku1)
-//     {
-
-//       return reply.code(200).send({ message: "CHALLENGE ACCREPTED ", friend:kuku1.friends_id});
-//     }
-
-//     const kuku2= db.prepare(`SELECT * FROM challenge WHERE user_id = ? AND confirmReq = 1 AND ok = 1`).get(user_id)
-//     if(kuku2)
-//     {
-//       console.log("OOOOOOOOOOOOOOOO")
-//       return reply.code(200).send({ message: "CHALLENGE ACCREPTED BEFORE"});
-
-//     }
-
-//   } catch (err) {
-//     console.error("Database error:", err.message);
-//     return reply.code(500).send({ message: "Something went wrong" });
-//   }
-// }
 
 export async function sawAccept(req, reply) {
   const { user_id, friends_id } = req.body;
@@ -176,6 +141,9 @@ export async function sawAccept(req, reply) {
 export async function accept(req, reply) {
   const { user_id, friends_id } = req.body;
 
+  console.log("IIIII=>", user_id)
+
+  console.log("BBBB=>", friends_id)
   try {
     const acceptReq = db
       .prepare(
@@ -193,9 +161,14 @@ export async function accept(req, reply) {
 export async function decline(req, reply) {
   const { user_id, friends_id } = req.body;
 
+    console.log("IIIII=>", user_id)
+
+  console.log("BBBB=>", friends_id)
+  console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+
   try {
     const declineReq = db
-      .prepare(`DELETE FROM challenge WHERE friends_id = ? AND user_id = ?`)
+      .prepare(`UPDATE challenge SET confirmReq = 0 WHERE friends_id = ? AND user_id = ?`)
       .run(user_id, friends_id);
 
     return reply.code(200).send({ message: "Deleted", declineReq });
