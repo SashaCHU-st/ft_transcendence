@@ -1,31 +1,3 @@
-// // import React, { Profiler } from 'react'
-// import MainPage from '../pages/MainPage/MainPage'
-// //import AuthPage from '../pages/AuthPage/AuthPage'
-// import Profile from '../pages/Profile/Profile';
-// import { BrowserRouter, Route, Routes} from "react-router-dom";
-// import Layout from '../components/Layout.tsx';
-
-// const AppRouter = () => {
-//   return (
-//     <div>
-//       <BrowserRouter>
-//         <Routes>
-//           <Route element={<Layout />}>
-//             <Route path ="/" element={<MainPage/>}/>
-//             <Route path ="/profile" element={<Profile/>}/>
-//           </Route>
-//         </Routes>
-//       </BrowserRouter>
-//     </div>
-//   )
-// }
-
-// export default AppRouter
-
-
-
-// // {/* <Route path ="/auth" element={<AuthPage/>}/> */}
-
 import MainPage from '../pages/MainPage/MainPage';
 import Profile from '../pages/Profile/Profile';
 import AuthPage from '../pages/AuthPage/AuthPage';
@@ -48,6 +20,7 @@ const AppRouter = () => {
              <MainPage/>
           )
           } />
+
           <Route path="/profile" 
           element={
             <ProtectedRoute>
@@ -55,16 +28,29 @@ const AppRouter = () => {
             </ProtectedRoute>
           } 
           />
-          <Route path="/pong" element={<PongGame />} />
+
+          <Route path="/pong" 
+            element={
+              <ProtectedRoute>
+                <PongGame />
+              </ProtectedRoute>
+          } />
+
           <Route path="/login" element={
-           // <AuthPage mode="login" onClose={() => {}} />
            isAuthenticated ? (
             <Navigate to="/profile" replace />
           ) : (
             <AuthPage mode="login" />
           )
-            } />
-          <Route path="/signup" element={<AuthPage mode="signup" onClose={() => {}} />} />
+          } />
+
+          <Route path="/signup" 
+            element={
+              <ProtectedRoute>
+                <AuthPage mode="signup" onClose={() => {}} />
+              </ProtectedRoute>
+          } />
+
           <Route path="*" element={<Navigate to="/" />} />
         </Route>
       </Routes>

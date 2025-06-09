@@ -49,28 +49,6 @@ export const getAuthHeaders = ():
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-// export const fetchUserData = async (
-//   headers: { Authorization: string } | Record<string, never> = getAuthHeaders(),
-// ): Promise<UserInfo> => {
-//   const response = await api.get("/users/me", { headers });
-//   const currentUser = response.data.user;
-
-//   return {
-//     id: String(currentUser.id || "unknown"),
-//     username: currentUser.username || currentUser.name || "Unknown",
-//     avatar: currentUser.image
-//       ? `data:image/jpeg;base64,${currentUser.image}`
-//       : "/prof_img/avatar1.png",
-//     email: currentUser.email || "",
-//     name: currentUser.name || "",
-//     password: currentUser.password || "",
-//     wins: currentUser.wins || 0,
-//     losses: currentUser.losses || 0,
-//     online: !!currentUser.online,
-//     history: currentUser.history || [],
-//   };
-// };
-
 export const updateUserProfile = async (
   profileUpdates: Partial<UserInfo>,
   avatar?: string,
@@ -113,6 +91,7 @@ export const updateUserProfile = async (
     throw error;
   }
 };
+
 export const saveGameResult = async (
   matchResult: MatchResult,
   headers: { Authorization: string } | Record<string, never> = getAuthHeaders()

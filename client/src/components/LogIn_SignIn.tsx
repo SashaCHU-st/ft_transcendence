@@ -1,5 +1,3 @@
-import React from 'react';
-
 const AuthButtons = ({ openModal }: { openModal: (mode: "login" | "signup") => void }) => {
   return (
     <div className="fixed top-4 right-8 z-50 flex gap-4">
