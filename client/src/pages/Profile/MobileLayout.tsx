@@ -1,4 +1,3 @@
-
 import React from "react";
 import UserList from "./UserList";
 import UserHeader from "./UserHeader";
@@ -43,7 +42,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
       <UserHeader
         user={{
           username: user.username,
-          avatar: user.avatar,
+          //avatar: user.avatar,
           wins: user.wins,
           losses: user.losses,
           history: user.history,
@@ -79,18 +78,23 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
             w-full
             sm:w-1/2
             min-w-0
+            flex
+            flex-col
+            items-start
           "
         >
           <h2
             className="
               text-lg
-              font-semibold
+              font-orbitron
+              font-bold
+              tracking-[.20em]
               mb-2
               text-left
               drop-shadow-[0_0_8px_red]
             "
           >
-            Friends
+            FRIENDS
           </h2>
           <UserList users={friends} variant="friends" expandUsername={expandUsername} onRemove={handleRemove} onAdd={handleAdd}/>
         </div>
@@ -107,13 +111,15 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           <h2
             className="
               text-lg
-              font-semibold
+              font-orbitron
+              font-bold
+              tracking-[.20em]
               mb-2
               text-right
               drop-shadow-[0_0_8px_red]
             "
           >
-            Players
+            PLAYERS
           </h2>
           <UserList users={players} variant="players" expandUsername={expandUsername}  onAdd={handleAdd}/>
         </div>
@@ -124,7 +130,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           mt-8
         "
       >
-        <div
+        {/* <div
           className="
             w-full
             max-w-[600px]
@@ -148,7 +154,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
               rounded-lg
             "
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );

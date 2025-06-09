@@ -129,11 +129,13 @@ const UserList: React.FC<Props> = ({ users, variant, expandUsername, onRemove, o
                     e.currentTarget.src = "/prof_img/avatar1.png";
                   }}
                 />
-                <span className="font-bold text-base">{user.username}</span>
+                <span className="font-bold text-base md:text-lg lg:text-xl 2xl:text-2xl ">{user.username}</span>
               </div>
               <span
                 className={
-                  `text-sm ${
+                  `text-sm
+                    sm:text-sm 
+                    md:text-base ${
                     user.online ? "text-green-400" : "text-gray-400"
                   }`
                 }

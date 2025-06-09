@@ -27,6 +27,9 @@ const BotSelector: React.FC<BotSelectorProps> = ({ selectedBot, setSelectedBot }
 			<p
 				className={`
           text-lg
+		  md:text-xl
+		  xl:text-2xl
+		  2xl:text-3xl
           text-purple-400
           font-extrabold
 		  font-orbitron
@@ -49,9 +52,7 @@ const BotSelector: React.FC<BotSelectorProps> = ({ selectedBot, setSelectedBot }
             grid
             grid-cols-1
             sm:grid-cols-2
-            md:grid-cols-3
             lg:grid-cols-4
-            xl:grid-cols-5
             gap-3
             w-full
             px-2
