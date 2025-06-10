@@ -7,6 +7,12 @@ import { broadcastSystemMessage } from '../chatWsServer.js';
 import { randomUUID } from 'crypto';
 import { SYSTEM_MESSAGE_TTL_MS } from '../../shared/chatConstants.js';
 import wsAuth from '../utils/wsAuth.js';
+import { URLSearchParams } from 'node:url';
+import { setInterval, clearInterval } from 'node:timers';
+
+// Track active WebSocket connections by user id so that a single user
+// cannot start multiple remote games at once.
+const activeUsers = new Map();
 
 export function initWsServer() {
   const wss = new WebSocketServer({ noServer: true });
@@ -14,6 +20,7 @@ export function initWsServer() {
   const refreshInterval = SYSTEM_MESSAGE_TTL_MS - 1000;
 
   wss.on('connection', (ws, req) => {
+    ws.id = randomUUID();
     let token;
     const queryIdx = req.url.indexOf('?');
     if (queryIdx !== -1) {
@@ -29,6 +36,22 @@ export function initWsServer() {
     if (info) {
       ws.user_id = info.userId;
       if (info.username) ws.username = info.username;
+    }
+
+    if (ws.user_id !== undefined) {
+      const existing = activeUsers.get(ws.user_id);
+      if (existing) {
+        if (existing.game && !existing.game.ended) {
+          // Refuse new connection while an active game exists
+          ws.close();
+          return;
+        }
+        try {
+          existing.close();
+        } catch {}
+        activeUsers.delete(ws.user_id);
+      }
+      activeUsers.set(ws.user_id, ws);
     }
     ws.on('message', (data) => {
       let msg;
@@ -53,6 +76,10 @@ export function initWsServer() {
         ws.waitingRefresh = null;
       }
 
+      if (ws.user_id !== undefined && activeUsers.get(ws.user_id) === ws) {
+        activeUsers.delete(ws.user_id);
+      }
+
       const game = ws.game;
       if (!game || game.ended) return;
 
@@ -75,18 +102,20 @@ export function initWsServer() {
       const loserId = ws.user_id ?? ws.id;
       updateStats(winnerId, loserId);
 
-      try {
-        winnerWs.send(
-          JSON.stringify(createEndMessage(winnerSide, state, 'opponent_left')),
-        );
-        winnerWs.close();
-      } catch {}
+        try {
+          winnerWs.send(
+            JSON.stringify(createEndMessage(winnerSide, state, 'opponent_left')),
+          );
+          winnerWs.close();
+        } catch {
+          // Ignore errors if the winner disconnects early
+        }
 
       game.stop();
     });
 
     if (waiting.size > 0) {
-      const other = waiting.dequeue();
+      const other = waiting.dequeueDifferent(ws.user_id);
       if (other) {
         if (other.waitingMessage) {
           broadcastSystemMessage(other.waitingMessage, { remove: true });
@@ -102,11 +131,12 @@ export function initWsServer() {
           id: randomUUID(),
           type: 'waiting',
           text: `${name} is waiting for an opponent`,
+          userId: ws.user_id,
         };
-        broadcastSystemMessage(ws.waitingMessage);
+        broadcastSystemMessage(ws.waitingMessage, { excludeUsers: ws.user_id !== undefined ? [ws.user_id] : [] });
         ws.waitingRefresh = setInterval(() => {
           if (ws.waitingMessage) {
-            broadcastSystemMessage(ws.waitingMessage);
+            broadcastSystemMessage(ws.waitingMessage, { excludeUsers: ws.user_id !== undefined ? [ws.user_id] : [] });
           } else if (ws.waitingRefresh) {
             clearInterval(ws.waitingRefresh);
           }
@@ -119,11 +149,12 @@ export function initWsServer() {
         id: randomUUID(),
         type: 'waiting',
         text: `${name} is waiting for an opponent`,
+        userId: ws.user_id,
       };
-      broadcastSystemMessage(ws.waitingMessage);
+      broadcastSystemMessage(ws.waitingMessage, { excludeUsers: ws.user_id !== undefined ? [ws.user_id] : [] });
       ws.waitingRefresh = setInterval(() => {
         if (ws.waitingMessage) {
-          broadcastSystemMessage(ws.waitingMessage);
+          broadcastSystemMessage(ws.waitingMessage, { excludeUsers: ws.user_id !== undefined ? [ws.user_id] : [] });
         } else if (ws.waitingRefresh) {
           clearInterval(ws.waitingRefresh);
         }

@@ -180,7 +180,7 @@ export function resetBall(state: GameState, objs: SceneObjects) {
 export function spawnBall(objs: SceneObjects) {
   const { ball, scene } = objs;
   const FR = 60;
-  if (typeof (scene as any).beginAnimation !== "function") return;
+  if (typeof scene.beginAnimation !== "function") return;
   boom(scene, ball.position);
   ball.scaling = new BABYLON.Vector3(0, 0, 0);
   const anim = new BABYLON.Animation(

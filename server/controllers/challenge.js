@@ -5,16 +5,15 @@ export async function challenge(req, reply) {
 
   try {
     const friends_id = db
-      .prepare(`SELECT * FROM users WHERE username = ?`)
+      .prepare(`SELECT * FROM users WHERE username = ? AND online = 1`)
       .get(username);
 
     if (!friends_id) {
-      return reply.code(404).send({ message: "User not found" });
+      return reply.code(404).send({ message: "User not found online" });
     }
     const alreadyChallengedBefore = db
       .prepare(`SELECT * FROM challenge WHERE user_id = ? AND friends_id = ? OR friends_id = ? AND user_id = ?`)
       .get(user_id, friends_id.id, user_id, friends_id.id);
-    // console.log("NNNNNN=>", alreadyChallengedBefore)
     if (!alreadyChallengedBefore) {
       const sendRequest = db
         .prepare(`INSERT INTO challenge (user_id, friends_id) VALUES (?,?)`)

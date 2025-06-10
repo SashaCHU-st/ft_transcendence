@@ -24,9 +24,9 @@ import {
 } from '../../../../shared/chatConstants.js';
 import type { SystemNotification } from '../../../../shared/chatConstants.js';
 
-interface SystemMessage extends SystemNotification {}
+type SystemMessage = SystemNotification;
 
-interface ChatState {
+export interface ChatState {
   selected: UserInfo | null;
   /**
    * Store conversation history per other user.
@@ -252,7 +252,7 @@ export const ChatProvider = ({ children, currentUserId }: { children: ReactNode;
             userId: Number(state.selected.id),
             payload: message,
           });
-        } catch (err) {
+        } catch {
           toast.error('Failed to send message');
         }
       }

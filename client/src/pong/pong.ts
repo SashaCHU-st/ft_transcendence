@@ -55,6 +55,7 @@ export interface GameState {
   /** Remote play events */
   onRemoteWaitingChange?: (waiting: boolean) => void;
   onRemoteCountdown?: (seconds: number) => void;
+  onRemoteError?: () => void;
 
   onMatchEndCallback?: (
     winner: string,
@@ -122,6 +123,7 @@ export interface PongCallbacks {
   onPlayersUpdate?: (leftName: string, rightName: string) => void;
   onRemoteWaitingChange?: (waiting: boolean) => void;
   onRemoteCountdown?: (seconds: number) => void;
+  onRemoteError?: () => void;
 }
 
 export function initGame(
@@ -171,6 +173,7 @@ export function initGame(
     onPlayersUpdate: callbacks?.onPlayersUpdate,
     onRemoteWaitingChange: callbacks?.onRemoteWaitingChange,
     onRemoteCountdown: callbacks?.onRemoteCountdown,
+    onRemoteError: callbacks?.onRemoteError,
 
     onMatchEndCallback: undefined,
 
@@ -275,10 +278,12 @@ export function initGame(
       if (state.remoteCleanup) {
         state.remoteCleanup();
         state.remoteCleanup = undefined;
-      } else if (state.ws) {
-        try {
-          state.ws.close();
-        } catch {}
+        } else if (state.ws) {
+          try {
+            state.ws.close();
+          } catch {
+            /* ignore close errors */
+          }
         state.ws = undefined;
       }
       state.gameStarted = false;
@@ -336,7 +341,7 @@ export function initGame(
   };
 
   // Expose internal state for tests
-  (api as any).__state = state;
+  (api as GameAPI & { __state: GameState }).__state = state;
 
   return api;
 }

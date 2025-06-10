@@ -13,7 +13,7 @@ const api: AxiosInstance = axios.create({
 
 api.interceptors.response.use(
   (response) => response,
-  (error: AxiosError<any>) => {
+  (error: AxiosError<{ message?: string }>) => {
     const backendMessage =
       error.response?.data?.message || error.message || "Something went wrong";
 
@@ -42,7 +42,9 @@ api.interceptors.response.use(
 //   },
 // );
 
-export const getAuthHeaders = (): { Authorization: string } | {} => {
+export const getAuthHeaders = ():
+  | { Authorization: string }
+  | Record<string, never> => {
   const token = localStorage.getItem("token");
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
@@ -50,7 +52,7 @@ export const getAuthHeaders = (): { Authorization: string } | {} => {
 export const updateUserProfile = async (
   profileUpdates: Partial<UserInfo>,
   avatar?: string,
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
 ): Promise<void> => {
   try {
     const updates: Partial<UserInfo> = {};
@@ -77,9 +79,14 @@ export const updateUserProfile = async (
         },
       });
     }
-  } catch (error: any) {
-    if (error.response && error.response.data && error.response.data.errors) {
-      throw error.response.data.errors;
+  } catch (error: unknown) {
+    if (
+      axios.isAxiosError(error) &&
+      error.response &&
+      error.response.data &&
+      (error.response.data as { errors?: unknown }).errors
+    ) {
+      throw (error.response.data as { errors: unknown }).errors;
     }
     throw error;
   }
@@ -87,7 +94,7 @@ export const updateUserProfile = async (
 
 export const saveGameResult = async (
   matchResult: MatchResult,
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
 ): Promise<void> => {
   await api.post("/game/result", matchResult, { headers });
 };
@@ -107,7 +114,7 @@ export const getUserIdFromToken = (): number | null => {
 };
 
 export const recordWin = async (
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
 ): Promise<void> => {
   const id = getUserIdFromToken();
   if (id === null) throw new Error("No user id");
@@ -115,7 +122,7 @@ export const recordWin = async (
 };
 
 export const recordLoss = async (
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
 ): Promise<void> => {
   const id = getUserIdFromToken();
   if (id === null) throw new Error("No user id");
@@ -136,7 +143,7 @@ export const sendChatMessage = async (
   fromId: number,
   toId: number,
   text: string,
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
 ): Promise<void> => {
   await api.post("/messages", { fromId, toId, text }, { headers });
 };
@@ -145,7 +152,7 @@ export const fetchChatMessages = async (
   user1: number,
   user2: number,
   viewerId: number,
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
 ): Promise<ChatMessage[]> => {
   const response = await api.get(
     `/messages?user1=${user1}&user2=${user2}&viewerId=${viewerId}`,
@@ -156,20 +163,20 @@ export const fetchChatMessages = async (
 
 export const blockUserRequest = async (
   blockedId: number,
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
 ): Promise<void> => {
   await api.post("/block", { blockedId }, { headers });
 };
 
 export const unblockUserRequest = async (
   blockedId: number,
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
 ): Promise<void> => {
   await api.post("/unblock", { blockedId }, { headers });
 };
 
 export const fetchBlockedUsers = async (
-  headers: { Authorization: string } | {} = getAuthHeaders()
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
 ): Promise<number[]> => {
   const response = await api.get("/blocked", { headers });
   return response.data.blocked as number[];

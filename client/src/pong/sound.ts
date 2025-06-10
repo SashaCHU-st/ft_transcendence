@@ -3,7 +3,9 @@ let ctx: AudioContext | null = null;
 export function playPaddleSound(): void {
   if (typeof window === 'undefined') return;
   if (!ctx) {
-    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    type WindowWithAudio = Window & { webkitAudioContext?: typeof AudioContext };
+    const win = window as WindowWithAudio;
+    const AudioCtx = window.AudioContext || win.webkitAudioContext;
     if (!AudioCtx) return;
     ctx = new AudioCtx();
   }

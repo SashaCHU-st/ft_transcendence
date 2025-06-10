@@ -19,17 +19,24 @@ export function usePlayers() {
       try {
         const res = await fetch(`https://localhost:3000/users?t=${Date.now()}`);
         const data = await res.json();
-        const online: PlayerInfo[] = (data.users || [])
-          .filter((u: any) => u.online)
-          .map((u: any) => ({
-            username: u.username || u.name,
+        interface RawUser {
+          online: boolean;
+          username?: string;
+          name?: string;
+          wins?: number;
+          losses?: number;
+        }
+        const online: PlayerInfo[] = (data.users || ([] as RawUser[]))
+          .filter((u: RawUser) => u.online)
+          .map((u: RawUser) => ({
+            username: u.username || u.name || "",
             wins: u.wins || 0,
             losses: u.losses || 0,
           }));
         if (isMounted) {
           setPlayers(online);
         }
-      } catch (err) {
+      } catch {
         if (isMounted) {
           setError("Failed to fetch players");
         }

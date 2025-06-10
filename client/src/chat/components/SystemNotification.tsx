@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { SystemNotification as Notification } from '../../../../shared/chatConstants.js';
 
-interface Props extends Notification {}
+type Props = Notification;
 
 const SystemNotification: React.FC<Props> = ({ type, text }) => {
   const navigate = useNavigate();
