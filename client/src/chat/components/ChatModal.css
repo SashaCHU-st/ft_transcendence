@@ -38,8 +38,21 @@
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
 }
+.search-input:focus {
+  outline: none;
+  border: 2px solid #40bfff;
+  box-shadow: 0 0 5px rgba(64, 191, 255, 0.7), 0 0 10px rgba(64, 191, 255, 0.9);
+}
 .search-input::placeholder {
   color: #9ca3af;
+}
+
+.search-highlight {
+  background-color: rgba(64, 191, 255, 0.3);
+  color: #e9f4fb;
+  border-radius: 0.125rem;
+  padding: 0 2px;
+  text-shadow: 0 0 6px rgba(64, 191, 255, 0.8);
 }
 
 .system-messages {
