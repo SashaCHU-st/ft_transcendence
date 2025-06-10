@@ -36,6 +36,9 @@ export async function win(req, reply) {
     const winValue = winUser.wins + 1;
     const updateWins = db.prepare(`UPDATE users SET wins = ? WHERE id = ?`).run(winValue, user_id);
 
+      const gameEND = db
+    .prepare(`INSERT INTO game (challenge_id, date, win_user_id ) VALUES (?,?)`)
+    .run(acceptReq.lastInsertRowid,new Date().toISOString(),user_id);
     return reply.code(200).send({ updateWins });
   } catch (err) {
     console.error("Database error:", err.message);
@@ -54,6 +57,9 @@ export async function loseUser(req, reply) {
         .prepare(`UPDATE users SET losses = ? WHERE id = ?`)
         .run(haha, user_id);
   
+
+      const gameEND = db
+    .prepare(`UPDATE INTO game (losses_user_id) VALUES (?)`).run(user_id);
       return reply.code(200).send({ updateLoses });
     } catch (err) {
       console.error("Database error:", err.message);

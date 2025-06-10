@@ -59,10 +59,10 @@ Server-side pong: Replace basic Pong with server-side Pong and implement an API 
 - [x] Unique display name for tournaments
 - [x] Ability to update profile information
 - [x] Avatar upload with default fallback
-- [ ] Friends list with online status
+- [x] Friends list with online status
 - [x] Player stats showing wins and losses
 - [ ] Match history with dates and details for logged-in users
-- [ ] Logical handling of duplicate usernames and emails
+- [x] Logical handling of duplicate usernames and emails
 
 ### Remote Authentication (Major) ★★★
 - [ ] Integrate Google Sign‑in

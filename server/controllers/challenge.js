@@ -103,10 +103,8 @@ export async function notification(req, reply) {
     `)
       .all(user_id);
 
-    console.log("SSSSSSSSSSSSS=>", acceptedSeen);
 
     if (notification.length === 0) {
-      console.log("FFFFFFFFFFFFF");
       return reply.code(200).send({
           message: "No challenge found",notification: [],acceptedUsers,notAcceptedUsers, acceptedSeen, usernames,usernamesNotAccepted});
     } else {
@@ -125,11 +123,9 @@ export async function sawAccept(req, reply) {
   try {
     const sawOk = db
       .prepare(
-        `UPDATE challenge SET ok = 1 WHERE user_id = ? AND friends_id = ?`
-      )
+        `UPDATE challenge SET ok = 1 WHERE user_id = ? AND friends_id = ?`)
       .run(user_id, friends_id);
 
-    console.log("SSSS=>", sawOk);
 
     return reply.code(200).send({ message: "Saw ok", sawOk });
   } catch (err) {
@@ -141,15 +137,15 @@ export async function sawAccept(req, reply) {
 export async function accept(req, reply) {
   const { user_id, friends_id } = req.body;
 
-  console.log("IIIII=>", user_id)
-
-  console.log("BBBB=>", friends_id)
   try {
     const acceptReq = db
       .prepare(
-        `UPDATE challenge SET confirmReq = 1 WHERE user_id =? AND friends_id =?`
+        `UPDATE challenge SET confirmReq = 1 WHERE user_id =? AND friends_id =? RETURNING id` 
       )
       .run(friends_id, user_id);
+      const gameStarts = db
+        .prepare(`INSERT INTO game (challenge_id, date) VALUES (?,?)`)
+        .run(acceptReq.lastInsertRowid,new Date().toISOString());
 
     return reply.code(201).send({ message: "Accepted", acceptReq });
   } catch (err) {
@@ -160,11 +156,6 @@ export async function accept(req, reply) {
 
 export async function decline(req, reply) {
   const { user_id, friends_id } = req.body;
-
-    console.log("IIIII=>", user_id)
-
-  console.log("BBBB=>", friends_id)
-  console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
 
   try {
     const declineReq = db
