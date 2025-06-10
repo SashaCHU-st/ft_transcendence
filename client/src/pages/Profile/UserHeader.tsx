@@ -1,9 +1,9 @@
 import React from "react";
-import Avatar from "./Avatar";
+//import Avatar from "./Avatar";
 import { UserInfo, calculateUserStats } from "./types/UserInfo";
 
 interface UserHeaderProps {
-	user: Pick<UserInfo, "username" | "avatar" | "wins" | "losses" | "history">;
+	user: Pick<UserInfo, "username"  | "wins" | "losses" | "history">;
 }
 
 const UserHeader: React.FC<UserHeaderProps> = ({ user }) => {
@@ -27,7 +27,7 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user }) => {
       `}
 		/* Header container: Centers user info vertically with constrained width */
 		>
-			<Avatar
+			{/* <Avatar
 				user={user}
 				className={`
           w-32
@@ -35,13 +35,17 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user }) => {
           sm:w-40
           sm:h-40
         `}
-			/* Avatar: Displays a responsive user avatar with larger size on sm screens */
-			/>
+		
+			
+			/> */}
 			<h2
 				className={`
-          text-xl
+          text-2xl
           sm:text-2xl
+		  xl:text-3xl
+		  2xl:text-4xl
           font-bold
+		  font-orbitron
         `}
 			/* Username: Styles the user's username with responsive font size */
 			>
@@ -49,8 +53,13 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user }) => {
 			</h2>
 			<div
 				className={`
-          text-sm
-          sm:text-base
+          text-base
+          sm:text-md
+		  md:text-lg
+		  lg:text-xl
+		  2xl:text-2xl
+		 
+
           space-y-1
         `}
 			/* Stats container: Groups user statistics with responsive text size */
@@ -59,6 +68,7 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user }) => {
 					Wins: <span
 						className={`
               text-green-400
+			  text-xl
             `}
 					/* Wins count: Highlights the number of wins in green */
 					>
@@ -66,6 +76,7 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user }) => {
 					</span> | Losses: <span
 						className={`
               text-red-400
+			  text-xl
             `}
 					/* Losses count: Highlights the number of losses in red */
 					>

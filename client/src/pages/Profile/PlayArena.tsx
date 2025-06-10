@@ -37,6 +37,8 @@ const Arena: React.FC<ArenaProps> = ({
         lg:h-44
         xl:w-48
         xl:h-48
+        2xl:w-60
+        2xl:h-60
         rounded-full
         bg-gray-700
         bg-opacity-60
@@ -78,6 +80,8 @@ const Arena: React.FC<ArenaProps> = ({
         lg:h-44
         xl:w-48
         xl:h-48
+        2xl:w-60
+        2xl:h-60
         rounded-full
         bg-gray-700
         bg-opacity-60
@@ -112,8 +116,8 @@ const Arena: React.FC<ArenaProps> = ({
           </>
         ) : (
           <div className="flex flex-col items-center text-xs">
-            <span className="font-semibold">Player 2</span>
-            <span className="text-gray-300 mt-1">Waiting...</span>
+            <span className="font-semibold xl:text-xl">Player 2</span>
+            <span className="text-gray-300 xl:text-base mt-1">Waiting...</span>
           </div>
         )}
       </div>

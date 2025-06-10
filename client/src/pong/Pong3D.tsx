@@ -15,7 +15,6 @@ import { RemoteErrorOverlay } from "./components/Overlays/RemoteErrorOverlay";
 import { Scoreboard } from "./components/Scoreboard";
 import { GoalBanner } from "./components/GoalBanner";
 import { EscMenu } from "./components/Overlays/EscMenu";
-import { OnlinePlayOverlay } from "./components/Overlays/OnlinePlayOverlay";
 
 import { useTournament } from "./hooks/useTournament";
 import "./pongGame.css";
@@ -60,7 +59,6 @@ export default function Pong3D() {
   // Main menu / tournament
   const [showStartScreen, setShowStartScreen] = useState(!startMode);
   const [showSetup, setShowSetup] = useState(startMode === GameMode.Tournament);
-  const [showOnline, setShowOnline] = useState(false);
   const [players, setPlayers] = useState<string[]>(["Player 1", "Player 2"]);
   const [nameError, setNameError] = useState(false);
   const [duplicateError, setDuplicateError] = useState(false);
@@ -309,18 +307,7 @@ export default function Pong3D() {
     setShowSetup(true);
   }
 
-  function openOnline() {
-    setShowStartScreen(false);
-    setShowOnline(true);
-  }
-
-  function closeOnline() {
-    setShowOnline(false);
-    resetAllToMainMenu();
-  }
-
   function startRandomMatch() {
-    setShowOnline(false);
     startRemoteDuel();
   }
 
@@ -540,18 +527,11 @@ export default function Pong3D() {
           onSingleAI={startAI}
           onLocal2P={startLocal}
           onTournament={openTournament}
-          onOnlinePlay={openOnline}
+          onRandomMatch={startRandomMatch}
           onClose={() => {
             setShowStartScreen(false);
             setShowMenu(true);
           }}
-        />
-      )}
-      {/* ONLINE PLAY */}
-      {showOnline && (
-        <OnlinePlayOverlay
-          onClose={closeOnline}
-          onRandomMatch={startRandomMatch}
         />
       )}
       {/* TOURNAMENT SETUP */}

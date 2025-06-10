@@ -26,7 +26,7 @@ const PlayerCard: React.FC<Props> = ({ user }) => {
       <UserHeader
         user={{
           username: user.username,
-          avatar: user.avatar,
+          //avatar: user.avatar,
           wins: user.wins,
           losses: user.losses,
           history: user.history,

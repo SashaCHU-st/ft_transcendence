@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { UserInfo, MatchResult } from "../types/UserInfo";
 import { updateUserProfile, getAuthHeaders, saveGameResult} from "../types/api";
 import { bots } from "../types/botsData";
+import { GameMode } from "../../../pong/pong";
 import { deleteFromFavorites } from "../DeleteFavorites";
 import { addToFavorites } from "../AddFavorites";
 import api from "../types/api";
@@ -299,13 +300,11 @@ export const useProfile = () => {
   );
 
   const handlePlay = useCallback(() => {
-    const opponent = selectedBot || bots[Math.floor(Math.random() * bots.length)];
-    const result = Math.random() > 0.5 ? "win" : "loss";
-
-    handleGameEnd(result, opponent.name);
+    // Simply navigate to the AI game mode. The game itself will handle
+    // updating the statistics once it ends.
     if (!selectedBot) setSelectedBot(null);
-    navigate("/pong?mode=ai");
-  }, [selectedBot, handleGameEnd]);
+    navigate(`/pong?mode=${GameMode.AI}`);
+  }, [selectedBot]);
 
   useEffect(() => {
     let isMounted = true;

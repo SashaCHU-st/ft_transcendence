@@ -1,4 +1,3 @@
-
 import React from "react";
 import GameModeSelector from "./GameModeSelector";
 import { useNavigate } from "react-router-dom";
@@ -6,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 const GameSelector: React.FC = () => {
   const navigate = useNavigate();
 
-  const handleSingle = () => navigate("/pong?mode=ai");
+  const handleSingle = () => navigate("/pong?mode=remote2p");
   const handleMulti = () => navigate("/pong?mode=local2p");
   const handleTournament = () => navigate("/pong?mode=tournament");
 
@@ -16,7 +15,6 @@ const GameSelector: React.FC = () => {
       onMultiClick={handleMulti}
       onTournamentClick={handleTournament}
     />
-
   );
 };
 

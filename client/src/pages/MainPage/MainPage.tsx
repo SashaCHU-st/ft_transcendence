@@ -3,7 +3,7 @@ import { useOutletContext } from "react-router-dom";
 import mainVideo from '../../assets/mainPageImages/Main_Video.mp4';
 import { SpaceBackground } from "../../pong/components/SpaceBackground";
 
-// 
+
 const MainPage = () => {
   const { openModal } = useOutletContext<{ openModal: (mode?: 'login' | 'signup') => void }>();
 
@@ -13,7 +13,9 @@ const MainPage = () => {
         <SpaceBackground />
       </div>
       <div className="container mx-auto flex flex-col items-center justify-center h-full relative z-10">
-          <h1 className="animate-pulse [animation-duration:3s] p-16 text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold font-orbitron"
+          <h1 className="animate-pulse [animation-duration:3s] p-16 
+                  text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-black font-orbitron 
+                  text-[#D3E0FB] "
           style={{ textShadow: '0 0 12px #007BFF, 0 0 20px #007BFF' }}
           >
             SUPER PONG
@@ -32,17 +34,20 @@ const MainPage = () => {
                   right-20 sm:right-32 md:right-44 lg:right-64 xl:right-72 2xl:right-96 
                   transform -translate-x-1/2 z-20">
             <button
-              className="rounded-3xl outline-3 outline-offset-2 outline-double border-4 border-blue-300 px-4 py-2
-                        lg:px-4 lg:py-2 md:px-4 md:py-2 2xl:px-4 2xl:py-3 xl:py-3
+              className="rounded-xl o border-2 px-5 py-2 border-blue-300
+                        lg:px-5 lg:py-2 md:px-5 md:py-2 2xl:px-5 2xl:py-3 xl:py-3
                         font-bold text-transparent text-md sm:text-lg md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl
                         bg-clip-text bg-gradient-to-r from-indigo-300 via-blue-300 to-sky-500
                         hover:from-red-50 hover:via-indigo-200 hover:to-purple-100
                         animate-bounce [animation-duration:1s] hover:animate-none
-                        transition-all ease-in-out hover:scale-110 w-full sm:w-auto text-center"
-              style={{
-                textShadow: '2px 2px 10px rgba(209, 255, 249, 0.6)',
-                boxShadow: '0 0 15px 6px rgba(117, 184, 255, 0.5)'
-              }}
+                        transition-all ease-in-out hover:scale-110 w-full sm:w-auto text-center
+                       bg-black bg-opacity-40
+                       text-[#40BFFF]
+                        shadow-[0_0_15px_rgba(0,255,255,0.7)]"
+              //   style={{
+              //   textShadow: '2px 2px 10px rgba(209, 255, 249, 0.6)',
+              //   boxShadow: '0 0 15px 6px rgba(117, 184, 255, 0.5)'
+              // }}
               onClick={() => openModal('login')}
             >
               GO

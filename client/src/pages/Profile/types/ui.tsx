@@ -16,10 +16,12 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
         text-black
         font-bold
         font-orbitron
+        tracking-[.10em]
         py-2
         px-8
         rounded
         text-xl
+        xl:text-2xl
         shadow-md
         hover:bg-gray-300
       "
@@ -54,8 +56,12 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
         hover:bg-gray-700
         cursor-pointer
         w-full
-        min-w-[240px]
-        max-w-[260px]
+        min-w-[280px]
+        
+        sm:w-[280px]
+        lg:w-[350px]
+        2xl:w-[450px]
+        
         duration-200
         ease-in-out
       "
