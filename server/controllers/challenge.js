@@ -93,10 +93,11 @@ export async function notification(req, reply) {
     }));
     console.log("Usernames not accepted", usernamesNotAccepted);
 
+
+    //not really neeeded, delete later
     const acceptedSeen = db
       .prepare(
-        `
-      SELECT challenge.*, users.username
+        `SELECT challenge.*, users.username
       FROM challenge
       JOIN users ON challenge.friends_id = users.id
       WHERE challenge.user_id = ? AND challenge.confirmReq = 1 AND challenge.ok = 1

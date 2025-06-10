@@ -23,12 +23,8 @@ async function challengeRoutes(fastify) {
   });
   
   fastify.post("/declineRequest",async (req, reply) => {
-    console.log("kuku111111111111111111111111111111111111111111111111111111111111")
     const validated = acceptSchema.safeParse(req.body);
-    console.log("kuku222222222222222222222222222222222222222222")
-
     const data =await validatedValues(validated, reply);
-console.log("KKKKKK=>", data)
     return decline({ ...req, body: data }, reply);
   });
   fastify.post("/sawAccept",async (req, reply) => {
