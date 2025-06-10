@@ -43,7 +43,7 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user }) => {
           text-2xl
           sm:text-2xl
 		  xl:text-3xl
-		  2xl:text-4xl
+		  2xl:text-3xl
           font-bold
 		  font-orbitron
         `}

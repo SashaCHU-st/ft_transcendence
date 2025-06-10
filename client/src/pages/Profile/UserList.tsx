@@ -129,7 +129,7 @@ const UserList: React.FC<Props> = ({ users, variant, expandUsername, onRemove, o
                     e.currentTarget.src = "/prof_img/avatar1.png";
                   }}
                 />
-                <span className="font-bold text-base md:text-lg lg:text-xl 2xl:text-2xl ">{user.username}</span>
+                <span className="font-bold text-base md:text-lg lg:text-xl">{user.username}</span>
               </div>
               <span
                 className={
