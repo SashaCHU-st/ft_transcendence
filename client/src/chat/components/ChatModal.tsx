@@ -115,7 +115,9 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
           <div className="chat-area flex flex-col flex-1">
             {selected && (
               <div className="p-2 border-b border-gray-700 flex justify-between items-center">
-                <span className="font-orbitron">{selected.username}</span>
+                <span className="font-orbitron">
+                  <img className="rounded-full w-16 h-10 object-cover" src={selected.avatar}/>
+                  {selected.username}</span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setShowProfile(true)}
@@ -149,11 +151,12 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
                 messages.map((m) => (
                   <div
                     key={m.id}
-                    className={`message-bubble ${
+                    className={`message-bubble px-6 ${
                       m.sender_id === Number(currentUserId) ? "sent" : "received"
                     }`}
                   >
-                    <p className="break-words font-ubuntu">{m.text}</p>
+                    <p className="flex break-words font-ubuntu justify-start">{m.text}</p>
+                    <p className="text-xs text-end text-gray-600">{new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
                 ))
               ) : (

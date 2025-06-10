@@ -54,7 +54,7 @@ export const useProfile = () => {
       console.log("Username", data.usernames)
       // console.log("Username 1 ", data.usernames[0].username);
       // console.log("Username 2", data.usernames[1].username);
-      console.log("USERNAME THAT DID  NT ACCEPT", data.usernamesNotAccepted[0].username);
+      // console.log("USERNAME THAT DID  NT ACCEPT", data.usernamesNotAccepted[0].username);
 
       // console.log("username 2", data.accptedFromPartner[1].username);
       // console.log("kuku2 ", data.alreadySeenAccept[0].friends_id);
