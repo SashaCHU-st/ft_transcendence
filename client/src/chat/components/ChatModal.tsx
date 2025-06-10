@@ -151,12 +151,12 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
                 messages.map((m) => (
                   <div
                     key={m.id}
-                    className={`message-bubble ${
+                    className={`message-bubble px-6 ${
                       m.sender_id === Number(currentUserId) ? "sent" : "received"
                     }`}
                   >
-                    <p className="break-words font-ubuntu">{m.text}</p>
-                    <p>{m.created_at}</p>
+                    <p className="flex break-words font-ubuntu justify-start">{m.text}</p>
+                    <p className="text-xs text-end text-gray-600">{new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                   </div>
                 ))
               ) : (
