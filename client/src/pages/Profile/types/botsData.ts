@@ -23,41 +23,41 @@ export const bots = [
 	  strengths: 'Great aim',
 	  weaknesses: 'Avoids ranches, prefers bikes',
 	},
-	{
-	  name: 'Dragon (Afraid of Fire)',
-	  image: '/boots_img/dragon.png',
-	  strengths: 'Icy breath, strong wings',
-	  weaknesses: 'Fears flames, carries extinguisher',
-	},
-	{
-	  name: 'Robot with Emotions',
-	  image: '/boots_img/robot.png',
-	  strengths: 'Empathy, poetic',
-	  weaknesses: 'Short-circuits from sadness',
-	},
-	{
-	  name: 'Ghost (Afraid of the Dark)',
-	  image: '/boots_img/ghost.png',
-	  strengths: 'Can float anywhere',
-	  weaknesses: 'Scared without light',
-	},
-	{
-	  name: 'Mermaid (Can’t Swim)',
-	  image: '/boots_img/mermaid.png',
-	  strengths: 'Sings beautifully',
-	  weaknesses: 'Needs life jacket in water',
-	},
-	{
-	  name: 'Ninja (Always Loud)',
-	  image: '/boots_img/ninja.png',
-	  strengths: 'Strong and fast',
-	  weaknesses: 'Can not stop yelling',
-	},
-	{
-	  name: 'Chef (Hates Food)',
-	  image: '/boots_img/chef.png',
-	  strengths: 'Perfect knife skills',
-	  weaknesses: 'Gags at smell of basil',
-	},
+	// {
+	//   name: 'Dragon (Afraid of Fire)',
+	//   image: '/boots_img/dragon.png',
+	//   strengths: 'Icy breath, strong wings',
+	//   weaknesses: 'Fears flames, carries extinguisher',
+	// },
+	// {
+	//   name: 'Robot with Emotions',
+	//   image: '/boots_img/robot.png',
+	//   strengths: 'Empathy, poetic',
+	//   weaknesses: 'Short-circuits from sadness',
+	// },
+	// {
+	//   name: 'Ghost (Afraid of the Dark)',
+	//   image: '/boots_img/ghost.png',
+	//   strengths: 'Can float anywhere',
+	//   weaknesses: 'Scared without light',
+	// },
+	// {
+	//   name: 'Mermaid (Can’t Swim)',
+	//   image: '/boots_img/mermaid.png',
+	//   strengths: 'Sings beautifully',
+	//   weaknesses: 'Needs life jacket in water',
+	// },
+	// {
+	//   name: 'Ninja (Always Loud)',
+	//   image: '/boots_img/ninja.png',
+	//   strengths: 'Strong and fast',
+	//   weaknesses: 'Can not stop yelling',
+	// },
+	// {
+	//   name: 'Chef (Hates Food)',
+	//   image: '/boots_img/chef.png',
+	//   strengths: 'Perfect knife skills',
+	//   weaknesses: 'Gags at smell of basil',
+	// },
   ];
   

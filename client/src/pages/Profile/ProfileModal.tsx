@@ -135,6 +135,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             className={`
               text-sm
               text-gray-300
+              font-ubuntu
             `}
             // File input: for selecting a new avatar
           />
@@ -152,6 +153,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             className={`
               text-sm
               text-gray-400
+              font-ubuntu
             `}
             // Label for the name field
           >
@@ -179,6 +181,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               focus:outline-none
               focus:ring-2
               focus:ring-indigo-800
+              font-ubuntu
             `}
             // Text input for editing the name
           />
@@ -197,6 +200,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             className={`
               text-sm
               text-gray-400
+              font-ubuntu
             `}
             // Label for the username field
           >
@@ -241,6 +245,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             className={`
               text-sm
               text-gray-400
+              font-ubuntu
             `}
             // Label for the new password field
           >
@@ -304,7 +309,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             `}
             // Cancel button: closes the modal
           >
-            Cancel
+            CANCEL
           </button>
           <button
             onClick={handleSave}
@@ -319,7 +324,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
             `}
             // Save button: saves changes
           >
-            Save
+            SAVE
           </button>
         </div>
       </div>

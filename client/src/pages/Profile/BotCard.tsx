@@ -72,6 +72,7 @@ const BotCard: React.FC<BotCardProps> = ({
       >
         <h3 className="
           font-bold
+          font-ubuntu
           text-base
           sm:text-lg
           lg:text-xl

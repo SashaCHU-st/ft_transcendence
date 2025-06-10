@@ -261,7 +261,8 @@ const Profile: React.FC = () => {
        text-white 
        flex 
        flex-col 
-       overflow-y-auto"
+       overflow-y-auto
+       font-ubuntu"
       >
         {/* Header with user info, profile toggle, and search functionality */}
         <Header
