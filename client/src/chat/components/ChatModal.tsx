@@ -115,7 +115,9 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
           <div className="chat-area flex flex-col flex-1">
             {selected && (
               <div className="p-2 border-b border-gray-700 flex justify-between items-center">
-                <span className="font-orbitron">{selected.username}</span>
+                <span className="font-orbitron">
+                  <img className="rounded-full w-16 h-10 object-cover" src={selected.avatar}/>
+                  {selected.username}</span>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setShowProfile(true)}
@@ -154,6 +156,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
                     }`}
                   >
                     <p className="break-words font-ubuntu">{m.text}</p>
+                    <p>{m.created_at}</p>
                   </div>
                 ))
               ) : (

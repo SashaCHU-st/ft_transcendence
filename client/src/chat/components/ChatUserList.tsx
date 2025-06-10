@@ -39,15 +39,18 @@ const ChatUserList: React.FC<Props> = ({ players, onSelect }) => {
       {players
         .filter((u) => u.username.toLowerCase().includes(search.toLowerCase()))
         .map((u) => (
-          <div
-            key={u.id}
-            className="conversation-item cursor-pointer hover:text-blue-300 font-ubuntu"
-            onClick={() => {
-              onSelect(u);
-              setSearch("");
-            }}
-          >
-            {highlightName(u.username)}
+          <div className="columns-3xs" key={u.id}>
+            <div
+              className="conversation-item cursor-pointer hover:text-blue-300 font-ubuntu aspect-3/2 flex items-center space-x-2"
+              onClick={() => {
+                onSelect(u);
+                setSearch("");
+              }}
+            >
+              <img className="rounded-full w-10 h-10 object-cover" src={u.avatar}  />  
+              <h2>     </h2>
+                  {highlightName(u.username)}
+          </div>
           </div>
         ))}
     </div>
