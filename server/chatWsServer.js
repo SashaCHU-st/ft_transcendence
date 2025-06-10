@@ -10,6 +10,7 @@ import { ChatMessageTypes } from '../shared/chatMessageTypes.js';
  * @property {string} id
  * @property {'waiting' | 'info'} type
  * @property {string} text
+ * @property {number} [userId]
  */
 
 
@@ -19,7 +20,7 @@ export const clients = new Map();
 // Map of id -> { message, timeout }
 export const activeSystemMessages = new Map();
 
-function broadcastPayload(payload, target = null) {
+function broadcastPayload(payload, target = null, excludeUsers = null) {
   const data = typeof payload === 'string' ? payload : JSON.stringify(payload);
   const send = (ws) => {
     if (ws.readyState === WebSocket.OPEN) {
@@ -40,7 +41,8 @@ function broadcastPayload(payload, target = null) {
     return;
   }
 
-  for (const set of clients.values()) {
+  for (const [id, set] of clients.entries()) {
+    if (excludeUsers && excludeUsers.includes(id)) continue;
     for (const ws of set) {
       send(ws);
     }
@@ -61,7 +63,7 @@ function removeSystemMessage(id) {
  * @param {SystemNotification} message - Notification to broadcast.
  * @param {{ remove?: boolean }} [options]
  */
-export function broadcastSystemMessage(message, { remove = false } = {}) {
+export function broadcastSystemMessage(message, { remove = false, excludeUsers = [] } = {}) {
   if (remove) {
     removeSystemMessage(message.id);
     return;
@@ -78,16 +80,18 @@ export function broadcastSystemMessage(message, { remove = false } = {}) {
       SYSTEM_MESSAGE_TTL_MS,
     );
     activeSystemMessages.set(message.id, { message, timeout });
-    broadcastPayload({ type: ChatMessageTypes.SYSTEM, message });
+    broadcastPayload({ type: ChatMessageTypes.SYSTEM, message }, null, excludeUsers);
   }
 }
 
 function sendActiveSystemMessages(ws) {
   for (const [, info] of activeSystemMessages) {
-    broadcastPayload(
-      { type: ChatMessageTypes.SYSTEM, message: info.message },
-      ws,
-    );
+    if (info.message.userId !== ws.user_id) {
+      broadcastPayload(
+        { type: ChatMessageTypes.SYSTEM, message: info.message },
+        ws,
+      );
+    }
   }
 }
 

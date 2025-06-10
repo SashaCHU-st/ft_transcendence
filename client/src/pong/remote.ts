@@ -20,6 +20,7 @@ export function connect(
 ): () => void {
   const ws = new WebSocket(url);
   state.ws = ws;
+  let receivedInit = false;
   let countdownInterval: ReturnType<typeof setInterval> | null = null;
   let cleaned = false;
 
@@ -37,6 +38,7 @@ export function connect(
   };
 
   const handleInitMessage = (msg: InitMessage) => {
+    receivedInit = true;
     clearCountdown();
     state.playerSide = msg.side;
     if (msg.leftName && msg.rightName) {
@@ -146,10 +148,16 @@ export function connect(
   };
 
   ws.onclose = () => {
+    if (!receivedInit) {
+      state.onRemoteError?.();
+    }
     cleanup();
   };
 
   ws.onerror = () => {
+    if (!receivedInit) {
+      state.onRemoteError?.();
+    }
     cleanup();
     state.onMatchOver?.(
       state.currentMode,

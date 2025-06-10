@@ -55,6 +55,7 @@ export interface GameState {
   /** Remote play events */
   onRemoteWaitingChange?: (waiting: boolean) => void;
   onRemoteCountdown?: (seconds: number) => void;
+  onRemoteError?: () => void;
 
   onMatchEndCallback?: (
     winner: string,
@@ -122,6 +123,7 @@ export interface PongCallbacks {
   onPlayersUpdate?: (leftName: string, rightName: string) => void;
   onRemoteWaitingChange?: (waiting: boolean) => void;
   onRemoteCountdown?: (seconds: number) => void;
+  onRemoteError?: () => void;
 }
 
 export function initGame(
@@ -171,6 +173,7 @@ export function initGame(
     onPlayersUpdate: callbacks?.onPlayersUpdate,
     onRemoteWaitingChange: callbacks?.onRemoteWaitingChange,
     onRemoteCountdown: callbacks?.onRemoteCountdown,
+    onRemoteError: callbacks?.onRemoteError,
 
     onMatchEndCallback: undefined,
 

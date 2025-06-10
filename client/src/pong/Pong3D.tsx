@@ -11,6 +11,7 @@ import { StartScreen } from "./components/StartScreen";
 import { TournamentSetup } from "./components/TournamentSetup";
 import { PauseOverlay } from "./components/Overlays/PauseOverlay";
 import { RemoteStatusOverlay } from "./components/Overlays/RemoteStatusOverlay";
+import { RemoteErrorOverlay } from "./components/Overlays/RemoteErrorOverlay";
 import { Scoreboard } from "./components/Scoreboard";
 import { GoalBanner } from "./components/GoalBanner";
 import { EscMenu } from "./components/Overlays/EscMenu";
@@ -54,6 +55,7 @@ export default function Pong3D() {
   const [waitingStart, setWaitingStart] = useState(false);
   const [remoteWaiting, setRemoteWaiting] = useState(false);
   const [remoteCountdown, setRemoteCountdown] = useState<number | null>(null);
+  const [remoteError, setRemoteError] = useState(false);
 
   // Main menu / tournament
   const [showStartScreen, setShowStartScreen] = useState(!startMode);
@@ -165,6 +167,9 @@ export default function Pong3D() {
       onRemoteCountdown: (sec) => {
         if (sec <= 0) setRemoteCountdown(null);
         else setRemoteCountdown(sec);
+      },
+      onRemoteError: () => {
+        setRemoteError(true);
       },
     };
     const game = initGame(canvasRef.current, callbacks);
@@ -459,6 +464,14 @@ export default function Pong3D() {
       {/* Remote status overlay */}
       {(remoteWaiting || remoteCountdown !== null) && (
         <RemoteStatusOverlay waiting={remoteWaiting} countdown={remoteCountdown} />
+      )}
+      {remoteError && (
+        <RemoteErrorOverlay
+          onExit={() => {
+            setRemoteError(false);
+            navigate('/profile');
+          }}
+        />
       )}
       {/* ESC MENU */}
       {showMenu && (
