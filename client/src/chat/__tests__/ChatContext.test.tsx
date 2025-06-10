@@ -3,15 +3,18 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { createRoot } from 'react-dom/client';
 
-let callbacks: { onSystemMessage?: (msg: any) => void; onSystemRemove?: (id: string) => void } = {};
+import type { ChatState } from '../context/ChatContext';
+import type { SystemNotification } from '../../../../shared/chatConstants.js';
+
+let callbacks: { onSystemMessage?: (msg: SystemNotification) => void; onSystemRemove?: (id: string) => void } = {};
 
 vi.mock('../hooks/useChatSocket', () => ({
   useChatSocket: (
     _userId: string,
-    _onChatMessage: any,
-    _onStatusChange: any,
-    _onError: any,
-    onSystemMessage?: (msg: any) => void,
+    _onChatMessage: unknown,
+    _onStatusChange: unknown,
+    _onError: unknown,
+    onSystemMessage?: (msg: SystemNotification) => void,
     onSystemRemove?: (id: string) => void,
   ) => {
     callbacks.onSystemMessage = onSystemMessage;
@@ -25,7 +28,7 @@ import { SYSTEM_MESSAGE_TTL_MS, MAX_SYSTEM_MESSAGES } from '../../../../shared/c
 
 let container: HTMLElement;
 let root: ReturnType<typeof createRoot>;
-let state: any;
+let state: ChatState;
 
 function Consumer() {
   const ctx = useChatContext();

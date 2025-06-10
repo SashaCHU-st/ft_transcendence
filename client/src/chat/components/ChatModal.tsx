@@ -8,7 +8,6 @@ import { OverlayWrapper } from "../../pong/components/Overlays/OverlayWrapper";
 import {
   OverlayCard,
   OverlayHeading,
-  OverlayButton,
   overlayOutlineClass,
 } from "../../pong/components/Overlays/OverlayComponents";
 import "./ChatModal.css";
@@ -170,7 +169,7 @@ const ChatModal: React.FC<ChatModalProps> = ({ onClose, currentUserId, players }
                 )}
                 <div className="flex items-end">
                   <input
-                    className="search-input flex-grow mr-2 font-ubuntu"
+                    className="search-input flex-grow mr-2 font-ubuntu focus:outline-none"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={handleKey}

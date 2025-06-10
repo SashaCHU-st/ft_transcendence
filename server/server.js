@@ -45,7 +45,7 @@ fastify.decorate("authenticate", async (request, reply) => {
 fastify.register(cors, {
   origin: "https://localhost:5173",
   credentials: true,
-  methods: ["GET", "POST", "PATCH", "DELETE"],
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
 });
 
 // Routes

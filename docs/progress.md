@@ -8,7 +8,7 @@
 - [ ] Dockerized deployment with a single command
 - [x] HTTPS enabled for all communication
 - [x] Passwords stored hashed
-- [ ] Protection against SQL injection and XSS verified
+- [x] Protection against SQL injection and XSS verified
 - [x] Form and input validation on server side
 - [x] Local two-player gameplay on the same keyboard
 - [x] Tournament system with registration and matchmaking
@@ -29,7 +29,7 @@
   - [x] Secure registration and login
   - [x] Unique display name for tournaments
   - [x] Profile update and avatar upload
-  - [ ] Friends list and online status
+  - [x] Friends list and online status
   - [x] Player stats (wins/losses)
   - [ ] Match history for logged in users
 - **Implementing a remote authentication (Major)**

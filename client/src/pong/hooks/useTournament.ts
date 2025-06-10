@@ -29,7 +29,7 @@ export function useTournament(gameApi: GameAPI | null) {
   }
 
   function startTourney(players: string[]) {
-    let arr = players.map((s) => s.trim()).filter((s) => s.length > 0);
+    const arr = players.map((s) => s.trim()).filter((s) => s.length > 0);
     if (arr.length < 2) {
       alert("Need at least 2 players!");
       return;
