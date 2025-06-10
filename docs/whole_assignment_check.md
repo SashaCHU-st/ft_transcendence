@@ -4,12 +4,12 @@
 ## Basic Requirements
 - [x] Frontend built with TypeScript
 - [x] Single Page Application with browser history support
-- [ ] Compatible with the latest Firefox
+- [x] Compatible with the latest Firefox
 - [ ] No unhandled errors or warnings when browsing
 - [ ] Dockerized deployment with a single command
 - [x] HTTPS enabled for all communication
 - [x] Passwords stored hashed
-- [ ] Protection against SQL injection and XSS verified
+- [x] Protection against SQL injection and XSS verified
 - [x] Form and input validation on server side
 - [x] Local two-player gameplay on the same keyboard
 - [x] Tournament system with registration and matchmaking
