@@ -100,7 +100,10 @@ export const useProfile = () => {
           if (typeof u.image === "string" && isValidBase64(u.image)) {
             avatar = `data:image/jpeg;base64,${u.image}`;
           } else if (u.image?.data) {
-            const binary = String.fromCharCode(...u.image.data);
+            let binary = "";
+            for (const byte of u.image.data) {
+              binary += String.fromCharCode(byte);
+            }
             avatar = `data:image/jpeg;base64,${btoa(binary)}`;
           }
         }
