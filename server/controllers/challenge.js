@@ -58,8 +58,7 @@ export async function notification(req, reply) {
       )
       .all(user_id);
 
-
-      console.log("RRRR=>", accptedFromPartner)
+    console.log('RRRR=>', accptedFromPartner);
     const notAcceptedFromPartner = db
       .prepare(
         `SELECT challenge.*, users.username
@@ -116,13 +115,11 @@ export async function notification(req, reply) {
         usernamesNotAccepted,
       });
     } else {
-      return reply
-        .code(200)
-        .send({
-          message: 'There is request',
-          friends_id: notification.user_id,
-          notification,
-        });
+      return reply.code(200).send({
+        message: 'There is request',
+        friends_id: notification.user_id,
+        notification,
+      });
     }
   } catch (err) {
     console.error('Database error:', err.message);
@@ -153,17 +150,23 @@ export async function accept(req, reply) {
   try {
     const acceptReq = db
       .prepare(
-        `UPDATE challenge SET confirmReq = 1 WHERE user_id =? AND friends_id =? RETURNING id`
+        `UPDATE challenge SET confirmReq = 1 WHERE user_id = ? AND friends_id = ? RETURNING id`
       )
-      .run(friends_id, user_id);
+      .get(friends_id, user_id);
 
+    console.log('kkkkkkkkkkkkk =>', acceptReq.id);
 
-      console.log("FFFFFFFFFFF=>", acceptReq.lastInsertRowid)
     const gameStarts = db
       .prepare(`INSERT INTO game (challenge_id, date ) VALUES (?,?)`)
-      .run(acceptReq.lastInsertRowid, new Date().toISOString());
+      .run(acceptReq.id, new Date().toISOString());
 
-    return reply.code(201).send({ message: 'Accepted', acceptReq, challenge_id: acceptReq.lastInsertRowid });
+    return reply
+      .code(201)
+      .send({
+        message: 'Accepted',
+        id:acceptReq,
+        challenge_id: acceptReq.lastInsertRowid,
+      });
   } catch (err) {
     console.error('Database error:', err.message);
     return reply.code(500).send({ message: 'Something went wrong' });
