@@ -303,11 +303,13 @@ export const useProfile = () => {
   );
 
   const handlePlay = useCallback(() => {
-    // Simply navigate to the AI game mode. The game itself will handle
-    // updating the statistics once it ends.
-    if (!selectedBot) setSelectedBot(null);
+    if (selectedBot) {
+      localStorage.setItem('selectedBot', JSON.stringify(selectedBot));
+    } else {
+      localStorage.removeItem('selectedBot');
+    }
     navigate(`/pong?mode=${GameMode.AI}`);
-  }, [selectedBot]);
+  }, [selectedBot, navigate]);
 
   useEffect(() => {
     let isMounted = true;

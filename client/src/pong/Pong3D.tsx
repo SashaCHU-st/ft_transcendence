@@ -184,8 +184,11 @@ export default function Pong3D() {
     const mode = query.get("mode");
     if (mode === GameMode.AI) {
       setShowStartScreen(false);
-      gameApi.startSinglePlayerAI();
+      const bot = getStoredBot();
+      gameApi.startSinglePlayerAI(bot || undefined);
       setWaitingStart(true);
+      setLeftLabel('YOU');
+      setRightLabel(bot?.name ?? 'AI');
     } else if (mode === GameMode.Local2P) {
       setShowStartScreen(false);
       gameApi.startLocal2P();
@@ -283,12 +286,25 @@ export default function Pong3D() {
   }
 
   // --- MAIN SCREEN
+  function getStoredBot() {
+    const raw = localStorage.getItem('selectedBot');
+    if (raw) {
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
+
   function startAI() {
     setShowStartScreen(false);
-    gameApi?.startSinglePlayerAI();
+    const bot = getStoredBot();
+    gameApi?.startSinglePlayerAI(bot || undefined);
     prevScore.current = { left: 0, right: 0 };
-    setLeftLabel("YOU");
-    setRightLabel("AI");
+    setLeftLabel('YOU');
+    setRightLabel(bot?.name ?? 'AI');
     setWaitingStart(true);
   }
   function startLocal() {
@@ -444,6 +460,8 @@ export default function Pong3D() {
         rightLabel={rightLabel}
         scoreLeft={scoreLeft}
         scoreRight={scoreRight}
+        leftPowerUp={gameApi?.__state?.powerUps.activeLeft?.type ?? null}
+        rightPowerUp={gameApi?.__state?.powerUps.activeRight?.type ?? null}
       />
       <GoalBanner visible={showGoal} />
       {/* PAUSE overlay */}
@@ -529,8 +547,7 @@ export default function Pong3D() {
           onTournament={openTournament}
           onRandomMatch={startRandomMatch}
           onClose={() => {
-            setShowStartScreen(false);
-            setShowMenu(true);
+            navigate('/profile');
           }}
         />
       )}

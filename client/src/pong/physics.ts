@@ -6,10 +6,15 @@ import { clamp } from "./utils";
 import type { GameState } from "./pong";
 import { GameMode } from "./pong";
 import { playPaddleSound } from "./sound";
+import { updateAI } from "./ai";
+import { updatePowerUps, PowerUpType } from "./powerups";
 
 export function stepPhysics(state: GameState, objs: SceneObjects, dt: number) {
   if (!state.gameStarted || state.paused) return;
   const { leftPaddle, rightPaddle, ball, scene } = objs;
+  const chefMode = state.bot?.name === "Steady Chef";
+
+  updatePowerUps(state, dt);
 
   if (state.currentMode === GameMode.Remote2P) {
     const s = state.remoteState;
@@ -51,34 +56,27 @@ export function stepPhysics(state: GameState, objs: SceneObjects, dt: number) {
     return;
   }
 
+  const leftSpeedMultiplier =
+    state.powerUps.activeLeft?.type === PowerUpType.Speed ? 1.5 : 1;
   leftPaddle.position.z = clamp(
-    leftPaddle.position.z + state.input.playerDzLeft,
+    leftPaddle.position.z + state.input.playerDzLeft * leftSpeedMultiplier,
     -state.physics.FIELD_HEIGHT + 1.5,
     state.physics.FIELD_HEIGHT - 1.5,
   );
 
+
   if (state.currentMode === GameMode.AI) {
-    state.input.aiTimer += dt;
-    if (state.input.aiTimer >= 1) {
-      state.input.aiTimer = 0;
-      state.input.aiTargetZ = ball.position.z;
-    }
-    const diff = state.input.aiTargetZ - rightPaddle.position.z;
-    if (Math.abs(diff) > 0.4) {
-      rightPaddle.position.z = clamp(
-        rightPaddle.position.z +
-          (diff > 0 ? state.physics.AI_SPEED : -state.physics.AI_SPEED),
-        -state.physics.FIELD_HEIGHT + 1.5,
-        state.physics.FIELD_HEIGHT - 1.5,
-      );
-    }
-  } else {
-    rightPaddle.position.z = clamp(
-      rightPaddle.position.z + state.input.playerDzRight,
-      -state.physics.FIELD_HEIGHT + 1.5,
-      state.physics.FIELD_HEIGHT - 1.5,
-    );
+    updateAI(state, objs, dt);
   }
+
+
+  const rightSpeedMultiplier =
+    state.powerUps.activeRight?.type === PowerUpType.Speed ? 1.5 : 1;
+  rightPaddle.position.z = clamp(
+    rightPaddle.position.z + state.input.playerDzRight * rightSpeedMultiplier,
+    -state.physics.FIELD_HEIGHT + 1.5,
+    state.physics.FIELD_HEIGHT - 1.5,
+  );
 
   ball.position.x += state.input.ballDX;
   ball.position.z += state.input.ballDZ;
@@ -111,6 +109,9 @@ export function stepPhysics(state: GameState, objs: SceneObjects, dt: number) {
     state.input.ballDX = -Math.abs(state.input.ballDX);
     boom(scene, ball.position);
     playPaddleSound();
+    if (chefMode) {
+      state.input.aiTargetZ = 0;
+    }
   }
 }
 
@@ -165,10 +166,14 @@ function endGame(state: GameState, winnerSide: "left" | "right") {
 export function resetBall(state: GameState, objs: SceneObjects) {
   const { ball } = objs;
   ball.position.set(0, 0.5, 0);
+  state.input.aiPrevBallX = ball.position.x;
+  state.input.aiPrevBallZ = ball.position.z;
+  state.input.aiTimer = 0;
   const dx = state.physics.BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
   const dz = state.physics.BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
   state.input.ballDX = 0;
   state.input.ballDZ = 0;
+  state.input.aiTargetZ = 0;
   if (state.ballSpawnTimeout) clearTimeout(state.ballSpawnTimeout);
   state.ballSpawnTimeout = setTimeout(() => {
     state.input.ballDX = dx;
@@ -274,4 +279,38 @@ export function playRemoteGoalAnimation(state: GameState, objs: SceneObjects) {
     state.paused = state.manualPaused;
     state.onPauseChange?.(state.paused);
   }, 1000);
+}
+
+export let predictImpactZ = (
+  x0: number,
+  z0: number,
+  vx: number,
+  vz: number,
+  targetX: number,
+  limit: number,
+) => {
+  if (!isFinite(vx) || vx === 0) return z0;
+  let t = (targetX - x0) / vx;
+  if (t <= 0) return z0;
+  let z = z0;
+  let dz = vz;
+  const top = limit;
+  const bottom = -limit;
+  while (t > 0) {
+    if (!isFinite(dz) || dz === 0) return z;
+    const targetZ = dz >= 0 ? top : bottom;
+    const timeToWall = (targetZ - z) / dz;
+    if (timeToWall >= t) {
+      z += dz * t;
+      break;
+    }
+    z = targetZ;
+    dz *= -1;
+    t -= timeToWall;
+  }
+  return z;
+};
+
+export function __setPredictImpactZ(fn: typeof predictImpactZ) {
+  predictImpactZ = fn;
 }

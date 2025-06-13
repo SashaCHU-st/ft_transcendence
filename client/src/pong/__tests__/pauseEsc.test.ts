@@ -112,8 +112,11 @@ function createState(): GameState {
       playerDzRight: 0,
       aiTimer: 0,
       aiTargetZ: 0,
+      aiPrevBallX: 0,
+      aiPrevBallZ: 0,
       ballDX: 0,
       ballDZ: 0,
+      dramaPhase: 0,
     },
     FIXED_DT: 0,
     accumulator: 0,
@@ -126,6 +129,7 @@ function createState(): GameState {
     keyUpHandler: null,
     goalTimeout: null,
     ballSpawnTimeout: null,
+    powerUps: { available: [], activeLeft: null, activeRight: null },
   };
 }
 

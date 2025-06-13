@@ -3,6 +3,7 @@ import * as BABYLON from "@babylonjs/core";
 import { createScene, fitFieldToCamera, type SceneObjects } from "./scene";
 import { stepPhysics, resetScores, resetPositions } from "./physics";
 import type { PhysicsParams, MatchInfo, InputState } from "./types";
+import type { PowerUpState } from "./powerups";
 import {
   startSinglePlayerAI,
   startLocal2P,
@@ -29,6 +30,9 @@ export interface GameState {
   physics: PhysicsParams;
   match: MatchInfo;
   input: InputState;
+
+  /** Selected bot configuration for AI mode */
+  bot?: BotInfo | null;
 
   FIXED_DT: number;
   accumulator: number;
@@ -85,10 +89,15 @@ export interface GameState {
   remoteBallDX?: number;
   remotePrevBallDX?: number;
   remoteCleanup?: () => void;
+
+  /** Active and available power-ups */
+  powerUps: PowerUpState;
 }
 
+import type { BotInfo } from "../pages/Profile/types/botsData";
+
 export interface GameAPI {
-  startSinglePlayerAI: () => void;
+  startSinglePlayerAI: (bot?: BotInfo) => void;
   startLocal2P: () => void;
   startRemote2P: (url?: string) => void;
   startTournamentMatch: (
@@ -137,7 +146,9 @@ export function initGame(
       FIELD_WIDTH,
       FIELD_HEIGHT,
       PADDLE_SPEED,
-      AI_SPEED: 0.3,
+      AI_SPEED: PADDLE_SPEED,
+      AI_REACTION: 1,
+      AI_ERROR: 0,
       BALL_SPEED,
       WINNING_SCORE,
     },
@@ -153,8 +164,11 @@ export function initGame(
       playerDzRight: 0,
       aiTimer: 0,
       aiTargetZ: 0,
+      aiPrevBallX: 0,
+      aiPrevBallZ: 0,
       ballDX: 0,
       ballDZ: 0,
+      dramaPhase: 0,
     },
 
     FIXED_DT: 1 / 60,
@@ -188,6 +202,8 @@ export function initGame(
     remoteBallDX: 0,
     remotePrevBallDX: 0,
     remoteCleanup: undefined,
+    bot: null,
+    powerUps: { available: [], activeLeft: null, activeRight: null },
   };
 
   const sceneObjects: SceneObjects = createScene(engine, canvas, state.physics);
@@ -255,8 +271,8 @@ export function initGame(
   window.addEventListener("keydown", keydownHandler);
 
   const api: GameAPI = {
-    startSinglePlayerAI: () => {
-      startSinglePlayerAI(state, sceneObjects);
+    startSinglePlayerAI: (bot?: BotInfo) => {
+      startSinglePlayerAI(state, sceneObjects, bot);
       state.manualPaused = true;
     },
     startLocal2P: () => {
@@ -312,7 +328,7 @@ export function initGame(
       }
 
       if (state.currentMode === GameMode.AI) {
-        startSinglePlayerAI(state, sceneObjects);
+        startSinglePlayerAI(state, sceneObjects, state.bot ?? undefined);
       } else if (state.currentMode === GameMode.Local2P) {
         startLocal2P(state, sceneObjects);
       } else if (state.currentMode === GameMode.Remote2P) {

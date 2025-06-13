@@ -3,6 +3,8 @@ export interface PhysicsParams {
   FIELD_HEIGHT: number;
   PADDLE_SPEED: number;
   AI_SPEED: number;
+  AI_REACTION: number;
+  AI_ERROR: number;
   BALL_SPEED: number;
   WINNING_SCORE: number;
 }
@@ -20,6 +22,12 @@ export interface InputState {
   playerDzRight: number;
   aiTimer: number;
   aiTargetZ: number;
+  /** Last observed ball X position for AI refresh */
+  aiPrevBallX: number;
+  /** Last observed ball Z position for AI refresh */
+  aiPrevBallZ: number;
   ballDX: number;
   ballDZ: number;
+  /** Phase offset for Drama Bot movement oscillation */
+  dramaPhase: number;
 }
