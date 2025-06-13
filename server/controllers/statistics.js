@@ -31,15 +31,18 @@ export async function win(req, reply) {
   const { user_id } = req.body;
 
   try {
+    const gameEND = db
+  .prepare(`UPDATE game SET win_user_id = ?, date = ? WHERE challenge_id = ? `)
+  .run(user_id,new Date().toISOString(),1);
     const winUser = db.prepare(`SELECT * FROM users WHERE id = ?`).get(user_id);
 
     const winValue = winUser.wins + 1;
     const updateWins = db.prepare(`UPDATE users SET wins = ? WHERE id = ?`).run(winValue, user_id);
 
-      const gameEND = db
-    .prepare(`INSERT INTO game (challenge_id, date, win_user_id ) VALUES (?,?)`)
-    .run(acceptReq.lastInsertRowid,new Date().toISOString(),user_id);
-    return reply.code(200).send({ updateWins });
+    console.log("YYYYY=>", user_id)
+
+    console.log("LLLL=>", gameEND)
+    return reply.code(200).send({ updateWins, gameEND });
   } catch (err) {
     console.error("Database error:", err.message);
     return reply.code(500).send({ message: "Something went wrong" });
@@ -50,17 +53,21 @@ export async function loseUser(req, reply) {
     const { user_id } = req.body;
   
     try {
+      const gameEND = db
+    .prepare(`UPDATE game SET losses_user_id = ?, date = ? WHERE challenge_id = ? `)
+    .run(user_id,new Date().toISOString(),1);
       const loseUser = db.prepare(`SELECT * FROM users WHERE id = ?`).get(user_id);
 
-      const haha = loseUser.losses + 1;
+      const count = loseUser.losses + 1;
       const updateLoses = db
         .prepare(`UPDATE users SET losses = ? WHERE id = ?`)
-        .run(haha, user_id);
+        .run(count, user_id);
   
 
-      const gameEND = db
-    .prepare(`UPDATE INTO game (losses_user_id) VALUES (?)`).run(user_id);
-      return reply.code(200).send({ updateLoses });
+    console.log("YYYYY=>", user_id)
+
+    console.log("LLLL=>", gameEND)
+      return reply.code(200).send({ updateLoses, gameEND });
     } catch (err) {
       console.error("Database error:", err.message);
       return reply.code(500).send({ message: "Something went wrong" });
