@@ -86,8 +86,7 @@ export function OverlayButton({
       type="button"
       {...rest}
       className={`
-        mt-2 px-6 py-2 rounded-xl border-2  lg:px-6 lg:py-2 md:px-6 md:py-2  xl:py-3 xl:px-6
-              text-md sm:text-lg md:text-2xl lg:text-3xl xl:text-4xl
+        mt-2 px-6 py-2 rounded-xl border-2
         ${colorClasses[color] || ""}
         ${className}
       `}

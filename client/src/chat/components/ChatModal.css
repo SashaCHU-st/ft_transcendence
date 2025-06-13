@@ -1,8 +1,9 @@
 .message-bubble {
+  /* padding-left: 200rem; */
   max-width: 70%;
   margin-bottom: 0.5rem;
   padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
+  border-radius: 30px 30px 1px 30px;
   background: rgba(0, 0, 0, 0.4);
   color: #e9f4fb;
   word-break: break-word;

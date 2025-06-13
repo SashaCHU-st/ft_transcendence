@@ -29,7 +29,7 @@ const ChatProfileModal: React.FC<ChatProfileModalProps> = ({
   onToggleBlock,
 }) => {
   const recentHistory = useMemo(() => user.history.slice(-5).reverse(), [user.history]);
-  const [isFriend, setIsFriend] = useState(false);
+  const [isFriend, setIsFriend] = useState(true);
   const handleAddFavorite = useCallback(async () => {
     try {
       await addToFavorites(user.username);
@@ -124,12 +124,12 @@ const ChatProfileModal: React.FC<ChatProfileModalProps> = ({
 
           <div className="grid grid-cols-2 gap-4">
             <OverlayButton
-              color="blue"
+              color="green"
               onClick={isFriend ? handleRemoveFavorite : handleAddFavorite}
               className="w-full flex items-center justify-center"
             >
               <i
-                className={`fa-solid ${isFriend ? 'fa-user-minus' : 'fa-user-plus'} mr-2`}
+                className={`fa-solid ${isFriend ? 'fa-solid fa-heart-crack' : 'fa-heart'} mr-2`}
               />
               {isFriend ? 'Remove friend' : 'Add friend'}
             </OverlayButton>

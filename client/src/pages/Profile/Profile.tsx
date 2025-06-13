@@ -332,7 +332,7 @@ const Profile: React.FC = () => {
           <ChatModal
             onClose={() => setIsChatOpen(false)}
             currentUserId={user.id}
-            players={players.filter((p) => p.id !== user.id)}
+            players={friends.filter((p) => p.id !== user.id)}
           />
         </ChatProvider>
       )}
