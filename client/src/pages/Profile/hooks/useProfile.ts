@@ -1,15 +1,18 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
-import { UserInfo, MatchResult } from "../types/UserInfo";
-import { updateUserProfile, getAuthHeaders, saveGameResult} from "../types/api";
-import { bots } from "../types/botsData";
-import { GameMode } from "../../../pong/pong";
-import { deleteFromFavorites } from "../DeleteFavorites";
-import { addToFavorites } from "../AddFavorites";
-import api from "../types/api";
-import { ColorSplitterBlock } from "@babylonjs/core";
-
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { UserInfo, MatchResult } from '../types/UserInfo';
+import {
+  updateUserProfile,
+  getAuthHeaders,
+  saveGameResult,
+} from '../types/api';
+import { bots } from '../types/botsData';
+import { GameMode } from '../../../pong/pong';
+import { deleteFromFavorites } from '../DeleteFavorites';
+import { addToFavorites } from '../AddFavorites';
+import api from '../types/api';
+import { ColorSplitterBlock } from '@babylonjs/core';
 
 export const useProfile = () => {
   const [selectedBot, setSelectedBot] = useState<(typeof bots)[0] | null>(null);
@@ -21,7 +24,10 @@ export const useProfile = () => {
   const navigate = useNavigate();
   const isFetchingRef = useRef(false);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
-  const [notifications, setNotifications] = useState<{ user_id: string; username: string }[]>([]);
+  const [notifications, setNotifications] = useState<
+    { user_id: string; username: string }[]
+  >([]);
+  const [challenge_id, setChallenge_id] = useState('');
 
   const authHeaders = useMemo(() => getAuthHeaders(), []);
 
@@ -32,55 +38,57 @@ export const useProfile = () => {
       return false;
     }
   };
- 
+
   const checkNotifications = useCallback(async () => {
-    const currentUserId = localStorage.getItem("id");
+    const currentUserId = localStorage.getItem('id');
     if (!currentUserId) return;
 
     try {
-      const res = await api.post("/notification", { user_id: currentUserId });
+      const res = await api.post('/notification', { user_id: currentUserId });
       const data = res.data;
 
-      console.log("Check data.notif: ", data.notification);
-      console.log("THEY ACCEPPTED ", data.acceptedUsers);
-      console.log("THEY DID NOT ACCPTED", data.notAcceptedUsers);
+      console.log('Check data.notif: ', data.notification);
+      console.log('THEY ACCEPPTED ', data.acceptedUsers);
+      console.log('THEY DID NOT ACCPTED', data.notAcceptedUsers);
 
-      /// DEBUG 
+      /// DEBUG
       // console.log("Friends id =>>>> ", data.acceptedUsers[0].friends_id);
       // console.log("Friends id =>>>> ", data.acceptedUsers[1].friends_id);
       // console.log("kuku2 ", data.acceptedSeen);
-      
+
       ////DEBUGGGGG
-      console.log("Username", data.usernames)
+      console.log('Username', data.usernames);
       // console.log("Username 1 ", data.usernames[0].username);
       // console.log("Username 2", data.usernames[1].username);
       // console.log("USERNAME THAT DID  NT ACCEPT", data.usernamesNotAccepted[0].username);
 
       // console.log("username 2", data.accptedFromPartner[1].username);
       // console.log("kuku2 ", data.alreadySeenAccept[0].friends_id);
-     
+
       if (data.notification && Array.isArray(data.notification)) {
         // Extract unique new notifications by friends_id
-        const newNotifications = data.notification.filter((notif: any) => {
-          return !notifications.some(n => n.user_id === notif.user_id);
-        }).map((notif: any) => ({
-          user_id: notif.user_id,
-          username: notif.username
-        }));
+        const newNotifications = data.notification
+          .filter((notif: any) => {
+            return !notifications.some((n) => n.user_id === notif.user_id);
+          })
+          .map((notif: any) => ({
+            user_id: notif.user_id,
+            username: notif.username,
+          }));
 
         if (newNotifications.length > 0) {
-          setNotifications(prev => [...prev, ...newNotifications]);
+          setNotifications((prev) => [...prev, ...newNotifications]);
           setIsNotificationModalOpen(true);
         }
       }
     } catch (err) {
-      console.error("Notification check failed:", err);
+      console.error('Notification check failed:', err);
     }
   }, [notifications, setNotifications, setIsNotificationModalOpen]);
 
   const fetchAllUsers = useCallback(async () => {
     try {
-      const currentUserId = localStorage.getItem("id");
+      const currentUserId = localStorage.getItem('id');
       if (!currentUserId) return;
 
       // const res = await fetch(`https://localhost:3000/users?t=${Date.now()}`, {
@@ -89,15 +97,15 @@ export const useProfile = () => {
       // const data = await res.json();
       // if (!res.ok) throw new Error(data.message || "Failed to fetch users");
       const { data } = await api.get(`/users?t=${Date.now()}`, {
-      headers: authHeaders,
-    });
-       
+        headers: authHeaders,
+      });
+
       let currentUser: UserInfo | null = null;
 
       const mappedUsers: UserInfo[] = data.users.map((u: any) => {
-        let avatar = "/prof_img/avatar1.png";
+        let avatar = '/prof_img/avatar1.png';
         if (u.image) {
-          if (typeof u.image === "string" && isValidBase64(u.image)) {
+          if (typeof u.image === 'string' && isValidBase64(u.image)) {
             avatar = `data:image/jpeg;base64,${u.image}`;
           } else if (u.image?.data) {
             const binary = String.fromCharCode(...u.image.data);
@@ -107,19 +115,18 @@ export const useProfile = () => {
 
         const userInfo: UserInfo = {
           id: String(u.id),
-          username: u.username || "Unknown",
+          username: u.username || 'Unknown',
           avatar,
-          email: u.email || "",
-          name: u.name || "",
-          password: "",
+          email: u.email || '',
+          name: u.name || '',
+          password: '',
           wins: u.wins || 0,
           losses: u.losses || 0,
           online: !!u.online,
           history: [],
         };
 
-        if (userInfo.id === currentUserId) 
-          currentUser = userInfo;
+        if (userInfo.id === currentUserId) currentUser = userInfo;
 
         return userInfo;
       });
@@ -129,27 +136,29 @@ export const useProfile = () => {
       //   headers: { "Content-Type": "application/json" },
       // });
       // const favData = await favRes.json();
-      // if (!favRes.ok) 
+      // if (!favRes.ok)
       //   throw new Error(favData.message || "Failed to fetch favorites");
       const favRes = await api.get(`/favorites?user_id=${currentUserId}`);
 
       //const favoriteUsernames: string[] = favData.favoritesUser.map((f: any) => f.username);
       const favoriteUsernames: string[] = favRes.data.favoritesUser.map(
-      (f: any) => f.username
-    );
-      const favoriteUsers: UserInfo[] = mappedUsers.filter(u => favoriteUsernames.includes(u.username));
+        (f: any) => f.username
+      );
+      const favoriteUsers: UserInfo[] = mappedUsers.filter((u) =>
+        favoriteUsernames.includes(u.username)
+      );
 
       const playersList = mappedUsers
-        .filter(u => u.id !== currentUserId)
-        .filter(u => !favoriteUsernames.includes(u.username))
-        .sort((a, b) => a.online === b.online ? 0 : a.online ? -1 : 1);
-      
+        .filter((u) => u.id !== currentUserId)
+        .filter((u) => !favoriteUsernames.includes(u.username))
+        .sort((a, b) => (a.online === b.online ? 0 : a.online ? -1 : 1));
+
       setUser(currentUser);
       setPlayers(playersList);
       setFriends(favoriteUsers);
     } catch (err: any) {
-      console.error("Error fetching users:", err);
-      toast.error(err.message || "Failed to load users.");
+      console.error('Error fetching users:', err);
+      toast.error(err.message || 'Failed to load users.');
     }
   }, [authHeaders]);
 
@@ -157,10 +166,10 @@ export const useProfile = () => {
     if (isFetchingRef.current) return;
     isFetchingRef.current = true;
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (!token) {
-      toast.error("No token found. Please log in.");
-      navigate("/login");
+      toast.error('No token found. Please log in.');
+      navigate('/login');
       isFetchingRef.current = false;
       return;
     }
@@ -168,12 +177,12 @@ export const useProfile = () => {
     setIsLoading(true);
     try {
       await fetchAllUsers();
-      console.log("I am in loading before check notification");
+      console.log('I am in loading before check notification');
       await checkNotifications();
     } catch (err) {
-      toast.error("Error loading data. Please log in again.");
-      localStorage.removeItem("token");
-      navigate("/login");
+      toast.error('Error loading data. Please log in again.');
+      localStorage.removeItem('token');
+      navigate('/login');
     } finally {
       setIsLoading(false);
       isFetchingRef.current = false;
@@ -183,9 +192,12 @@ export const useProfile = () => {
   const saveUserData = useCallback(
     async (updatedUser: UserInfo) => {
       const profileUpdates: Partial<UserInfo> = {};
-      if (updatedUser.name !== user?.name) profileUpdates.name = updatedUser.name;
-      if (updatedUser.username !== user?.username) profileUpdates.username = updatedUser.username;
-      if (updatedUser.password !== user?.password) profileUpdates.password = updatedUser.password;
+      if (updatedUser.name !== user?.name)
+        profileUpdates.name = updatedUser.name;
+      if (updatedUser.username !== user?.username)
+        profileUpdates.username = updatedUser.username;
+      if (updatedUser.password !== user?.password)
+        profileUpdates.password = updatedUser.password;
 
       await updateUserProfile(
         profileUpdates,
@@ -198,73 +210,76 @@ export const useProfile = () => {
     [user, authHeaders, fetchAllUsers]
   );
 
-    const handleAcceptChallenge = async (userId: string) => {
-      try {
-        await api.post("/acceptRequest", {
+  const handleAcceptChallenge = async (userId: string) => {
+    try {
+      const res = await api.post('/acceptRequest', {
         user_id: user?.id,
         friends_id: userId,
       });
-        toast.success("Challenge accepted!");
-      } catch (err:any) {
-        //toast.error(err.message || "Failed to accept challenge.");
-        console.error(err);
-        throw err;
-      } finally {
-        // setIsNotificationModalOpen(false);
-        // setNotification(null);
-
-        setNotifications((prev) => prev.filter((n) => n.user_id !== userId));
-        if (notifications.length <= 1) setIsNotificationModalOpen(false);
-        }
-    };
-    const handleDeclineChallenge = async (userId: string) => {
-      try {
-         await api.post("/declineRequest", { 
-          user_id: user?.id,
-          friends_id: userId,
-        
+      const data = res.data;
+      console.log('HHHHHHHHHHH=>', data.id);
+      localStorage.setItem('challenge_id', data.id);
+      toast.success('Challenge accepted!');
+    } catch (err: any) {
+      //toast.error(err.message || "Failed to accept challenge.");
+      console.error(err);
+      throw err;
+    } finally {
+      // setIsNotificationModalOpen(false);
+      // setNotification(null);
+      setNotifications((prev) => prev.filter((n) => n.user_id !== userId));
+      if (notifications.length <= 1) setIsNotificationModalOpen(false);
+    }
+  };
+  const handleDeclineChallenge = async (userId: string) => {
+    try {
+      await api.post('/declineRequest', {
+        user_id: user?.id,
+        friends_id: userId,
       });
 
-        toast.success("Challenge declined.");
-      } catch (err:any) {
-        //toast.error(err.message || "Failed to decline challenge.");
-        console.error(err);
-        throw err;
-      } finally {
-        setNotifications((prev) => prev.filter((n) => n.user_id !== userId));
-        if (notifications.length <= 1) setIsNotificationModalOpen(false);
-      }
-    };
-
-
-  const handleAdd = async (username: string) => {
-      try {
-        await addToFavorites(username);
-        console.log(`Added ${username} to favorites`);
-        toast.success(`${username} added to favorites`);
-        await fetchAllUsers();
-      } catch (err:any) {
-        console.error("Failed to add favorite:", err);
-        //toast.error(err.message);
-        throw err;
-      }
+      toast.success('Challenge declined.');
+    } catch (err: any) {
+      //toast.error(err.message || "Failed to decline challenge.");
+      console.error(err);
+      throw err;
+    } finally {
+      setNotifications((prev) => prev.filter((n) => n.user_id !== userId));
+      if (notifications.length <= 1) setIsNotificationModalOpen(false);
+    }
   };
 
-   const handleRemove = async (username: string) => {
-      try{
-        await deleteFromFavorites(username);
-        setFriends(prev => prev.filter(f => f.username !== username));
-        setPlayers(prev => [...prev, friends.find(f => f.username === username)!]);
+  const handleAdd = async (username: string) => {
+    try {
+      await addToFavorites(username);
+      console.log(`Added ${username} to favorites`);
+      toast.success(`${username} added to favorites`);
+      await fetchAllUsers();
+    } catch (err: any) {
+      console.error('Failed to add favorite:', err);
+      //toast.error(err.message);
+      throw err;
+    }
+  };
 
-        toast.success(`${username} removed from favorites`);
-        console.log(`Remove ${username}`);
-        await fetchAllUsers();
-      }catch (err:any) {
-        console.error("Failed to delete from favorite:", err);
-        //toast.error(err.message || "Failed to remove from favorites");
-        throw err;
-      }
-  }
+  const handleRemove = async (username: string) => {
+    try {
+      await deleteFromFavorites(username);
+      setFriends((prev) => prev.filter((f) => f.username !== username));
+      setPlayers((prev) => [
+        ...prev,
+        friends.find((f) => f.username === username)!,
+      ]);
+
+      toast.success(`${username} removed from favorites`);
+      console.log(`Remove ${username}`);
+      await fetchAllUsers();
+    } catch (err: any) {
+      console.error('Failed to delete from favorite:', err);
+      //toast.error(err.message || "Failed to remove from favorites");
+      throw err;
+    }
+  };
 
   const handleSaveProfile = useCallback(
     async (data: Partial<UserInfo>) => {
@@ -281,11 +296,13 @@ export const useProfile = () => {
   );
 
   const handleGameEnd = useCallback(
-    async (result: "win" | "loss", opponent: string) => {
+    async (result: 'win' | 'loss', opponent: string) => {
       if (!user) return;
 
-      const today = new Date().toISOString().split("T")[0];
-      const weekday = new Intl.DateTimeFormat("en-US", { weekday: "short" }).format(new Date());
+      const today = new Date().toISOString().split('T')[0];
+      const weekday = new Intl.DateTimeFormat('en-US', {
+        weekday: 'short',
+      }).format(new Date());
       const matchResult: MatchResult = { date: today, weekday, result };
 
       try {
@@ -293,7 +310,7 @@ export const useProfile = () => {
         await fetchAllUsers(); // Update after game result
         toast.success(`Game over! You ${result} against ${opponent}!`);
       } catch {
-        toast.error("Failed to save game result. Please try again.");
+        toast.error('Failed to save game result. Please try again.');
       }
     },
     [user, authHeaders, fetchAllUsers]
@@ -336,10 +353,6 @@ export const useProfile = () => {
     handleAdd,
   };
 };
-
-
-
-
 
 // Custom hook to manage profile-related state and interactions
 // export const useProfile = () => {
@@ -572,5 +585,3 @@ export const useProfile = () => {
 //     handlePlay,
 //   };
 // };
-
-
