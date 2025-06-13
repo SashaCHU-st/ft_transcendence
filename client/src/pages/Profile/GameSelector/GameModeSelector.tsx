@@ -1,11 +1,12 @@
 import React from "react";
-import { OverlayButton } from "../../../pong/components/Overlays/OverlayComponents";
+//import { OverlayButton } from "../../../pong/components/Overlays/OverlayComponents";
+import {FaGlobe, FaUserFriends, FaTrophy} from "react-icons/fa"
 
 
 const modes = [
-  { name: "Random Match", color: "green" }, 
-  { name: "Local Duel", color: "blue" },
-  { name: "Local Tournament", color: "magenta" },
+  { name: ["RANDOM", "MATCH"], icon: <FaGlobe/>, color: "text-blue-500", border:"hover:border-blue-400 hover:shadow-[0_0_15px_#60a5fa]", animation: "animate-pulse hover:animate-none [animation-duration:3s] "}, 
+  { name: ["LOCAL", "DUEL"], icon: <FaUserFriends/> ,color: "text-purple-500", border:"hover:border-purple-400 hover:shadow-[0_0_15px_#c084fc]", animation:"animate-pulse hover:animate-none [animation-duration:3s] "},
+  { name: ["LOCAL", "TOURNAMENT"], icon: <FaTrophy/>, color: "text-pink-600", border: "hover:border-pink-600 hover:shadow-[0_0_15px_#db2777]", animation:"animate-pulse hover:animate-none [animation-duration:3s] "},
 ];
 
 interface Props {
@@ -20,15 +21,16 @@ const GameModeSelector: React.FC<Props> = ({
   onTournamentClick
 }) => {
   // Dispatch click to the correct handler based on mode name
-  const handleClick = (modeName: string) => {
-    switch (modeName) {
-      case "Random Match":
+  const handleClick = (modeName: string[]) => {
+    const joined = modeName.join(" ");
+    switch (joined) {
+      case "RANDOM MATCH":
         onSingleClick();
         break;
-      case "Local Duel":
+      case "LOCAL DUEL":
         onMultiClick();
         break;
-      case "Local Tournament":
+      case "LOCAL TOURNAMENT":
         onTournamentClick();
         break;
       default:
@@ -37,19 +39,26 @@ const GameModeSelector: React.FC<Props> = ({
   };
 
   return (
-    // Vertical list of mode buttons with hover animations
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex justify-center items-center w-full px-4 py-8">
+    <div className="flex flex-row gap-6">
       {modes.map((mode) => (
-        <OverlayButton
-          key={mode.name}
-          color={mode.color} // Passing color for styling
-          onClick={() => handleClick(mode.name)} // Handling button clicks
-          className="w-full sm:w-[250px] md:w-[350px] xl:w-[400px] 2xl:w-[500px] py-4" // Adjust width
+        <button
+          key={mode.name.join("")}
+          onClick={() => handleClick(mode.name)}
+          className={`flex flex-col items-center justify-center gap-2
+            bg-transparent ${mode.color} ${mode.border} ${mode.animation} border-transparent border-2 rounded-xl 
+            transition duration-200 text-center
+            w-28 h-28 sm:w-32 sm:h-32 md:w-40 md:h-40 xl:w-48 xl:h-48`}
         >
-          {mode.name}
-        </OverlayButton>
+          <span className="text-3xl sm:text-4xl md:text-5xl">{mode.icon}</span>
+          <span className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl font-semibold font-orbitron leading-tight text-center">
+            {mode.name[0]} <br /> {mode.name[1]}
+          </span>
+        </button>
       ))}
     </div>
+  </div>
+
   );
 };
 
