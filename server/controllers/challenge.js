@@ -156,6 +156,9 @@ export async function accept(req, reply) {
         `UPDATE challenge SET confirmReq = 1 WHERE user_id =? AND friends_id =? RETURNING id`
       )
       .run(friends_id, user_id);
+
+
+      console.log("FFFFFFFFFFF=>", acceptReq.lastInsertRowid)
     const gameStarts = db
       .prepare(`INSERT INTO game (challenge_id, date ) VALUES (?,?)`)
       .run(acceptReq.lastInsertRowid, new Date().toISOString());
