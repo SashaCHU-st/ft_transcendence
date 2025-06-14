@@ -2,8 +2,16 @@
 import * as BABYLON from "@babylonjs/core";
 import { createScene, fitFieldToCamera, type SceneObjects } from "./scene";
 import { stepPhysics, resetScores, resetPositions } from "./physics";
-import type { PhysicsParams, MatchInfo, InputState } from "./types";
+import type { PhysicsParams, MatchInfo, InputState, Side } from "./types";
 import type { PowerUpState } from "./powerups";
+import {
+  activatePowerUp,
+  deactivatePowerUp,
+  PowerUpType,
+  POWER_UPS,
+  resetPowerUps,
+  createDefaultPowerUpState,
+} from "./powerups";
 import {
   startSinglePlayerAI,
   startLocal2P,
@@ -11,11 +19,13 @@ import {
   startRemote2P as startRemote2PMode,
 } from "./modes";
 import { removeAllKeyListeners } from "./utils";
+import { setSoundEnabled } from "./sound";
 import {
   FIELD_WIDTH,
   FIELD_HEIGHT,
   PADDLE_SPEED,
   BALL_SPEED,
+  BALL_SIZE,
   WINNING_SCORE,
 } from "../../../shared/constants.js";
 
@@ -55,6 +65,10 @@ export interface GameState {
     message?: string,
   ) => void;
   onPlayersUpdate?: (leftName: string, rightName: string) => void;
+  onPowerUpUpdate?: (
+    left: PowerUpType | null,
+    right: PowerUpType | null,
+  ) => void;
 
   /** Remote play events */
   onRemoteWaitingChange?: (waiting: boolean) => void;
@@ -77,7 +91,7 @@ export interface GameState {
 
   /** Remote play fields */
   ws?: WebSocket;
-  playerSide?: "left" | "right";
+  playerSide?: Side;
   remoteState?: {
     ballX: number;
     ballZ: number;
@@ -92,6 +106,16 @@ export interface GameState {
 
   /** Active and available power-ups */
   powerUps: PowerUpState;
+
+  /** Current modifiers from active power-ups */
+  powerUpEffects: {
+    speed: Record<Side, number>;
+    scale: Record<Side, number>;
+    powerShot: Record<Side, boolean>;
+  };
+
+  /** Whether power-ups can be used */
+  powerUpsEnabled: boolean;
 }
 
 import type { BotInfo } from "../pages/Profile/types/botsData";
@@ -115,6 +139,16 @@ export interface GameAPI {
 
   restartCurrentMatch?: () => void;
   unpause?: () => void;
+  usePowerUp?: (
+    side: Side,
+    pu: { type: PowerUpType; duration?: number },
+  ) => void;
+  setPowerUpsEnabled?: (v: boolean) => void;
+  setBallSpeed?: (v: number) => void;
+  setBallSize?: (v: number) => void;
+  setWinningScore?: (v: number) => void;
+  setPaddleColor?: (side: Side, color: string) => void;
+  setSoundEnabled?: (v: boolean) => void;
   dispose: () => void;
 }
 
@@ -130,6 +164,10 @@ export interface PongCallbacks {
     message?: string,
   ) => void;
   onPlayersUpdate?: (leftName: string, rightName: string) => void;
+  onPowerUpUpdate?: (
+    left: PowerUpType | null,
+    right: PowerUpType | null,
+  ) => void;
   onRemoteWaitingChange?: (waiting: boolean) => void;
   onRemoteCountdown?: (seconds: number) => void;
   onRemoteError?: () => void;
@@ -138,6 +176,7 @@ export interface PongCallbacks {
 export function initGame(
   canvas: HTMLCanvasElement,
   callbacks?: PongCallbacks,
+  powerUpsEnabled = true,
 ): GameAPI {
   const engine = new BABYLON.Engine(canvas, true);
 
@@ -150,6 +189,7 @@ export function initGame(
       AI_REACTION: 1,
       AI_ERROR: 0,
       BALL_SPEED,
+      BALL_SIZE,
       WINNING_SCORE,
     },
     match: {
@@ -168,6 +208,8 @@ export function initGame(
       aiPrevBallZ: 0,
       ballDX: 0,
       ballDZ: 0,
+      ballBaseSpeed: BALL_SPEED,
+      ballPowered: false,
       dramaPhase: 0,
     },
 
@@ -185,6 +227,7 @@ export function initGame(
     onEscMenuChange: callbacks?.onEscMenuChange,
     onMatchOver: callbacks?.onMatchOver,
     onPlayersUpdate: callbacks?.onPlayersUpdate,
+    onPowerUpUpdate: callbacks?.onPowerUpUpdate,
     onRemoteWaitingChange: callbacks?.onRemoteWaitingChange,
     onRemoteCountdown: callbacks?.onRemoteCountdown,
     onRemoteError: callbacks?.onRemoteError,
@@ -203,13 +246,15 @@ export function initGame(
     remotePrevBallDX: 0,
     remoteCleanup: undefined,
     bot: null,
-    powerUps: { available: [], activeLeft: null, activeRight: null },
+    ...createDefaultPowerUpState(),
+    powerUpsEnabled,
   };
 
   const sceneObjects: SceneObjects = createScene(engine, canvas, state.physics);
 
-  state.input.ballDX = state.physics.BALL_SPEED;
-  state.input.ballDZ = state.physics.BALL_SPEED;
+  state.input.ballBaseSpeed = state.physics.BALL_SPEED;
+  state.input.ballDX = state.input.ballBaseSpeed;
+  state.input.ballDZ = state.input.ballBaseSpeed;
 
   engine.runRenderLoop(() => {
     const dt = engine.getDeltaTime() / 1000;
@@ -334,6 +379,54 @@ export function initGame(
       } else if (state.currentMode === GameMode.Remote2P) {
         void startRemote2PMode(state, sceneObjects);
       }
+    },
+    usePowerUp: (side, pu) => {
+      if (state.powerUpsEnabled) {
+        const duration = pu.duration ?? POWER_UPS[pu.type].defaultDuration;
+        activatePowerUp(state, side, { type: pu.type, duration });
+      }
+    },
+    setPowerUpsEnabled: (v: boolean) => {
+      state.powerUpsEnabled = v;
+      if (!v) {
+        resetPowerUps(state);
+      }
+    },
+    setBallSpeed: (v: number) => {
+      state.physics.BALL_SPEED = v;
+      state.input.ballBaseSpeed = v;
+      if (state.ballSpawnTimeout) {
+        clearTimeout(state.ballSpawnTimeout);
+        const dx = v * (Math.random() > 0.5 ? 1 : -1);
+        const dz = v * (Math.random() > 0.5 ? 1 : -1);
+        state.ballSpawnTimeout = setTimeout(() => {
+          state.input.ballDX = dx;
+          state.input.ballDZ = dz;
+          state.ballSpawnTimeout = null;
+        }, 1000);
+      } else {
+        if (state.input.ballDX !== 0)
+          state.input.ballDX = Math.sign(state.input.ballDX) * v;
+        if (state.input.ballDZ !== 0)
+          state.input.ballDZ = Math.sign(state.input.ballDZ) * v;
+      }
+    },
+    setBallSize: (v: number) => {
+      sceneObjects.ball.scaling.set(v, v, v);
+      state.physics.BALL_SIZE = v;
+    },
+    setWinningScore: (v: number) => {
+      state.physics.WINNING_SCORE = v;
+    },
+    setPaddleColor: (side: Side, color: string) => {
+      const mat =
+        side === 'left'
+          ? (sceneObjects.leftPaddle.material as BABYLON.StandardMaterial)
+          : (sceneObjects.rightPaddle.material as BABYLON.StandardMaterial);
+      mat.emissiveColor = BABYLON.Color3.FromHexString(color);
+    },
+    setSoundEnabled: (v: boolean) => {
+      setSoundEnabled(v);
     },
     unpause: () => {
       if (state.goalTimeout) return;

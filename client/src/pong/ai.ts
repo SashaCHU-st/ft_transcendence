@@ -3,7 +3,11 @@ import type { GameState } from "./pong";
 import type { SceneObjects } from "./scene";
 import { clamp, dispatchKey } from "./utils";
 import { predictImpactZ } from "./physics";
-import { PowerUpType, activatePowerUp } from "./powerups";
+import {
+  PowerUpType,
+  POWER_UPS,
+  activatePowerUp,
+} from "./powerups";
 
 export const AI_KEYS = {
   up: 'w',
@@ -55,13 +59,51 @@ export function updateAI(state: GameState, objs: SceneObjects, dt: number) {
   };
 
   if (
-    !state.powerUps.activeRight &&
-    state.powerUps.available.length > 0 &&
-    state.input.ballDX > 0 &&
-    state.match.aiScore <= state.match.playerScore
+    !state.powerUps.active.right &&
+    state.match.aiScore <= state.match.playerScore &&
+    state.powerUpsEnabled &&
+    Math.abs(ball.position.x) > state.physics.FIELD_WIDTH / 4
   ) {
-    const pu = state.powerUps.available.shift()!;
-    activatePowerUp(state, 'right', pu);
+    const scoreDiff = state.match.playerScore - state.match.aiScore;
+    const chance = scoreDiff >= 2 ? 1 : scoreDiff > 0 ? 0.75 : 0.5;
+    if (Math.random() < chance) {
+      const offensive = state.input.ballDX < 0;
+      const favorite = state.bot?.favorite;
+      const favChance = 0.7;
+      let pu;
+      if (state.powerUps.available.length > 0) {
+        let idx = state.powerUps.available.findIndex((p) =>
+          offensive
+            ? p.type === PowerUpType.PowerShot
+            : p.type !== PowerUpType.PowerShot,
+        );
+        if (
+          favorite &&
+          Math.random() < favChance &&
+          state.powerUps.available.some((p) => p.type === favorite)
+        ) {
+          idx = state.powerUps.available.findIndex((p) => p.type === favorite);
+        }
+        const useIdx = idx === -1 ? 0 : idx;
+        pu = state.powerUps.available.splice(useIdx, 1)[0];
+      } else {
+        const types = offensive
+          ? [PowerUpType.PowerShot]
+          : [PowerUpType.Speed, PowerUpType.MegaPaddle];
+        let type: PowerUpType;
+        if (
+          favorite &&
+          types.includes(favorite) &&
+          Math.random() < favChance
+        ) {
+          type = favorite;
+        } else {
+          type = types[Math.floor(Math.random() * types.length)];
+        }
+        pu = { type, duration: POWER_UPS[type].defaultDuration };
+      }
+      activatePowerUp(state, 'right', pu);
+    }
   }
 
   if (dramaMode) state.input.dramaPhase += dt;
@@ -80,28 +122,35 @@ export function updateAI(state: GameState, objs: SceneObjects, dt: number) {
 
     const limit = state.physics.FIELD_HEIGHT - 0.5;
 
-    let predicted = calcTargetZ(
-      prevX,
-      prevZ,
-      dx,
-      dz,
-      elapsed,
-      state.physics.FIELD_WIDTH,
-      limit,
-    );
+    let predicted: number;
 
-    if (behavior.center && dx > 0) {
-      const targetX = state.physics.FIELD_WIDTH - 1.5;
-      const timeToImpact = (targetX - prevX) / (dx / elapsed);
-      const adjust =
-        behavior.center * Math.max(1 - timeToImpact / state.physics.AI_REACTION, 0);
-      predicted += adjust * Math.sign(predicted - rightPaddle.position.z);
-    }
+    if (dx > 0) {
+      predicted = calcTargetZ(
+        prevX,
+        prevZ,
+        dx,
+        dz,
+        elapsed,
+        state.physics.FIELD_WIDTH,
+        limit,
+      );
 
-    if (behavior.overshoot) {
-      predicted +=
-        behavior.overshoot * Math.sign(predicted - rightPaddle.position.z);
-      predicted = clamp(predicted, -limit, limit);
+      if (behavior.center) {
+        const targetX = state.physics.FIELD_WIDTH - 1.5;
+        const timeToImpact = (targetX - prevX) / (dx / elapsed);
+        const adjust =
+          behavior.center *
+          Math.max(1 - timeToImpact / state.physics.AI_REACTION, 0);
+        predicted += adjust * Math.sign(predicted - rightPaddle.position.z);
+      }
+
+      if (behavior.overshoot) {
+        predicted +=
+          behavior.overshoot * Math.sign(predicted - rightPaddle.position.z);
+        predicted = clamp(predicted, -limit, limit);
+      }
+    } else {
+      predicted = 0; // return to center when ball moving away
     }
 
     let target = predicted + (Math.random() - 0.5) * state.physics.AI_ERROR;

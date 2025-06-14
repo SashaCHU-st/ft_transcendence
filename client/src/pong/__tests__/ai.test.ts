@@ -11,7 +11,7 @@ vi.mock('../physics', async () => {
 });
 import type { SceneObjects } from '../scene';
 import type { GameState } from '../pong';
-import { PowerUpType } from '../powerups';
+import { PowerUpType, createDefaultPowerUpState } from '../powerups';
 import { setupKeyListeners } from '../utils';
 import { AI_KEYS } from '../ai';
 
@@ -29,6 +29,7 @@ function createState(): GameState {
       AI_REACTION: 1,
       AI_ERROR: 0,
       BALL_SPEED: 1,
+      BALL_SIZE: 1,
       WINNING_SCORE: 3,
     },
     match: {
@@ -47,6 +48,8 @@ function createState(): GameState {
       aiPrevBallZ: 0,
       ballDX: 0.2,
       ballDZ: 0,
+      ballBaseSpeed: 1,
+      ballPowered: false,
       dramaPhase: 0,
     },
     FIXED_DT: 0,
@@ -64,7 +67,8 @@ function createState(): GameState {
     remoteBallDX: 0,
     remotePrevBallDX: 0,
     bot: null,
-    powerUps: { available: [], activeLeft: null, activeRight: null },
+    ...createDefaultPowerUpState(),
+    powerUpsEnabled: true,
   };
 }
 
@@ -82,10 +86,35 @@ describe('AI power-up usage', () => {
   it('activates speed power-up when available and losing', () => {
     const state = createState();
     const objs = createObjs();
+    objs.ball.position.x = state.physics.FIELD_WIDTH / 2;
     state.powerUps.available.push({ type: PowerUpType.Speed, duration: 1 });
+    vi.spyOn(Math, 'random').mockReturnValue(0);
     updateAI(state, objs, 1);
-    expect(state.powerUps.activeRight?.type).toBe(PowerUpType.Speed);
+    vi.restoreAllMocks();
+    expect(state.powerUps.active.right?.type).toBe(PowerUpType.Speed);
     expect(state.powerUps.available.length).toBe(0);
+  });
+
+  it('uses a random power-up when none are available', () => {
+    const state = createState();
+    const objs = createObjs();
+    objs.ball.position.x = state.physics.FIELD_WIDTH / 2;
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    updateAI(state, objs, 1);
+    vi.restoreAllMocks();
+    expect(state.powerUps.active.right).not.toBeNull();
+  });
+
+  it('prefers power shot when attacking the player', () => {
+    const state = createState();
+    const objs = createObjs();
+    objs.ball.position.x = -state.physics.FIELD_WIDTH / 2;
+    state.input.ballDX = -0.2;
+    state.powerUps.available.push({ type: PowerUpType.PowerShot, duration: 1 });
+    vi.spyOn(Math, 'random').mockReturnValue(0);
+    updateAI(state, objs, 1);
+    vi.restoreAllMocks();
+    expect(state.powerUps.active.right?.type).toBe(PowerUpType.PowerShot);
   });
 });
 

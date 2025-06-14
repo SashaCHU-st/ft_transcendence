@@ -44,10 +44,10 @@
 - [ ] Handle network issues and provide the best user experience
 
 #### Game Customization ★★ (Minor)
-- [ ] Offer power-ups, attacks or different maps
-- [ ] Allow users to pick a default basic variant
+- [x] Offer power-ups, attacks or different maps
+- [x] Allow users to pick a default basic variant
 - [ ] Apply customization options to all games
-- [ ] Provide settings menus for adjusting parameters
+- [x] Provide settings menus for adjusting parameters
 - [ ] Keep customization consistent across games
 
 #### Live Chat ★★★ (Major)

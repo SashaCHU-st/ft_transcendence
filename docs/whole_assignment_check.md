@@ -85,10 +85,10 @@ Server-side pong: Replace basic Pong with server-side Pong and implement an API 
 - [ ] Maintain performance and update regularly
 
 ### Game Customization (Minor) ★★
-- [ ] Power-ups, attacks or map variants
-- [ ] Allow default basic version
+- [x] Power-ups, attacks or map variants
+- [x] Allow default basic version
 - [ ] Options available for all games
-- [ ] User-friendly settings menus
+- [x] User-friendly settings menus
 - [ ] Consistent customization across games
 
 ### Live Chat (Major) ★★★

@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { clamp, resetInput, setupKeyListeners, removeAllKeyListeners } from '../utils';
 import { GameMode } from '../pong';
 import type { GameState } from '../pong';
+import { createDefaultPowerUpState } from '../powerups';
 
 function createState(): GameState {
   return {
@@ -11,6 +12,7 @@ function createState(): GameState {
       PADDLE_SPEED: 1,
       AI_SPEED: 0,
       BALL_SPEED: 0,
+      BALL_SIZE: 1,
       WINNING_SCORE: 0,
     },
     match: {
@@ -29,6 +31,8 @@ function createState(): GameState {
       aiPrevBallZ: 0,
       ballDX: 0,
       ballDZ: 0,
+      ballBaseSpeed: 1,
+      ballPowered: false,
       dramaPhase: 0,
     },
     FIXED_DT: 0,
@@ -42,7 +46,8 @@ function createState(): GameState {
     keyUpHandler: null,
     goalTimeout: null,
     ballSpawnTimeout: null,
-    powerUps: { available: [], activeLeft: null, activeRight: null },
+    ...createDefaultPowerUpState(),
+    powerUpsEnabled: true,
   };
 }
 

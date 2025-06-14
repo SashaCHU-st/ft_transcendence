@@ -1,6 +1,6 @@
 import React from "react";
 
-import { PowerUpType } from "../powerups";
+import { PowerUpType, POWER_UPS } from "../powerups";
 
 interface ScoreboardProps {
   leftLabel: string;
@@ -19,7 +19,12 @@ export function Scoreboard({
   leftPowerUp,
   rightPowerUp,
 }: ScoreboardProps) {
-  const icon = (p?: PowerUpType | null) => (p === PowerUpType.Speed ? '⚡' : null);
+  const icon = (p?: PowerUpType | null) =>
+    p ? (
+      <span role="img" aria-label={POWER_UPS[p].label}>
+        {POWER_UPS[p].icon}
+      </span>
+    ) : null;
   return (
     <div className="absolute left-0 right-0 top-4 flex justify-between px-8">
       <div className="score-container rounded-lg px-6 py-3">

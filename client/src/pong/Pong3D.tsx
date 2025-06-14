@@ -15,6 +15,10 @@ import { RemoteErrorOverlay } from "./components/Overlays/RemoteErrorOverlay";
 import { Scoreboard } from "./components/Scoreboard";
 import { GoalBanner } from "./components/GoalBanner";
 import { EscMenu } from "./components/Overlays/EscMenu";
+import { SettingsOverlay } from "./components/Overlays/SettingsOverlay";
+import { PowerUpBar } from "./components/PowerUpBar";
+import { PowerUpType } from "./powerups";
+import { BALL_SPEED, BALL_SIZE, WINNING_SCORE } from "../../../shared/constants.js";
 
 import { useTournament } from "./hooks/useTournament";
 import "./pongGame.css";
@@ -55,6 +59,16 @@ export default function Pong3D() {
   const [remoteWaiting, setRemoteWaiting] = useState(false);
   const [remoteCountdown, setRemoteCountdown] = useState<number | null>(null);
   const [remoteError, setRemoteError] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [powerUpsEnabled, setPowerUpsEnabled] = useState(false);
+  const [ballSpeed, setBallSpeed] = useState(BALL_SPEED);
+  const [ballSize, setBallSize] = useState(BALL_SIZE);
+  const [winningScore, setWinningScore] = useState(WINNING_SCORE);
+  const [soundOn, setSoundOn] = useState(true);
+  const [leftColor, setLeftColor] = useState("#cc33cc");
+  const [rightColor, setRightColor] = useState("#33ccaa");
+  const [activeLeft, setActiveLeft] = useState<PowerUpType | null>(null);
+  const [activeRight, setActiveRight] = useState<PowerUpType | null>(null);
 
   // Main menu / tournament
   const [showStartScreen, setShowStartScreen] = useState(!startMode);
@@ -159,6 +173,10 @@ export default function Pong3D() {
         setLeftLabel(l);
         setRightLabel(r);
       },
+      onPowerUpUpdate: (l, r) => {
+        setActiveLeft(l);
+        setActiveRight(r);
+      },
       onRemoteWaitingChange: (w) => {
         setRemoteWaiting(w);
       },
@@ -170,12 +188,48 @@ export default function Pong3D() {
         setRemoteError(true);
       },
     };
-    const game = initGame(canvasRef.current, callbacks);
+    const game = initGame(canvasRef.current, callbacks, powerUpsEnabled);
+    game.setBallSpeed?.(ballSpeed);
+    game.setBallSize?.(ballSize);
+    game.setWinningScore?.(winningScore);
+    game.setPaddleColor?.('left', leftColor);
+    game.setPaddleColor?.('right', rightColor);
+    game.setSoundEnabled?.(soundOn);
     setGameApi(game);
     return () => {
       game.dispose();
     };
   }, []);
+
+  useEffect(() => {
+    if (!gameApi) return;
+    gameApi.setBallSpeed?.(ballSpeed);
+  }, [gameApi, ballSpeed]);
+
+  useEffect(() => {
+    if (!gameApi) return;
+    gameApi.setBallSize?.(ballSize);
+  }, [gameApi, ballSize]);
+
+  useEffect(() => {
+    if (!gameApi) return;
+    gameApi.setWinningScore?.(winningScore);
+  }, [gameApi, winningScore]);
+
+  useEffect(() => {
+    if (!gameApi) return;
+    gameApi.setPaddleColor?.('left', leftColor);
+  }, [gameApi, leftColor]);
+
+  useEffect(() => {
+    if (!gameApi) return;
+    gameApi.setPaddleColor?.('right', rightColor);
+  }, [gameApi, rightColor]);
+
+  useEffect(() => {
+    if (!gameApi) return;
+    gameApi.setSoundEnabled?.(soundOn);
+  }, [gameApi, soundOn]);
 
 
   useEffect(() => {
@@ -236,19 +290,25 @@ export default function Pong3D() {
     const mode = state?.currentMode;
     if (active) {
       if (mode === GameMode.Remote2P) {
-        return ["Back to match", "Quit match"];
+        return ["Back to match", "Settings", "Quit match"];
       }
       if (rounds.length > 0) {
         const arr = ["Resume"];
         if (!winner) {
           arr.push("Show bracket");
         }
-        arr.push("Switch game mode", "Quit to profile");
+        arr.push("Settings", "Switch game mode", "Quit to profile");
         return arr;
       }
-      return ["Resume", "Restart match", "Switch game mode", "Quit to profile"];
+      return [
+        "Resume",
+        "Restart match",
+        "Settings",
+        "Switch game mode",
+        "Quit to profile",
+      ];
     }
-    return ["Switch game mode", "Quit to profile"];
+    return ["Settings", "Switch game mode", "Quit to profile"];
   }
   function menuAction(idx: number) {
     const arr = getMenuItems();
@@ -262,6 +322,9 @@ export default function Pong3D() {
       setWaitingStart(true);
     } else if (chosen === "Show bracket") {
       setShowBracket(true);
+    } else if (chosen === "Settings") {
+      setShowSettings(true);
+      setShowMenu(false);
     } else if (chosen === "Switch game mode") {
       resetAllToMainMenu();
     } else if (chosen === "Quit match") {
@@ -460,12 +523,23 @@ export default function Pong3D() {
         rightLabel={rightLabel}
         scoreLeft={scoreLeft}
         scoreRight={scoreRight}
-        leftPowerUp={gameApi?.__state?.powerUps.activeLeft?.type ?? null}
-        rightPowerUp={gameApi?.__state?.powerUps.activeRight?.type ?? null}
+        leftPowerUp={activeLeft}
+        rightPowerUp={activeRight}
       />
+      {powerUpsEnabled && (
+        <PowerUpBar
+          onSelect={(t) => gameApi?.usePowerUp?.('left', { type: t })}
+          active={activeLeft}
+        />
+      )}
       <GoalBanner visible={showGoal} />
       {/* PAUSE overlay */}
-      {isPaused && !showMenu && <PauseOverlay waitingStart={waitingStart} />}
+      {isPaused && !showMenu && (
+        <PauseOverlay
+          waitingStart={waitingStart}
+          onSettings={() => setShowSettings(true)}
+        />
+      )}
       {/* Remote status overlay */}
       {(remoteWaiting || remoteCountdown !== null) && (
         <RemoteStatusOverlay waiting={remoteWaiting} countdown={remoteCountdown} />
@@ -485,6 +559,33 @@ export default function Pong3D() {
           menuIndex={menuIndex}
           setMenuIndex={setMenuIndex}
           onMenuAction={menuAction}
+        />
+      )}
+      {showSettings && (
+        <SettingsOverlay
+          powerUps={powerUpsEnabled}
+          ballSpeed={ballSpeed}
+          ballSize={ballSize}
+          winningScore={winningScore}
+          sound={soundOn}
+          leftColor={leftColor}
+          rightColor={rightColor}
+          onPowerUpsChange={(v) => {
+            setPowerUpsEnabled(v);
+            gameApi?.setPowerUpsEnabled?.(v);
+          }}
+          onBallSpeedChange={(v) => setBallSpeed(v)}
+          onBallSizeChange={(v) => setBallSize(v)}
+          onWinningScoreChange={(v) => setWinningScore(v)}
+          onLeftColorChange={(c) => setLeftColor(c)}
+          onRightColorChange={
+            gameApi?.__state?.currentMode === GameMode.Local2P ||
+            gameApi?.__state?.currentMode === GameMode.Tournament
+              ? (c) => setRightColor(c)
+              : undefined
+          }
+          onSoundChange={(v) => setSoundOn(v)}
+          onClose={() => setShowSettings(false)}
         />
       )}
       {/* BRACKET Overlay */}

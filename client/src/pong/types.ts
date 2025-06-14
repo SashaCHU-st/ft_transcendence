@@ -1,3 +1,7 @@
+export type Side = 'left' | 'right';
+
+export const SIDES: readonly Side[] = ['left', 'right'] as const;
+
 export interface PhysicsParams {
   FIELD_WIDTH: number;
   FIELD_HEIGHT: number;
@@ -6,6 +10,7 @@ export interface PhysicsParams {
   AI_REACTION: number;
   AI_ERROR: number;
   BALL_SPEED: number;
+  BALL_SIZE: number;
   WINNING_SCORE: number;
 }
 
@@ -28,6 +33,10 @@ export interface InputState {
   aiPrevBallZ: number;
   ballDX: number;
   ballDZ: number;
+  /** Base speed magnitude for the ball. Used to restore velocity */
+  ballBaseSpeed: number;
+  /** Whether the ball is currently moving at boosted speed */
+  ballPowered: boolean;
   /** Phase offset for Drama Bot movement oscillation */
   dramaPhase: number;
 }

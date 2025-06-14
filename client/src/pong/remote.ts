@@ -63,7 +63,7 @@ export function connect(
       } else {
         clearCountdown();
         state.onRemoteCountdown?.(0);
-        spawnBall(objs);
+        spawnBall(state, objs);
         state.paused = false;
         state.manualPaused = false;
         state.onPauseChange?.(false);

@@ -1,3 +1,5 @@
+import { PowerUpType } from "../../../pong/powerups";
+
 export type BotInfo = {
   name: string;
   image: string;
@@ -10,6 +12,8 @@ export type BotInfo = {
   center?: number;
   /** Optional overshoot amount when predicting target */
   overshoot?: number;
+  /** Preferred power-up type */
+  favorite?: PowerUpType;
 };
 
 export const bots: BotInfo[] = [
@@ -21,6 +25,8 @@ export const bots: BotInfo[] = [
     error: 0.01,
     stars: 3,
     center: 0.2,
+    overshoot: 0.1,
+    favorite: PowerUpType.MegaPaddle,
   },
   {
     name: "Speedy Ghost",
@@ -29,7 +35,9 @@ export const bots: BotInfo[] = [
     weaknesses: "Rushes so hard it leaves holes",
     error: 0.03,
     stars: 3,
+    center: 0.15,
     overshoot: 0.5,
+    favorite: PowerUpType.Speed,
   },
   {
     name: "Drama Bot",
@@ -38,6 +46,8 @@ export const bots: BotInfo[] = [
     weaknesses: "Panics and misses when things get real",
     error: 0.08,
     stars: 2,
+    overshoot: 0.2,
+    favorite: PowerUpType.PowerShot,
   },
   {
     name: "Shadow Ninja",
@@ -46,5 +56,8 @@ export const bots: BotInfo[] = [
     weaknesses: "None discovered so far",
     error: 0,
     stars: 4,
+    center: 0.1,
+    overshoot: 0.3,
+    favorite: PowerUpType.PowerShot,
   },
 ];
