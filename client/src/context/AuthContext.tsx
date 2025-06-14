@@ -5,6 +5,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
+import api from "../pages/Profile/types/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -28,10 +29,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      setIsAuthenticated(true);
-    }
-  }, []);
+    if (!token) return;
+
+    const verifyToken = async () => {
+      try {
+        const { data } = await api.get("/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (data?.user?.id) {
+          localStorage.setItem("id", String(data.user.id));
+          setIsAuthenticated(true);
+        } else {
+          throw new Error("User not found");
+        }
+      } catch (err) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("id");
+        setIsAuthenticated(false);
+        navigate("/login", { replace: true });
+      }
+    };
+
+    verifyToken();
+  }, [navigate]);
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
