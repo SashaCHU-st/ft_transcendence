@@ -8,7 +8,7 @@
 - [ ] Dockerized deployment with a single command
 - [x] HTTPS enabled for all communication
 - [x] Passwords stored hashed
-- [x] Protection against SQL injection and XSS verified
+- [ ] Protection against SQL injection and XSS verified
 - [x] Form and input validation on server side
 - [x] Local two-player gameplay on the same keyboard
 - [x] Tournament system with registration and matchmaking
@@ -29,7 +29,7 @@
   - [x] Secure registration and login
   - [x] Unique display name for tournaments
   - [x] Profile update and avatar upload
-  - [x] Friends list and online status
+  - [ ] Friends list and online status
   - [x] Player stats (wins/losses)
   - [ ] Match history for logged in users
 - **Implementing a remote authentication (Major)**
@@ -44,10 +44,10 @@
 - [ ] Handle network issues and provide the best user experience
 
 #### Game Customization ★★ (Minor)
-- [ ] Offer power-ups, attacks or different maps
-- [ ] Allow users to pick a default basic variant
+- [x] Offer power-ups, attacks or different maps
+- [x] Allow users to pick a default basic variant
 - [ ] Apply customization options to all games
-- [ ] Provide settings menus for adjusting parameters
+- [x] Provide settings menus for adjusting parameters
 - [ ] Keep customization consistent across games
 
 #### Live Chat ★★★ (Major)
@@ -62,8 +62,8 @@
 - [x] AI opponent simulates keyboard input
 - [x] Anticipates bounces with view refresh once per second
 - [ ] Uses power-ups if customization module is enabled
-- [ ] Strategic decision making without A* algorithm
-- [ ] Adapts to different gameplay situations and can win
+- [x] Strategic decision making without A* algorithm
+- [x] Adapts to different gameplay situations and can win
 
 #### Stats Dashboards ★★ (Minor)
 - [ ] Dashboard with user gaming statistics

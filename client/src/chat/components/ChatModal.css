@@ -19,6 +19,7 @@
 .message-bubble.received {
   align-self: flex-start;
   border: 1px solid #bd0e86;
+   border-radius: 30px 30px 30px 1px;
   background-color: rgba(189, 14, 134, 0.2);
 }
 

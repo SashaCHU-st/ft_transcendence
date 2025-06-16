@@ -78,6 +78,7 @@ vi.mock('@babylonjs/core', () => {
 
 import { initGame, GameMode } from '../pong';
 import type { GameAPI } from '../pong';
+import { createDefaultPowerUpState } from '../powerups';
 import { playGoalAnimation } from '../physics';
 import type { GameState } from '../pong';
 import type { SceneObjects } from '../scene';
@@ -98,6 +99,7 @@ function createState(): GameState {
       PADDLE_SPEED: 1,
       AI_SPEED: 0,
       BALL_SPEED: 1,
+      BALL_SIZE: 1,
       WINNING_SCORE: 3,
     },
     match: {
@@ -112,8 +114,13 @@ function createState(): GameState {
       playerDzRight: 0,
       aiTimer: 0,
       aiTargetZ: 0,
+      aiPrevBallX: 0,
+      aiPrevBallZ: 0,
       ballDX: 0,
       ballDZ: 0,
+      ballBaseSpeed: 1,
+      ballPowered: false,
+      dramaPhase: 0,
     },
     FIXED_DT: 0,
     accumulator: 0,
@@ -126,6 +133,8 @@ function createState(): GameState {
     keyUpHandler: null,
     goalTimeout: null,
     ballSpawnTimeout: null,
+    ...createDefaultPowerUpState(),
+    powerUpsEnabled: true,
   };
 }
 

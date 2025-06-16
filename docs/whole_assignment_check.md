@@ -4,12 +4,12 @@
 ## Basic Requirements
 - [x] Frontend built with TypeScript
 - [x] Single Page Application with browser history support
-- [x] Compatible with the latest Firefox
+- [ ] Compatible with the latest Firefox
 - [ ] No unhandled errors or warnings when browsing
 - [ ] Dockerized deployment with a single command
 - [x] HTTPS enabled for all communication
 - [x] Passwords stored hashed
-- [x] Protection against SQL injection and XSS verified
+- [ ] Protection against SQL injection and XSS verified
 - [x] Form and input validation on server side
 - [x] Local two-player gameplay on the same keyboard
 - [x] Tournament system with registration and matchmaking
@@ -59,10 +59,10 @@ Server-side pong: Replace basic Pong with server-side Pong and implement an API 
 - [x] Unique display name for tournaments
 - [x] Ability to update profile information
 - [x] Avatar upload with default fallback
-- [ ] Friends list with online status
+- [x] Friends list with online status
 - [x] Player stats showing wins and losses
 - [ ] Match history with dates and details for logged-in users
-- [ ] Logical handling of duplicate usernames and emails
+- [x] Logical handling of duplicate usernames and emails
 
 ### Remote Authentication (Major) ★★★
 - [ ] Integrate Google Sign‑in
@@ -85,10 +85,10 @@ Server-side pong: Replace basic Pong with server-side Pong and implement an API 
 - [ ] Maintain performance and update regularly
 
 ### Game Customization (Minor) ★★
-- [ ] Power-ups, attacks or map variants
-- [ ] Allow default basic version
+- [x] Power-ups, attacks or map variants
+- [x] Allow default basic version
 - [ ] Options available for all games
-- [ ] User-friendly settings menus
+- [x] User-friendly settings menus
 - [ ] Consistent customization across games
 
 ### Live Chat (Major) ★★★
