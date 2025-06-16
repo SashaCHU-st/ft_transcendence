@@ -16,7 +16,8 @@ db.exec(`
     online BOOL, 
     image BLOB,
     wins INTEGER default 0,
-    losses INTEGER default 0
+    losses INTEGER default 0,
+    twofa_enabled INTEGER DEFAULT 0
   );
 `);
 console.log("Database initialized and users table is ready.");
