@@ -1,5 +1,9 @@
 import type { Side } from './types';
-import { SIDES } from './types';
+import type { PowerUpInfo, EffectValues } from '../../../shared/powerups.js';
+import {
+  POWER_UPS as SHARED_POWER_UPS,
+  DEFAULT_EFFECTS as SHARED_DEFAULT_EFFECTS,
+} from '../../../shared/powerups.js';
 
 export enum PowerUpType {
   /** Doubles paddle speed */
@@ -10,69 +14,19 @@ export enum PowerUpType {
   PowerShot = 'power',
 }
 
-export interface PowerUpInfo {
-  icon: string;
-  label: string;
-  /** Used when no custom duration is provided */
-  defaultDuration: number;
-  /** Values to apply while the power-up is active */
-  effect: Partial<EffectValues>;
-}
+export type { PowerUpInfo, EffectValues } from '../../../shared/powerups.js';
+export const DEFAULT_EFFECTS = SHARED_DEFAULT_EFFECTS;
+export const POWER_UPS: Record<PowerUpType, PowerUpInfo> = SHARED_POWER_UPS;
 
-export const DEFAULT_EFFECTS = {
-  speed: 1,
-  scale: 1,
-  powerShot: false,
-} as const;
+import {
+  applyEffects,
+  removeEffects,
+  updatePowerUps,
+  resetPowerUps,
+  activatePowerUp as sharedActivatePowerUp,
+} from '../../../shared/powerupHelpers.js';
+export { applyEffects, removeEffects, updatePowerUps, resetPowerUps };
 
-export type EffectValues = typeof DEFAULT_EFFECTS;
-
-export const POWER_UPS = {
-  [PowerUpType.Speed]: {
-    icon: '⚡',
-    label: 'Speed boost: doubles paddle speed',
-    defaultDuration: 8,
-    effect: { speed: 2 },
-  },
-  [PowerUpType.MegaPaddle]: {
-    icon: '🛡',
-    label: 'Mega paddle: increases paddle length',
-    defaultDuration: 12,
-    effect: { scale: 1.5 },
-  },
-  [PowerUpType.PowerShot]: {
-    icon: '💥',
-    label: 'Power shot: doubles ball speed on hit',
-    defaultDuration: 10,
-    effect: { powerShot: true },
-  },
-} as const satisfies Record<PowerUpType, PowerUpInfo>;
-
-export function applyEffects(
-  state: PowerUpContext,
-  side: Side,
-  effect: Partial<EffectValues>,
-) {
-  if (effect.speed !== undefined)
-    state.powerUpEffects.speed[side] = effect.speed;
-  if (effect.scale !== undefined)
-    state.powerUpEffects.scale[side] = effect.scale;
-  if (effect.powerShot !== undefined)
-    state.powerUpEffects.powerShot[side] = effect.powerShot;
-}
-
-export function removeEffects(
-  state: PowerUpContext,
-  side: Side,
-  effect: Partial<EffectValues>,
-) {
-  if (effect.speed !== undefined)
-    state.powerUpEffects.speed[side] = DEFAULT_EFFECTS.speed;
-  if (effect.scale !== undefined)
-    state.powerUpEffects.scale[side] = DEFAULT_EFFECTS.scale;
-  if (effect.powerShot !== undefined)
-    state.powerUpEffects.powerShot[side] = DEFAULT_EFFECTS.powerShot;
-}
 
 export interface PowerUp {
   type: PowerUpType;
@@ -131,42 +85,12 @@ export function activatePowerUp(
   side: Side,
   powerUp: PowerUp,
 ) {
-  const duration = powerUp.duration;
-  if (duration <= 0 || !Number.isFinite(duration)) return;
-
-  clearActivePowerUp(state, side);
-  const active: ActivePowerUp = { type: powerUp.type, timer: duration };
-  state.powerUps.active[side] = active;
-  applyEffects(state, side, POWER_UPS[powerUp.type].effect);
-  notifyUpdate(state);
-}
-
-export function updatePowerUps(state: PowerUpContext, dt: number) {
-  if (state.powerUpsEnabled === false) return;
-  let changed = false;
-  for (const side of SIDES) {
-    const active = state.powerUps.active[side];
-    if (!active) continue;
-    active.timer = Math.max(active.timer - dt, 0);
-    if (active.timer === 0) {
-      changed = clearActivePowerUp(state, side) || changed;
-    }
-  }
-  if (changed) {
+  if (sharedActivatePowerUp(state as any, side, powerUp.type, powerUp.duration)) {
     notifyUpdate(state);
   }
 }
 
-export function resetPowerUps(state: PowerUpContext) {
-  let changed = false;
-  for (const side of SIDES) {
-    changed = clearActivePowerUp(state, side) || changed;
-  }
-  state.powerUps.available = [];
-  if (changed) {
-    notifyUpdate(state);
-  }
-}
+
 
 export function createDefaultPowerUpState() {
   return {

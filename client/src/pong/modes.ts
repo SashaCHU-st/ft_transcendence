@@ -80,6 +80,7 @@ export async function startRemote2P(
   state: GameState,
   scene: SceneObjects,
   url = "wss://localhost:3000/ws",
+  onHost?: () => void,
 ) {
   removeAllKeyListeners(state);
 
@@ -114,7 +115,7 @@ export async function startRemote2P(
   if (token) {
     connectUrl += connectUrl.includes("?") ? `&token=${token}` : `?token=${token}`;
   }
-  state.remoteCleanup = connect(state, connectUrl, scene);
+  state.remoteCleanup = connect(state, connectUrl, scene, onHost);
 }
 
 /**

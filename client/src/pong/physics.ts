@@ -7,7 +7,12 @@ import type { GameState } from "./pong";
 import { GameMode } from "./pong";
 import { playPaddleSound } from "./sound";
 import { updateAI } from "./ai";
-import { updatePowerUps, resetPowerUps } from "./powerups";
+import {
+  updatePowerUps,
+  resetPowerUps,
+  POWER_UPS,
+  DEFAULT_EFFECTS,
+} from "./powerups";
 import type { Side } from "./types";
 
 export function stepPhysics(state: GameState, objs: SceneObjects, dt: number) {
@@ -30,6 +35,17 @@ export function stepPhysics(state: GameState, objs: SceneObjects, dt: number) {
   if (state.currentMode === GameMode.Remote2P) {
     const s = state.remoteState;
     if (s) {
+      // Update paddle length based on active power-ups from the server
+      const leftScale =
+        s.activeLeft && POWER_UPS[s.activeLeft as keyof typeof POWER_UPS]?.effect.scale
+          ? (POWER_UPS[s.activeLeft as keyof typeof POWER_UPS].effect.scale as number)
+          : DEFAULT_EFFECTS.scale;
+      const rightScale =
+        s.activeRight && POWER_UPS[s.activeRight as keyof typeof POWER_UPS]?.effect.scale
+          ? (POWER_UPS[s.activeRight as keyof typeof POWER_UPS].effect.scale as number)
+          : DEFAULT_EFFECTS.scale;
+      leftPaddle.scaling.z = leftScale;
+      rightPaddle.scaling.z = rightScale;
       const scoreChanged =
         s.leftScore !== state.match.playerScore ||
         s.rightScore !== state.match.aiScore;

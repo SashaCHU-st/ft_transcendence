@@ -8,7 +8,7 @@ interface PauseOverlayProps {
 export function PauseOverlay({ waitingStart, onSettings }: PauseOverlayProps) {
   return (
     <OverlayWrapper>
-      {onSettings && (
+      {onSettings && waitingStart && (
         <button
           onClick={onSettings}
 

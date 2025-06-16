@@ -4,9 +4,12 @@ import {
   FIELD_HEIGHT,
   PADDLE_SPEED,
   BALL_SPEED,
+  BALL_SIZE,
   WINNING_SCORE,
 } from '../../shared/constants.js';
 import { createStateMessage, createEndMessage } from '../../shared/messages.js';
+import { DEFAULT_EFFECTS } from '../../shared/powerups.js';
+import { updatePowerUps, activatePowerUp as sharedActivatePowerUp } from '../../shared/powerupHelpers.js';
 import {
   setInterval,
   clearInterval,
@@ -14,12 +17,16 @@ import {
   clearTimeout,
 } from 'node:timers';
 
+
 function clamp(v, min, max) {
   return Math.min(max, Math.max(min, v));
 }
 
-function hitPaddle(ballX, ballZ, paddleX, paddleZ) {
-  return Math.abs(ballZ - paddleZ) < 2.5 && Math.abs(ballX - paddleX) < 1.0;
+function hitPaddle(ballX, ballZ, paddleX, paddleZ, scale = 1) {
+  return (
+    Math.abs(ballZ - paddleZ) < 1.5 * scale + 0.0 &&
+    Math.abs(ballX - paddleX) < 1.0
+  );
 }
 
 export function updateStats(winnerId, loserId) {
@@ -39,7 +46,7 @@ export function updateStats(winnerId, loserId) {
 }
 
 export class Game {
-  constructor(ws1, ws2) {
+  constructor(ws1, ws2, options = {}) {
     this.players = [ws1, ws2];
     this.leftInput = 0;
     this.rightInput = 0;
@@ -47,15 +54,37 @@ export class Game {
     this.rightZ = 0;
     this.ballX = 0;
     this.ballZ = 0;
-    this.ballDX = BALL_SPEED;
-    this.ballDZ = BALL_SPEED;
+    this.ballSpeed = options.ballSpeed ?? BALL_SPEED;
+    this.ballSize = options.ballSize ?? BALL_SIZE;
+    this.ballDX = this.ballSpeed;
+    this.ballDZ = this.ballSpeed;
     this.leftScore = 0;
     this.rightScore = 0;
+    this.winningScore = options.winningScore ?? WINNING_SCORE;
+    this.powerUpsEnabled = options.powerUps ?? false;
+    this.powerUps = { active: { left: null, right: null }, available: [] };
+    this.powerUpEffects = {
+      speed: { left: DEFAULT_EFFECTS.speed, right: DEFAULT_EFFECTS.speed },
+      scale: { left: DEFAULT_EFFECTS.scale, right: DEFAULT_EFFECTS.scale },
+      powerShot: {
+        left: DEFAULT_EFFECTS.powerShot,
+        right: DEFAULT_EFFECTS.powerShot,
+      },
+    };
+    this.ballPowered = false;
     this.interval = null;
     this.startTimeout = null;
     this.ballSpawnTimeout = null;
     this.ended = false;
   }
+
+
+
+  activatePowerUp(side, type, duration) {
+    if (!this.powerUpsEnabled) return;
+    sharedActivatePowerUp(this, side, type, duration);
+  }
+
 
   /**
    * Stop all running timers associated with the game instance.
@@ -81,13 +110,28 @@ export class Game {
   tick() {
     if (this.ended) return;
 
+    updatePowerUps(this, 1 / 60);
+
+    if (
+      !this.powerUpEffects.powerShot.left &&
+      !this.powerUpEffects.powerShot.right &&
+      this.ballPowered
+    ) {
+      this.ballDX = Math.sign(this.ballDX) * this.ballSpeed;
+      this.ballDZ = Math.sign(this.ballDZ) * this.ballSpeed;
+      this.ballPowered = false;
+    }
+
+    const leftSpeed = this.powerUpEffects.speed.left;
+    const rightSpeed = this.powerUpEffects.speed.right;
+
     this.leftZ = clamp(
-      this.leftZ + this.leftInput * PADDLE_SPEED,
+      this.leftZ + this.leftInput * PADDLE_SPEED * leftSpeed,
       -FIELD_HEIGHT + 1.5,
       FIELD_HEIGHT - 1.5,
     );
     this.rightZ = clamp(
-      this.rightZ + this.rightInput * PADDLE_SPEED,
+      this.rightZ + this.rightInput * PADDLE_SPEED * rightSpeed,
       -FIELD_HEIGHT + 1.5,
       FIELD_HEIGHT - 1.5,
     );
@@ -108,11 +152,39 @@ export class Game {
       this.resetBall();
     }
 
-    if (hitPaddle(this.ballX, this.ballZ, -FIELD_WIDTH + 1.5, this.leftZ) && this.ballDX < 0) {
+    if (
+      hitPaddle(
+        this.ballX,
+        this.ballZ,
+        -FIELD_WIDTH + 1.5,
+        this.leftZ,
+        this.powerUpEffects.scale.left,
+      ) &&
+      this.ballDX < 0
+    ) {
       this.ballDX = Math.abs(this.ballDX);
+      if (this.powerUpEffects.powerShot.left && !this.ballPowered) {
+        this.ballDX = Math.sign(this.ballDX) * this.ballSpeed * 2;
+        this.ballDZ = Math.sign(this.ballDZ) * this.ballSpeed * 2;
+        this.ballPowered = true;
+      }
     }
-    if (hitPaddle(this.ballX, this.ballZ, FIELD_WIDTH - 1.5, this.rightZ) && this.ballDX > 0) {
+    if (
+      hitPaddle(
+        this.ballX,
+        this.ballZ,
+        FIELD_WIDTH - 1.5,
+        this.rightZ,
+        this.powerUpEffects.scale.right,
+      ) &&
+      this.ballDX > 0
+    ) {
       this.ballDX = -Math.abs(this.ballDX);
+      if (this.powerUpEffects.powerShot.right && !this.ballPowered) {
+        this.ballDX = Math.sign(this.ballDX) * this.ballSpeed * 2;
+        this.ballDZ = Math.sign(this.ballDZ) * this.ballSpeed * 2;
+        this.ballPowered = true;
+      }
     }
 
     const state = {
@@ -122,13 +194,18 @@ export class Game {
       ballZ: this.ballZ,
       leftScore: this.leftScore,
       rightScore: this.rightScore,
+      activeLeft: this.powerUps.active.left ? this.powerUps.active.left.type : null,
+      activeRight: this.powerUps.active.right ? this.powerUps.active.right.type : null,
     };
 
     for (const p of this.players) {
       p.send(JSON.stringify(createStateMessage(state)));
     }
 
-    if (this.leftScore >= WINNING_SCORE || this.rightScore >= WINNING_SCORE) {
+    if (
+      this.leftScore >= this.winningScore ||
+      this.rightScore >= this.winningScore
+    ) {
       const winnerSide = this.leftScore > this.rightScore ? 'left' : 'right';
       const winnerIndex = winnerSide === 'left' ? 0 : 1;
       const loserIndex = winnerSide === 'left' ? 1 : 0;
@@ -155,10 +232,11 @@ export class Game {
     this.ballZ = 0;
     this.ballDX = 0;
     this.ballDZ = 0;
+    this.ballPowered = false;
     if (this.ballSpawnTimeout) clearTimeout(this.ballSpawnTimeout);
     this.ballSpawnTimeout = setTimeout(() => {
-      this.ballDX = BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
-      this.ballDZ = BALL_SPEED * (Math.random() > 0.5 ? 1 : -1);
+      this.ballDX = this.ballSpeed * (Math.random() > 0.5 ? 1 : -1);
+      this.ballDZ = this.ballSpeed * (Math.random() > 0.5 ? 1 : -1);
     }, 1000);
   }
 }

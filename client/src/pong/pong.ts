@@ -3,6 +3,8 @@ import * as BABYLON from "@babylonjs/core";
 import { createScene, fitFieldToCamera, type SceneObjects } from "./scene";
 import { stepPhysics, resetScores, resetPositions } from "./physics";
 import type { PhysicsParams, MatchInfo, InputState, Side } from "./types";
+import type { RemoteSettings } from "../../../shared/messages.js";
+import { MessageTypes } from "../../../shared/messages.js";
 import type { PowerUpState } from "./powerups";
 import {
   activatePowerUp,
@@ -71,9 +73,10 @@ export interface GameState {
   ) => void;
 
   /** Remote play events */
-  onRemoteWaitingChange?: (waiting: boolean) => void;
+  onRemoteWaitingChange?: (status: 'waiting' | 'preparing' | null) => void;
   onRemoteCountdown?: (seconds: number) => void;
   onRemoteError?: () => void;
+  onRemoteSettings?: (settings: RemoteSettings) => void;
 
   onMatchEndCallback?: (
     winner: string,
@@ -99,6 +102,8 @@ export interface GameState {
     rightPaddleZ: number;
     leftScore: number;
     rightScore: number;
+    activeLeft?: string | null;
+    activeRight?: string | null;
   } | null;
   remoteBallDX?: number;
   remotePrevBallDX?: number;
@@ -123,7 +128,7 @@ import type { BotInfo } from "../pages/Profile/types/botsData";
 export interface GameAPI {
   startSinglePlayerAI: (bot?: BotInfo) => void;
   startLocal2P: () => void;
-  startRemote2P: (url?: string) => void;
+  startRemote2P: (url?: string, onHost?: () => void) => void;
   startTournamentMatch: (
     p1Name: string,
     p2Name: string,
@@ -168,9 +173,10 @@ export interface PongCallbacks {
     left: PowerUpType | null,
     right: PowerUpType | null,
   ) => void;
-  onRemoteWaitingChange?: (waiting: boolean) => void;
+  onRemoteWaitingChange?: (status: 'waiting' | 'preparing' | null) => void;
   onRemoteCountdown?: (seconds: number) => void;
   onRemoteError?: () => void;
+  onRemoteSettings?: (settings: RemoteSettings) => void;
 }
 
 export function initGame(
@@ -231,6 +237,7 @@ export function initGame(
     onRemoteWaitingChange: callbacks?.onRemoteWaitingChange,
     onRemoteCountdown: callbacks?.onRemoteCountdown,
     onRemoteError: callbacks?.onRemoteError,
+    onRemoteSettings: callbacks?.onRemoteSettings,
 
     onMatchEndCallback: undefined,
 
@@ -324,8 +331,8 @@ export function initGame(
       startLocal2P(state, sceneObjects);
       state.manualPaused = true;
     },
-    startRemote2P: (url) => {
-      void startRemote2PMode(state, sceneObjects, url);
+    startRemote2P: (url, onHost) => {
+      void startRemote2PMode(state, sceneObjects, url, onHost);
       state.manualPaused = true;
     },
     startTournamentMatch: (p1, p2, isF, cb) => {
@@ -383,7 +390,21 @@ export function initGame(
     usePowerUp: (side, pu) => {
       if (state.powerUpsEnabled) {
         const duration = pu.duration ?? POWER_UPS[pu.type].defaultDuration;
-        activatePowerUp(state, side, { type: pu.type, duration });
+        if (state.currentMode === GameMode.Remote2P && state.ws) {
+          try {
+            if (state.ws.readyState === WebSocket.OPEN) {
+              state.ws.send(
+                JSON.stringify({
+                  type: MessageTypes.POWER,
+                  power: pu.type,
+                  duration,
+                }),
+              );
+            }
+          } catch {}
+        } else {
+          activatePowerUp(state, side, { type: pu.type, duration });
+        }
       }
     },
     setPowerUpsEnabled: (v: boolean) => {

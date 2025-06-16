@@ -8,8 +8,8 @@ import { createInitMessage } from '../../shared/messages.js';
  * @param {import('ws').WebSocket} ws2 Right player socket
  * @returns {Game}
  */
-export function startGame(ws1, ws2) {
-  const game = new Game(ws1, ws2);
+export function startGame(ws1, ws2, settings) {
+  const game = new Game(ws1, ws2, settings);
   ws1.side = 'left';
   ws2.side = 'right';
   ws1.game = game;
@@ -21,10 +21,24 @@ export function startGame(ws1, ws2) {
   const startTime = serverTime + 5000;
 
   const initLeft = JSON.stringify(
-    createInitMessage('left', leftName, rightName, startTime, serverTime),
+    createInitMessage(
+      'left',
+      leftName,
+      rightName,
+      startTime,
+      serverTime,
+      settings,
+    ),
   );
   const initRight = JSON.stringify(
-    createInitMessage('right', leftName, rightName, startTime, serverTime),
+    createInitMessage(
+      'right',
+      leftName,
+      rightName,
+      startTime,
+      serverTime,
+      settings,
+    ),
   );
 
   ws1.send(initLeft);

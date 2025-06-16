@@ -1,12 +1,12 @@
-import React from 'react';
-import { OverlayWrapper } from './OverlayWrapper';
+import React from "react";
+import { OverlayWrapper } from "./OverlayWrapper";
 import {
   OverlayCard,
   OverlayHeading,
   OverlayButton,
   OverlayText,
-} from './OverlayComponents';
-import { useEscapeKey } from '../../hooks/useEscapeKey';
+} from "./OverlayComponents";
+import { useEscapeKey } from "../../hooks/useEscapeKey";
 
 interface SettingsOverlayProps {
   powerUps: boolean;
@@ -88,12 +88,19 @@ export function SettingsOverlay({
           <label className="flex items-center gap-2">
             Winning score
             <input
+              className="text-blue-800 px-2"
               type="number"
               min="1"
               max="20"
               step="1"
               value={winningScore}
               onChange={(e) => onWinningScoreChange(Number(e.target.value))}
+              onKeyDown={(e) => {
+                const allowed = ["ArrowUp", "ArrowDown", "Tab"];
+                if (!allowed.includes(e.key)) {
+                  e.preventDefault();
+                }
+              }}
             />
           </label>
         </OverlayText>

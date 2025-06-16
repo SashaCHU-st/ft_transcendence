@@ -16,6 +16,7 @@ import { Scoreboard } from "./components/Scoreboard";
 import { GoalBanner } from "./components/GoalBanner";
 import { EscMenu } from "./components/Overlays/EscMenu";
 import { SettingsOverlay } from "./components/Overlays/SettingsOverlay";
+import { RemoteSetupOverlay } from "./components/Overlays/RemoteSetupOverlay";
 import { PowerUpBar } from "./components/PowerUpBar";
 import { PowerUpType } from "./powerups";
 import { BALL_SPEED, BALL_SIZE, WINNING_SCORE } from "../../../shared/constants.js";
@@ -56,10 +57,12 @@ export default function Pong3D() {
   const [showMenu, setShowMenu] = useState(false);
   const [menuIndex, setMenuIndex] = useState(0);
   const [waitingStart, setWaitingStart] = useState(false);
-  const [remoteWaiting, setRemoteWaiting] = useState(false);
+  const [remoteStatus, setRemoteStatus] = useState<'none' | 'waiting' | 'preparing'>('none');
   const [remoteCountdown, setRemoteCountdown] = useState<number | null>(null);
   const [remoteError, setRemoteError] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [showRemoteSetup, setShowRemoteSetup] = useState(false);
+  const [defaultMode, setDefaultMode] = useState(true);
   const [powerUpsEnabled, setPowerUpsEnabled] = useState(false);
   const [ballSpeed, setBallSpeed] = useState(BALL_SPEED);
   const [ballSize, setBallSize] = useState(BALL_SIZE);
@@ -177,8 +180,8 @@ export default function Pong3D() {
         setActiveLeft(l);
         setActiveRight(r);
       },
-      onRemoteWaitingChange: (w) => {
-        setRemoteWaiting(w);
+      onRemoteWaitingChange: (status) => {
+        setRemoteStatus(status ?? 'none');
       },
       onRemoteCountdown: (sec) => {
         if (sec <= 0) setRemoteCountdown(null);
@@ -186,6 +189,15 @@ export default function Pong3D() {
       },
       onRemoteError: () => {
         setRemoteError(true);
+      },
+      onRemoteSettings: (s) => {
+        setPowerUpsEnabled(s.powerUps);
+        setBallSpeed(s.ballSpeed);
+        setBallSize(s.ballSize);
+        setWinningScore(s.winningScore);
+        setLeftColor(s.leftColor);
+        setRightColor(s.rightColor);
+        setSoundOn(s.sound);
       },
     };
     const game = initGame(canvasRef.current, callbacks, powerUpsEnabled);
@@ -253,12 +265,14 @@ export default function Pong3D() {
     } else if (mode === GameMode.Remote2P) {
       setShowStartScreen(false);
       prevScore.current = { left: 0, right: 0 };
-      gameApi.startRemote2P();
+      gameApi.startRemote2P(undefined, () => {
+        setShowRemoteSetup(true);
+        setDefaultMode(true);
+      });
       setScoreLeft(0);
       setScoreRight(0);
       setLeftLabel("YOU");
       setRightLabel("OPPONENT");
-      setRemoteWaiting(true);
       setRemoteCountdown(null);
     }
   }, [gameApi, location.search]);
@@ -290,20 +304,19 @@ export default function Pong3D() {
     const mode = state?.currentMode;
     if (active) {
       if (mode === GameMode.Remote2P) {
-        return ["Back to match", "Settings", "Quit match"];
+        return ["Back to match", "Quit match"];
       }
       if (rounds.length > 0) {
         const arr = ["Resume"];
         if (!winner) {
           arr.push("Show bracket");
         }
-        arr.push("Settings", "Switch game mode", "Quit to profile");
+        arr.push("Switch game mode", "Quit to profile");
         return arr;
       }
       return [
         "Resume",
         "Restart match",
-        "Settings",
         "Switch game mode",
         "Quit to profile",
       ];
@@ -323,8 +336,10 @@ export default function Pong3D() {
     } else if (chosen === "Show bracket") {
       setShowBracket(true);
     } else if (chosen === "Settings") {
-      setShowSettings(true);
-      setShowMenu(false);
+      if (!gameApi?.__state?.gameStarted) {
+        setShowSettings(true);
+        setShowMenu(false);
+      }
     } else if (chosen === "Switch game mode") {
       resetAllToMainMenu();
     } else if (chosen === "Quit match") {
@@ -344,8 +359,9 @@ export default function Pong3D() {
     resetTourney();
     gameApi?.backToMenu();
     setWaitingStart(false);
-    setRemoteWaiting(false);
+    setRemoteStatus('none');
     setRemoteCountdown(null);
+    setShowRemoteSetup(false);
   }
 
   // --- MAIN SCREEN
@@ -394,13 +410,15 @@ export default function Pong3D() {
     setShowStartScreen(false);
     // Reset score tracking before starting a new remote game
     prevScore.current = { left: 0, right: 0 };
-    gameApi?.startRemote2P();
+    gameApi?.startRemote2P(undefined, () => {
+      setShowRemoteSetup(true);
+      setDefaultMode(true);
+    });
     // Reset UI scores before the server sends the initial state
     setScoreLeft(0);
     setScoreRight(0);
     setLeftLabel("YOU");
     setRightLabel("OPPONENT");
-    setRemoteWaiting(true);
     setRemoteCountdown(null);
   }
 
@@ -479,17 +497,43 @@ export default function Pong3D() {
     };
   }, [showBracket, tournamentEnded]);
 
+  // Prevent spacebar from unpausing while settings menu is open
+  useEffect(() => {
+    if (!showSettings) return;
+
+    function blockSpace(e: KeyboardEvent) {
+      if (e.code !== "Space") return;
+      const target = e.target as HTMLElement;
+      // Keep form controls functional but block propagation
+      if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLButtonElement
+      ) {
+        e.stopPropagation();
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    window.addEventListener("keydown", blockSpace, true);
+    return () => {
+      window.removeEventListener("keydown", blockSpace, true);
+    };
+  }, [showSettings]);
+
   // Unpause on any key when waiting to start
-    useEffect(() => {
-      if (!waitingStart) return;
-      if (gameApi?.__state?.currentMode === GameMode.Remote2P) return;
+  useEffect(() => {
+    if (!waitingStart || showSettings) return;
+    if (gameApi?.__state?.currentMode === GameMode.Remote2P) return;
     function handleStart() {
       setWaitingStart(false);
       gameApi?.unpause?.();
     }
     window.addEventListener("keydown", handleStart, { once: true });
     return () => window.removeEventListener("keydown", handleStart);
-  }, [waitingStart, gameApi]);
+  }, [waitingStart, showSettings, gameApi]);
 
   useEffect(() => {
     return () => {
@@ -527,28 +571,106 @@ export default function Pong3D() {
         rightPowerUp={activeRight}
       />
       {powerUpsEnabled && (
-        <PowerUpBar
-          onSelect={(t) => gameApi?.usePowerUp?.('left', { type: t })}
-          active={activeLeft}
-        />
+        <>
+          <PowerUpBar
+            side="left"
+            onSelect={(t) => gameApi?.usePowerUp?.('left', { type: t })}
+            active={activeLeft}
+            disabled={
+              gameApi?.__state?.currentMode === GameMode.Remote2P &&
+              gameApi?.__state?.playerSide === 'right'
+            }
+          />
+          <PowerUpBar
+            side="right"
+            onSelect={(t) => gameApi?.usePowerUp?.('right', { type: t })}
+            active={activeRight}
+            disabled={
+              gameApi?.__state?.currentMode === GameMode.AI ||
+              (gameApi?.__state?.currentMode === GameMode.Remote2P &&
+                gameApi?.__state?.playerSide === 'left')
+            }
+          />
+        </>
       )}
       <GoalBanner visible={showGoal} />
       {/* PAUSE overlay */}
-      {isPaused && !showMenu && (
+      {isPaused && !showMenu && !showSettings && (
         <PauseOverlay
           waitingStart={waitingStart}
-          onSettings={() => setShowSettings(true)}
+          onSettings={waitingStart ? () => setShowSettings(true) : undefined}
         />
       )}
       {/* Remote status overlay */}
-      {(remoteWaiting || remoteCountdown !== null) && (
-        <RemoteStatusOverlay waiting={remoteWaiting} countdown={remoteCountdown} />
+      {(remoteStatus !== 'none' || remoteCountdown !== null) && !showSettings && (
+        <RemoteStatusOverlay
+          waiting={remoteStatus === 'waiting'}
+          preparing={remoteStatus === 'preparing'}
+          countdown={remoteCountdown}
+        />
       )}
       {remoteError && (
         <RemoteErrorOverlay
           onExit={() => {
             setRemoteError(false);
             navigate('/profile');
+          }}
+        />
+      )}
+      {showRemoteSetup && (
+        <RemoteSetupOverlay
+          defaultMode={defaultMode}
+          powerUps={powerUpsEnabled}
+          ballSpeed={ballSpeed}
+          ballSize={ballSize}
+          winningScore={winningScore}
+          sound={soundOn}
+          leftColor={leftColor}
+          rightColor={rightColor}
+          onDefaultModeChange={(v) => setDefaultMode(v)}
+          onPowerUpsChange={(v) => {
+            setPowerUpsEnabled(v);
+            gameApi?.setPowerUpsEnabled?.(v);
+          }}
+          onBallSpeedChange={(v) => setBallSpeed(v)}
+          onBallSizeChange={(v) => setBallSize(v)}
+          onWinningScoreChange={(v) => setWinningScore(v)}
+          onLeftColorChange={(c) => setLeftColor(c)}
+          onRightColorChange={(c) => setRightColor(c)}
+          onSoundChange={(v) => setSoundOn(v)}
+          onConfirm={() => {
+            if (defaultMode) {
+              setPowerUpsEnabled(false);
+              setBallSpeed(BALL_SPEED);
+              setBallSize(BALL_SIZE);
+              setWinningScore(WINNING_SCORE);
+              setSoundOn(true);
+              setLeftColor('#cc33cc');
+              setRightColor('#33ccaa');
+              gameApi?.setPowerUpsEnabled?.(false);
+              gameApi?.setBallSpeed?.(BALL_SPEED);
+              gameApi?.setBallSize?.(BALL_SIZE);
+              gameApi?.setWinningScore?.(WINNING_SCORE);
+              gameApi?.setPaddleColor?.('left', '#cc33cc');
+              gameApi?.setPaddleColor?.('right', '#33ccaa');
+              gameApi?.setSoundEnabled?.(true);
+            }
+            const settings = {
+              powerUps: powerUpsEnabled,
+              ballSpeed,
+              ballSize,
+              winningScore,
+              sound: soundOn,
+              leftColor,
+              rightColor,
+            };
+            try {
+              gameApi?.__state?.ws?.send(
+                JSON.stringify({ type: 'settings', settings }),
+              );
+            } catch {}
+            gameApi?.__state?.onRemoteWaitingChange?.('waiting');
+            setShowRemoteSetup(false);
           }}
         />
       )}
