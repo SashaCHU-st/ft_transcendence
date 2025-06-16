@@ -36,14 +36,14 @@ const SignUpForm = ({ onSuccess, closeModal }: SignUpFormProps) => {
 
     const emailErr = validateEmail(email);
     const passwordErr = validatePassword(password);
-    const nameErr = validateName(name);
+    const nameError = validateName(name);
     const usernameErr = validateUsername(username);
     setEmailError(emailErr);
     setPasswordError(passwordErr);
-    setNameError(nameErr);
+    setNameError(nameError);
     setUsernameError(usernameErr);
 
-    if (emailErr || passwordErr || nameErr || usernameErr) return;
+    if (emailErr || passwordErr || nameError || usernameErr) return;
 
     try {
       const res = await fetch('https://localhost:3000/signup', {
