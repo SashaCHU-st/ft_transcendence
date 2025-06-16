@@ -30,13 +30,12 @@ const MainPage = () => {
               playsInline
               className="w-full h-auto rounded-xl transition-shadow duration-300 ease-in-out"
             />
-          <div className=" absolute sm:bottom-2 bottom-2 md:bottom-2 lg:bottom-4 
-                  right-20 sm:right-32 md:right-44 lg:right-64 xl:right-72 2xl:right-96 
-                  transform -translate-x-1/2 z-20">
+          <div className=" flex sm:bottom-2 bottom-2 md:bottom-2 lg:bottom-4
+                            justify-center">
             <button
-              className="rounded-xl o border-2 px-5 py-2 border-blue-300
+              className=" rounded-xl border-2 px-5 py-2 border-blue-300
                         lg:px-5 lg:py-2 md:px-5 md:py-2 2xl:px-5 2xl:py-3 xl:py-3
-                        font-bold text-transparent text-md sm:text-lg md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl
+                        font-bold text-transparent text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl
                         bg-clip-text bg-gradient-to-r from-indigo-300 via-blue-300 to-sky-500
                         hover:from-red-50 hover:via-indigo-200 hover:to-purple-100
                         animate-bounce [animation-duration:1s] hover:animate-none
@@ -50,7 +49,7 @@ const MainPage = () => {
               // }}
               onClick={() => openModal('login')}
             >
-              GO
+              PLAY
             </button>
           </div>
         </div>

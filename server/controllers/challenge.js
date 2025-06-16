@@ -12,9 +12,7 @@ export async function challenge(req, reply) {
       return reply.code(404).send({ message: 'User not found online' });
     }
     const alreadyChallengedBefore = db
-      .prepare(
-        `SELECT * FROM challenge WHERE user_id = ? AND friends_id = ? OR friends_id = ? AND user_id = ?`
-      )
+      .prepare(`SELECT * FROM challenge WHERE (user_id = ? AND friends_id = ?) OR (friends_id = ? AND user_id = ?)`)
       .get(user_id, friends_id.id, user_id, friends_id.id);
     if (!alreadyChallengedBefore) {
       const sendRequest = db
@@ -143,6 +141,7 @@ export async function sawAccept(req, reply) {
     return reply.code(500).send({ message: 'Something went wrong' });
   }
 }
+
 
 export async function accept(req, reply) {
   const { user_id, friends_id } = req.body;
