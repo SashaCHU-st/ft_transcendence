@@ -39,6 +39,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         gap-4
       "
     >
+    <div className="flex flex-col items-center justify-start gap-6 w-full">
       <UserHeader
         user={{
           username: user.username,
@@ -48,19 +49,13 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           history: user.history,
         }}
       />
-      <PrimaryButton onClick={handlePlay}>PLAY</PrimaryButton>
       <PlayArena
         user={{ username: user.username, avatar: user.avatar }}
         opponentImage={selectedBot ? selectedBot.image : null}
         opponentName={selectedBot ? selectedBot.name : undefined}
       />
-      <div
-        className="
-          w-full
-          max-w-xs
-          mt-4
-        "
-      >
+   
+        <PrimaryButton onClick={handlePlay}>PLAY</PrimaryButton>
         <GameSelector />
       </div>
       <div
@@ -88,6 +83,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
               text-lg
               font-orbitron
               font-bold
+              text-purple-200
               tracking-[.20em]
               mb-2
               text-left
@@ -113,6 +109,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
               text-lg
               font-orbitron
               font-bold
+              text-purple-200
               tracking-[.20em]
               mb-2
               text-right
