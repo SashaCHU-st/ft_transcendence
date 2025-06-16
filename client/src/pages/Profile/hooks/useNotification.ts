@@ -29,7 +29,7 @@ export function useNotifications(userId: string | null) {
     //       user_id: notif.user_id,
     //       username: notif.username
     //     }));
-	console.log("Existing notifications:", notificationsRef.current);
+	  console.log("Existing notifications:", notificationsRef.current);
    	console.log("Backend notifications:", data.notification);
 		
 		if (data.notification && Array.isArray(data.notification)) {
@@ -53,19 +53,19 @@ export function useNotifications(userId: string | null) {
   }, [userId]);
   console.log("Notification length: ", notifications.length);
 
-  //  useEffect(() => {
-  //   if (!userId) return;
+   useEffect(() => {
+    if (!userId) return;
 
-  //   // Check immediately on mount
-  //   checkNotifications();
+    // Check immediately on mount
+    checkNotifications();
 
-  //   // Poll every 10 seconds
-  //   const interval = setInterval(() => {
-  //     checkNotifications();
-  //   }, 10000);
+    // Poll every 10 seconds
+    const interval = setInterval(() => {
+      checkNotifications();
+    }, 10000);
 
-  //   return () => clearInterval(interval);
-  // }, [userId, checkNotifications]);
+    return () => clearInterval(interval);
+  }, [userId, checkNotifications]);
 
   const handleAcceptChallenge = useCallback(async (friendId: string) => {
     if (!userId) return;

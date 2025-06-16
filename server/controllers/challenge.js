@@ -50,6 +50,7 @@ export async function notification(req, reply) {
       .all(user_id);
 
     console.log("notifications =>", notification);
+
     const accptedFromPartner = db
       .prepare(
         `SELECT challenge.*, users.username
@@ -79,7 +80,7 @@ export async function notification(req, reply) {
       username: user.partner.username,
     }));
 
-        const notAcceptedUsers = notAcceptedFromPartner.map((ch) => {
+      const notAcceptedUsers = notAcceptedFromPartner.map((ch) => {
       return {
         ...ch,
         partner: db

@@ -17,7 +17,7 @@ export const useProfile = () => {
     notifications,
     isNotificationModalOpen,
     setIsNotificationModalOpen,
-    checkNotifications,
+    //checkNotifications,
     handleAcceptChallenge,
     handleDeclineChallenge,
   } = useNotifications(userId);
@@ -34,11 +34,9 @@ export const useProfile = () => {
 
   // Refresh user data and notifications periodically
   useEffect(() => {
-  if (userId)
-    checkNotifications();
   // Only fetch users once on mount or when really needed
   fetchAllUsers();
-}, [fetchAllUsers, checkNotifications]);
+}, [fetchAllUsers]);
   
   return {
     user,
