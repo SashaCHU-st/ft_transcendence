@@ -12,18 +12,22 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   return (
     <button
       className="
-        bg-white
-        text-black
+        bg-transparent
+        text-pink-600
         font-bold
         font-orbitron
         tracking-[.10em]
         py-2
         px-8
         rounded
-        text-xl
+        text-md
+        lg:text-2xl
         xl:text-2xl
-        shadow-md
-        hover:bg-gray-300
+        2xl:text-4xl
+        border-2
+        border-pink-500
+        hover:bg-indigo-950
+        shadow-[0_0_15px_#db2777]
       "
       {...props}
     >

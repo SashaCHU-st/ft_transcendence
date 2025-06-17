@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 
 
+
 // Define the props accepted by the ProfileActions component
 interface ProfileActionsProps {
   user: Pick<UserInfo, "username" | "online" | "email">; // Basic user info for display and API calls
@@ -23,30 +24,6 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
 }) => {
   //const navigate = useNavigate();               // Hook for navigation after logout
   const [searchQuery, setSearchQuery] = useState("");  // Local state for search input
-
-  /**
-   * Logout handler
-   * Sends POST to /logout, clears token, and navigates to login on success
-   */
-  // const handleLogout = async () => {
-  //   try {
-  //     const response = await fetch("http://localhost:3000/logout", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         ...getAuthHeaders(),                    // Attach authorization header
-  //       },
-  //       body: JSON.stringify({ email: user.email }),
-  //     });
-  //     if (!response.ok) throw new Error("Failed to logout");
-  //     toast.success("Logged out successfully!");
-  //     localStorage.removeItem("token");          // Remove JWT to prevent unauthorized access
-  //     //navigate("/login");                       // Redirect to login page
-  //   } catch (err) {
-  //     console.error("Logout error:", err);
-  //     toast.error("Failed to logout. Please try again.");
-  //   }
-  // };
 
   /**
    * Search handler
@@ -93,16 +70,16 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={handleKeyPress}
           className="
-            px-3
+            px-4
             py-1
             rounded-2xl
             text-xs
             sm:text-xs
-            md:text-xs
-            xl:text-sm
+            md:text-sm
             bg-gray-800
             border
-            border-emerald-200
+            border-purple-200
+            shadow-[0_0_15px_#c084fc]
             text-white
             focus:outline-none
             focus:ring-2
@@ -148,7 +125,7 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
           <button
             onClick={handleSearch}
           >
-            🔍
+             <i className="fas fa-magnifying-glass text-blue-300 hover:text-blue-400 text-md xl:text-xl w-8 h-8"></i>
           </button>
         </div>
       </div>
@@ -166,7 +143,7 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
             md:text-xl
             xl:text-2xl
             font-bold
-            ${user.online ? "text-green-400" : "text-gray-400"}
+            ${user.online ? "text-purple-200" : "text-gray-400"}
             truncate
             max-w-[150px]
             sm:max-w-[200px]
@@ -185,40 +162,27 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
           </button>
          
 
-            <button
-                onClick={onProfileClick}
+          <button
+              onClick={onProfileClick}
                 className="p-1 rounded-full bg-gray-800 hover:bg-gray-700 transition cursor-pointer"
                 aria-label="Open settings"
               >
-                <img
+               <img
                   src="/button_img/user-settings.png" 
                   alt="Settings"
                   className="w-6 h-6 lg:w-7 lg:h-7 drop-shadow-[0_0_25px_rgba(255,215,0,1)] 
                             animate-crown-spin hover:animate-none"
-                />
-              </button>
+              />
+          </button>
+
           <button
             onClick={logout}
             className="
-              px-3
+              px-1
               py-1
-              sm:px-3
-              sm:py-1
-              md:px-3 md:py-1
-              lg:px-3 lg:py-1
-              xl:px-3 xl:py-1
-              rounded-2xl
-              text-xs
+              rounded-full
               bg-gray-800
-         
-              sm:text-xs
-              md:text-xs
-              lg:text-xs
-              xl:text-sm
-              
-              font-orbitron
-              border
-              border-emerald-200
+              hover:bg-gray-700
               focus:outline-none
               focus:ring-2
             focus:ring-indigo-800
@@ -229,7 +193,8 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
               hover:scale-110
             "
           >
-            LogOut
+           
+            <i className="fas fa-right-from-bracket text-blue-500 hover:text-blue-400 text-xl xl:text-2xl w-8 h-8"></i>
           </button>
         </div>
       </div>

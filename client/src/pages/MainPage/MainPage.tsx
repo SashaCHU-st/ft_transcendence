@@ -30,7 +30,7 @@ const MainPage = () => {
               playsInline
               className="w-full h-auto rounded-xl transition-shadow duration-300 ease-in-out"
             />
-          <div className=" flex sm:bottom-2 bottom-2 md:bottom-2 lg:bottom-4
+          <div className=" absolute flex bottom-0 left-0 right-0 
                             justify-center">
             <button
               className=" rounded-xl border-2 px-5 py-2 border-blue-300
@@ -39,14 +39,10 @@ const MainPage = () => {
                         bg-clip-text bg-gradient-to-r from-indigo-300 via-blue-300 to-sky-500
                         hover:from-red-50 hover:via-indigo-200 hover:to-purple-100
                         animate-bounce [animation-duration:1s] hover:animate-none
-                        transition-all ease-in-out hover:scale-110 w-full sm:w-auto text-center
+                        transition-all ease-in-out hover:scale-95 w-full sm:w-auto text-center
                        bg-black bg-opacity-40
                        text-[#40BFFF]
                         shadow-[0_0_15px_rgba(0,255,255,0.7)]"
-              //   style={{
-              //   textShadow: '2px 2px 10px rgba(209, 255, 249, 0.6)',
-              //   boxShadow: '0 0 15px 6px rgba(117, 184, 255, 0.5)'
-              // }}
               onClick={() => openModal('login')}
             >
               PLAY

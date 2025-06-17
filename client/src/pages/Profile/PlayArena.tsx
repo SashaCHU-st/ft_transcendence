@@ -37,15 +37,16 @@ const Arena: React.FC<ArenaProps> = ({
         lg:h-44
         xl:w-56
         xl:h-56
-        2xl:w-60
-        2xl:h-60
+        2xl:w-80
+        2xl:h-80
         rounded-full
         bg-gray-700
         bg-opacity-60
-        shadow-inner
+       
         overflow-hidden
         flex
         items-center
+        shadow-[0_0_15px_#c084fc]
         drop-shadow-[0_0_8px_white]
         justify-center">
         {user.avatar ? (
@@ -80,17 +81,18 @@ const Arena: React.FC<ArenaProps> = ({
         lg:h-44
         xl:w-56
         xl:h-56
-        2xl:w-60
-        2xl:h-60
+        2xl:w-80
+        2xl:h-80
         rounded-full
-        bg-gray-700
+     
         bg-opacity-60
-        shadow-inner
+       
         overflow-hidden
         flex
         items-center
         justify-center
         drop-shadow-[0_0_8px_white]
+       shadow-[0_0_15px_#60a5fa]
         relative">
         {opponentImage ? (
           <>
@@ -108,7 +110,7 @@ const Arena: React.FC<ArenaProps> = ({
                 bottom-[-1.5rem]
                 text-xs
                 font-medium
-                text-gray-300
+                text-blue-400
               ">
                 {opponentName}
               </span>
@@ -116,8 +118,9 @@ const Arena: React.FC<ArenaProps> = ({
           </>
         ) : (
           <div className="flex flex-col items-center text-xs">
-            <span className="font-semibold xl:text-xl">Player 2</span>
-            <span className="text-gray-300 xl:text-base mt-1">Waiting...</span>
+            {/* <span className="font-semibold font-orbitron xl:text-xl">OPPONENT</span>
+            <span className="text-gray-300 font-ubuntu xl:text-base mt-1">Waiting...</span> */}
+            <i className="fa-solid fa-question text-6xl xl:text-7xl text-blue-300"></i>
           </div>
         )}
       </div>

@@ -1,6 +1,8 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { bots } from "../types/botsData";
+
+
 export function useGame() {
   const [selectedBot, setSelectedBot] = useState<(typeof bots)[0] | null>(null);
   const navigate = useNavigate();
