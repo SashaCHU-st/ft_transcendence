@@ -17,6 +17,8 @@
  * @property {number} rightPaddleZ
  * @property {number} leftScore
  * @property {number} rightScore
+ * @property {string | null} [activeLeft]
+ * @property {string | null} [activeRight]
  */
 
 /**
@@ -37,14 +39,21 @@
 
 /**
  * @typedef {object} EndMessage
- * @property {'end'} type
- * @property {Side} winner
- * @property {RemoteState} state
- * @property {'opponent_left'} [reason]
+  * @property {'end'} type
+  * @property {Side} winner
+  * @property {RemoteState} state
+  * @property {'opponent_left'} [reason]
  */
 
 /**
- * @typedef {InitMessage | StateMessage | EndMessage} ServerMessage
+ * @typedef {object} PowerMessage
+ * @property {'power'} type
+ * @property {string} power
+ * @property {number} [duration]
+ */
+
+/**
+ * @typedef {InitMessage | StateMessage | EndMessage | PowerMessage} ServerMessage
  */
 
 /**
@@ -56,6 +65,8 @@ export const MessageTypes = {
   INIT: 'init',
   STATE: 'state',
   END: 'end',
+  POWER: 'power',
+  WAIT: 'wait',
 };
 
 /**
@@ -67,12 +78,20 @@ export const MessageTypes = {
  * @param {number} [serverTime]
  * @returns {InitMessage}
  */
-export function createInitMessage(side, leftName, rightName, startTime, serverTime) {
+export function createInitMessage(
+  side,
+  leftName,
+  rightName,
+  startTime,
+  serverTime,
+  settings,
+) {
   const msg = { type: 'init', side };
   if (leftName) msg.leftName = leftName;
   if (rightName) msg.rightName = rightName;
   if (typeof startTime === 'number') msg.startTime = startTime;
   if (typeof serverTime === 'number') msg.serverTime = serverTime;
+  if (settings) msg.settings = settings;
   return msg;
 }
 

@@ -1,7 +1,8 @@
 import { WebSocketServer } from 'ws';
 import { updateStats } from './gameLogic.js';
+import { POWER_UPS } from '../../shared/powerups.js';
 import PlayerQueue from './playerQueue.js';
-import { createEndMessage } from '../../shared/messages.js';
+import { createEndMessage, MessageTypes } from '../../shared/messages.js';
 import { startGame } from './gameStarter.js';
 import { broadcastSystemMessage } from '../chatWsServer.js';
 import { randomUUID } from 'crypto';
@@ -18,6 +19,32 @@ export function initWsServer() {
   const wss = new WebSocketServer({ noServer: true });
   const waiting = new PlayerQueue();
   const refreshInterval = SYSTEM_MESSAGE_TTL_MS - 1000;
+
+  function tryPairing(hostWs) {
+    if (!hostWs.ready) return false;
+    for (let i = 0; i < waiting.queue.length; i++) {
+      const cand = waiting.queue[i].ws;
+      if (cand === hostWs) continue;
+      if (cand.user_id === hostWs.user_id) continue;
+      waiting.queue.splice(i, 1);
+      waiting.remove(hostWs);
+      if (hostWs.waitingMessage) {
+        broadcastSystemMessage(hostWs.waitingMessage, { remove: true });
+        hostWs.waitingMessage = null;
+        if (hostWs.waitingRefresh) clearInterval(hostWs.waitingRefresh);
+        hostWs.waitingRefresh = null;
+      }
+      if (cand.waitingMessage) {
+        broadcastSystemMessage(cand.waitingMessage, { remove: true });
+        cand.waitingMessage = null;
+        if (cand.waitingRefresh) clearInterval(cand.waitingRefresh);
+        cand.waitingRefresh = null;
+      }
+      startGame(hostWs, cand, hostWs.settings);
+      return true;
+    }
+    return false;
+  }
 
   wss.on('connection', (ws, req) => {
     ws.id = randomUUID();
@@ -60,10 +87,25 @@ export function initWsServer() {
       } catch {
         return;
       }
+      if (msg.type === 'settings' && typeof msg.settings === 'object') {
+        ws.settings = msg.settings;
+        ws.ready = true;
+        tryPairing(ws);
+        return;
+      }
       const game = ws.game;
-      if (!game || msg.type !== 'input') return;
-      if (typeof msg.dir !== 'number' || ![-1, 0, 1].includes(msg.dir)) return;
-      game.handleInput(ws.side, msg.dir);
+      if (!game) return;
+      if (msg.type === 'input') {
+        if (typeof msg.dir !== 'number' || ![-1, 0, 1].includes(msg.dir)) return;
+        game.handleInput(ws.side, msg.dir);
+      } else if (msg.type === MessageTypes.POWER) {
+        if (typeof msg.power !== 'string') return;
+        const dur =
+          typeof msg.duration === 'number'
+            ? msg.duration
+            : undefined;
+        game.activatePowerUp(ws.side, msg.power, dur ?? POWER_UPS[msg.power]?.defaultDuration);
+      }
     });
 
     ws.on('close', () => {
@@ -100,7 +142,9 @@ export function initWsServer() {
 
       const winnerId = winnerWs.user_id ?? winnerWs.id;
       const loserId = ws.user_id ?? ws.id;
-      updateStats(winnerId, loserId);
+      const winnerScore = winnerSide === 'left' ? game.leftScore : game.rightScore;
+      const loserScore = winnerSide === 'left' ? game.rightScore : game.leftScore;
+      updateStats(winnerId, loserId, winnerScore, loserScore);
 
         try {
           winnerWs.send(
@@ -114,35 +158,20 @@ export function initWsServer() {
       game.stop();
     });
 
-    if (waiting.size > 0) {
-      const other = waiting.dequeueDifferent(ws.user_id);
-      if (other) {
-        if (other.waitingMessage) {
-          broadcastSystemMessage(other.waitingMessage, { remove: true });
-          other.waitingMessage = null;
-          if (other.waitingRefresh) clearInterval(other.waitingRefresh);
-          other.waitingRefresh = null;
-        }
-        startGame(other, ws);
-      } else {
-        waiting.enqueue(ws);
-        const name = ws.username || `Player-${ws.user_id ?? ws.id}`;
-        ws.waitingMessage = {
-          id: randomUUID(),
-          type: 'waiting',
-          text: `${name} is waiting for an opponent`,
-          userId: ws.user_id,
-        };
-        broadcastSystemMessage(ws.waitingMessage, { excludeUsers: ws.user_id !== undefined ? [ws.user_id] : [] });
-        ws.waitingRefresh = setInterval(() => {
-          if (ws.waitingMessage) {
-            broadcastSystemMessage(ws.waitingMessage, { excludeUsers: ws.user_id !== undefined ? [ws.user_id] : [] });
-          } else if (ws.waitingRefresh) {
-            clearInterval(ws.waitingRefresh);
-          }
-        }, refreshInterval);
+    const readyHostIndex = waiting.queue.findIndex(
+      (p) => p.ws.ready && p.ws.user_id !== ws.user_id,
+    );
+    if (readyHostIndex !== -1) {
+      const host = waiting.queue.splice(readyHostIndex, 1)[0].ws;
+      if (host.waitingMessage) {
+        broadcastSystemMessage(host.waitingMessage, { remove: true });
+        host.waitingMessage = null;
+        if (host.waitingRefresh) clearInterval(host.waitingRefresh);
+        host.waitingRefresh = null;
       }
+      startGame(host, ws, host.settings);
     } else {
+      ws.ready = waiting.size > 0; // non-host players are ready
       waiting.enqueue(ws);
       const name = ws.username || `Player-${ws.user_id ?? ws.id}`;
       ws.waitingMessage = {
@@ -159,6 +188,14 @@ export function initWsServer() {
           clearInterval(ws.waitingRefresh);
         }
       }, refreshInterval);
+      const hostWaiting = waiting.queue.find(
+        (p) => p.ws !== ws && !p.ws.ready,
+      );
+      if (hostWaiting) {
+        try {
+          ws.send(JSON.stringify({ type: MessageTypes.WAIT }));
+        } catch {}
+      }
     }
   });
 

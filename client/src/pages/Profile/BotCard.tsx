@@ -7,6 +7,8 @@ interface BotCardProps {
   image: string;
   strengths: string;
   weaknesses: string;
+  /** Difficulty rating from 2 to 4 represented as stars */
+  stars: number;
   onSelect: () => void;
   selected: boolean;
 }
@@ -16,6 +18,7 @@ const BotCard: React.FC<BotCardProps> = ({
   image,
   strengths,
   weaknesses,
+  stars,
   onSelect,
   selected
 }) => {
@@ -82,6 +85,9 @@ const BotCard: React.FC<BotCardProps> = ({
         ">
           {name}
         </h3>
+        <div className="text-yellow-400 text-sm mb-1">
+          {'\u2B50'.repeat(stars)}
+        </div>
         <p className="text-sm sm:text-base text-green-300 mb-1 break-words">
           + {strengths}
         </p>

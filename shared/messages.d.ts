@@ -7,6 +7,18 @@ export interface RemoteState {
   rightPaddleZ: number;
   leftScore: number;
   rightScore: number;
+  activeLeft?: string | null;
+  activeRight?: string | null;
+}
+
+export interface RemoteSettings {
+  powerUps: boolean;
+  ballSpeed: number;
+  ballSize: number;
+  winningScore: number;
+  sound: boolean;
+  leftColor: string;
+  rightColor: string;
 }
 
 export interface InitMessage {
@@ -16,6 +28,7 @@ export interface InitMessage {
   rightName?: string;
   startTime?: number;
   serverTime?: number;
+  settings?: RemoteSettings;
 }
 
 export interface StateMessage {
@@ -30,7 +43,22 @@ export interface EndMessage {
   reason?: 'opponent_left';
 }
 
-export type ServerMessage = InitMessage | StateMessage | EndMessage;
+export interface PowerMessage {
+  type: 'power';
+  power: string;
+  duration?: number;
+}
+
+export interface WaitMessage {
+  type: 'wait';
+}
+
+export type ServerMessage =
+  | InitMessage
+  | StateMessage
+  | EndMessage
+  | PowerMessage
+  | WaitMessage;
 
 /**
  * Enum-like object with string constants for message types.
@@ -39,6 +67,8 @@ export const MessageTypes: {
   readonly INIT: 'init';
   readonly STATE: 'state';
   readonly END: 'end';
+  readonly POWER: 'power';
+  readonly WAIT: 'wait';
 };
 
 export function createInitMessage(
@@ -47,6 +77,7 @@ export function createInitMessage(
   rightName?: string,
   startTime?: number,
   serverTime?: number,
+  settings?: RemoteSettings,
 ): InitMessage;
 
 export function createStateMessage(state: RemoteState): StateMessage;

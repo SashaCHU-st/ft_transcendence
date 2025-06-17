@@ -95,6 +95,7 @@ export function createScene(
 
   // ball
   const ball = BABYLON.MeshBuilder.CreateSphere("ball", { diameter: 1 }, scene);
+  ball.scaling.set(config.BALL_SIZE, config.BALL_SIZE, config.BALL_SIZE);
   ball.position.set(0, 0.5, 0);
   ball.material = neonMat(scene, 0.8, 0.8, 0.2);
 

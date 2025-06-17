@@ -30,27 +30,22 @@ const MainPage = () => {
               playsInline
               className="w-full h-auto rounded-xl transition-shadow duration-300 ease-in-out"
             />
-          <div className=" absolute sm:bottom-2 bottom-2 md:bottom-2 lg:bottom-4 
-                  right-20 sm:right-32 md:right-44 lg:right-64 xl:right-72 2xl:right-96 
-                  transform -translate-x-1/2 z-20">
+          <div className=" absolute flex bottom-0 left-0 right-0 
+                            justify-center">
             <button
-              className="rounded-xl o border-2 px-5 py-2 border-blue-300
+              className=" rounded-xl border-2 px-5 py-2 border-blue-300
                         lg:px-5 lg:py-2 md:px-5 md:py-2 2xl:px-5 2xl:py-3 xl:py-3
-                        font-bold text-transparent text-md sm:text-lg md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl
+                        font-bold text-transparent text-3xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl
                         bg-clip-text bg-gradient-to-r from-indigo-300 via-blue-300 to-sky-500
                         hover:from-red-50 hover:via-indigo-200 hover:to-purple-100
                         animate-bounce [animation-duration:1s] hover:animate-none
-                        transition-all ease-in-out hover:scale-110 w-full sm:w-auto text-center
+                        transition-all ease-in-out hover:scale-95 w-full sm:w-auto text-center
                        bg-black bg-opacity-40
                        text-[#40BFFF]
                         shadow-[0_0_15px_rgba(0,255,255,0.7)]"
-              //   style={{
-              //   textShadow: '2px 2px 10px rgba(209, 255, 249, 0.6)',
-              //   boxShadow: '0 0 15px 6px rgba(117, 184, 255, 0.5)'
-              // }}
               onClick={() => openModal('login')}
             >
-              GO
+              PLAY
             </button>
           </div>
         </div>

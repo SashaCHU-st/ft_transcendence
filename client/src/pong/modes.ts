@@ -2,13 +2,21 @@
 import { resetScores, resetPositions } from "./physics";
 import type { SceneObjects } from "./scene";
 import { removeAllKeyListeners, setupKeyListeners } from "./utils";
+import { AI_KEYS } from "./ai";
 import type { GameState } from "./pong";
 import { GameMode } from "./pong";
+import { PADDLE_SPEED } from "../../../shared/constants.js";
 
 /**
  * SINGLE vs AI
  */
-export function startSinglePlayerAI(state: GameState, scene: SceneObjects) {
+import type { BotInfo } from "../pages/Profile/types/botsData";
+
+export function startSinglePlayerAI(
+  state: GameState,
+  scene: SceneObjects,
+  bot?: BotInfo,
+) {
   removeAllKeyListeners(state);
 
   state.currentMode = GameMode.AI;
@@ -22,11 +30,20 @@ export function startSinglePlayerAI(state: GameState, scene: SceneObjects) {
   state.onEscMenuChange?.(false);
 
   state.match.leftName = "YOU";
-  state.match.rightName = "AI";
+  state.match.rightName = bot?.name || "AI";
+  state.bot = bot ?? null;
+
+  state.physics.AI_SPEED = PADDLE_SPEED;
+  state.physics.AI_REACTION = 1;
+  state.physics.AI_ERROR = bot?.error ?? 0;
   // Notify React
   state.onPlayersUpdate?.(state.match.leftName, state.match.rightName);
 
-  setupKeyListeners(state, { up: "ArrowUp", down: "ArrowDown" });
+  setupKeyListeners(
+    state,
+    { up: "ArrowUp", down: "ArrowDown" },
+    AI_KEYS,
+  );
 }
 
 /**
@@ -63,6 +80,7 @@ export async function startRemote2P(
   state: GameState,
   scene: SceneObjects,
   url = "wss://localhost:3000/ws",
+  onHost?: () => void,
 ) {
   removeAllKeyListeners(state);
 
@@ -97,7 +115,7 @@ export async function startRemote2P(
   if (token) {
     connectUrl += connectUrl.includes("?") ? `&token=${token}` : `?token=${token}`;
   }
-  state.remoteCleanup = connect(state, connectUrl, scene);
+  state.remoteCleanup = connect(state, connectUrl, scene, onHost);
 }
 
 /**

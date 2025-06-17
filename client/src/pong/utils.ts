@@ -65,4 +65,15 @@ export function setupKeyListeners(
   window.addEventListener('keyup', state.keyUpHandler!);
 }
 
+export function dispatchKey(
+  state: GameState,
+  key: string,
+  type: 'down' | 'up',
+) {
+  const handler = type === 'down' ? state.keyDownHandler : state.keyUpHandler;
+  if (handler) {
+    handler(new KeyboardEvent(type === 'down' ? 'keydown' : 'keyup', { key }));
+  }
+}
+
 

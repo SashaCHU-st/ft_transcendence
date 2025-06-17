@@ -27,9 +27,9 @@ const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onOpenC
           text-transparent
           bg-clip-text
           bg-gradient-to-r
-          from-red-200
-          via-indigo-200
-          to-green-200
+          from-blue-500
+          via-purple-500
+          to-pink-600
           text-sm
           sm:text-base
           md:text-xl
@@ -40,11 +40,9 @@ const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onOpenC
           duration-300
           ease-in-out
           tracking-[.10em]
+          
         "
-        style={{
-          textShadow:
-            "0 0 20px rgba(255, 255, 255, 0.3), 0 0 32px rgba(255, 0, 255, 0.3)",
-        }}
+    
       >
         SUPER PONG
       </div>

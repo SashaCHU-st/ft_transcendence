@@ -4,8 +4,11 @@ import type {
   StateMessage,
   EndMessage,
   ServerMessage,
+  RemoteSettings,
 } from "../../../shared/messages.js";
 import { MessageTypes } from "../../../shared/messages.js";
+import * as BABYLON from "@babylonjs/core";
+import { setSoundEnabled } from "./sound";
 import type { SceneObjects } from "./scene";
 import { spawnBall } from "./physics";
 import type { GameState } from "./pong";
@@ -17,12 +20,14 @@ export function connect(
   state: GameState,
   url: string,
   objs: SceneObjects,
+  onHost?: () => void,
 ): () => void {
   const ws = new WebSocket(url);
   state.ws = ws;
   let receivedInit = false;
   let countdownInterval: ReturnType<typeof setInterval> | null = null;
   let cleaned = false;
+  let hostTimer: ReturnType<typeof setTimeout> | null = null;
 
   const clearCountdown = () => {
     if (countdownInterval) {
@@ -39,6 +44,10 @@ export function connect(
 
   const handleInitMessage = (msg: InitMessage) => {
     receivedInit = true;
+    if (hostTimer) {
+      clearTimeout(hostTimer);
+      hostTimer = null;
+    }
     clearCountdown();
     state.playerSide = msg.side;
     if (msg.leftName && msg.rightName) {
@@ -46,7 +55,22 @@ export function connect(
       state.match.rightName = msg.rightName;
       state.onPlayersUpdate?.(msg.leftName, msg.rightName);
     }
-    state.onRemoteWaitingChange?.(false);
+    if (msg.settings) {
+      const s = msg.settings as RemoteSettings;
+      state.powerUpsEnabled = s.powerUps;
+      state.physics.BALL_SPEED = s.ballSpeed;
+      state.physics.BALL_SIZE = s.ballSize;
+      state.physics.WINNING_SCORE = s.winningScore;
+      const leftMat =
+        objs.leftPaddle.material as BABYLON.StandardMaterial | undefined;
+      const rightMat =
+        objs.rightPaddle.material as BABYLON.StandardMaterial | undefined;
+      if (leftMat) leftMat.emissiveColor = BABYLON.Color3.FromHexString(s.leftColor);
+      if (rightMat) rightMat.emissiveColor = BABYLON.Color3.FromHexString(s.rightColor);
+      setSoundEnabled(s.sound);
+      state.onRemoteSettings?.(s);
+    }
+    state.onRemoteWaitingChange?.(null);
 
     const serverTime =
       typeof msg.serverTime === 'number' ? msg.serverTime : Date.now();
@@ -63,7 +87,7 @@ export function connect(
       } else {
         clearCountdown();
         state.onRemoteCountdown?.(0);
-        spawnBall(objs);
+        spawnBall(state, objs);
         state.paused = false;
         state.manualPaused = false;
         state.onPauseChange?.(false);
@@ -83,7 +107,17 @@ export function connect(
       state.remotePrevBallDX = 0;
       state.remoteBallDX = 0;
     }
+    const prev = state.remoteState;
     state.remoteState = newState;
+    if (
+      prev?.activeLeft !== newState.activeLeft ||
+      prev?.activeRight !== newState.activeRight
+    ) {
+      state.onPowerUpUpdate?.(
+        (newState.activeLeft as any) ?? null,
+        (newState.activeRight as any) ?? null,
+      );
+    }
   };
 
   const handleEndMessage = (msg: EndMessage) => {
@@ -111,9 +145,13 @@ export function connect(
     cleaned = true;
     state.gameStarted = false;
     state.paused = false;
-    state.onRemoteWaitingChange?.(false);
+    state.onRemoteWaitingChange?.(null);
     state.onRemoteCountdown?.(0);
     clearCountdown();
+    if (hostTimer) {
+      clearTimeout(hostTimer);
+      hostTimer = null;
+    }
     removeAllKeyListeners(state);
     if (
       ws.readyState !== WebSocket.CLOSED &&
@@ -124,7 +162,11 @@ export function connect(
   };
 
   ws.onopen = () => {
-    state.onRemoteWaitingChange?.(true);
+    hostTimer = setTimeout(() => {
+      if (!receivedInit) {
+        onHost?.();
+      }
+    }, 500);
   };
 
   ws.onmessage = (ev) => {
@@ -143,6 +185,10 @@ export function connect(
         break;
       case MessageTypes.END:
         handleEndMessage(msg as EndMessage);
+        break;
+      case MessageTypes.WAIT:
+        receivedInit = true;
+        state.onRemoteWaitingChange?.('preparing');
         break;
     }
   };

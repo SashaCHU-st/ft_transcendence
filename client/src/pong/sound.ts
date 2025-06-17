@@ -1,6 +1,12 @@
 let ctx: AudioContext | null = null;
+let soundEnabled = true;
+
+export function setSoundEnabled(v: boolean) {
+  soundEnabled = v;
+}
 
 export function playPaddleSound(): void {
+  if (!soundEnabled) return;
   if (typeof window === 'undefined') return;
   if (!ctx) {
     type WindowWithAudio = Window & { webkitAudioContext?: typeof AudioContext };
