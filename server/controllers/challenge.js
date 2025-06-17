@@ -156,9 +156,9 @@ export async function accept(req, reply) {
 
     console.log('kkkkkkkkkkkkk =>', acceptReq.id);
 
-    const gameStarts = db
-      .prepare(`INSERT INTO game (challenge_id, date ) VALUES (?,?)`)
-      .run(acceptReq.id, new Date().toISOString());
+    // const gameStarts = db
+    //   .prepare(`INSERT INTO game (challenge_id, date ) VALUES (?,?)`)
+    //   .run(acceptReq.id, new Date().toISOString());
 
     return reply
       .code(201)

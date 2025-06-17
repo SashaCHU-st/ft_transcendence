@@ -18,25 +18,26 @@ export async function signup(req, reply) {
       .get(email, username);
     if (!hasUser) {
       const users = db.prepare(
-        'INSERT INTO users (name, username, email, password,twofa_enabled) VALUES (?, ?, ?, ?,?)'
+        'INSERT INTO users (name, username, email, password,twofa_enabled, online) VALUES (?, ?, ?, ?,?, ?)'
       );
       const result = users.run(
         name,
         username,
         email,
         await hashedPassword(password),
+        1,
         1
       );
       const token = req.jwt.sign({
         id: result.lastInsertRowid,
       });
-      const online = db
-        .prepare(`UPDATE users SET online = ? WHERE id = ?`)
-        .run(1, result.lastInsertRowid);
+      // const online = db
+      //   .prepare(`UPDATE users SET online = ? WHERE id = ?`)
+      //   .run(1, result.lastInsertRowid);
 
-      const updated = db
-        .prepare(`SELECT id, online FROM users WHERE id = ?`)
-        .get(result.lastInsertRowid);
+      // const updated = db
+      //   .prepare(`SELECT id, online FROM users WHERE id = ?`)
+      //   .get(result.lastInsertRowid);
       return reply.code(201).send({
         message: 'USER created',
         users,
@@ -99,7 +100,7 @@ export async function logout(req, reply) {
     const offline = db
       .prepare('UPDATE users SET online = ? WHERE id = ?')
       .run(0, user_id);
-    return reply.code(200).send({ message: 'We are logged out' });
+    return reply.code(200).send({ message: 'We are logged out', offline });
   } catch (err) {
     console.error('Database error:', err.message);
     return reply.code(500).send({ message: 'Something went wrong' });
@@ -158,7 +159,7 @@ export async function twoFASend(req, reply) {
       subject: 'Your 2FA Code',
       text: `Your verification code is: ${code}. It will expire in 5 minutes.`,
     });
-    return reply.code(200).send({ success: true });
+    return reply.code(200).send({ success: true, info });
   } catch (err) {
     console.error('Error sending 2FA email:', err);
     return reply.code(500).send({ error: 'Failed to send email' });
