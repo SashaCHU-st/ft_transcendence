@@ -19,7 +19,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   const [username, setUsername] = useState(userData.username);
   const [name, setName] = useState(userData.name);
   const [password, setPassword] = useState("");
-  const MAX_FILE_SIZE = 2 * 1024 * 1024; // Maximum file size: 2 MB
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // Maximum file size: 5 MB
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [nameError, setNameError] = useState<string | null>(null);
@@ -45,7 +45,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
 
   // Handler for saving changes
   const handleSave = () => {
-    const passwordError = validatePassword(password);
+    const passwordError = password ? validatePassword(password): null;
     const nameError = validateName(name);
     const usernameError = validateUsername(username);
     setPasswordError(passwordError);
@@ -261,7 +261,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
               onChange={(e) => {
                   const value = e.target.value;
                   setPassword(value);
-                  setPasswordError(validatePassword(value));
+                  setPasswordError(value ? validatePassword(value): null);
               }}
               className={`
                 w-full

@@ -29,7 +29,7 @@ function hitPaddle(ballX, ballZ, paddleX, paddleZ, scale = 1) {
   );
 }
 
-export function updateStats(winnerId, loserId) {
+export function updateStats(winnerId, loserId, winnerScore, loserScore) {
   if (winnerId) {
     const row = db.prepare('SELECT wins FROM users WHERE id = ?').get(winnerId);
     if (row) {
@@ -43,6 +43,16 @@ export function updateStats(winnerId, loserId) {
       db.prepare('UPDATE users SET losses = ? WHERE id = ?').run(row.losses + 1, loserId);
     }
   }
+
+  db.prepare(
+    `INSERT INTO game (win_user_id, losses_user_id, win_score, lose_score, date) VALUES (?,?,?,?,?)`
+  ).run(
+    winnerId ?? 0,
+    loserId ?? 0,
+    winnerScore ?? 0,
+    loserScore ?? 0,
+    new Date().toISOString()
+  );
 }
 
 export class Game {
@@ -217,7 +227,9 @@ export class Game {
 
       const winnerId = winnerWs.user_id ?? winnerWs.id;
       const loserId = loserWs.user_id ?? loserWs.id;
-      updateStats(winnerId, loserId);
+      const winnerScore = winnerSide === 'left' ? this.leftScore : this.rightScore;
+      const loserScore = winnerSide === 'left' ? this.rightScore : this.leftScore;
+      updateStats(winnerId, loserId, winnerScore, loserScore);
 
       for (const p of this.players) {
         p.send(JSON.stringify(createEndMessage(winnerSide, state)));

@@ -216,7 +216,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-6 w-full">
         {/* Friends List */}
         <div className="flex flex-col items-start w-full">
-          <h2 className="text-lg xl:text-xl 2xl:text-2xl font-bold font-orbitron mb-2 text-left drop-shadow-[0_0_8px_pink] tracking-[.20em]">
+          <h2 className="text-lg xl:text-xl  font-bold font-orbitron mb-2 text-left drop-shadow-[0_0_8px_pink] tracking-[.20em]">
             FRIENDS
           </h2>
           <UserList
@@ -248,7 +248,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
 
         {/* Players List */}
         <div className="flex flex-col items-end w-full">
-          <h2 className="text-lg xl:text-xl 2xl:text-2xl font-semibold font-orbitron mb-2 text-right drop-shadow-[0_0_8px_pink] tracking-[.20em]">
+          <h2 className="text-lg xl:text-xl  font-semibold font-orbitron mb-2 text-right drop-shadow-[0_0_8px_pink] tracking-[.20em]">
             PLAYERS
           </h2>
           <UserList

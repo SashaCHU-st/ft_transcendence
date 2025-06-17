@@ -134,6 +134,21 @@ export const recordLoss = async (
   await api.post("/loseUser", { user_id: id , challenge_id :challenge_id}, { headers });
 };
 
+export const recordAiMatch = async (
+  playerScore: number,
+  aiScore: number,
+  playerWon: boolean,
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders(),
+): Promise<void> => {
+  const id = getUserIdFromToken();
+  if (id === null) throw new Error("No user id");
+  await api.post(
+    "/aiResult",
+    { user_id: id, player_score: playerScore, ai_score: aiScore, player_won: playerWon },
+    { headers },
+  );
+};
+
 export interface ChatMessage {
   id: number;
   sender_id: number;

@@ -175,7 +175,7 @@ const Profile: React.FC = () => {
     players, // List of all players
     selectedBot, // Currently selected bot for gameplay
     isModalOpen, // State for profile modal visibility
-    isLoading, // Loading state for data fetching
+   // isLoading, // Loading state for data fetching
     setSelectedBot, // Function to update selected bot
     setIsModalOpen, // Function to toggle profile modal
     handleSaveProfile, // Handler to save profile changes
@@ -217,22 +217,22 @@ const Profile: React.FC = () => {
   };
 
   // Display loading state while fetching data
-  if (isLoading) {
-    return (
-      <SpaceBackground>
-        <div
-          className="h-screen
-                      w-full 
-                      flex 
-                      items-center 
-                      justify-center
-                      text-white"
-        >
-          Loading data, please wait...
-        </div>
-      </SpaceBackground>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <SpaceBackground>
+  //       <div
+  //         className="h-screen
+  //                     w-full 
+  //                     flex 
+  //                     items-center 
+  //                     justify-center
+  //                     text-white"
+  //       >
+  //         Loading data, please wait...
+  //       </div>
+  //     </SpaceBackground>
+  //   );
+  // }
 
   // Display error if user data failed to load
   if (!user) {
