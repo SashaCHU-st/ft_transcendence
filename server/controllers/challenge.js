@@ -174,8 +174,7 @@ export async function accept(req, reply) {
       .code(201)
       .send({
         message: 'Accepted',
-        id:acceptReq,
-        challenge_id: acceptReq.lastInsertRowid,
+        challenge_id: acceptReq.id,
       });
   } catch (err) {
     console.error('Database error:', err.message);

@@ -9,7 +9,7 @@ import { useGame } from "./useGame";
 //import api from "../types/api";
 
 export const useProfile = () => {
-  const { user, friends, players, fetchAllUsers, setFriends, setPlayers, setUser } = useUserData();
+  const { user, friends, players, chatList, fetchAllUsers, setFriends, setPlayers, setChatList, setUser } = useUserData();
   const userId = user?.id || null;
   const authHeaders = getAuthHeaders();
 
@@ -33,7 +33,7 @@ export const useProfile = () => {
 
   // Game logic
   const navigate = useNavigate();
-  const { selectedBot, setSelectedBot, handlePlay } = useGame(user, fetchAllUsers, authHeaders);
+  const { selectedBot, setSelectedBot, handlePlay } = useGame();
 
   useEffect(() => {
   fetchAllUsers();
@@ -51,6 +51,7 @@ export const useProfile = () => {
     user,
     friends,
     players,
+    chatList,
     notifications,
     isNotificationModalOpen,
     setIsNotificationModalOpen,
@@ -62,6 +63,7 @@ export const useProfile = () => {
     setIsModalOpen,
     handleSaveProfile,
     selectedBot,
+    setChatList,
     setSelectedBot,
     handlePlay,
     navigate,

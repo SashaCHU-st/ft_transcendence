@@ -81,10 +81,13 @@ export function useNotifications(userId: string | null) {
   const handleAcceptChallenge = useCallback(async (friendId: string) => {
     if (!userId) return;
     try {
-      await api.post("/acceptRequest", {
+      const res = await api.post("/acceptRequest", {
         user_id: userId,
         friends_id: friendId,
       });
+      if (res.data?.challenge_id) {
+        localStorage.setItem("challenge_id", String(res.data.challenge_id));
+      }
       toast.success("Challenge accepted!");
       navigate("/pong?mode=remote2p");
     } catch (err: any) {
