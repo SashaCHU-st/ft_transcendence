@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
 import api from '../types/api';
 import { getAuthHeaders } from '../types/api';
-import { UserInfo } from '../types/UserInfo';
+import { UserInfo, MatchResult } from '../types/UserInfo';
 
 const isValidBase64 = (str: string) => {
   try {
@@ -17,6 +17,7 @@ export function useUserData() {
   const [friends, setFriends] = useState<UserInfo[]>([]);
   const [players, setPlayers] = useState<UserInfo[]>([]);
   const [chatList, setChatList] = useState<UserInfo[]>([]);
+  const [matches, setMatches] = useState<MatchResult[]>([]);
 
   const authHeaders = useMemo(() => getAuthHeaders(), []);
 
@@ -28,6 +29,19 @@ export function useUserData() {
       const { data } = await api.get(`/users?t=${Date.now()}`, {
         headers: authHeaders,
       });
+      console.log('GAME=>', data.game);
+      console.log('USERS=>', data.users);
+
+      const parsedMatches: MatchResult[] = data.game.map((g: any) => ({
+        id: String(g.id),
+        winner_name: String(g.winner_name),
+        losses_name: String(g.losses_name),
+        date: g.date,
+        win_score: String(g.win_score),
+        losses_score: String(g.lose_score),
+      }));
+
+      setMatches(parsedMatches);
 
       let currentUser: UserInfo | null = null;
 
@@ -58,7 +72,7 @@ export function useUserData() {
           wins: u.wins || 0,
           losses: u.losses || 0,
           online: !!u.online,
-          history: [],
+          // history: [],
         };
 
         if (userInfo.id === currentUserId) currentUser = userInfo;
@@ -87,7 +101,7 @@ export function useUserData() {
       setUser(currentUser);
       setFriends(favoriteUsers);
       setPlayers(playersList);
-      setChatList(chatList)
+      setChatList(chatList);
     } catch (err: any) {
       console.error('Error fetching users:', err);
       toast.error(err.message || 'Failed to load users.');
@@ -99,6 +113,7 @@ export function useUserData() {
     friends,
     players,
     chatList,
+    matches,
     fetchAllUsers,
     setFriends,
     setPlayers,

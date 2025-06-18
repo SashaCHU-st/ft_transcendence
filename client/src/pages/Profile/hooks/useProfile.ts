@@ -9,7 +9,7 @@ import { useGame } from "./useGame";
 
 
 export const useProfile = () => {
-  const { user, friends, players, chatList, fetchAllUsers, setFriends, setPlayers, setChatList, setUser } = useUserData();
+  const { user, friends, players, chatList,matches, fetchAllUsers, setFriends, setPlayers, setChatList, setUser } = useUserData();
   const userId = user?.id || null;
   const authHeaders = getAuthHeaders();
 
@@ -45,6 +45,7 @@ export const useProfile = () => {
     friends,
     players,
     chatList,
+    matches,
     notifications,
     isNotificationModalOpen,
     setIsNotificationModalOpen,

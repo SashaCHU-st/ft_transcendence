@@ -4,7 +4,9 @@ const db = new Database("./database/database.db");
 
 db.exec(
   `
-   DELETE FROM game WHERE  id = 4;
+   UPDATE users
+SET wins = 13, losses = 2
+WHERE id = 2;
   ` 
 );
 

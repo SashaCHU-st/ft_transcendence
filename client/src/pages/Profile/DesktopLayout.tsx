@@ -4,12 +4,13 @@ import UserHeader from "./UserHeader";
 import PlayArena from "./PlayArena";
 import GameSelector from "./GameSelector/GameSelector";
 import { PrimaryButton } from "./types/ui";
-import { UserInfo } from "./types/UserInfo";
+import { UserInfo, MatchResult } from "./types/UserInfo";
 import { bots } from "./types/botsData";
 
 // Define props for DesktopLayout component
 interface DesktopLayoutProps {
   user: UserInfo; // Current user's data
+  matches: MatchResult[];
   friends: UserInfo[]; // List of friends
   players: UserInfo[]; // List of other players
   selectedBot: (typeof bots)[0] | null; // Currently selected bot for gameplay
@@ -202,6 +203,7 @@ interface DesktopLayoutProps {
 
 const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   user,
+  matches,
   friends,
   players,
   selectedBot,
@@ -221,6 +223,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           </h2>
           <UserList
             users={friends}
+            matches={matches}
             variant="friends"
             expandUsername={expandUsername}
             onRemove={handleRemove}
@@ -230,14 +233,14 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
 
         {/* Center Section */}
         <div className="flex flex-col items-center justify-start gap-6 w-full">
-          <UserHeader
+          {/* <UserHeader
             user={{
               username: user.username,
               wins: user.wins,
               losses: user.losses,
               history: user.history,
             }}
-          />
+          /> */}
           <PlayArena
             user={{ username: user.username, avatar: user.avatar }}
             opponentImage={selectedBot ? selectedBot.image : null}
@@ -253,6 +256,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           </h2>
           <UserList
             users={players}
+            matches={matches}
             variant="players"
             expandUsername={expandUsername}
             onAdd={handleAdd}
