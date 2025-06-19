@@ -107,7 +107,6 @@ db.exec(`
       );
     `);
 
-    // Add new columns if the table existed before they were introduced
     const gameColumns = db.prepare('PRAGMA table_info(game);').all();
     const hasWinScore = gameColumns.some((c) => c.name === 'win_score');
     if (!hasWinScore) {
