@@ -29,7 +29,13 @@ function hitPaddle(ballX, ballZ, paddleX, paddleZ, scale = 1) {
   );
 }
 
-export function updateStats(winnerId, loserId, winnerScore, loserScore) {
+export function updateStats(
+  winnerId,
+  loserId,
+  winnerScore = 0,
+  loserScore = 0,
+  challengeId = null,
+) {
   if (winnerId) {
     const row = db.prepare('SELECT wins FROM users WHERE id = ?').get(winnerId);
     if (row) {
@@ -44,15 +50,20 @@ export function updateStats(winnerId, loserId, winnerScore, loserScore) {
     }
   }
 
+  let chId = challengeId;
+  if (chId === null && winnerId && loserId) {
+    const ch = db
+      .prepare(
+        `SELECT id FROM challenge WHERE ((user_id = ? AND friends_id = ?) OR (user_id = ? AND friends_id = ?)) AND confirmReq = 1 ORDER BY id DESC LIMIT 1`,
+      )
+      .get(winnerId, loserId, loserId, winnerId);
+    if (ch) chId = ch.id;
+  }
+
   db.prepare(
-    `INSERT INTO game (win_user_id, losses_user_id, win_score, lose_score, date) VALUES (?,?,?,?,?)`
-  ).run(
-    winnerId ?? 0,
-    loserId ?? 0,
-    winnerScore ?? 0,
-    loserScore ?? 0,
-    new Date().toISOString()
-  );
+    `INSERT INTO game (challenge_id, win_user_id, losses_user_id, win_score, lose_score, date)` +
+      ` VALUES (?, ?, ?, ?, ?, ?)`,
+  ).run(chId, winnerId ?? 0, loserId ?? 0, winnerScore, loserScore, new Date().toISOString());
 }
 
 export class Game {
