@@ -7,6 +7,8 @@ export function useNotifications(userId: string | null) {
   const [notifications, setNotifications] = useState<{ user_id: string; username: string }[]>([]);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
   const [redirectToGame, setRedirectToGame] = useState<{ friendId: string } | null>(null);
+  const [declinedChallenge, setDeclinedChallenge] = useState<string | null>(null);
+
   const notificationsRef = useRef(notifications);
   const navigate = useNavigate();
  
@@ -42,19 +44,30 @@ export function useNotifications(userId: string | null) {
         }
       }
 
-      if (data.acceptedUsers && Array.isArray(data.acceptedUsers)) {
-      const accepted = data.acceptedUsers.find((ch: any) =>
-         //String(ch.friends_id) === userId // I'm the one who sent the challenge
-      String(ch.user_id) === userId && ch.ok === 0
-      );
-      
-      if (accepted && !redirectToGame) {
-        console.log("✅ Your challenge was accepted by:", accepted.username);
-        // console.log("All info of accepted: ", accepted);
-         console.log("Accepted Friends Id: ",accepted.friends_id);
+        if (data.acceptedUsers && Array.isArray(data.acceptedUsers)) {
+        const accepted = data.acceptedUsers.find((ch: any) =>
+          //String(ch.friends_id) === userId // I'm the one who sent the challenge
+        String(ch.user_id) === userId && ch.ok === 0
+        );
         
-        setRedirectToGame({ friendId: String(accepted.friends_id) });
-        navigate("/pong?mode=remote2p");
+        if (accepted && !redirectToGame) {
+          console.log("✅ Your challenge was accepted by:", accepted.username);
+          // console.log("All info of accepted: ", accepted);
+          console.log("Accepted Friends Id: ",accepted.friends_id);
+          
+          setRedirectToGame({ friendId: String(accepted.friends_id) });
+          navigate("/pong?mode=remote2p");
+        }
+
+        if (data.notAcceptedUsers && Array.isArray(data.notAcceptedUsers)) {
+        const declined = data.notAcceptedUsers.find((ch: any) => 
+          String(ch.user_id) === userId && ch.ok === 0
+        );
+
+        if (declined) {
+          setDeclinedChallenge(declined.partner?.username || 'Unknown');
+          setIsNotificationModalOpen(true); // or show a separate modal
+        }
       }
     }
 
@@ -124,6 +137,8 @@ export function useNotifications(userId: string | null) {
     handleAcceptChallenge,
     handleDeclineChallenge,
     redirectToGame,
-    setRedirectToGame
+    setRedirectToGame,
+    declinedChallenge,
+    setDeclinedChallenge
   };
 }

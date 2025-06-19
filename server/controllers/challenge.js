@@ -57,6 +57,7 @@ export async function notification(req, reply) {
       .all(user_id);
 
     console.log('RRRR=>', accptedFromPartner);
+
     const notAcceptedFromPartner = db
       .prepare(
         `SELECT challenge.*, users.username
@@ -74,6 +75,7 @@ export async function notification(req, reply) {
           .get(ch.friends_id),
       };
     });
+
     const usernames = acceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
@@ -87,6 +89,7 @@ export async function notification(req, reply) {
           .get(ch.friends_id),
       };
     });
+
     const usernamesNotAccepted = notAcceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
@@ -112,6 +115,15 @@ export async function notification(req, reply) {
       `).run(user_id);
     }
 
+    if (notAcceptedUsers.length > 0)
+    {
+       db.prepare(
+        `UPDATE challenge 
+        SET ok = 1 
+        WHERE user_id = ? AND confirmReq = 0 AND ok = 0`
+      ).run(user_id);
+    };
+
     if (notification.length === 0) {
       return reply.code(200).send({
         message: 'No challenge found',
@@ -126,7 +138,8 @@ export async function notification(req, reply) {
       return reply.code(200).send({
         message: 'There is request',
         friends_id: notification.user_id,
-        acceptedUsers, 
+        acceptedUsers,
+        notAcceptedUsers,
         notification,
       });
     }

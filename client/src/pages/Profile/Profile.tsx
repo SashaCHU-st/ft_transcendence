@@ -165,6 +165,7 @@ import ChatModal from "../../chat/components/ChatModal";
 import { ChatProvider } from "../../chat/context/ChatContext";
 //import { UserInfo } from "./types/UserInfo";
 import NotificationModal from "./NotificationModal";
+import DeclinedChallengeModal from "./DeclinedChallengeModal";
 
 // Profile component serves as the main page for user profile management
 const Profile: React.FC = () => {
@@ -187,6 +188,8 @@ const Profile: React.FC = () => {
     handleAcceptChallenge,
     handleDeclineChallenge,
     handleAdd,
+    setDeclinedChallenge,
+    declinedChallenge
   } = useProfile();
 
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -327,7 +330,13 @@ const Profile: React.FC = () => {
           onDecline={handleDeclineChallenge}
         />
       )}
-
+      {declinedChallenge && (
+       <DeclinedChallengeModal
+        declinedUsername={declinedChallenge}
+        onClose={() => setDeclinedChallenge(null)}
+      />
+      )}
+      
       {isChatOpen && (
         <ChatProvider currentUserId={user.id}>
           <ChatModal

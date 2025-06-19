@@ -1,5 +1,6 @@
 import { FriendsAccept, usersSchema, FriendsMy, FriendsSchema, FriendsRequest} from "../schema/friends.schema.js";
 import { friendsSearch, friendsAdd, confirmFriend, myFriends, deleteFriend, requestFriend } from "../controllers/friends.js";
+
 async function friendsRoutes(fastify) {
   fastify.post("/searchUsers", async (req, reply) => {
     const validated = usersSchema.safeParse(req.body);

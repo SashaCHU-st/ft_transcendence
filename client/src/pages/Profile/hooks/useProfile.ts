@@ -22,7 +22,10 @@ export const useProfile = () => {
     handleAcceptChallenge,
     handleDeclineChallenge,
     redirectToGame,
-    setRedirectToGame
+    setRedirectToGame,
+    declinedChallenge,
+    setDeclinedChallenge
+
   } = useNotifications(userId);
 
   // Favorites
@@ -68,6 +71,8 @@ export const useProfile = () => {
     handlePlay,
     navigate,
     setUser,
+    declinedChallenge,
+    setDeclinedChallenge
   };
 };
 

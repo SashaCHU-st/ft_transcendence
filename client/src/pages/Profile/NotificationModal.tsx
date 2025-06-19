@@ -1,8 +1,10 @@
 import React from "react";
+//import Avatar from "./Avatar";
 
 interface Notification{
 	user_id: string;
 	username: string;
+	//avatar: string;
 };
 
 interface NotificationModalProps{
@@ -29,19 +31,25 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
 					key={notif.user_id}
 					className="border border-indigo-200 rounded-lg p-4 bg-white shadow"
 				>
-					<p className="mb-4 font-orbitron">
-					{notif.username} has challenged you to a game!
-					</p>
+					<div className="flex justify-center gap-2">
+						{/* <Avatar
+							user={{ avatar: notif.avatar || "/prof_img/avatar1.png", username: notif.username }}
+							className="w-10 h-10"
+						/>	 */}
+						<p className="mb-4 font-orbitron">
+						{notif.username} has challenged you to a game!
+						</p>
+					</div>
 					<div className="flex justify-center gap-2">
 					<button
 						onClick={() => onDecline(notif.user_id)}
-						className="px-4 py-2 font-orbitron bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+						className="px-4 py-2 font-orbitron bg-pink-700 text-white rounded hover:bg-pink-500"
 					>
 						DECLINE
 					</button>
 					<button
 						onClick={() => onAccept(notif.user_id)}
-						className="px-4 py-2 font-orbitron bg-green-500 text-white rounded hover:bg-green-600"
+						className="px-4 py-2 font-orbitron bg-emerald-600 text-white rounded hover:bg-emerald-500"
 					>
 						ACCEPT
 					</button>

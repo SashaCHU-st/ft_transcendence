@@ -8,7 +8,7 @@ export async function friendsSearch(req, reply) {
   const { username } = req.body;
 
   if (!username)
-    return reply.code(400).send({ message: "PLease fill in frien username" });
+    return reply.code(400).send({ message: "PLease fill in friend username" });
 
   try {
     const hasUser = db

@@ -43,18 +43,6 @@ const UserList: React.FC<Props> = ({ users, variant, expandUsername, onRemove, o
     setExpandedIndex((prev) => (prev === index ? null : index));
   };
 
-  // Stub handlers for friend/player actions
- // const handleAdd = (username: string) => console.log(`Add ${username}`);
-  //  const handleAdd = async (username: string) => {
-  //   try {
-  //     await addToFavorites(username);
-  //     console.log(`Added ${username} to favorites`);
-  //     //await fetchAllUsers();
-  //   } catch (err) {
-  //     console.error("Failed to add favorite:", err);
-  //   }
-  // };
- 
   const handleChallenge = async (username: string) => {
     try{
       await askForChallenge(username);
