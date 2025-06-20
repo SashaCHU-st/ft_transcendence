@@ -4,8 +4,8 @@ const db = new Database("./database/database.db");
 
 db.exec(
   `
-   UPDATE users
-SET wins = 13, losses = 2
+   UPDATE game
+SET win_user_id = 3, losses_user_id = 1
 WHERE id = 2;
   ` 
 );

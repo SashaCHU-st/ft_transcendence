@@ -281,7 +281,6 @@ const Profile: React.FC = () => {
         {/* Desktop-specific layout for large screens */}
         <DesktopLayout
           user={user}
-          matches={matches}
           friends={friends}
           players={players.filter((p) => p.id !== user.id)}
           selectedBot={selectedBot}

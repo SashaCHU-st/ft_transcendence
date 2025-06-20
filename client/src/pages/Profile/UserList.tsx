@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
 import { CardWrapper } from './types/ui';
-import { MatchResult, UserInfo } from './types/UserInfo';
+import { UserInfo } from './types/UserInfo';
 import { askForChallenge } from './Challenge';
 import { toast } from 'react-hot-toast';
 
 interface Props {
   users: UserInfo[];
-  matches: MatchResult[];
   variant: 'players' | 'friends';
   expandUsername?: string;
   onAdd?: (username: string) => void;
@@ -17,7 +16,6 @@ interface Props {
 
 const UserList: React.FC<Props> = ({
   users,
-  matches,
   variant,
   expandUsername,
   onRemove,
@@ -25,6 +23,8 @@ const UserList: React.FC<Props> = ({
   onChallenge,
 }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [userStats, setUserStats] = useState<Record<string, any>>({});
+  // const [fullHistory, setFullHistory] = useState(false);
 
   useEffect(() => {
     if (expandUsername) {
@@ -37,8 +37,30 @@ const UserList: React.FC<Props> = ({
     }
   }, [expandUsername, users]);
 
-  const toggleExpand = (index: number) => {
+  const toggleExpand = async (index: number) => {
+    const user = users[index];
+    const username = user.username;
+    try {
+      const response = await fetch('https://localhost:3000/statisticsUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),
+      });
+      const responseData = await response.json();
+      console.log('HERE=>', responseData.statUser);
+      if (!response.ok) throw new Error('Cannot find user');
+      setUserStats((prev) => ({
+        ...prev,
+        [username]: responseData.statUser,
+      }));
+    } catch (err) {
+      console.error('Error', err);
+    }
+
     setExpandedIndex((prev) => (prev === index ? null : index));
+    // setFullHistory(true);
   };
 
   const handleChallenge = async (username: string) => {
@@ -107,94 +129,101 @@ const UserList: React.FC<Props> = ({
         return (
           <CardWrapper key={user.id} onClick={() => toggleExpand(idx)}>
             {/* Header row: avatar, username, online status */}
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2">
+            <div className="flex w-full items-center">
+              <div className=" flex-grow flex items-center gap-2">
                 <span className="font-bold text-base md:text-lg lg:text-xl">
                   {user.username}
                 </span>
               </div>
 
-              {userWithActions.onRemove && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    userWithActions.onRemove!();
-                  }}
-                  className="
-              px-4
-              py-2
-              rounded-md
-              text-sm
-              font-semibold
-              text-red-400
-              border-2
-              border-red-500
-              hover:bg-red-600
-              hover:text-white
-              transition
-              duration-300
-              shadow-[0_0_12px_#ff4d4d]
-              hover:shadow-[0_0_18px_#ff4d4d]
-            "
-                >
-                  Remove
-                </button>
-              )}
-              {userWithActions.onAdd && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    userWithActions.onAdd!();
-                  }}
-                  className="
+              <div className="w-16">
+                {userWithActions.onRemove && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      userWithActions.onRemove!();
+                    }}
+                    className="
+                      px-4
+                      py-2
+                      rounded-md
+                      text-sm
+                      font-semibold
+                      text-red-400
+                      border-2
+                      border-red-500
+                      hover:bg-red-600
+                      hover:text-white
+                      transition
+                      duration-300
+                      shadow-[0_0_12px_#ff4d4d]
+                      hover:shadow-[0_0_18px_#ff4d4d]
+                    "
+                  >
+                    <i className="fa-solid fa-heart-crack"></i>
+                  </button>
+                )}
+              </div>
+              <div className="w-16">
+                {userWithActions.onAdd && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      userWithActions.onAdd!();
+                    }}
+                    className="
                   h-10
-              px-4
-              py-2
-              rounded-md
-              text-sm
-              font-semibold
-              text-green-400
-              border-2
-              border-green-500
-              hover:bg-green-800
-              hover:text-white
-              transition
-              duration-300
-              shadow-[0_0_12px_#00ff00]
-              hover:shadow-[0_0_18px_#00ff00]
+                  px-4
+                  py-2
+                  rounded-md
+                  text-sm
+                  font-semibold
+                  text-green-400
+                  border-2
+                  border-green-500
+                  hover:bg-green-800
+                  hover:text-white
+                  transition
+                  duration-300
+                  shadow-[0_0_12px_#00ff00]
+                  hover:shadow-[0_0_18px_#00ff00]
             "
-                >
-                  <span className="text-xl text-green-300 drop-shadow-[0_0_3px_#00ff00]">
-                    💚
-                  </span>
-                </button>
-              )}
-              {userWithActions.onChallenge && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    userWithActions.onChallenge!();
-                  }}
-                  className="
-                    px-4
-                    py-2
-                    rounded-md
-                    text-sm
-                    font-semibold
-                    text-cyan-300
-                    border-2
-                    border-cyan-400
-                    hover:bg-cyan-500
-                    hover:text-black
-                    transition
-                    duration-300
-                    shadow-[0_0_12px_#00ffff]
-                    hover:shadow-[0_0_18px_#00ffff]
-                  "
-                >
-                  Challenge
-                </button>
-              )}
+                  >
+                    <span className="text-xl text-green-300 drop-shadow-[0_0_3px_#00ff00]">
+                      <i className="fa-solid fa-heart"></i>
+                    </span>
+                  </button>
+                )}
+              </div>
+              <div className="w-16">
+                {userWithActions.onChallenge && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      userWithActions.onChallenge!();
+                    }}
+                    className="
+                  px-4
+                  py-2
+                  rounded-md
+                  text-sm
+                  font-semibold
+                  text-cyan-300
+                  border-2
+                  border-cyan-400
+                  hover:bg-cyan-500
+                  hover:text-black
+                  transition
+                  duration-300
+                  shadow-[0_0_12px_#00ffff]
+                  hover:shadow-[0_0_18px_#00ffff]
+                "
+                  >
+                    <i className="fa-solid fa-gamepad fa-1.5x"></i>
+                  </button>
+                )}
+              </div>
+
               <span
                 className={`text-sm
                     sm:text-sm 
@@ -214,19 +243,13 @@ const UserList: React.FC<Props> = ({
                   ></i>
                 )}
               </span>
-
-              {/* Важно: проверяем userWithActions.onChallenge */}
             </div>
 
             {/* Expandable content container */}
             <div style={expandedStyle}>
               <PlayerCard
                 user={userWithActions}
-                matches={(matches || []).filter(
-                  (match) =>
-                    match.winner_name === user.username ||
-                    match.losses_name === user.username
-                )}
+                stats={userStats[user.username]}
               />
             </div>
           </CardWrapper>

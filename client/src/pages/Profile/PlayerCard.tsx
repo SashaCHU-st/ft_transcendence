@@ -1,14 +1,15 @@
 import React from 'react';
 //import React, { useState } from "react";
 import UserHeader from './UserHeader';
-import { MatchResult, UserInfo } from './types/UserInfo';
+import { UserInfo } from './types/UserInfo';
 
 interface Props {
   user: UserInfo;
-  matches?: MatchResult[];
+  stats?: any;
 }
 
-const PlayerCard: React.FC<Props> = ({ user,matches }) => {
+const PlayerCard: React.FC<Props> = ({ user,stats }) => {
+  console.log("UUUUUUU=>", stats)
   return (
     <div
       className="
@@ -29,9 +30,9 @@ const PlayerCard: React.FC<Props> = ({ user,matches }) => {
           avatar:user.avatar,
           wins: user.wins,
           losses: user.losses,
-          // history: user.history,
+          online:user.online
         }}
-        matches={matches}
+        stats={stats}
       />
       <div
         className="

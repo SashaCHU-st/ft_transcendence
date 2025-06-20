@@ -3,7 +3,7 @@ import { z } from "zod";
 export const ProfileSchema = z.object({
   username: z
     .string()
-    .max(20)
+    .max(11)
     .refine((value) => value.trim().length > 0, "Name cannot be only spaces")
     .refine(
       (value) => /^[a-zA-Z0-9_]+$/.test(value),

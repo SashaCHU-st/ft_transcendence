@@ -10,7 +10,6 @@ import { bots } from "./types/botsData";
 // Define props for DesktopLayout component
 interface DesktopLayoutProps {
   user: UserInfo; // Current user's data
-  matches: MatchResult[];
   friends: UserInfo[]; // List of friends
   players: UserInfo[]; // List of other players
   selectedBot: (typeof bots)[0] | null; // Currently selected bot for gameplay
@@ -203,7 +202,6 @@ interface DesktopLayoutProps {
 
 const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   user,
-  matches,
   friends,
   players,
   selectedBot,
@@ -223,7 +221,6 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           </h2>
           <UserList
             users={friends}
-            matches={matches}
             variant="friends"
             expandUsername={expandUsername}
             onRemove={handleRemove}
@@ -256,7 +253,6 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           </h2>
           <UserList
             users={players}
-            matches={matches}
             variant="players"
             expandUsername={expandUsername}
             onAdd={handleAdd}
