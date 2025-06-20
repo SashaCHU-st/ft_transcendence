@@ -1,5 +1,9 @@
 import db from '../database/database.js';
 
+/////////////////////////////////////////////////////////////////////////////
+/// Neeed to fix, add flag that if game end then person can challenge again!!!
+/// Then fix db and when win/losse update that game ended
+///////////////////////////////////////////////////////////////////////////
 export async function challenge(req, reply) {
   const { user_id, username } = req.body;
 
@@ -46,13 +50,15 @@ export async function notification(req, reply) {
       )
       .all(user_id);
 
+      // IF WE DECIDED THAT WHEN USER INVITED SOMEONE TO PLAY AND THEN THEY GOES TO WAITING
+      // WE DONT NEED TO SEE IS HE ACCPTED OR NOT BECAUSE GAME WILL JUST START ANYWAY
     console.log('notifications =>', notification);
     const accptedFromPartner = db
       .prepare(
         `SELECT challenge.*, users.username
-      FROM challenge
-      JOIN users ON challenge.user_id = users.id 
-      WHERE challenge.user_id = ? AND challenge.confirmReq = 1 AND challenge.ok = 0`
+          FROM challenge
+          JOIN users ON challenge.user_id = users.id 
+          WHERE challenge.user_id = ? AND challenge.confirmReq = 1 AND challenge.ok = 0`
       )
       .all(user_id);
 
@@ -61,9 +67,9 @@ export async function notification(req, reply) {
     const notAcceptedFromPartner = db
       .prepare(
         `SELECT challenge.*, users.username
-      FROM challenge
-      JOIN users ON challenge.user_id = users.id 
-      WHERE challenge.user_id = ? AND challenge.confirmReq = 0 AND challenge.ok = 0`
+          FROM challenge
+          JOIN users ON challenge.user_id = users.id 
+          WHERE challenge.user_id = ? AND challenge.confirmReq = 0 AND challenge.ok = 0`
       )
       .all(user_id);
 
@@ -99,10 +105,9 @@ export async function notification(req, reply) {
     const acceptedSeen = db
       .prepare(
         `SELECT challenge.*, users.username
-      FROM challenge
-      JOIN users ON challenge.friends_id = users.id
-      WHERE challenge.user_id = ? AND challenge.confirmReq = 1 AND challenge.ok = 1
-    `
+          FROM challenge
+          JOIN users ON challenge.friends_id = users.id
+          WHERE challenge.user_id = ? AND challenge.confirmReq = 1 AND challenge.ok = 1`
       )
       .all(user_id);
 
