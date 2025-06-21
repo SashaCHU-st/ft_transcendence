@@ -12,11 +12,20 @@ const isValidBase64 = (str: string) => {
   }
 };
 
+type FriendRequest = {
+  id: string;
+  username: string;
+  avatar: string;
+  online: boolean;
+};
+
 export function useUserData() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [friends, setFriends] = useState<UserInfo[]>([]);
   const [players, setPlayers] = useState<UserInfo[]>([]);
   const [chatList, setChatList] = useState<UserInfo[]>([]);
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
+   const [declinedFriendRequest, setDeclinedFriendRequest] = useState<string | null>(null);
 
   const authHeaders = useMemo(() => getAuthHeaders(), []);
 
@@ -67,17 +76,25 @@ export function useUserData() {
       });
 
       // Fetch favorites
-      const favRes = await api.get(`/favorites?user_id=${currentUserId}`);
-      const favoriteUsernames: string[] = favRes.data.favoritesUser.map(
-        (f: any) => f.username
+      // const favRes = await api.get(`/favorites?user_id=${currentUserId}`);
+      // const favoriteUsernames: string[] = favRes.data.favoritesUser.map(
+      //   (f: any) => f.username
+      // );
+      // const favoriteUsers = mappedUsers.filter((u) =>
+      //   favoriteUsernames.includes(u.username)
+      // );
+      const friendsRes = await api.post("/myfriends", { user_id: currentUserId });
+      const confirmedFriendIds = friendsRes.data.myfriends.map((f: any) =>
+        f.user_id === Number(currentUserId) ? f.friends_id : f.user_id
       );
-      const favoriteUsers = mappedUsers.filter((u) =>
-        favoriteUsernames.includes(u.username)
+
+      const confirmedFriends = mappedUsers.filter((u) =>
+        confirmedFriendIds.includes(Number(u.id))
       );
 
       const playersList = mappedUsers
         .filter((u) => u.id !== currentUserId)
-        .filter((u) => !favoriteUsernames.includes(u.username))
+        .filter((u) => !confirmedFriendIds.includes(Number(u.id)))
         .sort((a, b) => (a.online === b.online ? 0 : a.online ? -1 : 1));
 
       const chatList = mappedUsers
@@ -85,7 +102,7 @@ export function useUserData() {
         .sort((a, b) => (a.online === b.online ? 0 : a.online ? -1 : 1));
 
       setUser(currentUser);
-      setFriends(favoriteUsers);
+      setFriends(confirmedFriends);
       setPlayers(playersList);
       setChatList(chatList)
     } catch (err: any) {
@@ -94,15 +111,59 @@ export function useUserData() {
     }
   }, [authHeaders]);
 
+
+const fetchFriendRequests = useCallback(async () => {
+  try {
+    const user_id = localStorage.getItem("id");
+    if (!user_id) return;
+
+    const { data } = await api.post("/request", { user_id });
+
+    if (data.checkRequest) {
+      const requests: FriendRequest[] = data.checkRequest.map((u: any) => {
+        let avatar = '/prof_img/avatar1.png';
+
+        if (u.image) {
+          if (typeof u.image === 'string' && isValidBase64(u.image)) {
+            avatar = `data:image/jpeg;base64,${u.image}`;
+          } else if (u.image?.data) {
+            const dataArray = u.image.data;
+            let binary = '';
+            for (let i = 0; i < dataArray.length; i++) {
+              binary += String.fromCharCode(dataArray[i]);
+            }
+            avatar = `data:image/jpeg;base64,${btoa(binary)}`;
+          }
+        }
+        return {
+          id: String(u.id),
+          username: u.username || 'Unknown',
+          avatar,
+          online: !!u.online,
+        };
+      });
+
+      setFriendRequests(requests);
+    }
+  } catch (err: any) {
+    console.error("Failed to fetch friend requests:", err);
+    toast.error("Could not load friend requests");
+  }
+}, []);
+
   return {
     user,
     friends,
     players,
     chatList,
     fetchAllUsers,
+    fetchFriendRequests,
     setFriends,
     setPlayers,
     setChatList,
     setUser,
+    friendRequests,
+    declinedFriendRequest,
+    setDeclinedFriendRequest  
   };
 }

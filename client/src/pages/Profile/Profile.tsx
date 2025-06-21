@@ -166,6 +166,8 @@ import { ChatProvider } from "../../chat/context/ChatContext";
 //import { UserInfo } from "./types/UserInfo";
 import NotificationModal from "./NotificationModal";
 import DeclinedChallengeModal from "./DeclinedChallengeModal";
+import FriendRequestList from "./FriendRequestsList"
+import DeclinedFriendRequestModal from "./DeclinedFriendRequestModal";
 
 // Profile component serves as the main page for user profile management
 const Profile: React.FC = () => {
@@ -188,8 +190,13 @@ const Profile: React.FC = () => {
     handleAcceptChallenge,
     handleDeclineChallenge,
     handleAdd,
+    handleConfirm,
+    handleDecline,
     setDeclinedChallenge,
-    declinedChallenge
+    declinedChallenge, 
+    friendRequests,
+    declinedFriendRequest,
+    setDeclinedFriendRequest,
   } = useProfile();
 
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -290,6 +297,7 @@ const Profile: React.FC = () => {
           expandUsername={expandUsername}
           handleRemove={handleRemove}
           handleAdd={handleAdd}
+          //handleConfirm={handleConfirm}
         />
 
         {/* Mobile-specific layout for smaller screens */}
@@ -302,14 +310,21 @@ const Profile: React.FC = () => {
           expandUsername={expandUsername}
           handleRemove={handleRemove}
           handleAdd={handleAdd}
+          //handleConfirm={handleConfirm}
         />
 
         {/* Bot selector for choosing game opponent */}
+        <FriendRequestList
+            requests={friendRequests}
+            onConfirm={handleConfirm}
+            onDecline={handleDecline}
+        />
         <BotSelector
           selectedBot={selectedBot}
           setSelectedBot={setSelectedBot}
         />
       </div>
+
 
       {/* Conditionally render profile modal for editing user data */}
       {isModalOpen && (
@@ -335,6 +350,13 @@ const Profile: React.FC = () => {
         declinedUsername={declinedChallenge}
         onClose={() => setDeclinedChallenge(null)}
       />
+      )}
+
+      {declinedFriendRequest && (
+        <DeclinedFriendRequestModal
+          declinedUsername={declinedFriendRequest}
+          onClose={() => setDeclinedFriendRequest(null)}
+        />
       )}
       
       {isChatOpen && (

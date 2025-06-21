@@ -9,22 +9,6 @@ export const addToFavorites = async (targetUsername: string): Promise<void> => {
       throw new Error("User not authenticated");
     }
     console.log("Sending to server:", { user_id, username: targetUsername });
-    // const response = await fetch("https://localhost:3000/addfavorites", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${token}`,
-    //   },
-    //   body: JSON.stringify({ user_id, username: targetUsername }),
-    // });
-
-    // const result = await response.json();
-
-    // if (!response.ok) {
-    //   console.error("Server responded with:", result);
-    //   throw new Error(result.message || "Failed to add to favorites");
-    // }
-
     const response = await api.post(
       "/addfavorites",
       { user_id, username: targetUsername },

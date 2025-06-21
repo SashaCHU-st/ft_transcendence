@@ -16,16 +16,18 @@ const DeclinedChallengeModal: React.FC<DeclinedChallengeModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" >
-      <div className="bg-white rounded-xl p-6 text-center text-black w-full max-w-md max-h-[80vh] overflow-y-auto space-y-6">
-        <h2 className="text-lg text-indigo-900 font-orbitron font-bold mb-4">
+      <div className="bg-gray-800  bg-opacity-70 rounded-xl border border-blue-500 
+                  p-6 shadow-[0_0_15px_#60a5fa] text-center text-blue-200 w-full max-w-md max-h-[80vh]
+                   overflow-y-auto space-y-6">
+        <h2 className="text-xl text-blue-500 font-orbitron font-bold mb-4">
           CHALLENGE DECLINED!
         </h2>
-        <div className="border border-indigo-200 rounded-lg p-4 bg-white shadow">
+        <div className="border border-blue-200 rounded-lg p-4 bg-gray shadow">
             {/* <Avatar
 						user={{ avatar: declinedUserAvatar || "/prof_img/avatar1.png", username: declinedUsername}}
 						className="w-10 h-10"
 					  />	 */}
-            <p className="font-orbitron text-gray-950">
+            <p className="mb-4 font-orbitron text-lg">
               {declinedUsername} has declined your challenge.
             </p>
             <button

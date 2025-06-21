@@ -1,5 +1,5 @@
 import { FriendsAccept, usersSchema, FriendsMy, FriendsSchema, FriendsRequest} from "../schema/friends.schema.js";
-import { friendsSearch, friendsAdd, confirmFriend, myFriends, deleteFriend, requestFriend } from "../controllers/friends.js";
+import { friendsSearch, friendsAdd, confirmFriend, myFriends, deleteFriend, requestFriend, declineFriend } from "../controllers/friends.js";
 
 async function friendsRoutes(fastify) {
   fastify.post("/searchUsers", async (req, reply) => {
@@ -42,6 +42,17 @@ async function friendsRoutes(fastify) {
       });
     }
     return requestFriend({ ...req, body: validated.data }, reply);
+  });
+
+  fastify.post(`/declineFriend`, async (req, reply) => {
+    const validated = FriendsAccept.safeParse(req.body);
+    if (!validated.success) {
+      return reply.code(400).send({
+        message: 'Validation error',
+        errors: validated.error.errors,
+      });
+    }
+    return declineFriend({ ...req, body: validated.data }, reply);
   });
 
   fastify.post(`/myfriends`, async (req, reply) => {

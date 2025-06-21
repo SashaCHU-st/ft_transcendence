@@ -44,12 +44,12 @@ export async function friendsAdd(req, reply) {
     .prepare("SELECT * FROM users WHERE username = ?")
     .get(username);
   if (!friend) {
-    return reply.code(404).send({ message: "NO such as friebd" });
+    return reply.code(404).send({ message: "NO such as friend" });
   }
 
   console.log("ID friend=>>>>", friend.id);
   console.log("ID=>>>>", user_id);
-  if (Number(user_id) === Number(friend.id)) {
+  if (Number(user_id) === friend.id) {
     return reply.code(400).send({ message: "Cannot add yourself" });
   }
 
@@ -121,6 +121,43 @@ export async function confirmFriend(req, reply) {
   }
 }
 
+export async function declineFriend(req, reply) {
+  console.log('WE IN DECLINE FRIEND');
+  /// decline will be 0
+  const { user_id, username, confirmReq } = req.body;
+
+  const friend = db
+    .prepare('SELECT * FROM users WHERE username = ?')
+    .get(username);
+  if (!friend) {
+    return reply.code(404).send({ message: 'NO such as friebd' });
+  }
+  try {
+    const checkReq1 = db
+      .prepare(`SELECT * FROM friends WHERE friends_id = ? AND user_id = ?`)
+      .get(user_id, friend.id);
+    console.log('IIIII=>', checkReq1);
+    if (checkReq1) {
+      console.log('CoN=>', confirmReq);
+      const declineReq = db
+        .prepare(
+          `UPDATE friends SET confirmReq = 0 WHERE friends_id = ? AND user_id = ? `
+        )
+        .run(user_id, friend.id);
+      console.log('DECLINE =>....', declineReq);
+      return reply.code(200).send({ message: 'confirmed' });
+    }
+    if (!declineReq) {
+      return reply.code(400).send({ message: 'No request' });
+    }
+    // confirmAccept.run();
+  } catch (err) {
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
+  }
+}
+
+
 export async function requestFriend(req, reply) {
   console.log("WE in REQUESTTTT")
   const {user_id} = req.body;
@@ -128,12 +165,24 @@ export async function requestFriend(req, reply) {
   console.log("ISER=>", user_id)
 
   try {
-    const checkRequest = db.prepare("SELECT * FROM friends WHERE friends_id = ? AND confirmReq = 0").all(user_id)
+    // const checkRequest = db.prepare(
+    //   "SELECT * FROM friends WHERE friends_id = ? AND confirmReq = 0").all(user_id)
+    const checkRequest = db.prepare(`
+      SELECT 
+        u.id, 
+        u.username, 
+        u.image, 
+        u.online
+      FROM friends f
+      JOIN users u ON u.id = f.user_id
+      WHERE f.friends_id = ? AND f.confirmReq = 0
+    `).all(user_id);
     console.log("YYYY=>", checkRequest)
+    
     if(checkRequest)
     {
       console.log("TTTTT=>", checkRequest);
-      return reply.code(200).send({ message: "There is request", checkRequest });
+      return reply.code(200).send({ message: "There is request", checkRequest});
     }
     else
     {

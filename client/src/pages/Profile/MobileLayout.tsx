@@ -16,6 +16,9 @@ interface MobileLayoutProps {
   expandUsername?: string;
   handleRemove: (username: string) => void;
   handleAdd: (username: string) => void;
+  //handleConfirm: (username: string) => void;
+  
+
 }
 
 const MobileLayout: React.FC<MobileLayoutProps> = ({
@@ -27,6 +30,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   expandUsername,
   handleRemove,
   handleAdd,
+  //handleConfirm,
 }) => {
   return (
     <div

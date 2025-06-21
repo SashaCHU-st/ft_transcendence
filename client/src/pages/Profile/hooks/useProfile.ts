@@ -3,15 +3,31 @@ import { useNavigate } from "react-router-dom";
 import {getAuthHeaders} from "../types/api";
 import { useUserData } from "./useUserData";
 import { useNotifications } from "./useNotification";
-import { useFavorites } from "./useFavorites";
+//import { useFavorites } from "./useFavorites";
+import { useFriends } from "./useFriends";
 import { useProfileModal } from "./useProfileModal";
 import { useGame } from "./useGame";
 //import api from "../types/api";
 
 export const useProfile = () => {
-  const { user, friends, players, chatList, fetchAllUsers, setFriends, setPlayers, setChatList, setUser } = useUserData();
+  const { user,
+      friends,
+      players, 
+      chatList, 
+      fetchAllUsers,
+      setFriends, 
+      setPlayers, 
+      setChatList, 
+      setUser,
+      fetchFriendRequests,
+      friendRequests,
+      declinedFriendRequest,
+      setDeclinedFriendRequest
+    } = useUserData();
+
   const userId = user?.id || null;
   const authHeaders = getAuthHeaders();
+ 
 
   // Notifications
   const {
@@ -29,7 +45,17 @@ export const useProfile = () => {
   } = useNotifications(userId);
 
   // Favorites
-  const { handleAdd, handleRemove } = useFavorites(fetchAllUsers, friends, setFriends, setPlayers);
+  //const { handleAdd, handleRemove } = useFavorites(fetchAllUsers, friends, setFriends, setPlayers);
+
+  //Friends
+  const { handleAdd, handleRemove, handleConfirm, handleDecline } = useFriends(
+  fetchAllUsers,
+  fetchFriendRequests,
+  friends,
+  setFriends,
+  setPlayers,
+  setDeclinedFriendRequest,
+);
 
   // Profile modal
   const { isModalOpen, setIsModalOpen, handleSaveProfile } = useProfileModal(user, fetchAllUsers, authHeaders);
@@ -40,7 +66,15 @@ export const useProfile = () => {
 
   useEffect(() => {
   fetchAllUsers();
-  }, [fetchAllUsers]);
+   fetchFriendRequests();
+
+    const interval = setInterval(() => {
+    fetchFriendRequests();
+    fetchAllUsers();
+   }, 5000);
+     return () => clearInterval(interval);
+
+  }, [fetchAllUsers,  fetchFriendRequests]);
 
   useEffect(() => {
     if (!redirectToGame || !userId) 
@@ -62,6 +96,8 @@ export const useProfile = () => {
     handleDeclineChallenge,
     handleAdd,
     handleRemove,
+    handleConfirm,
+    handleDecline,
     isModalOpen,
     setIsModalOpen,
     handleSaveProfile,
@@ -72,7 +108,10 @@ export const useProfile = () => {
     navigate,
     setUser,
     declinedChallenge,
-    setDeclinedChallenge
+    setDeclinedChallenge,
+    friendRequests,
+    declinedFriendRequest,
+    setDeclinedFriendRequest
   };
 };
 
