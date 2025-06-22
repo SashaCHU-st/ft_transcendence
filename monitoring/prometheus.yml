@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+rule_files:
+  - "alert.rules.yml"
+scrape_configs:
+  - job_name: "server"
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+    # Enable the following lines when METRICS_TOKEN is set on the server
+    # authorization:
+    #   type: Bearer
+    #   credentials: <token>
+    static_configs:
+      - targets: ["host.docker.internal:3000"]
+  - job_name: "node"
+    static_configs:
+      - targets: ["node-exporter:9100"]

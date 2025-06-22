@@ -89,3 +89,18 @@
 - [ ] Provide responsive and enjoyable gameplay
 - [ ] Integrate the server-side game with the web application
 
+### Accessibility
+#### Server-Side Rendering (SSR) Integration ★ (Minor)
+- [x] Pre-render the landing page on the server
+- [x] Serve HTML content for faster initial load
+- [x] Hydrate the React app on the client
+
+### Devops
+#### Monitoring System ★★ (Minor)
+* [x] Deploy Prometheus to collect metrics from system components
+* [x] Configure exporters to gather service, database and host metrics
+* [x] Provide custom Grafana dashboards for real‑time visualization
+* [x] Set up Prometheus alert rules for critical issues
+* [x] Retain historical metrics using persistent storage
+* [x] Protect Grafana with authentication and access control
+

@@ -173,7 +173,6 @@ const Profile: React.FC = () => {
     user, // Current user's data
     friends, // List of friends
     players, // List of all players
-    chatList,
     selectedBot, // Currently selected bot for gameplay
     isModalOpen, // State for profile modal visibility
    // isLoading, // Loading state for data fetching
@@ -333,7 +332,7 @@ const Profile: React.FC = () => {
           <ChatModal
             onClose={() => setIsChatOpen(false)}
             currentUserId={user.id}
-            players={chatList.filter((p) => p.id !== user.id)}
+            players={friends.filter((p) => p.id !== user.id)}
           />
         </ChatProvider>
       )}

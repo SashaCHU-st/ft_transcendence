@@ -201,3 +201,7 @@ export function initWsServer() {
 
   return wss;
 }
+
+export function getActiveUserCount() {
+  return activeUsers.size;
+}

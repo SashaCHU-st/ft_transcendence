@@ -77,7 +77,6 @@ export async function notification(req, reply) {
     const usernames = acceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
-    console.log('Usernames are accepted', acceptedUsers);
 
     const notAcceptedUsers = notAcceptedFromPartner.map((ch) => {
       return {
@@ -103,15 +102,6 @@ export async function notification(req, reply) {
       )
       .all(user_id);
 
-    // ✅ Mark accepted challenges as "seen" by setting ok = 1
-    if (acceptedUsers.length > 0) {
-      db.prepare(`
-        UPDATE challenge
-        SET ok = 1
-        WHERE user_id = ? AND confirmReq = 1 AND ok = 0
-      `).run(user_id);
-    }
-
     if (notification.length === 0) {
       return reply.code(200).send({
         message: 'No challenge found',
@@ -126,7 +116,6 @@ export async function notification(req, reply) {
       return reply.code(200).send({
         message: 'There is request',
         friends_id: notification.user_id,
-        acceptedUsers, 
         notification,
       });
     }
@@ -174,7 +163,8 @@ export async function accept(req, reply) {
       .code(201)
       .send({
         message: 'Accepted',
-        challenge_id: acceptReq.id,
+        id:acceptReq,
+        challenge_id: acceptReq.lastInsertRowid,
       });
   } catch (err) {
     console.error('Database error:', err.message);

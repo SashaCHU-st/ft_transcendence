@@ -1,15 +1,12 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import api from "../types/api";
-import { useNavigate } from "react-router-dom";
 
 export function useNotifications(userId: string | null) {
   const [notifications, setNotifications] = useState<{ user_id: string; username: string }[]>([]);
   const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
-  const [redirectToGame, setRedirectToGame] = useState<{ friendId: string } | null>(null);
+
   const notificationsRef = useRef(notifications);
-  const navigate = useNavigate();
- 
   useEffect(() => {
     notificationsRef.current = notifications;
   }, [notifications]);
@@ -24,6 +21,15 @@ export function useNotifications(userId: string | null) {
       const res = await api.post("/notification", { user_id: userId });
       const data = res.data;
 
+    //   if (data.notification && Array.isArray(data.notification)) {
+    //     const newNotifications = data.notification.filter(
+    //       (notif: any) =>
+    //         !notificationsRef.current.some(n => n.user_id === notif.user_id)
+    //     ).map((notif: any) => ({
+    //       user_id: notif.user_id,
+    //       username: notif.username
+    //     }));
+	  console.log("Existing notifications:", notificationsRef.current);
    	console.log("Backend notifications:", data.notification);
 		
 		if (data.notification && Array.isArray(data.notification)) {
@@ -41,31 +47,14 @@ export function useNotifications(userId: string | null) {
           setIsNotificationModalOpen(true);
         }
       }
-
-      if (data.acceptedUsers && Array.isArray(data.acceptedUsers)) {
-      const accepted = data.acceptedUsers.find((ch: any) =>
-         //String(ch.friends_id) === userId // I'm the one who sent the challenge
-      String(ch.user_id) === userId && ch.ok === 0
-      );
-      
-      if (accepted && !redirectToGame) {
-        console.log("✅ Your challenge was accepted by:", accepted.username);
-        // console.log("All info of accepted: ", accepted);
-         console.log("Accepted Friends Id: ",accepted.friends_id);
-        
-        setRedirectToGame({ friendId: String(accepted.friends_id) });
-        navigate("/pong?mode=remote2p");
-      }
-    }
-
     } catch (err) {
       console.error("Notification check failed:", err);
     }
   }, [userId]);
+  console.log("Notification length: ", notifications.length);
 
    useEffect(() => {
-    if (!userId) 
-      return;
+    if (!userId) return;
 
     // Check immediately on mount
     checkNotifications();
@@ -81,15 +70,11 @@ export function useNotifications(userId: string | null) {
   const handleAcceptChallenge = useCallback(async (friendId: string) => {
     if (!userId) return;
     try {
-      const res = await api.post("/acceptRequest", {
+      await api.post("/acceptRequest", {
         user_id: userId,
         friends_id: friendId,
       });
-      if (res.data?.challenge_id) {
-        localStorage.setItem("challenge_id", String(res.data.challenge_id));
-      }
       toast.success("Challenge accepted!");
-      navigate("/pong?mode=remote2p");
     } catch (err: any) {
       console.error(err);
       throw err;
@@ -97,7 +82,7 @@ export function useNotifications(userId: string | null) {
       setNotifications(prev => prev.filter(n => n.user_id !== friendId));
       if (notifications.length <= 1) setIsNotificationModalOpen(false);
     }
-  }, [userId, notifications, navigate]);
+  }, [userId, notifications.length]);
 
   const handleDeclineChallenge = useCallback(async (friendId: string) => {
     if (!userId) return;
@@ -114,7 +99,7 @@ export function useNotifications(userId: string | null) {
       setNotifications(prev => prev.filter(n => n.user_id !== friendId));
       if (notifications.length <= 1) setIsNotificationModalOpen(false);
     }
-  }, [userId, notifications]);
+  }, [userId, notifications.length]);
 
   return {
     notifications,
@@ -123,7 +108,5 @@ export function useNotifications(userId: string | null) {
     checkNotifications,
     handleAcceptChallenge,
     handleDeclineChallenge,
-    redirectToGame,
-    setRedirectToGame
   };
 }
