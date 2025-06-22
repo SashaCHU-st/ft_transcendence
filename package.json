@@ -1,8 +1,9 @@
 {
-  "devDependencies": {
-    "prettier": "^3.5.3"
-  },
+  "type": "module",
   "dependencies": {
     "react-icons": "^5.5.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3"
   }
 }

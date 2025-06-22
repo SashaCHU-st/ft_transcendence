@@ -61,7 +61,7 @@ fastify.register(blockRoutes);
 // Server start
 const start = async () => {
   try {
-    await fastify.listen({ port: process.env.PORT || 3000 });
+    await fastify.listen({ port: process.env.PORT || 3000, host: "0.0.0.0",});
     const gameWss = initWsServer();
     const chatWss = initChatWsServer();
 
