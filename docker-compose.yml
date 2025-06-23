@@ -1,58 +1,22 @@
-
-# services:
-#   backend:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-#       target: backend
-#     env_file:
-#       - server/.env
-#     volumes:
-#       - ./server:/app/server:cached
-#       - ./shared:/app/shared:cached
-#       - /app/server/node_modules
-#     working_dir: /app/server
-#     ports:
-#       - "3000:3000"
-
-#   frontend:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-#       target: frontend
-#     env_file:
-#       - server/.env
-#     volumes:
-#       - ./client:/app/client:cached
-#       - ./shared:/app/shared:cached
-#       - ./server/cert:/app/server/cert:cached
-#       - /app/client/node_modules
-#     working_dir: /app/client
-#     ports:
-#       - "5173:5173"
-
-
-
-
 services:
   backend:
     build:
-      context: .              # корень проекта, где ищем Dockerfile
+      context: .              # the project root; Dockerfile is located here
       dockerfile: Dockerfile
       target: backend
     env_file:
-      - server/.env           # подтянет PORT, JWT_SECRET_KEY и VITE_API_URL
+      - server/.env           # pull in server environment (PORT, JWT_SECRET_KEY, VITE_API_URL)
     environment:
-      - PORT=3000             # явно пробрасываем
+      - PORT=3000             # explicitly expose PORT inside the container
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"  # allow container to resolve host machine by this hostname
     volumes:
-      - ./server:/app/server:cached
-      - ./shared:/app/shared:cached
-      - server_node_modules:/app/server/node_modules
+      - ./server:/app/server:cached          # mount host server code for live reload (nodemon)
+      - ./shared:/app/shared:cached          # mount shared code across both services
+      - server_node_modules:/app/server/node_modules  # named volume to persist installed deps
     working_dir: /app/server
     ports:
-      - "3000:3000"
+      - "3000:3000"            # map container port 3000 → host port 3000
 
   frontend:
     build:
@@ -60,20 +24,20 @@ services:
       dockerfile: Dockerfile
       target: frontend
     env_file:
-      - server/.env           # оттуда подхватит VITE_API_URL=https://localhost:3000
+      - server/.env           # bring in VITE_API_URL so Vite knows where to proxy API calls
     environment:
-      - VITE_API_URL          # гарантируем, что Vite его увидит
+      - VITE_API_URL          # ensure Vite picks up the API URL at runtime
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"  # same host alias for frontend to reach backend
     volumes:
-      - ./client:/app/client:cached
-      - ./shared:/app/shared:cached
-      - ./server/cert:/app/server/cert:cached
-      - client_node_modules:/app/client/node_modules
+      - ./client:/app/client:cached         # mount host client code for live reload (Vite)
+      - ./shared:/app/shared:cached         # mount shared code
+      - ./server/cert:/app/server/cert:cached  # reuse backend’s TLS certs for HTTPS in Vite
+      - client_node_modules:/app/client/node_modules  # named volume for frontend deps
     working_dir: /app/client
     ports:
-      - "5173:5173"
+      - "5173:5173"           # map container port 5173 → host port 5173
 
 volumes:
-  server_node_modules: {}      # именованные тома для node_modules
-  client_node_modules: {}
+  server_node_modules: {}      # named volume to cache backend node_modules between rebuilds
+  client_node_modules: {}      # named volume to cache frontend node_modules between rebuilds
