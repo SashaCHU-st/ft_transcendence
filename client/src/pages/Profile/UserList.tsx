@@ -106,8 +106,6 @@ const UserList: React.FC<Props> = ({
           ? user.avatar
           : '/prof_img/avatar1.png';
 
-        // Создаём новый объект user с добавленными функциями
-
         const userWithActions: UserInfo & {
           onRemove?: () => void;
           onChallenge?: () => void;
@@ -131,9 +129,24 @@ const UserList: React.FC<Props> = ({
             {/* Header row: avatar, username, online status */}
             <div className="flex w-full items-center">
               <div className=" flex-grow flex items-center gap-2">
-                <span className="font-bold text-base md:text-lg lg:text-xl">
-                  {user.username}
-                </span>
+                 <div className="flex items-center gap-3">
+                <div className="relative">
+                  <img
+                    src={user.avatar}
+                    alt={user.username}
+                    className="w-8 h-8 rounded-full border"
+                  />
+                  <span
+                    className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-900 ${
+                      user.online ? "bg-green-400" : "bg-gray-400"
+                    }`}
+                  />
+                </div>
+                <div>
+                  <p className="font-semibold text-white">{user.username}</p>
+                </div>
+              </div>
+
               </div>
 
               <div className="w-16">
@@ -223,26 +236,6 @@ const UserList: React.FC<Props> = ({
                   </button>
                 )}
               </div>
-
-              <span
-                className={`text-sm
-                    sm:text-sm 
-                    md:text-base ${
-                      user.online ? 'text-green-400' : 'text-gray-400'
-                    }`}
-              >
-                {user.online ? (
-                  <i
-                    className="fa-solid fa-circle"
-                    style={{ color: 'green', fontSize: '1.2em' }}
-                  ></i>
-                ) : (
-                  <i
-                    className="fa-solid fa-circle"
-                    style={{ color: 'red', fontSize: '1.2em' }}
-                  ></i>
-                )}
-              </span>
             </div>
 
             {/* Expandable content container */}

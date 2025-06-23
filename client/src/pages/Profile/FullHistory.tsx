@@ -44,23 +44,23 @@ const FullHistory: React.FC<FullHistoryProps> = ({
           </OverlayHeading>
 
           <div className="self-end flex items-center gap-2">
-            <img
-              src={user.avatar}
-              alt="avatar"
-              className="w-32 h-32 rounded-full object-cover"
-            />
-            <i
-              className="fa-solid fa-circle"
-              style={{
-                color: user.online ? 'green' : 'red',
-                fontSize: '1.2em',
-              }}
-            />
-            <span
-              className={`text-sm sm:text-sm md:text-base ${
-                user.online ? 'text-green-400' : 'text-gray-400'
-              }`}
-            ></span>
+                   <div className="flex items-center gap-3">
+                <div className="relative">
+                  <img
+                    src={user.avatar}
+                    alt={user.username}
+                    className="w-32 rounded-full border"
+                  />
+                  <span
+                    className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-900 ${
+                      user.online ? "bg-green-400" : "bg-gray-400"
+                    }`}
+                  />
+                </div>
+                <div>
+                  <p className="font-semibold text-white">{user.username}</p>
+                </div>
+              </div>
             <div className="flex w-full justify-between text-center font-bold font-orbitron">
               <div className="flex-1 flex flex-col items-center">
                 <div>GAMES</div>
