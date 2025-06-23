@@ -17,14 +17,12 @@ export async function challenge(req, reply) {
       WHERE user_id = ? AND friends_id = ? AND sent_once = ? AND game_end = ?
     `).get(user_id, friends_id.id, 1, 0);
 
-    console.log("HHHHHHHHHH=>", challengeSentOnce)
 
     if(!challengeSentOnce)
     {
       const sendRequest = db
         .prepare(`INSERT INTO challenge (user_id, friends_id, sent_once) VALUES (?,?, ?) RETURNING id`)
         .run(user_id, friends_id.id, 1);
-      console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP", sendRequest.lastInsertRowid)
 
       return reply
         .code(201)
@@ -59,7 +57,6 @@ export async function notification(req, reply) {
       )
       .all(user_id);
 
-    console.log('notifications =>', notification);
     const accptedFromPartner = db
       .prepare(
         `SELECT challenge.*, users.username
@@ -69,7 +66,6 @@ export async function notification(req, reply) {
       )
       .all(user_id);
 
-    // console.log('RRRR=>', accptedFromPartner);
 
     const notAcceptedFromPartner = db
       .prepare(
@@ -163,7 +159,7 @@ export async function notification(req, reply) {
 }
 
 export async function sawAccept(req, reply) {
-  console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU")
+  // console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU")
   const { user_id, friends_id } = req.body;
 
   try {
@@ -191,7 +187,7 @@ export async function accept(req, reply) {
       )
       .get(friends_id, user_id);
 
-    console.log('kkkkkkkkkkkkk =>', acceptReq.id);
+    // console.log('kkkkkkkkkkkkk =>', acceptReq.id);
 
     const gameStarts = db
       .prepare(`INSERT INTO game (challenge_id, date ) VALUES (?,?)`)

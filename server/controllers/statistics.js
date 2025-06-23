@@ -55,11 +55,8 @@ export async function statisticsUser(req, reply) {
 }
 
 export async function win(req, reply) {
-  console.log("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
   const { user_id, challenge_id, score } = req.body;
 
-  console.log("CHALENGE ID=>", challenge_id);
-  console.log("USER IDDDDD>", user_id);
   try {
     let gameEND = { changes: 0 };
     if (challenge_id) {
@@ -69,7 +66,6 @@ export async function win(req, reply) {
         )
         .run(user_id, score, new Date().toISOString(), challenge_id);
     const gameEND2 = db.prepare(`UPDATE challenge SET game_end = ? WHERE id = ? `).run(1, challenge_id)
-    console.log("gameEND2      =>", gameEND2)
     }
 
     if (!challenge_id || gameEND.changes === 0) {

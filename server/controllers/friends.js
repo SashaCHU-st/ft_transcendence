@@ -14,12 +14,12 @@ export async function friendsSearch(req, reply) {
     const hasUser = db
       .prepare(`SELECT * FROM users WHERE username = ? `)
       .get(username);
-    console.log("THERE is such username", hasUser);
+    // console.log("THERE is such username", hasUser);
     if (!hasUser) {
       return reply.code(400).send({ message: "Not such user" });
     }
     if (hasUser) {
-      console.log("KUKU, lets add display user");
+      // console.log("KUKU, lets add display user");
       return reply.code(200).send({ message: "we have this user", hasUser });
     }
   } catch (err) {
@@ -122,17 +122,17 @@ export async function confirmFriend(req, reply) {
 }
 
 export async function requestFriend(req, reply) {
-  console.log("WE in REQUESTTTT")
+  // console.log("WE in REQUESTTTT")
   const {user_id} = req.body;
 
   console.log("ISER=>", user_id)
 
   try {
     const checkRequest = db.prepare("SELECT * FROM friends WHERE friends_id = ? AND confirmReq = 0").all(user_id)
-    console.log("YYYY=>", checkRequest)
+    // console.log("YYYY=>", checkRequest)
     if(checkRequest)
     {
-      console.log("TTTTT=>", checkRequest);
+      // console.log("TTTTT=>", checkRequest);
       return reply.code(200).send({ message: "There is request", checkRequest });
     }
     else
