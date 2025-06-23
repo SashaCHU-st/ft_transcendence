@@ -39,7 +39,10 @@ const UserList: React.FC<Props> = ({
 
   const toggleExpand = async (index: number) => {
     const user = users[index];
+
+    // console.log("IIIIII=>,", user)
     const username = user.username;
+        console.log("IIIIII=>,", username)
     try {
       const response = await fetch('https://localhost:3000/statisticsUser', {
         method: 'POST',

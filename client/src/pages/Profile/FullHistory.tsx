@@ -57,9 +57,9 @@ const FullHistory: React.FC<FullHistoryProps> = ({
                     }`}
                   />
                 </div>
-                <div>
+                {/* <div>
                   <p className="font-semibold text-white">{user.username}</p>
-                </div>
+                </div> */}
               </div>
             <div className="flex w-full justify-between text-center font-bold font-orbitron">
               <div className="flex-1 flex flex-col items-center">
@@ -89,6 +89,8 @@ const FullHistory: React.FC<FullHistoryProps> = ({
               game.winner_name === username
                 ? game.loser_name
                 : game.winner_name;
+                console.log("OPONENT  NAME >", opponentName)
+                 console.log(" NAME >", username)
             const isWinner = game.winner_name === username;
 
             return (

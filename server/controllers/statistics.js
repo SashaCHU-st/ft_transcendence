@@ -23,25 +23,25 @@ export async function statisticsAll(request, reply) {
 }
 
 export async function statisticsUser(req, reply) {
-  const { user_id } = req.body;
+  const { username } = req.body;
 
   try {
     const statUser = db
       .prepare(
-        `SELECT 
-          users.id,
-          users.wins,
-          users.losses,
-          game.id AS game_id,
-          game.win_score,
-          game.lose_score,
-          game.date
-          FROM users
-          LEFT JOIN game
-          ON users.id = game.win_user_id OR users.id = game.losses_user_id
-          WHERE users.id = ?`
+        `SELECT
+          g.win_score,
+          winner.username AS winner_name,
+          g.lose_score,
+          loser.username AS loser_name,
+          g.date
+      FROM users u
+      JOIN game g ON g.win_user_id = u.id OR g.losses_user_id = u.id
+      JOIN users AS winner ON g.win_user_id = winner.id
+      JOIN users AS loser ON g.losses_user_id = loser.id
+      WHERE u.username = ?
+      `
       )
-      .all(user_id);
+      .all(username);
     console.log('USER STAT =>', statUser);
 
     // const wins = statUser.wins;
