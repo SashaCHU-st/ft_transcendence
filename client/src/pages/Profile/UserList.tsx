@@ -42,7 +42,7 @@ const UserList: React.FC<Props> = ({
 
     // console.log("IIIIII=>,", user)
     const username = user.username;
-        console.log("IIIIII=>,", username)
+        // console.log("IIIIII=>,", username)
     try {
       const response = await fetch('https://localhost:3000/statisticsUser', {
         method: 'POST',
@@ -152,7 +152,7 @@ const UserList: React.FC<Props> = ({
 
               </div>
 
-              <div className="w-16">
+              {/* <div className="w-16">
                 {userWithActions.onRemove && (
                   <button
                     onClick={(e) => {
@@ -188,22 +188,22 @@ const UserList: React.FC<Props> = ({
                       userWithActions.onAdd!();
                     }}
                     className="
-                  h-10
-                  px-4
-                  py-2
-                  rounded-md
-                  text-sm
-                  font-semibold
-                  text-green-400
-                  border-2
-                  border-green-500
-                  hover:bg-green-800
-                  hover:text-white
-                  transition
-                  duration-300
-                  shadow-[0_0_12px_#00ff00]
-                  hover:shadow-[0_0_18px_#00ff00]
-            "
+                        h-10
+                        px-4
+                        py-2
+                        rounded-md
+                        text-sm
+                        font-semibold
+                        text-green-400
+                        border-2
+                        border-green-500
+                        hover:bg-green-800
+                        hover:text-white
+                        transition
+                        duration-300
+                        shadow-[0_0_12px_#00ff00]
+                        hover:shadow-[0_0_18px_#00ff00]
+                  "
                   >
                     <span className="text-xl text-green-300 drop-shadow-[0_0_3px_#00ff00]">
                       <i className="fa-solid fa-heart"></i>
@@ -219,26 +219,26 @@ const UserList: React.FC<Props> = ({
                       userWithActions.onChallenge!();
                     }}
                     className="
-                  px-4
-                  py-2
-                  rounded-md
-                  text-sm
-                  font-semibold
-                  text-cyan-300
-                  border-2
-                  border-cyan-400
-                  hover:bg-cyan-500
-                  hover:text-black
-                  transition
-                  duration-300
-                  shadow-[0_0_12px_#00ffff]
-                  hover:shadow-[0_0_18px_#00ffff]
+                          px-4
+                          py-2
+                          rounded-md
+                          text-sm
+                          font-semibold
+                          text-cyan-300
+                          border-2
+                          border-cyan-400
+                          hover:bg-cyan-500
+                          hover:text-black
+                          transition
+                          duration-300
+                          shadow-[0_0_12px_#00ffff]
+                          hover:shadow-[0_0_18px_#00ffff]
                 "
                   >
                     <i className="fa-solid fa-gamepad fa-1.5x"></i>
                   </button>
                 )}
-              </div>
+              </div> */}
             </div>
 
             {/* Expandable content container */}
