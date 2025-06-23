@@ -43,6 +43,93 @@ const PlayerCard: React.FC<Props> = ({ user,stats }) => {
           pt-2
         "
       >
+         <div className="w-16">
+                {user.onAdd && (
+                  <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    user.onAdd!();
+                  }}
+                  className="
+                  h-10
+                        px-4
+                        py-2
+                        rounded-md
+                        text-sm
+                        font-semibold
+                        text-green-400
+                        border-2
+                        border-green-500
+                        hover:bg-green-800
+                        hover:text-white
+                        transition
+                        duration-300
+                        shadow-[0_0_12px_#00ff00]
+                        hover:shadow-[0_0_18px_#00ff00]
+                        "
+                        >
+                    <span className="text-xl text-green-300 drop-shadow-[0_0_3px_#00ff00]">
+                      <i className="fa-solid fa-heart"></i>
+                    </span>
+                  </button>
+                )}
+              </div>
+              <div className="w-16">
+                {user.onRemove && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      user.onRemove!();
+                    }}
+                    className="
+                      px-4
+                      py-2
+                      rounded-md
+                      text-sm
+                      font-semibold
+                      text-red-400
+                      border-2
+                      border-red-500
+                      hover:bg-red-600
+                      hover:text-white
+                      transition
+                      duration-300
+                      shadow-[0_0_12px_#ff4d4d]
+                      hover:shadow-[0_0_18px_#ff4d4d]
+                    "
+                  >
+                    <i className="fa-solid fa-heart-crack"></i>
+                  </button>
+                )}
+              </div>
+              <div className="w-16">
+                {user.onChallenge && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      user.onChallenge!();
+                    }}
+                    className="
+                          px-4
+                          py-2
+                          rounded-md
+                          text-sm
+                          font-semibold
+                          text-cyan-300
+                          border-2
+                          border-cyan-400
+                          hover:bg-cyan-500
+                          hover:text-black
+                          transition
+                          duration-300
+                          shadow-[0_0_12px_#00ffff]
+                          hover:shadow-[0_0_18px_#00ffff]
+                "
+                  >
+                    <i className="fa-solid fa-gamepad fa-1.5x"></i>
+                  </button>
+                )}
+              </div>
       </div>
     </div>
   );
