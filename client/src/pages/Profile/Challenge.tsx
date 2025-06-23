@@ -35,6 +35,8 @@ export const askForChallenge = async (targetUsername: string): Promise<void> => 
     // }
 
     console.log("You sent request for challenge:", response.data);
+    // console.log("You sent request for challenge:", response.data.challenge_id);
+    localStorage.setItem("challenge_id", response.data.challenge_id);
     }catch (err: any) {
     if (err.response) {
       console.error("Status:", err.response.status);

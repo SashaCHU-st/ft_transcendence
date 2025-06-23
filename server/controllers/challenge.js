@@ -11,21 +11,34 @@ export async function challenge(req, reply) {
     if (!friends_id) {
       return reply.code(404).send({ message: 'User not found online' });
     }
-    const alreadyChallengedBefore = db
-      .prepare(`SELECT * FROM challenge WHERE (user_id = ? AND friends_id = ?) OR (friends_id = ? AND user_id = ?)`)
-      .get(user_id, friends_id.id, user_id, friends_id.id);
-    if (!alreadyChallengedBefore) {
+
+    const challengeSentOnce = db.prepare(`
+      SELECT * FROM challenge
+      WHERE user_id = ? AND friends_id = ? AND sent_once = ? AND game_end = ?
+    `).get(user_id, friends_id.id, 1, 0);
+
+    console.log("HHHHHHHHHH=>", challengeSentOnce)
+
+    if(!challengeSentOnce)
+    {
       const sendRequest = db
-        .prepare(`INSERT INTO challenge (user_id, friends_id) VALUES (?,?)`)
-        .run(user_id, friends_id.id);
+        .prepare(`INSERT INTO challenge (user_id, friends_id, sent_once) VALUES (?,?, ?) RETURNING id`)
+        .run(user_id, friends_id.id, 1);
+      console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP", sendRequest.lastInsertRowid)
+
       return reply
         .code(201)
-        .send({ message: 'Request sent', request: sendRequest });
-    } else {
-      return reply.code(400).send({
-        message: 'Challenge has been called once',
-      });
+        .send({ message: 'Request sent', request: sendRequest, challenge_id : sendRequest.lastInsertRowid});
+
     }
+    else
+    {
+      return reply
+        .code(400)
+        .send({ message: 'CHALLENGE HAVE BEEN SENT ONCE'});
+    }
+
+    
   } catch (err) {
     console.error('Database error:', err.message);
     return reply.code(500).send({ message: 'Something went wrong' });
@@ -56,7 +69,8 @@ export async function notification(req, reply) {
       )
       .all(user_id);
 
-    console.log('RRRR=>', accptedFromPartner);
+    // console.log('RRRR=>', accptedFromPartner);
+
     const notAcceptedFromPartner = db
       .prepare(
         `SELECT challenge.*, users.username
@@ -74,9 +88,11 @@ export async function notification(req, reply) {
           .get(ch.friends_id),
       };
     });
+
     const usernames = acceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
+    // console.log('Usernames are accepted', acceptedUsers);
 
     const notAcceptedUsers = notAcceptedFromPartner.map((ch) => {
       return {
@@ -86,10 +102,11 @@ export async function notification(req, reply) {
           .get(ch.friends_id),
       };
     });
+
     const usernamesNotAccepted = notAcceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
-    console.log('Usernames not accepted', usernamesNotAccepted);
+    // console.log('Usernames not accepted', usernamesNotAccepted);
 
     //not really neeeded, delete later
     const acceptedSeen = db
@@ -101,6 +118,24 @@ export async function notification(req, reply) {
     `
       )
       .all(user_id);
+
+    // ✅ Mark accepted challenges as "seen" by setting ok = 1
+    if (acceptedUsers.length > 0) {
+      db.prepare(`
+        UPDATE challenge
+        SET ok = 1
+        WHERE user_id = ? AND confirmReq = 1 AND ok = 0
+      `).run(user_id);
+    }
+
+    if (notAcceptedUsers.length > 0)
+    {
+       db.prepare(
+        `UPDATE challenge 
+        SET ok = 1 
+        WHERE user_id = ? AND confirmReq = 0 AND ok = 0`
+      ).run(user_id);
+    };
 
     if (notification.length === 0) {
       return reply.code(200).send({
@@ -116,6 +151,8 @@ export async function notification(req, reply) {
       return reply.code(200).send({
         message: 'There is request',
         friends_id: notification.user_id,
+        acceptedUsers,
+        notAcceptedUsers,
         notification,
       });
     }
@@ -126,6 +163,7 @@ export async function notification(req, reply) {
 }
 
 export async function sawAccept(req, reply) {
+  console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU")
   const { user_id, friends_id } = req.body;
 
   try {

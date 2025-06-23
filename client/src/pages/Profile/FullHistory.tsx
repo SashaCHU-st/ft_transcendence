@@ -74,12 +74,12 @@ const FullHistory: React.FC<FullHistoryProps> = ({
                   {winRate}%
                 </div>
               </div>
-              <div className="flex-1 flex flex-col items-center">
+              {/* <div className="flex-1 flex flex-col items-center">
                 <div>STREAK</div>
                 <div className="text-[#76E29A] text-5xl font-bold">
                   {user.losses}
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
 
