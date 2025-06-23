@@ -96,13 +96,25 @@ db.exec(`
     db.exec(`
       CREATE TABLE IF NOT EXISTS game (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        challenge_id INTEGER NOT NULL,
-        win_user_id INTEGER default 0,
-        losses_user_id INTEGER default 0,
+        challenge_id INTEGER,
+        win_user_id INTEGER DEFAULT 0,
+        losses_user_id INTEGER DEFAULT 0,
+        win_score INTEGER DEFAULT 0,
+        lose_score INTEGER DEFAULT 0,
         date DATE,
         FOREIGN KEY (challenge_id) REFERENCES challenge(id)
       );
     `);
+
+    const gameColumns = db.prepare('PRAGMA table_info(game);').all();
+    const hasWinScore = gameColumns.some((c) => c.name === 'win_score');
+    if (!hasWinScore) {
+      db.exec('ALTER TABLE game ADD COLUMN win_score INTEGER DEFAULT 0;');
+    }
+    const hasLoseScore = gameColumns.some((c) => c.name === 'lose_score');
+    if (!hasLoseScore) {
+      db.exec('ALTER TABLE game ADD COLUMN lose_score INTEGER DEFAULT 0;');
+    }
     
     
     console.log("Database initialized and favorites table is ready.");

@@ -142,7 +142,9 @@ export function initWsServer() {
 
       const winnerId = winnerWs.user_id ?? winnerWs.id;
       const loserId = ws.user_id ?? ws.id;
-      updateStats(winnerId, loserId);
+      const winnerScore = winnerSide === 'left' ? game.leftScore : game.rightScore;
+      const loserScore = winnerSide === 'left' ? game.rightScore : game.leftScore;
+      updateStats(winnerId, loserId, winnerScore, loserScore);
 
         try {
           winnerWs.send(
