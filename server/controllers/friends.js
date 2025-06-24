@@ -182,9 +182,9 @@ export async function deleteFriend(req, reply) {
     return reply.code(404).send({ message: "NO such as friebd" });
   }
   try {
-    const deleteFr = db
-      .prepare(`DELETE FROM friends WHERE user_id = ? AND friends_id = ?`)
-      .run(user_id, friend.id);
+     const deleteFr = db
+      .prepare(`DELETE FROM friends WHERE (user_id = ? AND friends_id = ?) OR (user_id = ? AND friends_id = ?)`)
+      .run(user_id, friend.id, friend.id, user_id);
     return reply.code(200).send({ deleteFr });
   } catch (err) {
     console.error("Database error:", err.message);
