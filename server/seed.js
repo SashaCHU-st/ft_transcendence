@@ -4,7 +4,7 @@ const db = new Database("./database/database.db");
 
 db.exec(
   `
-   DELETE FROM game WHERE  id = 4;
+   DELETE FROM friends WHERE  id < 100;
   ` 
 );
 

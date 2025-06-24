@@ -168,6 +168,7 @@ import NotificationModal from "./NotificationModal";
 import DeclinedChallengeModal from "./DeclinedChallengeModal";
 import FriendRequestList from "./FriendRequestsList"
 import DeclinedFriendRequestModal from "./DeclinedFriendRequestModal";
+import api from "./types/api";
 
 // Profile component serves as the main page for user profile management
 const Profile: React.FC = () => {
@@ -206,6 +207,32 @@ const Profile: React.FC = () => {
   const [expandUsername, setExpandUsername] = useState<string | undefined>(
     undefined
   );
+
+  const handleok =async () =>
+  {
+    console.log('IIIIII')
+    const user_id1 = localStorage.getItem("id");
+    const username1 = declinedFriendRequest;
+        // const username = declinedFriendRequest?.map((d:string)=> d.username)
+    console.log("Username in sawAccept: ", username1[0]);
+        console.log("IDDDD in sawAccept: ",user_id1);
+    const username  = username1[0]
+    // const username2 = username[0];
+
+    // const fetchData = await (`https://localhost:3000/sawAccept`,
+    //   method:"POST",
+
+
+    //)
+
+    console.log("KKKK=>", typeof user_id1)
+    console.log("KKKK=>", typeof username[0])
+    const user_id = Number(user_id1);
+    const data =await api.post('/sawAccept', { user_id, username });
+    setDeclinedFriendRequest(null);
+
+    console.log("JJJJ=>", data)
+  }
 
   // Handle search for a user by username (case-insensitive)
   const handleSearch = (username: string) => {
@@ -357,7 +384,7 @@ const Profile: React.FC = () => {
       {declinedFriendRequest && (
         <DeclinedFriendRequestModal
           declinedUsername={declinedFriendRequest}
-          onClose={() => setDeclinedFriendRequest(null)}
+          onClose={handleok}
         />
       )}
       
