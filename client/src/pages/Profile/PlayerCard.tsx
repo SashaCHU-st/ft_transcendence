@@ -37,7 +37,6 @@ const PlayerCard: React.FC<Props> = ({ user,stats }) => {
       <div
         className="
           flex
-          gap-3
           justify-center
           flex-wrap
           pt-2
@@ -51,9 +50,8 @@ const PlayerCard: React.FC<Props> = ({ user,stats }) => {
                   user.onAdd?.();
                 }}
                 className="
-                  h-10
-                  px-4
-                  py-2
+                  px-5
+                  py-1
                   rounded-md
                   text-sm
                   font-semibold
@@ -69,7 +67,7 @@ const PlayerCard: React.FC<Props> = ({ user,stats }) => {
                 "
               >
                 <span className="text-xl text-green-300 drop-shadow-[0_0_3px_#00ff00]">
-                  <i className="fa-solid fa-heart"></i>
+                  <i className="fa-solid text-2xl fa-heart"></i>
                 </span>
               </button>
             ) : typeof user.onRemove === 'function' ? (
@@ -79,9 +77,8 @@ const PlayerCard: React.FC<Props> = ({ user,stats }) => {
                   user.onRemove?.()
                 }}
                 className="
-                  h-10
-                  px-4
-                  py-2
+                  px-5
+                  py-1
                   rounded-md
                   text-sm
                   font-semibold
@@ -97,7 +94,7 @@ const PlayerCard: React.FC<Props> = ({ user,stats }) => {
                 "
               >
                 <span className="text-xl text-red-300 drop-shadow-[0_0_3px_#ff0000]">
-                  <i className="fa-solid fa-heart-crack"></i>
+                  <i className="fa-solid text-2xl fa-heart-crack"></i>
                 </span>
               </button>
             ) : null}
@@ -113,7 +110,7 @@ const PlayerCard: React.FC<Props> = ({ user,stats }) => {
                     }}
                     className="
                           px-4
-                          py-2
+                          py-1
                           rounded-md
                           text-sm
                           font-semibold
@@ -128,7 +125,7 @@ const PlayerCard: React.FC<Props> = ({ user,stats }) => {
                           hover:shadow-[0_0_18px_#00ffff]
                 "
                   >
-                    <i className="fa-solid fa-gamepad fa-1.5x"></i>
+                    <i className="fa-solid fa-gamepad text-2xl fa-1.5x"></i>
                   </button>
                 )}
               </div>

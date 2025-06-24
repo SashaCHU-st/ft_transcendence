@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { toast } from 'react-hot-toast';
 import api from '../types/api';
 import { getAuthHeaders } from '../types/api';
-import { UserInfo, MatchResult } from '../types/UserInfo';
+import { UserInfo} from '../types/UserInfo';
 
 const isValidBase64 = (str: string) => {
   try {
@@ -25,17 +25,10 @@ export function useUserData() {
   const [players, setPlayers] = useState<UserInfo[]>([]);
   const [chatList, setChatList] = useState<UserInfo[]>([]);
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
-  const [declinedFriendRequest, setDeclinedFriendRequest] = useState<string | null>(null);
+  const [declinedFriendRequest, setDeclinedFriendRequest] = useState<string[] | null>(null);
  
-
   const authHeaders = useMemo(() => getAuthHeaders(), []);
-  // const friendRequestsRef = useRef<FriendRequest[]>(friendRequests);
-
-  // // Keep ref updated when friendRequests state changes
-  // useEffect(() => {
-  //   friendRequestsRef.current = friendRequests;
-  // }, [friendRequests]);
-
+  
   const fetchAllUsers = useCallback(async () => {
     try {
       const currentUserId = localStorage.getItem('id');
@@ -47,16 +40,16 @@ export function useUserData() {
       console.log('GAME=>', data.game);
       console.log('USERS=>', data.users);
 
-      const parsedMatches: MatchResult[] = data.game.map((g: any) => ({
-        id: String(g.id),
-        winner_name: String(g.winner_name),
-        losses_name: String(g.losses_name),
-        date: g.date,
-        win_score: String(g.win_score),
-        losses_score: String(g.lose_score),
-      }));
+      // const parsedMatches: MatchResult[] = data.game.map((g: any) => ({
+      //   id: String(g.id),
+      //   winner_name: String(g.winner_name),
+      //   losses_name: String(g.losses_name),
+      //   date: g.date,
+      //   win_score: String(g.win_score),
+      //   losses_score: String(g.lose_score),
+      // }));
 
-      setMatches(parsedMatches);
+      // setMatches(parsedMatches);
 
       let currentUser: UserInfo | null = null;
 
@@ -132,43 +125,6 @@ export function useUserData() {
   }, [authHeaders]);
 
 
-
-// const fetchFriendNotifications = useCallback(async () => {
-//   try {
-//     const user_id = localStorage.getItem("id");
-//     if (!user_id) return;
-
-//     const { data } = await api.post("/notificationFriend", { user_id });
-
-//     if (data.usernamesDeclined && data.usernamesDeclined.length > 0) {
-//       setFriendRequests((prevRequests) => {
-//         console.log("Friend requests before filtering:", prevRequests);
-
-//         const filtered = prevRequests.filter((request) =>
-//           !data.usernamesDeclined.some((declined: any) => declined.username === request.username)
-//         );
-
-//         console.log("Filtered friend requests:", filtered);
-//         return filtered;
-//       });
-
-//       const declinedUsernames = data.usernamesDeclined.map((d: any) => d.username);
-
-//       console.log("Declined usernames: ", data.usernamesDeclined);
-//       console.log("Declined usernames (strings):", declinedUsernames);
-
-//       setDeclinedFriendRequest(declinedUsernames);
-
-//       toast('Some friend requests were declined.', { icon: '❌' });
-//     }
-
-//   } catch (err: any) {
-//     console.error("Failed to fetch friend notifications:", err);
-//     toast.error("Could not check friend notifications");
-//   }
-// }, []);
-
-
 const fetchFriendRequests = useCallback(async () => {
   try {
     const user_id = localStorage.getItem('id');
@@ -225,7 +181,7 @@ const fetchFriendRequests = useCallback(async () => {
     friends,
     players,
     chatList,
-    matches,
+    
     fetchAllUsers,
     fetchFriendRequests,
    // fetchFriendNotifications,

@@ -1,7 +1,3 @@
-
-
-//! dlja preznego fona, zakomentirujte niz i otkrojte verh
-
 import React, { useState } from "react";
 import ProfileModal from "./ProfileModal";
 import Header from "./Header";
@@ -22,13 +18,11 @@ import api from "./types/api";
 
 // Profile component serves as the main page for user profile management
 const Profile: React.FC = () => {
-  // Destructure user data, state, and handlers from custom useProfile hook
   const {
     user, // Current user's data
     friends, // List of friends
     players, // List of all players
     chatList,
-    matches,
     selectedBot, // Currently selected bot for gameplay
     isModalOpen, // State for profile modal visibility
    // isLoading, // Loading state for data fetching
@@ -59,24 +53,22 @@ const Profile: React.FC = () => {
     undefined
   );
 
-  const handleok =async () =>
-  {
-    console.log('IIIIII')
-    const user_id1 = localStorage.getItem("id");
-    const username1 = declinedFriendRequest;
-        // const username = declinedFriendRequest?.map((d:string)=> d.username)
-    console.log("Username in sawAccept: ", username1[0]);
-        console.log("IDDDD in sawAccept: ",user_id1);
-    const username  = username1[0]
-   
-    console.log("KKKK=>", typeof user_id1)
-    console.log("KKKK=>", typeof username[0])
-    const user_id = Number(user_id1);
-    const data =await api.post('/sawAccept', { user_id, username });
-    setDeclinedFriendRequest(null);
+const handleOkButtondeclineFriend = async (username: string) => {
+  const user_id1 = localStorage.getItem("id");
+  if (!user_id1) return;
 
-    console.log("JJJJ=>", data)
+  const user_id = Number(user_id1);
+  try {
+    await api.post("/sawAccept", { user_id, username });
+    console.log(`Handled declined request for ${username}`);
+    // Remove only the acknowledged username from the array
+    setDeclinedFriendRequest((prev) =>
+      prev ? prev.filter((u) => u !== username) : null
+    );
+  } catch (err) {
+    console.error(`Failed to acknowledge declined request for ${username}:`, err);
   }
+};
 
   // Handle search for a user by username (case-insensitive)
   const handleSearch = (username: string) => {
@@ -98,6 +90,10 @@ const Profile: React.FC = () => {
       toast.error(`User ${username} not found`);
     }
   };
+
+  const handleClearSearch = () => {
+  setExpandUsername(undefined); // Clear search result so the card won't reopen
+};
 
   // Display loading state while fetching data
   // if (isLoading) {
@@ -156,6 +152,7 @@ const Profile: React.FC = () => {
           }}
           onProfileClick={() => setIsModalOpen(true)}
           onSearch={handleSearch}
+          onClearSearch={handleClearSearch}
           onOpenChat={() => setIsChatOpen(true)}
         />
 
@@ -225,12 +222,21 @@ const Profile: React.FC = () => {
       />
       )}
 
-      {declinedFriendRequest && (
+      {/* {declinedFriendRequest && (
         <DeclinedFriendRequestModal
           declinedUsername={declinedFriendRequest}
-          onClose={handleok}
+          onClose={handleOkButtondeclineFriend }
         />
-      )}
+      )} */}
+
+      {declinedFriendRequest &&
+        declinedFriendRequest.map((username) => (
+          <DeclinedFriendRequestModal
+            key={username}
+            declinedUsername={username}
+            onClose={() => handleOkButtondeclineFriend(username)}
+          />
+      ))}
       
       {isChatOpen && (
         <ChatProvider currentUserId={user.id}>
