@@ -1,47 +1,47 @@
-import db from "../database/database.js";
+import db from '../database/database.js';
 // import dbFriends from "../database/databaseFriends.js";
 
 // see users but not friends
 export async function friendsSearch(req, reply) {
-  console.log("WE ARE IN FRIENDS");
+  console.log('WE ARE IN FRIENDS');
 
   const { username } = req.body;
 
   if (!username)
-    return reply.code(400).send({ message: "PLease fill in friend username" });
+    return reply.code(400).send({ message: 'PLease fill in friend username' });
 
   try {
     const hasUser = db
       .prepare(`SELECT * FROM users WHERE username = ? `)
       .get(username);
-    console.log("THERE is such username", hasUser);
+    console.log('THERE is such username', hasUser);
     if (!hasUser) {
-      return reply.code(400).send({ message: "Not such user" });
+      return reply.code(400).send({ message: 'Not such user' });
     }
     if (hasUser) {
-      console.log("KUKU, lets add display user");
-      return reply.code(200).send({ message: "we have this user", hasUser });
+      console.log('KUKU, lets add display user');
+      return reply.code(200).send({ message: 'we have this user', hasUser });
     }
   } catch (err) {
-    console.error("Database error:", err.message);
-    return reply.code(500).send({ message: "Something went wrong" });
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
   }
 }
 
 /////ADD friends
 ////FIX THIS THAT CANNOT ADD YOUERSELF!
 export async function friendsAdd(req, reply) {
-  console.log("WE ARE IN ADDING FRIENDS");
+  console.log('WE ARE IN ADDING FRIENDS');
 
   const { user_id, username } = req.body;
-  console.log("id=>", user_id);
-  console.log("username=>", username);
+  console.log('id=>', user_id);
+  console.log('username=>', username);
 
   if (!username)
-    return reply.code(400).send({ message: "PLease fill in friend username" });
+    return reply.code(400).send({ message: 'PLease fill in friend username' });
 
   const friend = db
-    .prepare("SELECT * FROM users WHERE username = ?")
+    .prepare('SELECT * FROM users WHERE username = ?')
     .get(username);
   if (!friend) {
     return reply.code(404).send({ message: "NO such as friend" });
@@ -57,28 +57,32 @@ export async function friendsAdd(req, reply) {
     const hasUser2 = db
       .prepare(`SELECT * FROM users WHERE id = ?`)
       .get(friend.id);
-    console.log("THERE is such username", hasUser2);
+    console.log('THERE is such username', hasUser2);
 
     if (!hasUser2) {
-      return reply.code(400).send({ message: "Not such user" });
+      return reply.code(400).send({ message: 'Not such user' });
     }
     if (hasUser2) {
       const friendAlready1 = db
-        .prepare(`SELECT * FROM friends WHERE (user_id = ? AND friends_id = ?) OR (user_id = ? AND friends_id = ?)`)
+        .prepare(
+          `SELECT * FROM friends WHERE (user_id = ? AND friends_id = ?) OR (user_id = ? AND friends_id = ?)`
+        )
         .get(user_id, friend.id, friend.id, user_id);
-      
+
       if (friendAlready1) {
-        return reply.code(400).send({ message: "Friend already or already have sent request" });
+        return reply
+          .code(400)
+          .send({ message: 'Friend already or already have sent request' });
       } else {
         const add = db
           .prepare(`INSERT INTO friends (user_id, friends_id) VALUES (?,? )`)
           .run(user_id, friend.id);
-        return reply.code(200).send({ message: "we have this user", add });
+        return reply.code(200).send({ message: 'we have this user', add });
       }
     }
   } catch (err) {
-    console.error("Database error:", err.message);
-    return reply.code(500).send({ message: "Something went wrong" });
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
   }
 }
 
@@ -89,10 +93,10 @@ export async function confirmFriend(req, reply) {
   const { user_id, username, confirmReq } = req.body;
 
   const friend = db
-    .prepare("SELECT * FROM users WHERE username = ?")
+    .prepare('SELECT * FROM users WHERE username = ?')
     .get(username);
   if (!friend) {
-    return reply.code(404).send({ message: "NO such as friebd" });
+    return reply.code(404).send({ message: 'NO such as friebd' });
   }
 
   // confirm can be accepted only from friend_id side
@@ -100,24 +104,60 @@ export async function confirmFriend(req, reply) {
     const checkReq1 = db
       .prepare(`SELECT * FROM friends WHERE friends_id = ? AND user_id = ?`)
       .get(user_id, friend.id);
+    console.log('IIIII=>', checkReq1);
     if (checkReq1) {
-      console.log("CoN=>", confirmReq);
+      console.log('CoN=>', confirmReq);
       const confirmAccept1 = db
         .prepare(
-          `UPDATE friends SET confirmReq = ?, saw = ? WHERE (user_id = ? AND friends_id = ?) 
-           OR (user_id = ? AND friends_id = ?)`
+          `UPDATE friends SET confirmReq = 1 WHERE friends_id = ? AND user_id = ? `
         )
-        .run(1,1, user_id, friend.id, friend.id, user_id);
-      console.log("CONFIRM =>....", confirmAccept1);
-      return reply.code(200).send({ message: "confirmed" });
+        .run(user_id, friend.id);
+      console.log('CONFIRM =>....', confirmAccept1);
+      return reply.code(200).send({ message: 'confirmed' });
     }
     if (!checkReq1) {
-      return reply.code(400).send({ message: "No request" });
+      return reply.code(400).send({ message: 'No request' });
     }
     // confirmAccept.run();
   } catch (err) {
-    console.error("Database error:", err.message);
-    return reply.code(500).send({ message: "Something went wrong" });
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
+  }
+}
+
+export async function declineFriend(req, reply) {
+  console.log('WE IN DECLINE FRIEND');
+  /// decline will be 0
+  const { user_id, username, confirmReq } = req.body;
+
+  const friend = db
+    .prepare('SELECT * FROM users WHERE username = ?')
+    .get(username);
+  if (!friend) {
+    return reply.code(404).send({ message: 'NO such as friebd' });
+  }
+  try {
+    const checkReq1 = db
+      .prepare(`SELECT * FROM friends WHERE friends_id = ? AND user_id = ?`)
+      .get(user_id, friend.id);
+    console.log('IIIII=>', checkReq1);
+    if (checkReq1) {
+      console.log('CoN=>', confirmReq);
+      const declineReq = db
+        .prepare(
+          `UPDATE friends SET confirmReq = 0 WHERE friends_id = ? AND user_id = ? `
+        )
+        .run(user_id, friend.id);
+      console.log('DECLINE =>....', declineReq);
+      return reply.code(200).send({ message: 'confirmed' });
+    }
+    if (!declineReq) {
+      return reply.code(400).send({ message: 'No request' });
+    }
+    // confirmAccept.run();
+  } catch (err) {
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
   }
 }
 
@@ -163,10 +203,10 @@ export async function declineFriend(req, reply) {
 
 
 export async function requestFriend(req, reply) {
-  console.log("WE in REQUESTTTT")
-  const {user_id} = req.body;
+  console.log('WE in REQUESTTTT');
+  const { user_id } = req.body;
 
-  console.log("ISER=>", user_id)
+  console.log('ISER=>', user_id);
 
   try {
     // const checkRequest = db.prepare(
@@ -192,16 +232,15 @@ export async function requestFriend(req, reply) {
     {
       return reply.code(400).send({ message: "NO requests" });
     }
-
   } catch (err) {
-    console.error("Database error:", err.message);
-    return reply.code(500).send({ message: "Something went wrong" });
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
   }
 }
 
 ///SEE the own friends
 export async function myFriends(req, reply) {
-  console.log("WE IN MY FRIENDS");
+  console.log('WE IN MY FRIENDS');
 
   const { user_id } = req.body;
 
@@ -214,11 +253,11 @@ export async function myFriends(req, reply) {
     if (myfriends) {
       return reply.code(200).send({ myfriends });
     } else {
-      return reply.code(200).send({ message: "No friends" });
+      return reply.code(200).send({ message: 'No friends' });
     }
   } catch (err) {
-    console.error("Database error:", err.message);
-    return reply.code(500).send({ message: "Something went wrong" });
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
   }
 }
 
@@ -240,8 +279,8 @@ export async function deleteFriend(req, reply) {
       .run(user_id, friend.id, friend.id, user_id);
     return reply.code(200).send({ deleteFr });
   } catch (err) {
-    console.error("Database error:", err.message);
-    return reply.code(500).send({ message: "Something went wrong" });
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
   }
 }
 
