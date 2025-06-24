@@ -66,10 +66,10 @@
 - [x] Adapts to different gameplay situations and can win
 
 #### Stats Dashboards ★★ (Minor)
-- [ ] Dashboard with user gaming statistics
-- [ ] Dashboard for game session history
-- [ ] Charts and graphs for data visualization
-- [ ] Users can explore their own history and metrics
+- [x] Dashboard with user gaming statistics
+- [x] Dashboard for game session history
+- [x] Charts and graphs for data visualization
+- [x] Users can explore their own history and metrics
 
 ### Graphics ★★★ (Major)
 - [x] Implement advanced 3D graphics using Babylon.js

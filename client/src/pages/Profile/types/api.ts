@@ -186,4 +186,57 @@ export const fetchBlockedUsers = async (
   const response = await api.get("/blocked", { headers });
   return response.data.blocked as number[];
 };
+
+export interface SessionStat {
+  game_id: number;
+  winner_name: string;
+  winner_score: number;
+  win_user_id: number;
+  loser_name: string;
+  loser_score: number;
+  losses_user_id: number;
+  date: string;
+}
+
+export const fetchStatistics = async (
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
+): Promise<SessionStat[]> => {
+  const response = await api.get("/statistics", { headers });
+  return response.data.stat as SessionStat[];
+};
+
+export interface ChallengeStats {
+  sent: number;
+  received: number;
+  accepted: number;
+  declined: number;
+  games: number;
+  topChallenged?: { username: string; count: number } | null;
+  topChallenger?: { username: string; count: number } | null;
+}
+
+export const fetchChallengeStats = async (
+  userId: number,
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
+): Promise<ChallengeStats> => {
+  const response = await api.get(`/challenge-stats/${userId}`, { headers });
+  return response.data as ChallengeStats;
+};
+
+export interface OpponentStat {
+  opponent_id: number;
+  username: string;
+  wins: number;
+  losses: number;
+  games: number;
+}
+
+export const fetchOpponentStats = async (
+  userId: number,
+  headers: { Authorization: string } | Record<string, never> = getAuthHeaders()
+): Promise<OpponentStat[]> => {
+  const response = await api.get(`/opponent-stats/${userId}`, { headers });
+  return response.data.stats as OpponentStat[];
+};
+
 export default api;

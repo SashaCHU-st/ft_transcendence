@@ -3,13 +3,15 @@ import db from '../database/database.js';
 export async function statisticsAll(request, reply) {
   const stat = db
     .prepare(
-      `SELECT 
+      `SELECT
     game.id AS game_id,
     game.challenge_id,
     game.win_user_id,
     winner.name AS winner_name,
+    game.win_score,
     game.losses_user_id,
     loser.name AS loser_name,
+    game.lose_score,
     game.date
   FROM game
   INNER JOIN users AS winner ON game.win_user_id = winner.id
@@ -108,6 +110,31 @@ export async function loseUser(req, reply) {
     } else {
       return reply.code(400).send({ message: 'We are not in game' });
     }
+  } catch (err) {
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
+  }
+}
+export async function opponentStats(req, reply) {
+  const userId = Number(req.params.user_id || req.body?.user_id || req.query.user_id);
+  try {
+    const rows = db
+      .prepare(
+        `SELECT u.username AS username, t.opponent_id, t.wins, t.losses, t.wins + t.losses AS games
+         FROM (
+           SELECT
+             CASE WHEN win_user_id = ? THEN losses_user_id ELSE win_user_id END AS opponent_id,
+             SUM(CASE WHEN win_user_id = ? THEN 1 ELSE 0 END) AS wins,
+             SUM(CASE WHEN losses_user_id = ? THEN 1 ELSE 0 END) AS losses
+           FROM game
+           WHERE win_user_id = ? OR losses_user_id = ?
+           GROUP BY opponent_id
+         ) t
+         JOIN users u ON u.id = t.opponent_id
+         ORDER BY games DESC`
+      )
+      .all(userId, userId, userId, userId, userId);
+    return reply.code(200).send({ stats: rows });
   } catch (err) {
     console.error('Database error:', err.message);
     return reply.code(500).send({ message: 'Something went wrong' });

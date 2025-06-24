@@ -7,9 +7,10 @@ interface HeaderProps {
   onProfileClick: () => void;
   onSearch?: (username: string) => void;
   onOpenChat: () => void;
+  onOpenStats: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onOpenChat }) => {
+const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onOpenChat, onOpenStats }) => {
   return (
     <div
       className="
@@ -51,6 +52,7 @@ const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onOpenC
         onProfileClick={onProfileClick}
         onSearch={onSearch}
         onOpenChat={onOpenChat}
+        onOpenStats={onOpenStats}
       />
     </div>
   );
