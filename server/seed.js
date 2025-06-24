@@ -4,8 +4,8 @@ const db = new Database("./database/database.db");
 
 db.exec(
   `
-   DELETE FROM game WHERE  id = 4;
+  UPDATE friends SET confirmReq = 0 WHERE id = 5;
   ` 
 );
 
-// UPDATE challenge SET confirmReq = 2 WHERE id = 1;
+// DELETE FROM friends WHERE  id = 1;
