@@ -67,14 +67,7 @@ const Profile: React.FC = () => {
     console.log("Username in sawAccept: ", username1[0]);
         console.log("IDDDD in sawAccept: ",user_id1);
     const username  = username1[0]
-    // const username2 = username[0];
-
-    // const fetchData = await (`https://localhost:3000/sawAccept`,
-    //   method:"POST",
-
-
-    //)
-
+   
     console.log("KKKK=>", typeof user_id1)
     console.log("KKKK=>", typeof username[0])
     const user_id = Number(user_id1);
