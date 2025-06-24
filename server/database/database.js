@@ -28,10 +28,7 @@ db.exec(`
     user_id INTEGER NOT NULL,
     friends_id INTEGER NOT NULL,
     confirmReq INTEGER default 2,
-<<<<<<< HEAD
     saw INTEGER default 2,
-=======
->>>>>>> 0a9277d0671e87d15aaa03547de553cfbdb8c676
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (friends_id) REFERENCES users(id)
   );

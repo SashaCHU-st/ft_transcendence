@@ -9,7 +9,9 @@ import {friendsSearch,friendsAdd, confirmFriend,
   myFriends,
   requestFriend,
   declineFriend,
-  notificationFriends
+  notificationFriends,
+  deleteFriend,
+  sawAccept
 } from '../controllers/friends.js';
 
 async function friendsRoutes(fastify) {
@@ -65,16 +67,16 @@ async function friendsRoutes(fastify) {
     return requestFriend({ ...req, body: validated.data }, reply);
   });
 
-  fastify.post(`/declineFriend`, async (req, reply) => {
-    const validated = FriendsAccept.safeParse(req.body);
-    if (!validated.success) {
-      return reply.code(400).send({
-        message: 'Validation error',
-        errors: validated.error.errors,
-      });
-    }
-    return declineFriend({ ...req, body: validated.data }, reply);
-  });
+  // fastify.post(`/declineFriend`, async (req, reply) => {
+  //   const validated = FriendsAccept.safeParse(req.body);
+  //   if (!validated.success) {
+  //     return reply.code(400).send({
+  //       message: 'Validation error',
+  //       errors: validated.error.errors,
+  //     });
+  //   }
+  //   return declineFriend({ ...req, body: validated.data }, reply);
+  // });
 
   fastify.post(`/myfriends`, async (req, reply) => {
     console.log('we in my friends');
@@ -110,17 +112,17 @@ async function friendsRoutes(fastify) {
     return sawAccept({ ...req, body: validated.data }, reply);
   });
   
-  // fastify.delete(`/deletefriend`, async (req, reply) => {
-  //   console.log('we in my delete friends');
-  //   const validated = FriendsSchema.safeParse(req.body);
-  //   if (!validated.success) {
-  //     return reply.code(400).send({
-  //       message: 'Validation error',
-  //       errors: validated.error.errors,
-  //     });
-  //   }
-  //   return deleteFriend({ ...req, body: validated.data }, reply);
-  // });
+  fastify.delete(`/deletefriend`, async (req, reply) => {
+    console.log('we in my delete friends');
+    const validated = FriendsSchema.safeParse(req.body);
+    if (!validated.success) {
+      return reply.code(400).send({
+        message: 'Validation error',
+        errors: validated.error.errors,
+      });
+    }
+    return deleteFriend({ ...req, body: validated.data }, reply);
+  });
 }
 
 export default friendsRoutes;
