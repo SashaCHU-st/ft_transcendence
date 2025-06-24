@@ -114,7 +114,7 @@ export async function notification(req, reply) {
     // ✅ Mark accepted challenges as "seen" by setting ok = 1
     if (acceptedUsers.length > 0) {
       db.prepare(`
-        UPDATE challenge
+        UPDATE challenge 
         SET ok = 1
         WHERE user_id = ? AND confirmReq = 1 AND ok = 0
       `).run(user_id);

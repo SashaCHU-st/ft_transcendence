@@ -98,6 +98,18 @@ async function friendsRoutes(fastify) {
     }
     return notificationFriends({ ...req, body: validated.data }, reply);
   });
+     fastify.post(`/sawAccept`, async (req, reply) => {
+       const validated = FriendsSchema.safeParse(req.body);
+       if (!validated.success) {
+         return reply.code(400).send({
+           message: 'Validation error',
+           errors: validated.error.errors,
+          });
+        }
+        console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
+    return sawAccept({ ...req, body: validated.data }, reply);
+  });
+  
   // fastify.delete(`/deletefriend`, async (req, reply) => {
   //   console.log('we in my delete friends');
   //   const validated = FriendsSchema.safeParse(req.body);
