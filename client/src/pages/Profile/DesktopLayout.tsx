@@ -4,7 +4,7 @@ import UserHeader from "./UserHeader";
 import PlayArena from "./PlayArena";
 import GameSelector from "./GameSelector/GameSelector";
 import { PrimaryButton } from "./types/ui";
-import { UserInfo } from "./types/UserInfo";
+import { UserInfo, MatchResult } from "./types/UserInfo";
 import { bots } from "./types/botsData";
 
 // Define props for DesktopLayout component
@@ -53,14 +53,14 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
 
         {/* Center Section */}
         <div className="flex flex-col items-center justify-start gap-6 w-full">
-          <UserHeader
+          {/* <UserHeader
             user={{
               username: user.username,
               wins: user.wins,
               losses: user.losses,
               history: user.history,
             }}
-          />
+          /> */}
           <PlayArena
             user={{ username: user.username, avatar: user.avatar }}
             opponentImage={selectedBot ? selectedBot.image : null}

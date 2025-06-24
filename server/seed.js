@@ -4,12 +4,10 @@ const db = new Database("./database/database.db");
 
 db.exec(
   `
-<<<<<<< HEAD
-   DELETE FROM friends WHERE  id < 100;
-=======
-  UPDATE friends SET confirmReq = 0 WHERE id = 5;
->>>>>>> 0a9277d0671e87d15aaa03547de553cfbdb8c676
+  UPDATE game SET losses_user_id = 1, win_user_id = 2, lose_score = 2, win_score = 30, lose_score = 15 WHERE id = 8;
   ` 
 );
 
-// DELETE FROM friends WHERE  id = 1;
+// UPDATE challenge SET game_end = 1 WHERE id = 3;
+// DELETE FROM game WHERE  id <100;
+// DELETE FROM challenge WHERE  id < 100;

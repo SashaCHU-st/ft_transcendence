@@ -125,6 +125,7 @@ export const useProfile = () => {
     friends,
     players,
     chatList,
+    
     notifications,
     isNotificationModalOpen,
     setIsNotificationModalOpen,

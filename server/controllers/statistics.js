@@ -5,44 +5,43 @@ export async function statisticsAll(request, reply) {
   const stat = db
     .prepare(
       `SELECT
-    game.id AS game_id,
-    game.challenge_id,
-    game.win_user_id,
-    game.win_score,
-    winner.name AS winner_name,
-    game.losses_user_id,
-    game.lose_score,
-    loser.name AS loser_name,
-    game.date
-  FROM game
-  INNER JOIN users AS winner ON game.win_user_id = winner.id
-  INNER JOIN users AS loser ON game.losses_user_id = loser.id`
+        game.id AS game_id,
+        game.challenge_id,
+        game.win_user_id,
+        game.win_score,
+        winner.name AS winner_name,
+        game.losses_user_id,
+        game.lose_score,
+        loser.name AS loser_name,
+        game.date
+      FROM game
+      INNER JOIN users AS winner ON game.win_user_id = winner.id
+      INNER JOIN users AS loser ON game.losses_user_id = loser.id`
     )
     .all();
-
   return reply.code(200).send({ stat });
 }
 
 export async function statisticsUser(req, reply) {
-  const { user_id } = req.body;
+  const { username } = req.body;
 
   try {
     const statUser = db
       .prepare(
-        `SELECT 
-        users.id,
-        users.wins,
-        users.losses,
-        game.id AS game_id,
-        game.win_score,
-        game.lose_score,
-        game.date
-        FROM users
-        LEFT JOIN game
-        ON users.id = game.win_user_id OR users.id = game.losses_user_id
-        WHERE users.id = ?`
+        `SELECT
+          g.win_score,
+          winner.username AS winner_name,
+          g.lose_score,
+          loser.username AS loser_name,
+          g.date
+      FROM users u
+      JOIN game g ON g.win_user_id = u.id OR g.losses_user_id = u.id
+      JOIN users AS winner ON g.win_user_id = winner.id
+      JOIN users AS loser ON g.losses_user_id = loser.id
+      WHERE u.username = ?
+      `
       )
-      .all(user_id);
+      .all(username);
     console.log('USER STAT =>', statUser);
 
     // const wins = statUser.wins;
@@ -58,8 +57,6 @@ export async function statisticsUser(req, reply) {
 export async function win(req, reply) {
   const { user_id, challenge_id, score } = req.body;
 
-  console.log("UUUUUUUUUUUUU=>", challenge_id);
-  console.log("ttttttttt=>", user_id);
   try {
     let gameEND = { changes: 0 };
     if (challenge_id) {
@@ -68,6 +65,7 @@ export async function win(req, reply) {
           `UPDATE game SET win_user_id = ?, win_score = ?, date = ? WHERE challenge_id = ? `
         )
         .run(user_id, score, new Date().toISOString(), challenge_id);
+    const gameEND2 = db.prepare(`UPDATE challenge SET game_end = ? WHERE id = ? `).run(1, challenge_id)
     }
 
     if (!challenge_id || gameEND.changes === 0) {

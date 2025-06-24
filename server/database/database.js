@@ -51,6 +51,8 @@ db.exec(`
     friends_id INTEGER NOT NULL,
     confirmReq INTEGER default 2,
     ok BOOL default 0,
+    sent_once BOOL default 0,
+    game_end BOOL default 0,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (friends_id) REFERENCES users(id)
   );

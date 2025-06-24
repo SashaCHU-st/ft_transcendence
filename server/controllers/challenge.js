@@ -15,21 +15,32 @@ export async function challenge(req, reply) {
     if (!friends_id) {
       return reply.code(404).send({ message: 'User not found online' });
     }
-    const alreadyChallengedBefore = db
-      .prepare(`SELECT * FROM challenge WHERE (user_id = ? AND friends_id = ?) OR (friends_id = ? AND user_id = ?)`)
-      .get(user_id, friends_id.id, user_id, friends_id.id);
-    if (!alreadyChallengedBefore) {
+
+    const challengeSentOnce = db.prepare(`
+      SELECT * FROM challenge
+      WHERE user_id = ? AND friends_id = ? AND sent_once = ? AND game_end = ?
+    `).get(user_id, friends_id.id, 1, 0);
+
+
+    if(!challengeSentOnce)
+    {
       const sendRequest = db
-        .prepare(`INSERT INTO challenge (user_id, friends_id) VALUES (?,?)`)
-        .run(user_id, friends_id.id);
+        .prepare(`INSERT INTO challenge (user_id, friends_id, sent_once) VALUES (?,?, ?) RETURNING id`)
+        .run(user_id, friends_id.id, 1);
+
       return reply
         .code(201)
-        .send({ message: 'Request sent', request: sendRequest });
-    } else {
-      return reply.code(400).send({
-        message: 'Challenge has been called once',
-      });
+        .send({ message: 'Request sent', request: sendRequest, challenge_id : sendRequest.lastInsertRowid});
+
     }
+    else
+    {
+      return reply
+        .code(400)
+        .send({ message: 'CHALLENGE HAVE BEEN SENT ONCE'});
+    }
+
+    
   } catch (err) {
     console.error('Database error:', err.message);
     return reply.code(500).send({ message: 'Something went wrong' });
@@ -82,6 +93,7 @@ export async function notification(req, reply) {
       };
     });
 
+
     const usernames = acceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
@@ -96,10 +108,11 @@ export async function notification(req, reply) {
       };
     });
 
+
     const usernamesNotAccepted = notAcceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
-    console.log('Usernames not accepted', usernamesNotAccepted);
+    // console.log('Usernames not accepted', usernamesNotAccepted);
 
     //not really neeeded, delete later
     const acceptedSeen = db
@@ -145,6 +158,8 @@ export async function notification(req, reply) {
         friends_id: notification.user_id,
         acceptedUsers,
         notAcceptedUsers,
+        acceptedUsers,
+        notAcceptedUsers,
         notification,
       });
     }
@@ -155,6 +170,7 @@ export async function notification(req, reply) {
 }
 
 export async function sawAccept(req, reply) {
+  // console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU")
   const { user_id, friends_id } = req.body;
 
   try {
@@ -182,7 +198,7 @@ export async function accept(req, reply) {
       )
       .get(friends_id, user_id);
 
-    console.log('kkkkkkkkkkkkk =>', acceptReq.id);
+    // console.log('kkkkkkkkkkkkk =>', acceptReq.id);
 
     const gameStarts = db
       .prepare(`INSERT INTO game (challenge_id, date ) VALUES (?,?)`)

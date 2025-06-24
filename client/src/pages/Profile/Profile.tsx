@@ -28,6 +28,7 @@ const Profile: React.FC = () => {
     friends, // List of friends
     players, // List of all players
     chatList,
+    matches,
     selectedBot, // Currently selected bot for gameplay
     isModalOpen, // State for profile modal visibility
    // isLoading, // Loading state for data fetching
