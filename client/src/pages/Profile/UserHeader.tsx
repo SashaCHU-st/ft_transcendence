@@ -24,7 +24,7 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user, stats = [] }) => {
   );
 
   const [fullHistory, setFullHistory] = useState(false);
-  console.log('YYYYYYYYY=>', stats);
+  // console.log('YYYYYYYYY=>', stats);
 
   const handleShowHistory = () => {
     console.log('JJJJ');
@@ -103,100 +103,6 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user, stats = [] }) => {
             STRIKE
           </div> */}
         </div>
-        {/* <div className="border-t-2 border-indigo-500 text-center text-xl py-2">
-          <h2
-            className=" font-orbitron 
-                    text-xl 
-                    text-indigo-400 
-                    transition-colors 
-                    duration-300 
-                    tracking-wide 
-                    uppercase
-                    font-bold"
-          >
-            RECENT GAMES
-            <div className="border-t-2 border-indigo-500 my-2 w-full" />
-          </h2>
-          {stats.length === 0 ? (
-            <p className="text-sm text-gray-400 mt-2">No games</p>
-          ) : (
-            <div className="mt-4 text-left w-full font-orbitron text-sm text-indigo-300 space-y-2 font-bold">
-              {stats.slice(0, 3).map((game, index) => {
-                const opponentName =
-                  game.winner_name === user.username
-                    ? game.loser_name
-                    : game.winner_name;
-                return (
-                  <div
-                    key={index}
-                    className="border-b border-gray-700 pb-2 mb-2 last:border-none last:pb-0 last:mb-0"
-                  >
-                    <p className="text-[#B9AECE]">
-                      {new Date(game.date).toLocaleDateString(undefined, {
-                        year: 'numeric',
-                        month: '2-digit',
-                        day: '2-digit',
-                      })}
-                    </p>
-                    <div className="flex w-full items-center">
-                      <div className="flex-grow text-[#34C2EF]">
-                        <p>VS {opponentName}</p>
-                      </div>
-                      <div className="w-16 text-center">
-                        <p>
-                          <span
-                            className={
-                              game.winner_name === user.username
-                                ? 'text-[#76E29A]'
-                                : 'text-[#E984BE]'
-                            }
-                          >
-                            {game.winner_name === user.username
-                              ? game.win_score
-                              : game.lose_score}
-                          </span>
-                        </p>
-                      </div>
-
-                      <div className="w-6 text-center -mx-2">
-                        <p>
-                          <span
-                            className={
-                              game.winner_name !== user.username
-                                ? 'text-[#76E29A]'
-                                : 'text-[#E984BE]'
-                            }
-                          >
-                            {game.winner_name === user.username
-                              ? game.lose_score
-                              : game.win_score}
-                          </span>
-                        </p>
-                      </div>
-
-                      <div className="w-20 text-center">
-                        <p>
-                          <span
-                            className={
-                              game.winner_name === user.username
-                                ? 'text-[#76E29A]'
-                                : 'text-[#E984BE]'
-                            }
-                          >
-                            {game.winner_name === user.username
-                              ? 'WIN'
-                              : 'LOSS'}
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div> */}
-
         <button
           onClick={handleShowHistory}
           className="
@@ -219,6 +125,7 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user, stats = [] }) => {
         >
           Full History
         </button>
+        {/* <div className='pt-6'> */}
         {fullHistory && (
           <FullHistory
             winRate={winRate}
@@ -228,8 +135,9 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user, stats = [] }) => {
             onClose={() => setFullHistory(false)}
           />
         )}
+        </div>
       </div>
-    </div>
+    // </div>
   );
 };
 
