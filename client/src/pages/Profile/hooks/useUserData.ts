@@ -215,7 +215,6 @@ const fetchFriendRequests = useCallback(async () => {
     fetchAllUsers,
     fetchFriendRequests,
    // fetchFriendNotifications,
-   
     setFriends,
     setPlayers,
     setChatList,
