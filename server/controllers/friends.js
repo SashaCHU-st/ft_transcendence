@@ -84,7 +84,7 @@ export async function friendsAdd(req, reply) {
 
 //Confirm friends
 export async function confirmFriend(req, reply) {
-  console.log("WE IN CONFIRM FRIEND");
+  console.log("WE IN CONFIRM FRIEND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
   /// confirm just will be 1???
   const { user_id, username, confirmReq } = req.body;
 
@@ -147,15 +147,19 @@ export async function declineFriend(req, reply) {
       console.log('DECLINE =>....', declineReq);
       return reply.code(200).send({ message: 'confirmed' });
     }
-    if (!declineReq) {
-      return reply.code(400).send({ message: 'No request' });
-    }
+    // if (!declineReq) {
+    //   return reply.code(400).send({ message: 'No request' });
+    // }
+    if (declineReq.changes === 0) {
+  return reply.code(400).send({ message: 'No request' });
+}
     // confirmAccept.run();
   } catch (err) {
     console.error('Database error:', err.message);
     return reply.code(500).send({ message: 'Something went wrong' });
   }
 }
+
 
 
 export async function requestFriend(req, reply) {
@@ -238,5 +242,86 @@ export async function deleteFriend(req, reply) {
   } catch (err) {
     console.error("Database error:", err.message);
     return reply.code(500).send({ message: "Something went wrong" });
+  }
+}
+
+export async function notificationFriends(req, reply) {
+  console.log('WE IN NOTIFIICA FRIENFS');
+
+  const { user_id } = req.body;
+
+  try {
+    const checkNotif = db
+      .prepare(
+        `SELECT friends.*, users.username
+        FROM friends 
+        JOIN users ON friends.user_id = users.id 
+        WHERE friends.friends_id = ? AND friends.confirmReq = 2 `
+      )
+      .all(user_id);
+
+    console.log('NNNNNN=>', checkNotif);
+
+    const seeIfFriendAccepted = db
+      .prepare(
+        `SELECT friends.*, users.username
+        FROM friends 
+        JOIN users ON friends.user_id = users.id 
+        WHERE friends.user_id = ? AND friends.confirmReq = 1 `
+      )
+      .all(user_id);
+
+    console.log('YYYYYY=>', seeIfFriendAccepted);
+
+    const acceptedUsers = seeIfFriendAccepted.map((ch) => {
+      return {
+        ...ch,
+        partner: db
+          .prepare(`SELECT username FROM users WHERE id = ?`)
+          .get(ch.friends_id),
+      };
+    });
+
+    const usernames = acceptedUsers.map((user) => ({
+      username: user.partner.username,
+    }));
+    console.log('Usernames are accepted', acceptedUsers);
+
+    const seeIfFriendDeclined = db
+      .prepare(
+        `SELECT friends.*, users.username
+        FROM friends 
+        JOIN users ON friends.user_id = users.id 
+        WHERE friends.user_id = ? AND friends.confirmReq = 0`
+      )
+      .all(user_id);
+
+    const declinedUsers = seeIfFriendDeclined.map((ch) => {
+      return {
+        ...ch,
+        partner: db
+          .prepare(`SELECT id, username FROM users WHERE id = ?`)
+          .get(ch.friends_id),
+      };
+    });
+
+    const usernamesDeclined = declinedUsers.map((user) => ({
+      username: user.partner.username, 
+      id:user.partner.id
+    }));
+    console.log('Usernames are declined', usernamesDeclined);
+
+    console.log('NNNNNNN=>', seeIfFriendDeclined);
+    return reply.code(200).send({
+      message: 'Notification',
+      checkNotif,
+      seeIfFriendAccepted,
+      usernames,
+      seeIfFriendDeclined,
+      usernamesDeclined,
+    });
+  } catch (err) {
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
   }
 }

@@ -197,6 +197,7 @@ const Profile: React.FC = () => {
     friendRequests,
     declinedFriendRequest,
     setDeclinedFriendRequest,
+    //dismissDeclinedFriendRequest
   } = useProfile();
 
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -318,6 +319,7 @@ const Profile: React.FC = () => {
             requests={friendRequests}
             onConfirm={handleConfirm}
             onDecline={handleDecline}
+           
         />
         <BotSelector
           selectedBot={selectedBot}

@@ -12,7 +12,7 @@ const isValidBase64 = (str: string) => {
   }
 };
 
-type FriendRequest = {
+export type FriendRequest = {
   id: string;
   username: string;
   avatar: string;
@@ -25,9 +25,16 @@ export function useUserData() {
   const [players, setPlayers] = useState<UserInfo[]>([]);
   const [chatList, setChatList] = useState<UserInfo[]>([]);
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
-   const [declinedFriendRequest, setDeclinedFriendRequest] = useState<string | null>(null);
+  const [declinedFriendRequest, setDeclinedFriendRequest] = useState<string | null>(null);
+ 
 
   const authHeaders = useMemo(() => getAuthHeaders(), []);
+  // const friendRequestsRef = useRef<FriendRequest[]>(friendRequests);
+
+  // // Keep ref updated when friendRequests state changes
+  // useEffect(() => {
+  //   friendRequestsRef.current = friendRequests;
+  // }, [friendRequests]);
 
   const fetchAllUsers = useCallback(async () => {
     try {
@@ -112,29 +119,64 @@ export function useUserData() {
   }, [authHeaders]);
 
 
+
+// const fetchFriendNotifications = useCallback(async () => {
+//   try {
+//     const user_id = localStorage.getItem("id");
+//     if (!user_id) return;
+
+//     const { data } = await api.post("/notificationFriend", { user_id });
+
+//     if (data.usernamesDeclined && data.usernamesDeclined.length > 0) {
+//       setFriendRequests((prevRequests) => {
+//         console.log("Friend requests before filtering:", prevRequests);
+
+//         const filtered = prevRequests.filter((request) =>
+//           !data.usernamesDeclined.some((declined: any) => declined.username === request.username)
+//         );
+
+//         console.log("Filtered friend requests:", filtered);
+//         return filtered;
+//       });
+
+//       const declinedUsernames = data.usernamesDeclined.map((d: any) => d.username);
+
+//       console.log("Declined usernames: ", data.usernamesDeclined);
+//       console.log("Declined usernames (strings):", declinedUsernames);
+
+//       setDeclinedFriendRequest(declinedUsernames);
+
+//       toast('Some friend requests were declined.', { icon: '❌' });
+//     }
+
+//   } catch (err: any) {
+//     console.error("Failed to fetch friend notifications:", err);
+//     toast.error("Could not check friend notifications");
+//   }
+// }, []);
+
+
 const fetchFriendRequests = useCallback(async () => {
   try {
-    const user_id = localStorage.getItem("id");
-    if (!user_id) return;
+    const user_id = localStorage.getItem('id');
+    if (!user_id) return [];
 
-    const { data } = await api.post("/request", { user_id });
+    const { data } = await api.post('/request', { user_id });
+
+    let requests: FriendRequest[] = [];
 
     if (data.checkRequest) {
-      const requests: FriendRequest[] = data.checkRequest.map((u: any) => {
+      requests = data.checkRequest.map((u: any) => {
         let avatar = '/prof_img/avatar1.png';
-
         if (u.image) {
           if (typeof u.image === 'string' && isValidBase64(u.image)) {
             avatar = `data:image/jpeg;base64,${u.image}`;
           } else if (u.image?.data) {
-            const dataArray = u.image.data;
-            let binary = '';
-            for (let i = 0; i < dataArray.length; i++) {
-              binary += String.fromCharCode(dataArray[i]);
-            }
+            const binary = String.fromCharCode(...u.image.data);
             avatar = `data:image/jpeg;base64,${btoa(binary)}`;
           }
         }
+
         return {
           id: String(u.id),
           username: u.username || 'Unknown',
@@ -142,12 +184,26 @@ const fetchFriendRequests = useCallback(async () => {
           online: !!u.online,
         };
       });
-
-      setFriendRequests(requests);
     }
+
+    // Now check for declined requests directly here
+    const notifRes = await api.post('/notificationFriend', { user_id });
+    const declinedUsernames = notifRes.data.usernamesDeclined?.map((d: any) => d.username) || [];
+    console.log("declined usernames in fetch friend request", declinedUsernames);
+    const filtered = requests.filter(req => !declinedUsernames.includes(req.username));
+    //const hadDeclinedVisible = requests.some(req => declinedUsernames.includes(req.username));
+    setFriendRequests(filtered);
+    if (declinedUsernames.length > 0) {
+      setDeclinedFriendRequest(declinedUsernames);
+     
+      toast('Some friend requests were declined.', { icon: '❌' });
+    }
+
+    return filtered;
   } catch (err: any) {
-    console.error("Failed to fetch friend requests:", err);
-    toast.error("Could not load friend requests");
+    console.error('Failed to fetch friend requests:', err);
+    toast.error('Could not load friend requests');
+    return [];
   }
 }, []);
 
@@ -158,11 +214,14 @@ const fetchFriendRequests = useCallback(async () => {
     chatList,
     fetchAllUsers,
     fetchFriendRequests,
+   // fetchFriendNotifications,
+   
     setFriends,
     setPlayers,
     setChatList,
     setUser,
     friendRequests,
+    setFriendRequests,
     declinedFriendRequest,
     setDeclinedFriendRequest  
   };

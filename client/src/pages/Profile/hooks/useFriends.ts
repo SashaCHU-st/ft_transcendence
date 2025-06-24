@@ -4,14 +4,18 @@ import { deleteFriend } from "../DeleteFriend";
 import { confirmFriendRequest } from "../ConfirmFriendRequest";
 import { toast } from "react-hot-toast";
 import api from "../types/api";
+import { FriendRequest } from "./useUserData";
+
 
 export function useFriends(
 	fetchAllUsers: () => Promise<void>, 
-	fetchFriendRequests: () => Promise<void>, 
+	fetchFriendRequests: () => Promise<FriendRequest[]>, 
 	friends: any[], 
 	setFriends: any, 
 	setPlayers: any,
-  setDeclinedFriendRequest: React.Dispatch<React.SetStateAction<string | null>> ) {
+  setFriendRequests: React.Dispatch<React.SetStateAction<FriendRequest[]>>,
+  // setDeclinedFriendRequest: React.Dispatch<React.SetStateAction<string | null>>
+) {
 
   const handleAdd = useCallback(async (username: string) => {
     try {
@@ -37,21 +41,23 @@ export function useFriends(
 
   const handleDecline = useCallback(async (username: string) => {
   try {
-     console.log("📛 handleDecline called with username:", username);
-    const user_id = Number(localStorage.getItem("id"));
+    const user_id = localStorage.getItem("id");
+    console.log("📛 handleDecline called with username:", username);
     await api.post('/declineFriend', { 
       user_id,
       username,
       confirmReq: 0
-     });
+    });
     console.log("All info of decline:", username, user_id);
+    setFriendRequests(prev => prev.filter(req => req.username !== username));
+
     toast.success(`You declined a friend request from ${username}`);
-    setDeclinedFriendRequest(username);
-    await fetchFriendRequests();
+    //setDeclinedFriendRequest(username);
+    //await fetchFriendRequests();
   } catch (err: any) {
     toast.error("Failed to decline request");
   }
-}, [fetchFriendRequests,  setDeclinedFriendRequest]);
+}, [setFriendRequests]);
 
   const handleRemove = useCallback(async (username: string) => {
     try {
@@ -66,5 +72,5 @@ export function useFriends(
     }
   }, [friends, setFriends, setPlayers, fetchAllUsers]);
 
-  return { handleAdd, handleRemove, handleConfirm, handleDecline,  setDeclinedFriendRequest};
+  return { handleAdd, handleRemove, handleConfirm, handleDecline };
 }

@@ -12,13 +12,18 @@ interface FriendRequestListProps {
   requests: FriendRequest[];
   onConfirm: (username: string) => void;
   onDecline: (username: string) => void;
+ 
 }
+
+
 
 const FriendRequestList: React.FC<FriendRequestListProps> = ({
   requests,
   onConfirm,
   onDecline,
+  
 }) => {
+  
   return (
     <div className="bg-gray-900 rounded-lg p-4 w-96">
       <h2 className="text-lg xl:text-xl font-bold font-orbitron text-purple-200 mb-4 text-center drop-shadow-[0_0_8px_red] tracking-[.20em]">

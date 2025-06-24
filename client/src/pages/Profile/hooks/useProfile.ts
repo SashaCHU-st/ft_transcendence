@@ -22,7 +22,10 @@ export const useProfile = () => {
       fetchFriendRequests,
       friendRequests,
       declinedFriendRequest,
-      setDeclinedFriendRequest
+      setDeclinedFriendRequest,
+      //fetchFriendNotifications,
+      setFriendRequests,
+      
     } = useUserData();
 
   const userId = user?.id || null;
@@ -54,7 +57,9 @@ export const useProfile = () => {
   friends,
   setFriends,
   setPlayers,
-  setDeclinedFriendRequest,
+   setFriendRequests,
+  // setDeclinedFriendRequest,
+
 );
 
   // Profile modal
@@ -64,17 +69,48 @@ export const useProfile = () => {
   const navigate = useNavigate();
   const { selectedBot, setSelectedBot, handlePlay } = useGame();
 
-  useEffect(() => {
-  fetchAllUsers();
-   fetchFriendRequests();
+  // useEffect(() => {
+  //   fetchAllUsers();
+  //   fetchFriendRequests();
+  //   fetchFriendNotifications();
+  //   if (declinedFriendRequest)
+  //     fetchFriendNotifications();
 
-    const interval = setInterval(() => {
+  //   const interval = setInterval(() => {
+  //   fetchFriendRequests();
+  //   fetchAllUsers();
+   
+  //  }, 5000);
+  //    return () => clearInterval(interval);
+
+  // }, [fetchAllUsers, fetchFriendRequests]);
+
+
+// const dismissDeclinedFriendRequest = () => {
+//   if (declinedFriendRequest) {
+//     // Remove from visible friendRequests list
+//     setFriendRequests(prev => prev.filter(req => req.username !== declinedFriendRequest));
+//   }
+//   // Clear the modal trigger
+//   setDeclinedFriendRequest(null);
+// };
+
+  useEffect(() => {
+  const init = async () => {
+    await fetchAllUsers();
+    await fetchFriendRequests();
+  };
+
+  init();
+
+  const interval = setInterval(() => {
     fetchFriendRequests();
     fetchAllUsers();
-   }, 5000);
-     return () => clearInterval(interval);
+  }, 10000);
 
-  }, [fetchAllUsers,  fetchFriendRequests]);
+  return () => clearInterval(interval);
+}, [fetchAllUsers, fetchFriendRequests]);
+
 
   useEffect(() => {
     if (!redirectToGame || !userId) 
@@ -111,7 +147,8 @@ export const useProfile = () => {
     setDeclinedChallenge,
     friendRequests,
     declinedFriendRequest,
-    setDeclinedFriendRequest
+    setDeclinedFriendRequest,
+    //dismissDeclinedFriendRequest
   };
 };
 
