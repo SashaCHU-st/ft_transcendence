@@ -14,12 +14,10 @@ export async function friendsSearch(req, reply) {
     const hasUser = db
       .prepare(`SELECT * FROM users WHERE username = ? `)
       .get(username);
-    console.log('THERE is such username', hasUser);
     if (!hasUser) {
       return reply.code(400).send({ message: 'Not such user' });
     }
     if (hasUser) {
-      console.log('KUKU, lets add display user');
       return reply.code(200).send({ message: 'we have this user', hasUser });
     }
   } catch (err) {
@@ -31,11 +29,8 @@ export async function friendsSearch(req, reply) {
 /////ADD friends
 ////FIX THIS THAT CANNOT ADD YOUERSELF!
 export async function friendsAdd(req, reply) {
-  console.log('WE ARE IN ADDING FRIENDS');
 
   const { user_id, username } = req.body;
-  console.log('id=>', user_id);
-  console.log('username=>', username);
 
   if (!username)
     return reply.code(400).send({ message: 'PLease fill in friend username' });
@@ -46,9 +41,6 @@ export async function friendsAdd(req, reply) {
   if (!friend) {
     return reply.code(404).send({ message: "NO such as friend" });
   }
-
-  console.log("ID friend=>>>>", friend.id);
-  console.log("ID=>>>>", user_id);
   if (Number(user_id) === friend.id) {
     return reply.code(400).send({ message: "Cannot add yourself" });
   }
@@ -57,7 +49,6 @@ export async function friendsAdd(req, reply) {
     const hasUser2 = db
       .prepare(`SELECT * FROM users WHERE id = ?`)
       .get(friend.id);
-    console.log('THERE is such username', hasUser2);
 
     if (!hasUser2) {
       return reply.code(400).send({ message: 'Not such user' });
@@ -65,10 +56,8 @@ export async function friendsAdd(req, reply) {
     if (hasUser2) {
       const friendAlready1 = db
         .prepare(
-          `SELECT * FROM friends WHERE (user_id = ? AND friends_id = ?) OR (user_id = ? AND friends_id = ?)`
-        )
+          `SELECT saw FROM friends WHERE ((user_id = ? AND friends_id = ?)  OR (user_id = ? AND friends_id = ?))  AND saw = 1`)
         .get(user_id, friend.id, friend.id, user_id);
-
       if (friendAlready1) {
         return reply
           .code(400)
@@ -86,10 +75,7 @@ export async function friendsAdd(req, reply) {
   }
 }
 
-//Confirm friends
 export async function confirmFriend(req, reply) {
-  console.log("WE IN CONFIRM FRIEND!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-  /// confirm just will be 1???
   const { user_id, username, confirmReq } = req.body;
 
   const friend = db
@@ -99,71 +85,28 @@ export async function confirmFriend(req, reply) {
     return reply.code(404).send({ message: 'NO such as friebd' });
   }
 
-  // confirm can be accepted only from friend_id side
   try {
     const checkReq1 = db
       .prepare(`SELECT * FROM friends WHERE friends_id = ? AND user_id = ?`)
       .get(user_id, friend.id);
-    console.log('IIIII=>', checkReq1);
     if (checkReq1) {
-      console.log('CoN=>', confirmReq);
       const confirmAccept1 = db
         .prepare(
           `UPDATE friends SET confirmReq = 1 WHERE friends_id = ? AND user_id = ? `
         )
         .run(user_id, friend.id);
-      console.log('CONFIRM =>....', confirmAccept1);
       return reply.code(200).send({ message: 'confirmed' });
     }
     if (!checkReq1) {
       return reply.code(400).send({ message: 'No request' });
     }
-    // confirmAccept.run();
   } catch (err) {
     console.error('Database error:', err.message);
     return reply.code(500).send({ message: 'Something went wrong' });
   }
 }
 
-// export async function declineFriend(req, reply) {
-//   console.log('WE IN DECLINE FRIEND');
-//   /// decline will be 0
-//   const { user_id, username, confirmReq } = req.body;
-
-//   const friend = db
-//     .prepare('SELECT * FROM users WHERE username = ?')
-//     .get(username);
-//   if (!friend) {
-//     return reply.code(404).send({ message: 'NO such as friebd' });
-//   }
-//   try {
-//     const checkReq1 = db
-//       .prepare(`SELECT * FROM friends WHERE friends_id = ? AND user_id = ?`)
-//       .get(user_id, friend.id);
-//     console.log('IIIII=>', checkReq1);
-//     if (checkReq1) {
-//       console.log('CoN=>', confirmReq);
-//       const declineReq = db
-//         .prepare(
-//           `UPDATE friends SET confirmReq = 0 WHERE friends_id = ? AND user_id = ? `
-//         )
-//         .run(user_id, friend.id);
-//       console.log('DECLINE =>....', declineReq);
-//       return reply.code(200).send({ message: 'confirmed' });
-//     }
-//     if (!declineReq) {
-//       return reply.code(400).send({ message: 'No request' });
-//     }
-//     // confirmAccept.run();
-//   } catch (err) {
-//     console.error('Database error:', err.message);
-//     return reply.code(500).send({ message: 'Something went wrong' });
-//   }
-// }
-
 export async function declineFriend(req, reply) {
-  console.log('WE IN DECLINE FRIEND');
-  /// decline will be 0
   const { user_id, username, confirmReq } = req.body;
 
   const friend = db
@@ -176,24 +119,17 @@ export async function declineFriend(req, reply) {
     const checkReq1 = db
       .prepare(`SELECT * FROM friends WHERE friends_id = ? AND user_id = ?`)
       .get(user_id, friend.id);
-    console.log('IIIII=>', checkReq1);
     if (checkReq1) {
-      console.log('CoN=>', confirmReq);
       const declineReq = db
         .prepare(
           `UPDATE friends SET confirmReq = 0, saw = 1 WHERE friends_id = ? AND user_id = ? `
         )
         .run(user_id, friend.id);
-      console.log('DECLINE =>....', declineReq);
       return reply.code(200).send({ message: 'confirmed' });
     }
-    // if (!declineReq) {
-    //   return reply.code(400).send({ message: 'No request' });
-    // }
     if (declineReq.changes === 0) {
   return reply.code(400).send({ message: 'No request' });
 }
-    // confirmAccept.run();
   } catch (err) {
     console.error('Database error:', err.message);
     return reply.code(500).send({ message: 'Something went wrong' });
@@ -203,14 +139,11 @@ export async function declineFriend(req, reply) {
 
 
 export async function requestFriend(req, reply) {
-  console.log('WE in REQUESTTTT');
   const { user_id } = req.body;
 
   console.log('ISER=>', user_id);
 
   try {
-    // const checkRequest = db.prepare(
-    //   "SELECT * FROM friends WHERE friends_id = ? AND confirmReq = 0").all(user_id)
     const checkRequest = db.prepare(`
       SELECT 
         u.id, 
@@ -221,11 +154,9 @@ export async function requestFriend(req, reply) {
       JOIN users u ON u.id = f.user_id
       WHERE f.friends_id = ? AND f.confirmReq = 2
     `).all(user_id);
-    console.log("YYYY=>", checkRequest)
     
     if(checkRequest)
     {
-      console.log("TTTTT=>", checkRequest);
       return reply.code(200).send({ message: "There is request", checkRequest});
     }
     else
@@ -238,9 +169,8 @@ export async function requestFriend(req, reply) {
   }
 }
 
-///SEE the own friends
+
 export async function myFriends(req, reply) {
-  console.log('WE IN MY FRIENDS');
 
   const { user_id } = req.body;
 
@@ -263,7 +193,6 @@ export async function myFriends(req, reply) {
 
 /// delete from friends
 export async function deleteFriend(req, reply) {
-  console.log("WE IN MY DELETE FRIENDS");
 
   const { user_id, username } = req.body;
 
@@ -285,7 +214,6 @@ export async function deleteFriend(req, reply) {
 }
 
 export async function notificationFriends(req, reply) {
-  console.log('WE IN NOTIFIICA FRIENFS');
 
   const { user_id } = req.body;
 
@@ -299,8 +227,6 @@ export async function notificationFriends(req, reply) {
       )
       .all(user_id);
 
-    console.log('NNNNNN=>', checkNotif);
-
     const seeIfFriendAccepted = db
       .prepare(
         `SELECT friends.*, users.username
@@ -309,8 +235,6 @@ export async function notificationFriends(req, reply) {
         WHERE friends.user_id = ? AND friends.confirmReq = 1 `
       )
       .all(user_id);
-
-    console.log('YYYYYY=>', seeIfFriendAccepted);
 
     const acceptedUsers = seeIfFriendAccepted.map((ch) => {
       return {
@@ -324,7 +248,6 @@ export async function notificationFriends(req, reply) {
     const usernames = acceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
-    console.log('Usernames are accepted', acceptedUsers);
 
     const seeIfFriendDeclined = db
       .prepare(
@@ -348,9 +271,8 @@ export async function notificationFriends(req, reply) {
       username: user.partner.username, 
       id:user.partner.id
     }));
-    console.log('Usernames are declined', usernamesDeclined);
 
-    console.log('NNNNNNN=>', seeIfFriendDeclined);
+
     return reply.code(200).send({
       message: 'Notification',
       checkNotif,
@@ -369,13 +291,8 @@ export async function notificationFriends(req, reply) {
 export async function sawAccept(req, reply) {
   const { user_id, username } = req.body;
 
-  console.log("IIIII=>", user_id)
-  console.log("LLLLLL=>", username)
 
 const username_id = db.prepare(`SELECT id FROM users WHERE username = ?`).get(username)
-
-
-console.log("UUUU=>", username_id.id)
 
   try {
     const sawOk = db

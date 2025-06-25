@@ -1,9 +1,5 @@
 import db from '../database/database.js';
 
-/////////////////////////////////////////////////////////////////////////////
-/// Neeed to fix, add flag that if game end then person can challenge again!!!
-/// Then fix db and when win/losse update that game ended
-///////////////////////////////////////////////////////////////////////////
 export async function challenge(req, reply) {
   const { user_id, username } = req.body;
 
@@ -61,9 +57,6 @@ export async function notification(req, reply) {
       )
       .all(user_id);
 
-      // IF WE DECIDED THAT WHEN USER INVITED SOMEONE TO PLAY AND THEN THEY GOES TO WAITING
-      // WE DONT NEED TO SEE IS HE ACCPTED OR NOT BECAUSE GAME WILL JUST START ANYWAY
-    console.log('notifications =>', notification);
     const accptedFromPartner = db
       .prepare(
         `SELECT challenge.*, users.username
@@ -73,7 +66,6 @@ export async function notification(req, reply) {
       )
       .all(user_id);
 
-    console.log('RRRR=>', accptedFromPartner);
 
     const notAcceptedFromPartner = db
       .prepare(
@@ -97,7 +89,6 @@ export async function notification(req, reply) {
     const usernames = acceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
-    console.log('Usernames are accepted', acceptedUsers);
 
     const notAcceptedUsers = notAcceptedFromPartner.map((ch) => {
       return {
@@ -112,9 +103,6 @@ export async function notification(req, reply) {
     const usernamesNotAccepted = notAcceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
-    // console.log('Usernames not accepted', usernamesNotAccepted);
-
-    //not really neeeded, delete later
     const acceptedSeen = db
       .prepare(
         `SELECT challenge.*, users.username
@@ -170,7 +158,6 @@ export async function notification(req, reply) {
 }
 
 export async function sawAccept(req, reply) {
-  // console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU")
   const { user_id, friends_id } = req.body;
 
   try {
@@ -198,7 +185,6 @@ export async function accept(req, reply) {
       )
       .get(friends_id, user_id);
 
-    // console.log('kkkkkkkkkkkkk =>', acceptReq.id);
 
     const gameStarts = db
       .prepare(`INSERT INTO game (challenge_id, date ) VALUES (?,?)`)
@@ -222,7 +208,7 @@ export async function decline(req, reply) {
   try {
     const declineReq = db
       .prepare(
-        `UPDATE challenge SET confirmReq = 0 WHERE friends_id = ? AND user_id = ?`
+        `UPDATE challenge SET confirmReq = 0, game_end = 1 WHERE friends_id = ? AND user_id = ?`
       )
       .run(user_id, friends_id);
 
