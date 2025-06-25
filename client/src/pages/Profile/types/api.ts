@@ -120,7 +120,7 @@ export const recordWin = async (
   if (id === null) throw new Error("No user id");
     const challenge_id = localStorage.getItem("challenge_id")
   console.log("TYYYYYYYYYYYYYYYYYYYYYYY=>", challenge_id)
-  console.log(typeof challenge_id)
+  // console.log(typeof challenge_id)
   await api.post("/winUser", { user_id: id , challenge_id :challenge_id}, { headers });
 };
 
@@ -130,7 +130,7 @@ export const recordLoss = async (
   const id = getUserIdFromToken();
   if (id === null) throw new Error("No user id");
   const challenge_id = localStorage.getItem("challenge_id")
-  console.log("TYYYYYYYYYYYYYYYYYYYYYYY=>", challenge_id)
+  // console.log("TYYYYYYYYYYYYYYYYYYYYYYY=>", challenge_id)
   await api.post("/loseUser", { user_id: id , challenge_id :challenge_id}, { headers });
 };
 

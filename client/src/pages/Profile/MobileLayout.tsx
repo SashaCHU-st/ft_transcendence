@@ -16,6 +16,9 @@ interface MobileLayoutProps {
   expandUsername?: string;
   handleRemove: (username: string) => void;
   handleAdd: (username: string) => void;
+  //handleConfirm: (username: string) => void;
+  
+
 }
 
 const MobileLayout: React.FC<MobileLayoutProps> = ({
@@ -27,6 +30,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   expandUsername,
   handleRemove,
   handleAdd,
+  //handleConfirm,
 }) => {
   return (
     <div
@@ -40,7 +44,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
       "
     >
     <div className="flex flex-col items-center justify-start gap-6 w-full">
-      <UserHeader
+      {/* <UserHeader
         user={{
           username: user.username,
           //avatar: user.avatar,
@@ -48,7 +52,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           losses: user.losses,
           history: user.history,
         }}
-      />
+      /> */}
       <PlayArena
         user={{ username: user.username, avatar: user.avatar }}
         opponentImage={selectedBot ? selectedBot.image : null}

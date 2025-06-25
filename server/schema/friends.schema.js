@@ -6,23 +6,21 @@ export const usersSchema = z.object({
 });
 
 export const FriendsSchema = z.object({
-  user_id: z.number(),
+  user_id: z.coerce.number(),
   username:z.string()
-  // username: z.string().max(20)
+
 });
 
 export const FriendsAccept = z.object({
-  user_id: z.number(),
+  user_id: z.coerce.number(),
   username:z.string(),
-  confirmReq: z.string()///????? maybe int need to check
+  confirmReq: z.coerce.number()
 });
 
 export const FriendsRequest = z.object({
-  user_id: z.number(),
-  // username:z.string(),
-  // confirmReq: z.string()///????? maybe int need to check
+  user_id: z.coerce.number(),
 });
 
 export const FriendsMy = z.object({
-  user_id: z.number()
+  user_id: z.coerce.number(),
 });

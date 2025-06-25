@@ -6,7 +6,7 @@ export async function addfavorites(req, reply) {
   try {
     const user = db.prepare(`SELECT * FROM users WHERE id = ?`).get(user_id);
 
-    console.log(user.username);
+    // console.log(user.username);
     if (String(username) === String(user.username)) {
       return reply.code(400).send({ message: "Cannot add yourself" });
     }
@@ -28,7 +28,7 @@ export async function addfavorites(req, reply) {
 }
 
 export async function deletefavorites(req, reply) {
-  console.log("we in delete");
+  // console.log("we in delete");
 
   const {user_id, username} = req.body;
 

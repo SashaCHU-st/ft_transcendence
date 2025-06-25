@@ -3,14 +3,33 @@ import { useNavigate } from "react-router-dom";
 import {getAuthHeaders} from "../types/api";
 import { useUserData } from "./useUserData";
 import { useNotifications } from "./useNotification";
-import { useFavorites } from "./useFavorites";
+//import { useFavorites } from "./useFavorites";
+import { useFriends } from "./useFriends";
 import { useProfileModal } from "./useProfileModal";
 import { useGame } from "./useGame";
 
 export const useProfile = () => {
-  const { user, friends, players, fetchAllUsers, setFriends, setPlayers, setUser } = useUserData();
+  const { user,
+      friends,
+      players, 
+      chatList, 
+      fetchAllUsers,
+      setFriends, 
+      setPlayers, 
+      setChatList, 
+      setUser,
+      fetchFriendRequests,
+      friendRequests,
+      declinedFriendRequest,
+      setDeclinedFriendRequest,
+      //fetchFriendNotifications,
+      setFriendRequests,
+      
+    } = useUserData();
+
   const userId = user?.id || null;
   const authHeaders = getAuthHeaders();
+ 
 
   // Notifications
   const {
@@ -20,10 +39,27 @@ export const useProfile = () => {
     //checkNotifications,
     handleAcceptChallenge,
     handleDeclineChallenge,
+    redirectToGame,
+    setRedirectToGame,
+    declinedChallenge,
+    setDeclinedChallenge
+
   } = useNotifications(userId);
 
   // Favorites
-  const { handleAdd, handleRemove } = useFavorites(fetchAllUsers, friends, setFriends, setPlayers);
+  //const { handleAdd, handleRemove } = useFavorites(fetchAllUsers, friends, setFriends, setPlayers);
+
+  //Friends
+  const { handleAdd, handleRemove, handleConfirm, handleDecline } = useFriends(
+  fetchAllUsers,
+  fetchFriendRequests,
+  friends,
+  setFriends,
+  setPlayers,
+   setFriendRequests,
+  // setDeclinedFriendRequest,
+
+);
 
   // Profile modal
   const { isModalOpen, setIsModalOpen, handleSaveProfile } = useProfileModal(user, fetchAllUsers, authHeaders);
@@ -32,16 +68,64 @@ export const useProfile = () => {
   const navigate = useNavigate();
   const { selectedBot, setSelectedBot, handlePlay } = useGame(user, fetchAllUsers, authHeaders);
 
+  // useEffect(() => {
+  //   fetchAllUsers();
+  //   fetchFriendRequests();
+  //   fetchFriendNotifications();
+  //   if (declinedFriendRequest)
+  //     fetchFriendNotifications();
+
+  //   const interval = setInterval(() => {
+  //   fetchFriendRequests();
+  //   fetchAllUsers();
+   
+  //  }, 5000);
+  //    return () => clearInterval(interval);
+
+  // }, [fetchAllUsers, fetchFriendRequests]);
+
+
+// const dismissDeclinedFriendRequest = () => {
+//   if (declinedFriendRequest) {
+//     // Remove from visible friendRequests list
+//     setFriendRequests(prev => prev.filter(req => req.username !== declinedFriendRequest));
+//   }
+//   // Clear the modal trigger
+//   setDeclinedFriendRequest(null);
+// };
+
   // Refresh user data and notifications periodically
   useEffect(() => {
-  // Only fetch users once on mount or when really needed
-  fetchAllUsers();
-}, [fetchAllUsers]);
-  
+  const init = async () => {
+    await fetchAllUsers();
+    await fetchFriendRequests();
+  };
+
+  init();
+
+  const interval = setInterval(() => {
+    fetchFriendRequests();
+    fetchAllUsers();
+  }, 5000);
+
+  return () => clearInterval(interval);
+}, [fetchAllUsers, fetchFriendRequests]);
+
+
+  useEffect(() => {
+    if (!redirectToGame || !userId) 
+      return;
+
+      setRedirectToGame(null);
+  }, [redirectToGame, userId]);
+
+
   return {
     user,
     friends,
     players,
+    chatList,
+    
     notifications,
     isNotificationModalOpen,
     setIsNotificationModalOpen,
@@ -49,14 +133,23 @@ export const useProfile = () => {
     handleDeclineChallenge,
     handleAdd,
     handleRemove,
+    handleConfirm,
+    handleDecline,
     isModalOpen,
     setIsModalOpen,
     handleSaveProfile,
     selectedBot,
+      setChatList,
     setSelectedBot,
     handlePlay,
     navigate,
     setUser,
+    declinedChallenge,
+    setDeclinedChallenge,
+    friendRequests,
+    declinedFriendRequest,
+    setDeclinedFriendRequest,
+    //dismissDeclinedFriendRequest
   };
 };
 

@@ -21,17 +21,19 @@ db.exec(`
 `);
 console.log("Database initialized and users table is ready.");
 
-// const db = new Database("./database/friends.db");
-// db.exec(`
-//   CREATE TABLE IF NOT EXISTS friends (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     user_id INTEGER NOT NULL,
-//     friends_id INTEGER NOT NULL,
-//     confirmReq BOOL default 0,
-//     FOREIGN KEY (user_id) REFERENCES users(id),
-//     FOREIGN KEY (friends_id) REFERENCES users(id)
-//   );
-// `);
+//const db = new Database("./database/friends.db");
+db.exec(`
+  CREATE TABLE IF NOT EXISTS friends (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    friends_id INTEGER NOT NULL,
+    confirmReq INTEGER default 2,
+    saw INTEGER default 2,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (friends_id) REFERENCES users(id)
+  );
+ `);
+ 
 db.exec(`
   CREATE TABLE IF NOT EXISTS favorites (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,6 +51,8 @@ db.exec(`
     friends_id INTEGER NOT NULL,
     confirmReq INTEGER default 2,
     ok BOOL default 0,
+    sent_once BOOL default 0,
+    game_end BOOL default 0,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (friends_id) REFERENCES users(id)
   );

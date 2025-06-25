@@ -1,7 +1,6 @@
 import Fastify from "fastify";
 import authRoutes from "./routes/AuthRoutes.js";
-// import friendsRoutes from "./routes/FriendsRoutes.js"
-import favoriteRoutes from "./routes/FavoritesRoutes.js";
+import friendsRoutes from "./routes/FriendsRoutes.js"
 import profileRoutes from "./routes/ProfileRoutes.js";
 import statisticsRoutes from "./routes/StatisticRoutes.js";
 import challengeRoutes from "./routes/ChallangeRoutes.js";
@@ -77,8 +76,8 @@ fastify.register(cors, {
 
 // Routes
 fastify.register(authRoutes);
-// fastify.register(friendsRoutes);
-fastify.register(favoriteRoutes);
+fastify.register(friendsRoutes);
+// fastify.register(favoriteRoutes);
 fastify.register(profileRoutes);
 fastify.register(statisticsRoutes);
 fastify.register(challengeRoutes);

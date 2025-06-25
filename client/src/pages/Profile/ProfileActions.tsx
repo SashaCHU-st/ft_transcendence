@@ -9,11 +9,13 @@ import { useAuth } from "../../context/AuthContext";
 
 // Define the props accepted by the ProfileActions component
 interface ProfileActionsProps {
-  user: Pick<UserInfo, "username" | "online" | "email">; // Basic user info for display and API calls
-  onProfileClick: () => void;                           // Callback to open profile modal
-  onSearch?: (username: string) => void;                // Optional callback for search action
-  onOpenChat: () => void;                               // Callback to open chat
-  onOpenStats: () => void;                              // Callback to open stats dashboard
+
+  user: Pick<UserInfo, "username" | "online" | "email">; 
+  onProfileClick: () => void;                           
+  onSearch?: (username: string) => void; 
+  onClearSearch?: () => void;               
+  onOpenChat: () => void;                               
+ 
 }
 
 // Main component rendering search, user info, and action buttons
@@ -21,11 +23,13 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
   user,
   onProfileClick,
   onSearch,
+  onClearSearch,
   onOpenChat,
-  onOpenStats,
+  
 }) => {
   //const navigate = useNavigate();               // Hook for navigation after logout
-  const [searchQuery, setSearchQuery] = useState("");  // Local state for search input
+  const [searchQuery, setSearchQuery] = useState(""); 
+  const [hasSearched, setHasSearched] = useState(false);
 
   /**
    * Search handler
@@ -36,12 +40,15 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
       toast.error("Please enter a username to search.");
       return;
     }
-    onSearch?.(searchQuery.trim());             // Trigger search in parent component
+    onSearch?.(searchQuery.trim());
+    setHasSearched(true);
   };
 
   /** Clear the current search input */
   const handleClear = () => {
     setSearchQuery("");
+    setHasSearched(false);
+    onClearSearch?.();
   };
 
   /**
@@ -65,47 +72,45 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
       */}
       <div className="flex items-center gap-2 flex-col sm:flex-row">
         <div className="relative w-32 sm:w-40">
-        <input
-          type="text"
-          placeholder="Search user..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyPress={handleKeyPress}
-          className="
-            px-4
-            py-1
-            rounded-2xl
-            text-xs
-            sm:text-xs
-            md:text-sm
-            bg-gray-800
-            border
-            border-purple-200
-            shadow-[0_0_15px_#c084fc]
-            text-white
-            focus:outline-none
-            focus:ring-2
-            focus:ring-indigo-800
-            transition-all
-            duration-300
-            ease-in-out
-            hover:scale-105
-            w-32
-            sm:w-40
-          "
-          style={{
-            textShadow: `
-              0 0 4px rgba(102, 0, 255, 0.9),
-              0 0 8px rgba(102, 0, 255, 0.7),
-              0 0 16px rgba(102, 0, 255, 0.5),
-              0 0 32px rgba(102, 0, 255, 0.3)
-            `,
-          }}
-          
-        />
-        {searchQuery && (
+          <input
+            type="text"
+            placeholder="Search user..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
+            className="
+              w-full
+              px-4
+              pr-8
+              py-1
+              rounded-2xl
+              text-xs
+              sm:text-xs
+              md:text-sm
+              bg-gray-800
+              border
+              border-purple-200
+              shadow-[0_0_15px_#c084fc]
+              text-white
+              focus:outline-none
+              focus:ring-2
+              focus:ring-indigo-800
+              transition-all
+              duration-300
+              ease-in-out
+              hover:scale-105
+            "
+            style={{
+              textShadow: `
+                0 0 4px rgba(102, 0, 255, 0.9),
+                0 0 8px rgba(102, 0, 255, 0.7),
+                0 0 16px rgba(102, 0, 255, 0.5),
+                0 0 32px rgba(102, 0, 255, 0.3)
+              `,
+            }}
+          />
           <button
-            onClick={handleClear}
+            onClick={hasSearched ? handleClear : handleSearch}
             className="
               absolute
               right-2
@@ -114,20 +119,13 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
               -translate-y-1/2
               text-white
               text-sm
-              hover:text-red-400
+              hover:text-blue-400
               transition
+              focus:outline-none
             "
-            aria-label="Clear search"
+            aria-label={hasSearched ? "Clear search" : "Search"}
           >
-            ✕
-          </button>
-        )}
-        </div>
-        <div className="flex gap-2">
-          <button
-            onClick={handleSearch}
-          >
-             <i className="fas fa-magnifying-glass text-blue-300 hover:text-blue-400 text-md xl:text-xl w-8 h-8"></i>
+            {hasSearched ? "✕" : <i className="fas fa-magnifying-glass text-blue-300" />}
           </button>
         </div>
       </div>
@@ -162,15 +160,6 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
           >
             <i className="fas fa-comments text-blue-300 w-6 h-6" />
           </button>
-
-          <button
-            onClick={onOpenStats}
-            className="p-1 rounded-full bg-gray-800 hover:bg-gray-700 transition cursor-pointer"
-            aria-label="Open statistics"
-          >
-            <i className="fas fa-chart-simple text-blue-300 w-6 h-6" />
-          </button>
-         
 
           <button
               onClick={onProfileClick}

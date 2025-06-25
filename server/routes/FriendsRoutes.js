@@ -1,11 +1,25 @@
-import { FriendsAccept, usersSchema, FriendsMy, FriendsSchema, FriendsRequest} from "../schema/friends.schema.js";
-import { friendsSearch, friendsAdd, confirmFriend, myFriends, deleteFriend, requestFriend } from "../controllers/friends.js";
+import {
+  FriendsAccept,
+  usersSchema,
+  FriendsMy,
+  FriendsSchema,
+  FriendsRequest,
+} from '../schema/friends.schema.js';
+import {friendsSearch,friendsAdd, confirmFriend,
+  myFriends,
+  requestFriend,
+  declineFriend,
+  notificationFriends,
+  deleteFriend,
+  sawAccept
+} from '../controllers/friends.js';
+
 async function friendsRoutes(fastify) {
-  fastify.post("/searchUsers", async (req, reply) => {
+  fastify.post('/searchUsers', async (req, reply) => {
     const validated = usersSchema.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
+        message: 'Validation error',
         errors: validated.error.errors,
       });
     }
@@ -16,7 +30,7 @@ async function friendsRoutes(fastify) {
     const validated = FriendsSchema.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
+        message: 'Validation error',
         errors: validated.error.errors,
       });
     }
@@ -26,46 +40,89 @@ async function friendsRoutes(fastify) {
     const validated = FriendsAccept.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
+        message: 'Validation error',
         errors: validated.error.errors,
       });
     }
     return confirmFriend({ ...req, body: validated.data }, reply);
   });
+  fastify.post(`/declineFriend`, async (req, reply) => {
+    const validated = FriendsAccept.safeParse(req.body);
+    if (!validated.success) {
+      return reply.code(400).send({
+        message: 'Validation error',
+        errors: validated.error.errors,
+      });
+    }
+    return declineFriend({ ...req, body: validated.data }, reply);
+  });
   fastify.post(`/request`, async (req, reply) => {
     const validated = FriendsRequest.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
+        message: 'Validation error',
         errors: validated.error.errors,
       });
     }
     return requestFriend({ ...req, body: validated.data }, reply);
   });
 
+  // fastify.post(`/declineFriend`, async (req, reply) => {
+  //   const validated = FriendsAccept.safeParse(req.body);
+  //   if (!validated.success) {
+  //     return reply.code(400).send({
+  //       message: 'Validation error',
+  //       errors: validated.error.errors,
+  //     });
+  //   }
+  //   return declineFriend({ ...req, body: validated.data }, reply);
+  // });
+
   fastify.post(`/myfriends`, async (req, reply) => {
-    console.log("we in my friends")
+    console.log('we in my friends');
     const validated = FriendsMy.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
+        message: 'Validation error',
         errors: validated.error.errors,
       });
     }
     return myFriends({ ...req, body: validated.data }, reply);
   });
+    fastify.post(`/notificationFriend`, async (req, reply) => {
+    console.log('we in my notification friends');
+    const validated = FriendsMy.safeParse(req.body);
+    if (!validated.success) {
+      return reply.code(400).send({
+        message: 'Validation error',
+        errors: validated.error.errors,
+      });
+    }
+    return notificationFriends({ ...req, body: validated.data }, reply);
+  });
+     fastify.post(`/sawAccept`, async (req, reply) => {
+       const validated = FriendsSchema.safeParse(req.body);
+       if (!validated.success) {
+         return reply.code(400).send({
+           message: 'Validation error',
+           errors: validated.error.errors,
+          });
+        }
+        console.log('rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr');
+    return sawAccept({ ...req, body: validated.data }, reply);
+  });
+  
   fastify.delete(`/deletefriend`, async (req, reply) => {
-    console.log("we in my delete friends")
+    console.log('we in my delete friends');
     const validated = FriendsSchema.safeParse(req.body);
     if (!validated.success) {
       return reply.code(400).send({
-        message: "Validation error",
+        message: 'Validation error',
         errors: validated.error.errors,
       });
     }
     return deleteFriend({ ...req, body: validated.data }, reply);
   });
-  
 }
 
 export default friendsRoutes;
