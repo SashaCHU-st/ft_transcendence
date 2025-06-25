@@ -1,11 +1,9 @@
 import Database from "better-sqlite3";
 
 const db = new Database("./database/database.db");
-// Ensure SQLite enforces foreign key constraints
-db.pragma('foreign_keys = ON');
-//nickname uniqy and email
 
-//time for game
+db.pragma('foreign_keys = ON');
+
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,9 +17,7 @@ db.exec(`
     losses INTEGER default 0
   );
 `);
-console.log("Database initialized and users table is ready.");
 
-//const db = new Database("./database/friends.db");
 db.exec(`
   CREATE TABLE IF NOT EXISTS friends (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,7 +54,6 @@ db.exec(`
   );
 `);
 
-
 db.exec(`
   CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -91,7 +86,6 @@ db.exec(`
     );
     `);
     
-    // Add indexes to optimize lookups by sender and receiver
     db.exec("CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON messages(sender_id);");
     db.exec("CREATE INDEX IF NOT EXISTS idx_messages_receiver_id ON messages(receiver_id);");
     db.exec("CREATE INDEX IF NOT EXISTS idx_blocks_blocker_id ON blocks(blocker_id);");
@@ -119,11 +113,6 @@ db.exec(`
     if (!hasLoseScore) {
       db.exec('ALTER TABLE game ADD COLUMN lose_score INTEGER DEFAULT 0;');
     }
-    
-    
-    console.log("Database initialized and favorites table is ready.");
-    
-    
     
     export default db;
     

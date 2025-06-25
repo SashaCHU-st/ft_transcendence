@@ -101,7 +101,7 @@ export async function win(req, reply) {
         `UPDATE game SET win_user_id = ?, win_score = ?, date = ? WHERE challenge_id = ? `
       )
       .run(user_id, score, new Date().toISOString(), challenge_id);
-      const gameEND2 = db.prepare(`UPDATE challenge SET game_end = 1 WHERE id = ? `).run( challenge_id)
+      db.prepare(`UPDATE challenge SET game_end = 1 WHERE id = ? `).run( challenge_id)
     }
     if (!challenge_id || gameEND.changes === 0) {
       gameEND = db
@@ -154,7 +154,7 @@ export async function loseUser(req, reply) {
           `UPDATE game SET losses_user_id = ?, lose_score = ?, date = ? WHERE challenge_id = ? `
         )
         .run(user_id, score, new Date().toISOString(), challenge_id);
- const gameEND2 = db.prepare(`UPDATE challenge SET game_end = 1 WHERE id = ? `).run( challenge_id)
+      db.prepare(`UPDATE challenge SET game_end = 1 WHERE id = ? `).run( challenge_id)
     }
   } catch (err) {
     console.error('Database error:', err.message);
@@ -180,7 +180,7 @@ export async function opponentStats(req, reply) {
          ORDER BY games DESC`
       )
       .all(userId, userId, userId, userId, userId);
-    const kuku =   db.prepare(`UPDATE challenge SET game_end = 1 WHERE id = ? `).run(chId)
+    db.prepare(`UPDATE challenge SET game_end = 1 WHERE id = ? `).run(chId)
     return reply.code(200).send({ stats: rows });
   } catch (err) {
     console.error('Database error:', err.message);

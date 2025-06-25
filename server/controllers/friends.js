@@ -1,10 +1,6 @@
 import db from '../database/database.js';
-// import dbFriends from "../database/databaseFriends.js";
 
-// see users but not friends
 export async function friendsSearch(req, reply) {
-  console.log('WE ARE IN FRIENDS');
-
   const { username } = req.body;
 
   if (!username)
@@ -25,9 +21,6 @@ export async function friendsSearch(req, reply) {
     return reply.code(500).send({ message: 'Something went wrong' });
   }
 }
-
-/////ADD friends
-////FIX THIS THAT CANNOT ADD YOUERSELF!
 export async function friendsAdd(req, reply) {
 
   const { user_id, username } = req.body;
@@ -84,16 +77,12 @@ export async function confirmFriend(req, reply) {
   if (!friend) {
     return reply.code(404).send({ message: 'NO such as friebd' });
   }
-
   try {
     const checkReq1 = db
       .prepare(`SELECT * FROM friends WHERE friends_id = ? AND user_id = ?`)
       .get(user_id, friend.id);
     if (checkReq1) {
-      const confirmAccept1 = db
-        .prepare(
-          `UPDATE friends SET confirmReq = 1 WHERE friends_id = ? AND user_id = ? `
-        )
+        db.prepare(`UPDATE friends SET confirmReq = 1 WHERE friends_id = ? AND user_id = ? `)
         .run(user_id, friend.id);
       return reply.code(200).send({ message: 'confirmed' });
     }
@@ -120,10 +109,7 @@ export async function declineFriend(req, reply) {
       .prepare(`SELECT * FROM friends WHERE friends_id = ? AND user_id = ?`)
       .get(user_id, friend.id);
     if (checkReq1) {
-      const declineReq = db
-        .prepare(
-          `UPDATE friends SET confirmReq = 0, saw = 1 WHERE friends_id = ? AND user_id = ? `
-        )
+      db.prepare(`UPDATE friends SET confirmReq = 0, saw = 1 WHERE friends_id = ? AND user_id = ? `)
         .run(user_id, friend.id);
       return reply.code(200).send({ message: 'confirmed' });
     }
@@ -136,13 +122,8 @@ export async function declineFriend(req, reply) {
   }
 }
 
-
-
 export async function requestFriend(req, reply) {
   const { user_id } = req.body;
-
-  console.log('ISER=>', user_id);
-
   try {
     const checkRequest = db.prepare(`
       SELECT 
@@ -191,7 +172,6 @@ export async function myFriends(req, reply) {
   }
 }
 
-/// delete from friends
 export async function deleteFriend(req, reply) {
 
   const { user_id, username } = req.body;

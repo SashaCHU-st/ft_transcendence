@@ -15,14 +15,10 @@ export async function updateProfile(req, reply) {
       return reply.code(404).send({ message: "User not found" });
     }
     if (name) {
-      const updateName = db
-        .prepare("UPDATE users SET name = ? WHERE id = ?")
-        .run(name, userId);
+      db.prepare("UPDATE users SET name = ? WHERE id = ?").run(name, userId);
     }
     if (password) {
-      const updatePassword = db
-        .prepare("UPDATE users SET password = ? WHERE id = ?")
-        .run(await hashedPassword(password), userId);
+      db.prepare("UPDATE users SET password = ? WHERE id = ?").run(await hashedPassword(password), userId);
     }
     if (username) {
       const nickExist = db
@@ -31,9 +27,7 @@ export async function updateProfile(req, reply) {
       if (nickExist) {
         return reply.code(400).send({ message: "Nick already exists" });
       } else {
-        const updateUsername = db
-          .prepare("UPDATE users SET username = ? WHERE id = ?")
-          .run(username, userId);
+        db.prepare("UPDATE users SET username = ? WHERE id = ?").run(username, userId);
       }
     }
     return reply.code(200).send({ message: "Profile updated" });
@@ -55,11 +49,8 @@ export async function uploadPicture(data, reply) {
     return reply.code(400).send({ message: "Invalid image format" });
   }
   try {
-    const user = db.prepare("SELECT * FROM users WHERE id = ?").get(userId);
-    console.log("user ok => ", user.id);
-
+    db.prepare("SELECT * FROM users WHERE id = ?").get(userId);
     const buffer = await data.toBuffer();
-
     db.prepare("UPDATE users SET image = ? WHERE id = ?").run(buffer, userId);
     return reply.code(200).send({ message: "Image uploaded" });
   } catch (err) {

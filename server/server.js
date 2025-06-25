@@ -34,7 +34,7 @@ fastify.register(view, {
   root: path.resolve("./views"),
 });
 // JWT
-fastify.register(jwt, { secret: "kuku" });
+fastify.register(jwt, { secret: process.env.SECRET });
 
 fastify.addHook("preHandler", (req, res, next) => {
   req.jwt = fastify.jwt;
@@ -69,7 +69,7 @@ fastify.decorate("authenticate", async (request, reply) => {
 
 // CORS
 fastify.register(cors, {
-  origin: "https://localhost:5173",
+  origin: process.env.CLIENT,
   credentials: true,
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
 });
@@ -77,7 +77,6 @@ fastify.register(cors, {
 // Routes
 fastify.register(authRoutes);
 fastify.register(friendsRoutes);
-// fastify.register(favoriteRoutes);
 fastify.register(profileRoutes);
 fastify.register(statisticsRoutes);
 fastify.register(challengeRoutes);

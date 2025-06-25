@@ -10,12 +10,10 @@ export const SignUpSchema = z.object({
   email: z.string().max(40).email(),
   password: z.string().min(4).max(40),
 });
-
 export const LoginSchema = z.object({
     email: z.string().max(40).email(),
     password: z.string().min(4).max(40),
   });
-  
 export const LogoutSchema = z.object({
     user_id: z.string(),
   });

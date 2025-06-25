@@ -24,10 +24,7 @@ export async function challenge(req, reply) {
         .prepare(`INSERT INTO challenge (user_id, friends_id, sent_once) VALUES (?,?, ?) RETURNING id`)
         .run(user_id, friends_id.id, 1);
 
-      return reply
-        .code(201)
-        .send({ message: 'Request sent', request: sendRequest, challenge_id : sendRequest.lastInsertRowid});
-
+      return reply.code(201).send({ message: 'Request sent', request: sendRequest, challenge_id : sendRequest.lastInsertRowid});
     }
     else
     {
@@ -84,8 +81,6 @@ export async function notification(req, reply) {
           .get(ch.friends_id),
       };
     });
-
-
     const usernames = acceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
@@ -157,22 +152,6 @@ export async function notification(req, reply) {
   }
 }
 
-// export async function sawAccept(req, reply) {
-//   const { user_id, friends_id } = req.body;
-
-//   try {
-//     const sawOk = db
-//       .prepare(
-//         `UPDATE challenge SET ok = 1 WHERE user_id = ? AND friends_id = ?`
-//       )
-//       .run(user_id, friends_id);
-
-//     return reply.code(200).send({ message: 'Saw ok', sawOk });
-//   } catch (err) {
-//     console.error('Database error:', err.message);
-//     return reply.code(500).send({ message: 'Something went wrong' });
-//   }
-// }
 
 
 export async function accept(req, reply) {
@@ -184,12 +163,6 @@ export async function accept(req, reply) {
         `UPDATE challenge SET confirmReq = 1 WHERE user_id = ? AND friends_id = ? RETURNING id`
       )
       .get(friends_id, user_id);
-
-
-    // const gameStarts = db
-    //   .prepare(`INSERT INTO game (challenge_id, date ) VALUES (?,?)`)
-    //   .run(acceptReq.id, new Date().toISOString());
-
     return reply
       .code(201)
       .send({
