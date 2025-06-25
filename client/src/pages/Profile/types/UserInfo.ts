@@ -6,6 +6,13 @@ export type MatchResult = {
 	losses_score:string;
 	date: string;
   };
+
+  export type FriendRequest = {
+  id: string;
+  username: string;
+  avatar: string;
+  online: boolean;
+};
   
   export type UserInfo = {
 	id: string;

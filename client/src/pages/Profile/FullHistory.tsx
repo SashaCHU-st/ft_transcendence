@@ -84,6 +84,7 @@ const FullHistory: React.FC<FullHistoryProps> = ({
           </div>
 
           <div className="border-t-2 border-indigo-500 my-4 w-full" />
+          <div className="overflow-y-auto max-h-[200px] pr-2">
           {stats.map((game, index) => {
             const opponentName =
               game.winner_name === username
@@ -130,9 +131,11 @@ const FullHistory: React.FC<FullHistoryProps> = ({
                 <div className={isWinner ? 'text-[#76E29A]' : 'text-[#E984BE]'}>
                   {isWinner ? 'WIN' : 'LOSS'}
                 </div>
+                
               </div>
             );
           })}
+           </div>
         </OverlayCard>
       </OverlayWrapper>
     </>
