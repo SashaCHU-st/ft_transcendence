@@ -4,18 +4,18 @@ export async function statisticsAll(request, reply) {
   const stat = db
     .prepare(
       `SELECT
-        game.id AS game_id,
-        game.challenge_id,
-        game.win_user_id,
-        game.win_score,
-        winner.name AS winner_name,
-        game.losses_user_id,
-        game.lose_score,
-        loser.name AS loser_name,
-        game.date
-      FROM game
-      INNER JOIN users AS winner ON game.win_user_id = winner.id
-      INNER JOIN users AS loser ON game.losses_user_id = loser.id`
+    game.id AS game_id,
+    game.challenge_id,
+    game.win_user_id,
+    winner.username AS winner_username,
+    game.win_score AS winner_score,
+    game.losses_user_id,
+    loser.username AS loser_username,
+    game.lose_score AS loser_score,
+    game.date
+  FROM game
+  INNER JOIN users AS winner ON game.win_user_id = winner.id
+  INNER JOIN users AS loser ON game.losses_user_id = loser.id`
     )
     .all();
   return reply.code(200).send({ stat });

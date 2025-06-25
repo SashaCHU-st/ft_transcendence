@@ -10,12 +10,13 @@ import { useAuth } from "../../context/AuthContext";
 // Define the props accepted by the ProfileActions component
 interface ProfileActionsProps {
 
-  user: Pick<UserInfo, "username" | "online" | "email">; 
-  onProfileClick: () => void;                           
-  onSearch?: (username: string) => void; 
-  onClearSearch?: () => void;               
-  onOpenChat: () => void;                               
- 
+  user: Pick<UserInfo, "username" | "online" | "email">;
+  onProfileClick: () => void;
+  onSearch?: (username: string) => void;
+  onClearSearch?: () => void;
+  onOpenChat: () => void;
+  onOpenStats: () => void;
+
 }
 
 // Main component rendering search, user info, and action buttons
@@ -25,7 +26,8 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
   onSearch,
   onClearSearch,
   onOpenChat,
-  
+  onOpenStats,
+
 }) => {
   //const navigate = useNavigate();               // Hook for navigation after logout
   const [searchQuery, setSearchQuery] = useState(""); 
@@ -159,6 +161,14 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
             aria-label="Open chat"
           >
             <i className="fas fa-comments text-blue-300 w-6 h-6" />
+          </button>
+
+          <button
+            onClick={onOpenStats}
+            className="p-1 rounded-full bg-gray-800 hover:bg-gray-700 transition cursor-pointer"
+            aria-label="Open statistics"
+          >
+            <i className="fas fa-chart-simple text-blue-300 w-6 h-6" />
           </button>
 
           <button

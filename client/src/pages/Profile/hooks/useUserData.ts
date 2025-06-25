@@ -166,14 +166,14 @@ const fetchFriendRequests = useCallback(async () => {
     setFriendRequests(filtered);
     if (declinedUsernames.length > 0) {
       setDeclinedFriendRequest(declinedUsernames);
-     
-      toast('Some friend requests were declined.', { icon: '❌' });
+      // Disabled toast spam
+      // toast('Some friend requests were declined.', { icon: '❌' });
     }
 
     return filtered;
   } catch (err: any) {
     console.error('Failed to fetch friend requests:', err);
-    toast.error('Could not load friend requests');
+    // toast.error('Could not load friend requests'); // disabled spam
     return [];
   }
 }, []);

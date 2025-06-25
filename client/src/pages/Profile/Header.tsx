@@ -6,13 +6,13 @@ interface HeaderProps {
   user: Pick<UserInfo, "username" | "online" | "email">;
   onProfileClick: () => void;
   onSearch?: (username: string) => void;
-  onClearSearch?: () => void; 
+  onClearSearch?: () => void;
   onOpenChat: () => void;
- 
+  onOpenStats: () => void;
 }
 
 //const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onOpenChat, onOpenStats }) => {
-const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onClearSearch,  onOpenChat }) => {
+const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onClearSearch,  onOpenChat, onOpenStats }) => {
   return (
     <div
       className="
@@ -55,7 +55,8 @@ const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onClear
         onSearch={onSearch}
         onClearSearch={onClearSearch}
         onOpenChat={onOpenChat}
-       
+        onOpenStats={onOpenStats}
+
       />
     </div>
   );

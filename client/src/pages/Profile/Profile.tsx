@@ -48,6 +48,7 @@ const Profile: React.FC = () => {
   } = useProfile();
 
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
  
 
   // State to store username for auto-expanding a user card
@@ -156,7 +157,8 @@ const handleOkButtondeclineFriend = async (username: string) => {
           onSearch={handleSearch}
           onClearSearch={handleClearSearch}
           onOpenChat={() => setIsChatOpen(true)}
-          
+          onOpenStats={() => setIsStatsOpen(true)}
+
         />
 
         {/* Desktop-specific layout for large screens */}
@@ -240,6 +242,10 @@ const handleOkButtondeclineFriend = async (username: string) => {
             onClose={() => handleOkButtondeclineFriend(username)}
           />
       ))}
+
+      {isStatsOpen && (
+        <StatsDashboardModal user={user} onClose={() => setIsStatsOpen(false)} />
+      )}
 
       {isChatOpen && (
         <ChatProvider currentUserId={user.id}>

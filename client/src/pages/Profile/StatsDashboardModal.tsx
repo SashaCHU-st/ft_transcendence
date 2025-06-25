@@ -1,8 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
+import Avatar from "./Avatar";
 import { OverlayWrapper } from "../../pong/components/Overlays/OverlayWrapper";
 import {
   OverlayCard,
   OverlayHeading,
+  overlayOutlineClass,
 } from "../../pong/components/Overlays/OverlayComponents";
 import { UserInfo } from "./types/UserInfo";
 import {
@@ -54,6 +56,45 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
     null
   );
   const [opponentStats, setOpponentStats] = useState<OpponentStat[]>([]);
+  const [page, setPage] = useState(0);
+  const [opponentPage, setOpponentPage] = useState(0);
+
+  const userSessions = useMemo(
+    () =>
+      sessions.filter(
+        (s) =>
+          s.win_user_id === Number(user.id) ||
+          s.losses_user_id === Number(user.id)
+      ),
+    [sessions, user.id]
+  );
+  const sessionsPerPage = 5;
+  const totalPages = useMemo(
+    () => Math.ceil(userSessions.length / sessionsPerPage),
+    [userSessions]
+  );
+  const paginatedSessions = useMemo(
+    () =>
+      userSessions.slice(
+        page * sessionsPerPage,
+        (page + 1) * sessionsPerPage
+      ),
+    [userSessions, page]
+  );
+
+  const opponentsPerPage = 5;
+  const opponentTotalPages = useMemo(
+    () => Math.ceil(opponentStats.length / opponentsPerPage),
+    [opponentStats]
+  );
+  const paginatedOpponents = useMemo(
+    () =>
+      opponentStats.slice(
+        opponentPage * opponentsPerPage,
+        (opponentPage + 1) * opponentsPerPage
+      ),
+    [opponentStats, opponentPage]
+  );
 
   useEffect(() => {
     (async () => {
@@ -88,20 +129,32 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
     })();
   }, [user.id]);
 
-  const historyData = useMemo(
-    () => aggregateHistory(user.history),
-    [user.history]
-  );
+  const userHistory = useMemo(() => {
+    return sessions
+      .filter(
+        (s) =>
+          s.win_user_id === Number(user.id) ||
+          s.losses_user_id === Number(user.id)
+      )
+      .map((s) => ({
+        date: s.date.split("T")[0],
+        weekday: "",
+        result:
+          s.win_user_id === Number(user.id) ? ("win" as const) : ("loss" as const),
+      }));
+  }, [sessions, user.id]);
+
+  const historyData = useMemo(() => aggregateHistory(userHistory), [userHistory]);
 
   const sessionChart = useMemo(() => {
     const map: Record<string, { date: string; matches: number }> = {};
-    sessions.forEach((s) => {
+    userSessions.forEach((s) => {
       const d = s.date.split("T")[0];
       if (!map[d]) map[d] = { date: d, matches: 0 };
       map[d].matches += 1;
     });
     return Object.values(map);
-  }, [sessions]);
+  }, [userSessions]);
 
   const totalMatches = user.wins + user.losses;
   const winRate = totalMatches
@@ -109,7 +162,7 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
     : 0;
   const bestScore = useMemo(() => {
     let max = 0;
-    sessions.forEach((s) => {
+    userSessions.forEach((s) => {
       if (s.win_user_id === Number(user.id)) {
         max = Math.max(max, s.winner_score);
       } else if (s.losses_user_id === Number(user.id)) {
@@ -117,10 +170,10 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
       }
     });
     return max;
-  }, [sessions, user.id]);
+  }, [userSessions, user.id]);
 
   const bestStreak = useMemo(() => {
-    const sorted = [...sessions].sort((a, b) => a.date.localeCompare(b.date));
+    const sorted = [...userSessions].sort((a, b) => a.date.localeCompare(b.date));
     let longest = 0;
     let current = 0;
     sorted.forEach((s) => {
@@ -132,34 +185,34 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
       }
     });
     return longest;
-  }, [sessions, user.id]);
+  }, [userSessions, user.id]);
 
   const currentStreak = useMemo(() => {
-    const sorted = [...sessions].sort((a, b) => a.date.localeCompare(b.date));
+    const sorted = [...userSessions].sort((a, b) => a.date.localeCompare(b.date));
     let streak = 0;
     for (let i = sorted.length - 1; i >= 0; i--) {
       const s = sorted[i];
       if (s.win_user_id === Number(user.id)) {
         streak += 1;
       } else if (s.losses_user_id === Number(user.id)) {
-        streak = streak > 0 ? 0 : streak - 1;
+        streak = 0;
         break;
       }
     }
     return streak;
-  }, [sessions, user.id]);
+  }, [userSessions, user.id]);
 
   const scoreDiff = useMemo(() => {
-    if (!sessions.length) return { avg: 0, max: 0 };
+    if (!userSessions.length) return { avg: 0, max: 0 };
     let sum = 0;
     let max = 0;
-    sessions.forEach((s) => {
+    userSessions.forEach((s) => {
       const diff = Math.abs(s.winner_score - s.loser_score);
       sum += diff;
       max = Math.max(max, diff);
     });
-    return { avg: Number((sum / sessions.length).toFixed(1)), max };
-  }, [sessions]);
+    return { avg: Number((sum / userSessions.length).toFixed(1)), max };
+  }, [userSessions]);
 
   const challengePieData = useMemo(() => {
     if (!challengeStats) return [];
@@ -175,7 +228,8 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
     ];
   }, [challengeStats]);
 
-  const pieColors = ["#4ade80", "#f87171", "#facc15"];
+  // Neon palette used across the game UI
+  const pieColors = ["#40BFFF", "#BD0E86", "#00ffaa"];
 
   const Panel: React.FC<{ title: React.ReactNode; className?: string }> = ({
     title,
@@ -183,9 +237,9 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
     className = "",
   }) => (
     <div
-      className={`bg-gray-700/30 p-4 rounded-lg border border-gray-600 ${className}`}
+      className={`backdrop-blur-lg p-4 rounded-xl bg-gradient-to-br from-indigo-950/70 to-slate-900/70 ${overlayOutlineClass("blue")} ${className}`}
     >
-      <h3 className="text-lg font-orbitron text-blue-300 mb-3 flex items-center">
+      <h3 className="text-lg font-orbitron text-cyan-300 mb-3 flex items-center drop-shadow-[0_0_5px_#40BFFF]">
         {title}
       </h3>
       {children}
@@ -194,7 +248,7 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
 
   return (
     <OverlayWrapper onBackdropClick={onClose}>
-      <OverlayCard className="w-[95%] max-w-6xl bg-gray-900/80 text-white max-h-[95vh] overflow-hidden relative flex flex-col">
+      <OverlayCard className="w-[95%] max-w-6xl text-white max-h-[95vh] overflow-hidden relative flex flex-col bg-gradient-to-br from-[#0a0e2a] to-black border-[#00a1ff] shadow-[0_0_20px_#00a1ff,0_0_40px_#00a1ff]">
         <button
           onClick={onClose}
           aria-label="Close"
@@ -203,45 +257,60 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
           ✕
         </button>
         <OverlayHeading className="text-2xl mb-4 font-orbitron">
-          Stats Dashboard
+          {`${user.username}'s Stats Dashboard`}
         </OverlayHeading>
-        <div className="flex flex-wrap justify-around mb-6 text-center gap-4">
-          <div>
-            <p className="text-sm text-gray-400">Total Matches</p>
-            <p className="text-lg font-bold">{totalMatches}</p>
+        <div className="flex items-center justify-around mb-4 text-center font-orbitron flex-wrap gap-4">
+          <div className="flex flex-col items-center gap-2">
+            <Avatar
+              user={{ avatar: user.avatar, username: user.username }}
+              className="w-24 h-24 border-2 border-purple-500 shadow-[0_0_20px_#c084fc] transform scale-125"
+            />
           </div>
-          <div>
-            <p className="text-sm text-gray-400">Win Rate</p>
-            <p className="text-lg font-bold">{winRate}%</p>
+          <div className="flex flex-col items-center">
+            <p className="text-5xl font-extrabold text-blue-400 drop-shadow-[0_0_10px_#40BFFF]">
+              {totalMatches}
+            </p>
+            <p className="text-sm uppercase mt-1 text-cyan-300">Games</p>
           </div>
-          <div>
-            <p className="text-sm text-gray-400">Best Score</p>
-            <p className="text-lg font-bold">{bestScore}</p>
+          <div className="flex flex-col items-center">
+            <p className="text-5xl font-extrabold text-green-400 drop-shadow-[0_0_10px_#00ffaa]">
+              {user.wins}
+            </p>
+            <p className="text-sm uppercase mt-1 text-cyan-300">Wins</p>
           </div>
-          <div>
-            <p className="text-sm text-gray-400">Best Streak</p>
-            <p className="text-lg font-bold">{bestStreak}</p>
+          <div className="flex flex-col items-center">
+            <p className="text-5xl font-extrabold text-pink-400 drop-shadow-[0_0_10px_#ff00ff]">
+              {bestStreak}
+            </p>
+            <p className="text-sm uppercase mt-1 text-cyan-300">Best Streak</p>
           </div>
-          <div>
-            <p className="text-sm text-gray-400">Current Streak</p>
-            <p className="text-lg font-bold">{currentStreak}</p>
+        </div>
+        <div className="mb-8 flex items-center font-orbitron w-full">
+          <div className="flex-1 mr-4">
+            <div className="w-full h-4 bg-gray-700 rounded border border-violet-400/70 overflow-hidden">
+              <div
+                className="h-full rounded bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 drop-shadow-[0_0_6px_#40BFFF]"
+                style={{ width: `${Math.min(winRate, 100)}%` }}
+              ></div>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-gray-400">Avg Diff</p>
-            <p className="text-lg font-bold">{scoreDiff.avg}</p>
-          </div>
-          <div>
-            <p className="text-sm text-gray-400">Max Diff</p>
-            <p className="text-lg font-bold">{scoreDiff.max}</p>
+          <div className="flex flex-col items-end">
+            <p className="text-4xl font-extrabold text-blue-400 drop-shadow-[0_0_10px_#40BFFF]">
+              {winRate}%
+            </p>
+            <p className="text-sm uppercase mt-1 text-cyan-300">Win Rate</p>
           </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1 overflow-y-auto p-2">
           <div className="space-y-8">
-            <div>
-              <h3 className="text-lg font-orbitron text-blue-300 mb-2 flex items-center">
-                <i className="fa-solid fa-user-astronaut mr-2" />
-                User Stats
-              </h3>
+            <Panel
+              title={
+                <>
+                  <i className="fa-solid fa-user-astronaut mr-2" />
+                  User Stats
+                </>
+              }
+            >
               {historyData.length > 0 ? (
                 <div className="w-full h-64">
                   <ResponsiveContainer width="100%" height="100%">
@@ -250,8 +319,8 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
                       <XAxis dataKey="date" stroke="#fff" />
                       <YAxis stroke="#fff" />
                       <Tooltip />
-                      <Bar dataKey="wins" fill="#4ade80" />
-                      <Bar dataKey="losses" fill="#f87171" />
+                      <Bar dataKey="wins" fill="#40BFFF" />
+                      <Bar dataKey="losses" fill="#BD0E86" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -260,12 +329,15 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
                   No games played yet.
                 </p>
               )}
-            </div>
-            <div>
-              <h3 className="text-lg font-orbitron text-blue-300 mb-2 flex items-center">
-                <i className="fa-solid fa-chart-line mr-2" />
-                Game Sessions
-              </h3>
+            </Panel>
+            <Panel
+              title={
+                <>
+                  <i className="fa-solid fa-chart-line mr-2" />
+                  Game Sessions
+                </>
+              }
+            >
               {sessionChart.length > 0 ? (
                 <div className="w-full h-64">
                   <ResponsiveContainer width="100%" height="100%">
@@ -277,7 +349,7 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
                       <Line
                         type="monotone"
                         dataKey="matches"
-                        stroke="#38bdf8"
+                        stroke="#00ffaa"
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -287,42 +359,99 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
                   No session data available.
                 </p>
               )}
-              {sessions.length > 0 && (
-                <table className="w-full text-sm mt-4 text-center">
-                  <thead>
-                    <tr className="text-blue-300">
-                      <th className="px-2">Date</th>
-                      <th className="px-2">Winner</th>
-                      <th className="px-2">Loser</th>
-                      <th className="px-2">Score</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sessions.slice(0, 5).map((s) => (
-                      <tr key={s.game_id} className="odd:bg-gray-800">
-                        <td className="px-2 py-1">{s.date.split("T")[0]}</td>
-                        <td className="px-2 py-1">{s.winner_name}</td>
-                        <td className="px-2 py-1">{s.loser_name}</td>
-                        <td className="px-2 py-1">
-                          {s.winner_score}-{s.loser_score}
-                        </td>
+              {userSessions.length > 0 && (
+                <>
+                  <table className="w-full text-sm mt-4 text-center">
+                    <thead>
+                      <tr className="text-cyan-300">
+                        <th className="px-2">Date</th>
+                        <th className="px-2">Winner</th>
+                        <th className="px-2">Loser</th>
+                        <th className="px-2">Score</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {paginatedSessions.map((s) => (
+                        <tr key={s.game_id} className="odd:bg-gray-800">
+                          <td className="px-2 py-1">{s.date.split("T")[0]}</td>
+                          <td className="px-2 py-1">{s.winner_username}</td>
+                          <td className="px-2 py-1">{s.loser_username}</td>
+                          <td className="px-2 py-1">
+                            {s.winner_score} : {s.loser_score}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-4 mt-2 text-sm font-orbitron">
+                      <button
+                        onClick={() => setPage((p) => Math.max(p - 1, 0))}
+                        disabled={page === 0}
+                        className="border border-blue-400 rounded px-2 py-1 text-blue-400 hover:text-blue-200 disabled:text-gray-500"
+                      >
+                        Prev
+                      </button>
+                      <span className="text-cyan-300">
+                        Page {page + 1} of {totalPages}
+                      </span>
+                      <button
+                        onClick={() =>
+                          setPage((p) => Math.min(p + 1, totalPages - 1))
+                        }
+                        disabled={page >= totalPages - 1}
+                        className="border border-blue-400 rounded px-2 py-1 text-blue-400 hover:text-blue-200 disabled:text-gray-500"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+                </>
               )}
-            </div>
+            </Panel>
           </div>
           <div className="space-y-8">
+            <Panel
+              title={
+                <>
+                  <i className="fa-solid fa-star mr-2" />
+                  Highlights
+                </>
+              }
+            >
+              <div className="flex justify-around mb-4 text-center">
+                <div>
+                  <p className="text-sm text-gray-400">Best Score</p>
+                  <p className="text-lg font-bold">{bestScore}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Current Streak</p>
+                  <p className="text-lg font-bold">{Math.max(currentStreak, 0)}</p>
+                </div>
+              </div>
+              <div className="flex justify-around text-center">
+                <div>
+                  <p className="text-sm text-gray-400">Avg Diff</p>
+                  <p className="text-lg font-bold">{scoreDiff.avg}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-400">Max Diff</p>
+                  <p className="text-lg font-bold">{scoreDiff.max}</p>
+                </div>
+              </div>
+            </Panel>
             {opponentStats.length > 0 && (
-              <div>
-                <h3 className="text-lg font-orbitron text-blue-300 mb-2 flex items-center">
-                  <i className="fa-solid fa-users mr-2" />
-                  Opponents
-                </h3>
+              <Panel
+                title={
+                  <>
+                    <i className="fa-solid fa-users mr-2" />
+                    Opponents
+                  </>
+                }
+              >
                 <table className="w-full text-sm text-center">
                   <thead>
-                    <tr className="text-blue-300">
+                    <tr className="text-cyan-300">
                       <th className="px-2">Opponent</th>
                       <th className="px-2">Wins</th>
                       <th className="px-2">Losses</th>
@@ -330,11 +459,9 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
                     </tr>
                   </thead>
                   <tbody>
-                    {opponentStats.slice(0, 5).map((o) => {
+                    {paginatedOpponents.map((o) => {
                       const total = o.wins + o.losses;
-                      const rate = total
-                        ? Math.round((o.wins / total) * 100)
-                        : 0;
+                      const rate = total ? Math.round((o.wins / total) * 100) : 0;
                       return (
                         <tr key={o.opponent_id} className="odd:bg-gray-800">
                           <td className="px-2 py-1">{o.username}</td>
@@ -346,14 +473,40 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
                     })}
                   </tbody>
                 </table>
-              </div>
+                {opponentTotalPages > 1 && (
+                  <div className="flex justify-center items-center gap-4 mt-2 text-sm font-orbitron">
+                    <button
+                      onClick={() => setOpponentPage((p) => Math.max(p - 1, 0))}
+                      disabled={opponentPage === 0}
+                      className="border border-blue-400 rounded px-2 py-1 text-blue-400 hover:text-blue-200 disabled:text-gray-500"
+                    >
+                      Prev
+                    </button>
+                    <span className="text-cyan-300">
+                      Page {opponentPage + 1} of {opponentTotalPages}
+                    </span>
+                    <button
+                      onClick={() =>
+                        setOpponentPage((p) => Math.min(p + 1, opponentTotalPages - 1))
+                      }
+                      disabled={opponentPage >= opponentTotalPages - 1}
+                      className="border border-blue-400 rounded px-2 py-1 text-blue-400 hover:text-blue-200 disabled:text-gray-500"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+              </Panel>
             )}
             {challengeStats && (
-              <div>
-                <h3 className="text-lg font-orbitron text-blue-300 mb-2 flex items-center">
-                  <i className="fa-solid fa-handshake mr-2" />
-                  Challenges
-                </h3>
+              <Panel
+                title={
+                  <>
+                    <i className="fa-solid fa-gamepad mr-2" />
+                    Challenges
+                  </>
+                }
+              >
                 <div className="flex justify-around mb-4 text-center">
                   <div>
                     <p className="text-sm text-gray-400">Sent</p>
@@ -361,9 +514,7 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Received</p>
-                    <p className="text-lg font-bold">
-                      {challengeStats.received}
-                    </p>
+                    <p className="text-lg font-bold">{challengeStats.received}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-400">Games Played</p>
@@ -394,19 +545,21 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
                 <div className="mt-4 text-sm text-gray-300 space-y-1">
                   {challengeStats.topChallenged && (
                     <p>
-                      Most Challenged: {challengeStats.topChallenged.username} (
-                      {challengeStats.topChallenged.count})
+                      Most Challenged: {challengeStats.topChallenged.username} ({
+                        challengeStats.topChallenged.count
+                      })
                     </p>
                   )}
                   {challengeStats.topChallenger && (
                     <p>
                       Most Frequent Challenger:{" "}
-                      {challengeStats.topChallenger.username} (
-                      {challengeStats.topChallenger.count})
+                      {challengeStats.topChallenger.username} ({
+                        challengeStats.topChallenger.count
+                      })
                     </p>
                   )}
                 </div>
-              </div>
+              </Panel>
             )}
           </div>
         </div>
