@@ -165,6 +165,7 @@ import ChatModal from "../../chat/components/ChatModal";
 import { ChatProvider } from "../../chat/context/ChatContext";
 //import { UserInfo } from "./types/UserInfo";
 import NotificationModal from "./NotificationModal";
+import StatsDashboardModal from "./StatsDashboardModal";
 
 // Profile component serves as the main page for user profile management
 const Profile: React.FC = () => {
@@ -173,7 +174,6 @@ const Profile: React.FC = () => {
     user, // Current user's data
     friends, // List of friends
     players, // List of all players
-    chatList,
     selectedBot, // Currently selected bot for gameplay
     isModalOpen, // State for profile modal visibility
    // isLoading, // Loading state for data fetching
@@ -190,6 +190,7 @@ const Profile: React.FC = () => {
   } = useProfile();
 
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
 
   // State to store username for auto-expanding a user card
   const [expandUsername, setExpandUsername] = useState<string | undefined>(
@@ -275,6 +276,7 @@ const Profile: React.FC = () => {
           onProfileClick={() => setIsModalOpen(true)}
           onSearch={handleSearch}
           onOpenChat={() => setIsChatOpen(true)}
+          onOpenStats={() => setIsStatsOpen(true)}
         />
 
         {/* Desktop-specific layout for large screens */}
@@ -328,12 +330,16 @@ const Profile: React.FC = () => {
         />
       )}
 
+      {isStatsOpen && (
+        <StatsDashboardModal user={user} onClose={() => setIsStatsOpen(false)} />
+      )}
+
       {isChatOpen && (
         <ChatProvider currentUserId={user.id}>
           <ChatModal
             onClose={() => setIsChatOpen(false)}
             currentUserId={user.id}
-            players={chatList.filter((p) => p.id !== user.id)}
+            players={friends.filter((p) => p.id !== user.id)}
           />
         </ChatProvider>
       )}

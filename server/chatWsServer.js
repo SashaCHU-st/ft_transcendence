@@ -184,3 +184,9 @@ export function initChatWsServer() {
 
   return wss;
 }
+
+export function getChatClientCount() {
+  let count = 0;
+  for (const set of clients.values()) count += set.size;
+  return count;
+}

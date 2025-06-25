@@ -1,5 +1,15 @@
-import { statisticsSchema, winSchema, aiResultSchema } from "../schema/statisticSchema.js";
-import { statisticsAll, statisticsUser, win, loseUser, aiResult } from "../controllers/statistics.js";
+import {
+  statisticsSchema,
+  winSchema,
+  opponentStatsParamsSchema,
+} from "../schema/statisticSchema.js";
+import {
+  statisticsAll,
+  statisticsUser,
+  win,
+  loseUser,
+  opponentStats,
+} from "../controllers/statistics.js";
 import { validatedValues } from "../utils/validate.js";
 
 async function statistics(fastify) {
@@ -21,10 +31,12 @@ async function statistics(fastify) {
     return loseUser({ ...req, body: data }, reply);
   });
 
-  fastify.post("/aiResult", async (req, reply) => {
-    const validated = aiResultSchema.safeParse(req.body);
+  fastify.get("/opponent-stats/:user_id", async (req, reply) => {
+    const validated = opponentStatsParamsSchema.safeParse({
+      user_id: Number(req.params.user_id),
+    });
     const data = await validatedValues(validated, reply);
-    return aiResult({ ...req, body: data }, reply);
+    return opponentStats({ ...req, params: data }, reply);
   });
 }
 

@@ -5,12 +5,19 @@ import './index.css';
 import { AuthProvider } from './context/AuthContext';
 import { BrowserRouter } from 'react-router-dom';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+const rootEl = document.getElementById('root')!;
+const app = (
   <React.StrictMode>
     <BrowserRouter>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>
 );
+
+if (rootEl.hasChildNodes()) {
+  ReactDOM.hydrateRoot(rootEl, app);
+} else {
+  ReactDOM.createRoot(rootEl).render(app);
+}

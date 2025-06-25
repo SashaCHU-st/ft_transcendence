@@ -1,5 +1,5 @@
-import { challengeSchema, notificationSchema, acceptSchema } from "../schema/challenge.schema.js";
-import { challenge,notification,accept,decline, sawAccept } from "../controllers/challenge.js";
+import { challengeSchema, notificationSchema, acceptSchema, challengeStatsParamsSchema } from "../schema/challenge.schema.js";
+import { challenge,notification,accept,decline, sawAccept, getChallengeStats } from "../controllers/challenge.js";
 import { validatedValues } from "../utils/validate.js";
 
 
@@ -31,6 +31,14 @@ async function challengeRoutes(fastify) {
     const validated = acceptSchema.safeParse(req.body);
     const data =await validatedValues(validated, reply);
     return sawAccept({ ...req, body: data }, reply);
+  });
+
+  fastify.get("/challenge-stats/:user_id", async (req, reply) => {
+    const validated = challengeStatsParamsSchema.safeParse({
+      user_id: Number(req.params.user_id),
+    });
+    const data = await validatedValues(validated, reply);
+    return getChallengeStats({ ...req, params: data }, reply);
   });
 }
 

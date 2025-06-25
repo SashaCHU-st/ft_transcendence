@@ -77,7 +77,6 @@ export async function notification(req, reply) {
     const usernames = acceptedUsers.map((user) => ({
       username: user.partner.username,
     }));
-    console.log('Usernames are accepted', acceptedUsers);
 
     const notAcceptedUsers = notAcceptedFromPartner.map((ch) => {
       return {
@@ -103,15 +102,6 @@ export async function notification(req, reply) {
       )
       .all(user_id);
 
-    // ✅ Mark accepted challenges as "seen" by setting ok = 1
-    if (acceptedUsers.length > 0) {
-      db.prepare(`
-        UPDATE challenge
-        SET ok = 1
-        WHERE user_id = ? AND confirmReq = 1 AND ok = 0
-      `).run(user_id);
-    }
-
     if (notification.length === 0) {
       return reply.code(200).send({
         message: 'No challenge found',
@@ -126,7 +116,6 @@ export async function notification(req, reply) {
       return reply.code(200).send({
         message: 'There is request',
         friends_id: notification.user_id,
-        acceptedUsers, 
         notification,
       });
     }
@@ -174,7 +163,8 @@ export async function accept(req, reply) {
       .code(201)
       .send({
         message: 'Accepted',
-        challenge_id: acceptReq.id,
+        id:acceptReq,
+        challenge_id: acceptReq.lastInsertRowid,
       });
   } catch (err) {
     console.error('Database error:', err.message);
@@ -198,3 +188,34 @@ export async function decline(req, reply) {
     return reply.code(500).send({ message: 'Something went wrong' });
   }
 }
+
+export async function getChallengeStats(req, reply) {
+  const userId = Number(req.params.user_id || req.body?.user_id || req.query.user_id);
+  try {
+    const sent = db.prepare('SELECT COUNT(*) AS count FROM challenge WHERE user_id = ?').get(userId).count;
+    const received = db.prepare('SELECT COUNT(*) AS count FROM challenge WHERE friends_id = ?').get(userId).count;
+    const accepted = db.prepare('SELECT COUNT(*) AS count FROM challenge WHERE (user_id = ? OR friends_id = ?) AND confirmReq = 1').get(userId, userId).count;
+    const declined = db.prepare('SELECT COUNT(*) AS count FROM challenge WHERE (user_id = ? OR friends_id = ?) AND confirmReq = 0').get(userId, userId).count;
+    const games = db.prepare('SELECT COUNT(*) AS count FROM game WHERE challenge_id IN (SELECT id FROM challenge WHERE user_id = ? OR friends_id = ?)').get(userId, userId).count;
+    const topChallenged = db
+      .prepare(`SELECT users.username AS username, COUNT(*) AS count FROM challenge JOIN users ON challenge.friends_id = users.id WHERE challenge.user_id = ? GROUP BY friends_id ORDER BY count DESC LIMIT 1`)
+      .get(userId) || null;
+    const topChallenger = db
+      .prepare(`SELECT users.username AS username, COUNT(*) AS count FROM challenge JOIN users ON challenge.user_id = users.id WHERE challenge.friends_id = ? GROUP BY user_id ORDER BY count DESC LIMIT 1`)
+      .get(userId) || null;
+
+    return reply.code(200).send({
+      sent,
+      received,
+      accepted,
+      declined,
+      games,
+      topChallenged,
+      topChallenger,
+    });
+  } catch (err) {
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
+  }
+}
+

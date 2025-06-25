@@ -9,7 +9,7 @@
 - [ ] Dockerized deployment with a single command
 - [x] HTTPS enabled for all communication
 - [x] Passwords stored hashed
-- [x] Protection against SQL injection and XSS verified
+- [ ] Protection against SQL injection and XSS verified
 - [x] Form and input validation on server side
 - [x] Local two-player gameplay on the same keyboard
 - [x] Tournament system with registration and matchmaking
@@ -124,13 +124,13 @@ Server-side pong: Replace basic Pong with server-side Pong and implement an API 
 
 ### 2FA & JWT (Major) ★★★
 - [x] JWT-based endpoints implemented
-- [x] Two‑Factor Authentication
+- [ ] Two‑Factor Authentication
 
 ### Log Management (Major) ★★
 - [ ] Infrastructure for centralized log collection
 
 ### Monitoring (Minor) ★★
-- [ ] Implement monitoring system
+- [x] Implement monitoring system ([setup](monitoring.md))
 
 ### Microservices (Major) ★★★★
 - [ ] Split backend into microservices

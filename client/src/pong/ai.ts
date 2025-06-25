@@ -112,13 +112,13 @@ export function updateAI(state: GameState, objs: SceneObjects, dt: number) {
     const elapsed = state.input.aiTimer;
     state.input.aiTimer = 0;
 
-    const prevX = ball.position.x;
-    const prevZ = ball.position.z;
-    const dx = state.input.ballDX * elapsed;
-    const dz = state.input.ballDZ * elapsed;
+    const prevX = state.input.aiPrevBallX;
+    const prevZ = state.input.aiPrevBallZ;
+    const dx = ball.position.x - prevX;
+    const dz = ball.position.z - prevZ;
 
-    state.input.aiPrevBallX = prevX;
-    state.input.aiPrevBallZ = prevZ;
+    state.input.aiPrevBallX = ball.position.x;
+    state.input.aiPrevBallZ = ball.position.z;
 
     const limit = state.physics.FIELD_HEIGHT - 0.5;
 
