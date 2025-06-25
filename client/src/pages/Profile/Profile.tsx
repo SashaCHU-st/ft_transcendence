@@ -13,9 +13,10 @@ import { ChatProvider } from "../../chat/context/ChatContext";
 import NotificationModal from "./NotificationModal";
 import StatsDashboardModal from "./StatsDashboardModal";
 import DeclinedChallengeModal from "./DeclinedChallengeModal";
-import FriendRequestList from "./FriendRequestsList"
+//import FriendRequestList from "./FriendRequestsList"
 import DeclinedFriendRequestModal from "./DeclinedFriendRequestModal";
 import api from "./types/api";
+
 
 // Profile component serves as the main page for user profile management
 const Profile: React.FC = () => {
@@ -37,11 +38,11 @@ const Profile: React.FC = () => {
     handleAcceptChallenge,
     handleDeclineChallenge,
     handleAdd,
-    handleConfirm,
-    handleDecline,
+    //handleConfirm,
+   // handleDecline,
     setDeclinedChallenge,
     declinedChallenge, 
-    friendRequests,
+    //friendRequests,
     declinedFriendRequest,
     setDeclinedFriendRequest,
     //dismissDeclinedFriendRequest
@@ -188,16 +189,18 @@ const handleOkButtondeclineFriend = async (username: string) => {
         />
 
         {/* Bot selector for choosing game opponent */}
-        <FriendRequestList
+        {/* <FriendRequestList
             requests={friendRequests}
             onConfirm={handleConfirm}
             onDecline={handleDecline}
            
-        />
+        /> */}
         <BotSelector
           selectedBot={selectedBot}
           setSelectedBot={setSelectedBot}
         />
+
+      
       </div>
 
 

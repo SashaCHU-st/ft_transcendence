@@ -11,6 +11,13 @@ export type MatchResult = {
 	weekday: string;
 	result: "win" | "loss";
   };
+
+  export type FriendRequest = {
+  id: string;
+  username: string;
+  avatar: string;
+  online: boolean;
+};
   
   export type UserInfo = {
 	id: string;
