@@ -44,8 +44,6 @@ export async function statisticsUser(req, reply) {
       .all(username);
     console.log('USER STAT =>', statUser);
 
-    // const wins = statUser.wins;
-    // const losses = statUser.losses;
 
     return reply.code(200).send({ statUser });
   } catch (err) {
@@ -61,21 +59,19 @@ export async function win(req, reply) {
     let gameEND = { changes: 0 };
     if (challenge_id) {
       gameEND = db
-        .prepare(
-          `UPDATE game SET win_user_id = ?, win_score = ?, date = ? WHERE challenge_id = ? `
-        )
-        .run(user_id, score, new Date().toISOString(), challenge_id);
-    const gameEND2 = db.prepare(`UPDATE challenge SET game_end = ? WHERE id = ? `).run(1, challenge_id)
+      .prepare(
+        `UPDATE game SET win_user_id = ?, win_score = ?, date = ? WHERE challenge_id = ? `
+      )
+      .run(user_id, score, new Date().toISOString(), challenge_id);
+      const gameEND2 = db.prepare(`UPDATE challenge SET game_end = 1 WHERE id = ? `).run( challenge_id)
     }
-
     if (!challenge_id || gameEND.changes === 0) {
       gameEND = db
-        .prepare(
-          `INSERT INTO game (win_user_id, win_score, date) VALUES (?,?,?)`
+      .prepare(
+        `INSERT INTO game (win_user_id, win_score, date) VALUES (?,?,?)`
         )
         .run(user_id, score, new Date().toISOString());
     }
-
     const winUser = db.prepare(`SELECT * FROM users WHERE id = ?`).get(user_id);
     const winValue = winUser.wins + 1;
     const updateWins = db
@@ -99,6 +95,7 @@ export async function loseUser(req, reply) {
           `UPDATE game SET losses_user_id = ?, lose_score = ?, date = ? WHERE challenge_id = ? `
         )
         .run(user_id, score, new Date().toISOString(), challenge_id);
+ const gameEND2 = db.prepare(`UPDATE challenge SET game_end = 1 WHERE id = ? `).run( challenge_id)
     }
 
     if (!challenge_id || gameEND.changes === 0) {

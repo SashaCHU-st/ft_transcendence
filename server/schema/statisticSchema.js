@@ -1,5 +1,4 @@
 import { z } from "zod";
-// import { challenge } from "../controllers/challenge";
 
 export const statisticsSchema = z.object({
   username: z.string(),

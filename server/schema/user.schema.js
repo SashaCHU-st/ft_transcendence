@@ -1,4 +1,4 @@
-import { z } from "zod"; /// validation
+import { z } from "zod";
 
 export const SignUpSchema = z.object({
   name: z.string().max(20)

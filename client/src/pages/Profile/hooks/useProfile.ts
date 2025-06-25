@@ -106,7 +106,7 @@ export const useProfile = () => {
   const interval = setInterval(() => {
     fetchFriendRequests();
     fetchAllUsers();
-  }, 10000);
+  }, 5000);
 
   return () => clearInterval(interval);
 }, [fetchAllUsers, fetchFriendRequests]);
