@@ -7,18 +7,19 @@ import { useProfile } from "./hooks/useProfile";
 
 interface UserProfileProps {
   user: Pick<UserInfo, 'username' | 'avatar' | 'wins' | 'losses' | 'online'>;
-  stats: {
-	date: string;
-	game_id: number;
-	lose_score: number;
-	loser_name: string;
-	win_score: number;
-	winner_name: string;
-  }[];
+
   
 }
+type UserStat = {
+  date: string;
+  game_id: number;
+  lose_score: number;
+  loser_name: string;
+  win_score: number;
+  winner_name: string;
+};
 
-const UserProfile: React.FC<UserProfileProps> = ({ user, stats = [] }) => {
+const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
   const { winRate } = calculateUserStats(
 	user.wins,
 	user.losses
@@ -32,29 +33,26 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, stats = [] }) => {
   
 
   const [fullHistory, setFullHistory] = useState(false);
-//    const [userStats, setUserStats] = useState<Record<string, any>>({});
-  const handleShowHistory =() => {
-	
+	const [userStats, setUserStats] = useState<UserStat[]>([]);
+  const handleShowHistory =async () => {
 
-	// const username = user.username;
-	//  try {
-    //   const response = await fetch('https://localhost:3000/statisticsUser', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({ username }),
-    //   });
-    //   const responseData = await response.json();
-    //   console.log('HERE=>', responseData.statUser);
-    //   if (!response.ok) throw new Error('Cannot find user');
-    //   setUserStats((prev) => ({
-    //     ...prev,
-    //     [username]: responseData.statUser,
-    //   }));
-    // } catch (err) {
-    //   console.error('Error', err);
-    // }
+	const username = user.username;
+	 try {
+      const response = await fetch('https://localhost:3000/statisticsUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username }),
+      });
+      const responseData = await response.json();
+      console.log('HERE=>', responseData.statUser);
+      if (!response.ok) throw new Error('Cannot find user');
+  setUserStats(responseData.statUser);
+
+    } catch (err) {
+      console.error('Error', err);
+    }
 
 	setFullHistory(true);
   };
@@ -159,7 +157,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, stats = [] }) => {
 		{fullHistory && (
 		  <FullHistory
 			winRate={winRate}
-			stats={stats}
+			stats={userStats}
 			user={user}
 			username={user.username}
 			onClose={() => setFullHistory(false)}
