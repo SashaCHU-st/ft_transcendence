@@ -28,7 +28,6 @@ const Avatar: React.FC<AvatarProps> = ({ user, className }) => {
         className={`
           rounded-full
           border-2
-          border-white
           overflow-hidden
           flex
           items-center
