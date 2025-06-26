@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { UserInfo, calculateUserStats } from './types/UserInfo';
 import FullHistory from './FullHistory';
 import FriendRequestList from './FriendRequestsList';
-import { FriendRequest } from "./types/UserInfo";
+//import { FriendRequest } from "./types/UserInfo";
 import { useProfile } from "./hooks/useProfile";
 
 // interface FriendRequest {
