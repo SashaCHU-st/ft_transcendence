@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { initGame, GameAPI, PongCallbacks, GameMode, type GameState } from "./pong";
-import { recordWin, recordLoss } from "../pages/Profile/types/api";
+import { recordAiMatch } from "../pages/Profile/types/api";
 import BracketOverlay from "./BracketOverlay";
 import { ByeOverlay } from "./components/Overlays/ByeOverlay";
 import { MatchResultOverlay } from "./components/Overlays/MatchResultOverlay";
@@ -167,7 +167,7 @@ export default function Pong3D() {
         if (mode === GameMode.AI) {
           const isPlayerWinner =
             winner.toLowerCase() === "you" || winner.toLowerCase() === "player";
-          (isPlayerWinner ? recordWin : recordLoss)().catch((err) => {
+          recordAiMatch(plScore, aiScore, isPlayerWinner).catch((err) => {
             console.error("Failed to update stats", err);
           });
         }
