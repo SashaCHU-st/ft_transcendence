@@ -2,15 +2,8 @@ import React, { useState } from 'react';
 import { UserInfo, calculateUserStats } from './types/UserInfo';
 import FullHistory from './FullHistory';
 import FriendRequestList from './FriendRequestsList';
-//import { FriendRequest } from "./types/UserInfo";
 import { useProfile } from "./hooks/useProfile";
 
-// interface FriendRequest {
-//   id: string;
-//   username: string;
-//   avatar: string;
-//   online: boolean;
-// }
 
 interface UserProfileProps {
   user: Pick<UserInfo, 'username' | 'avatar' | 'wins' | 'losses' | 'online'>;
@@ -24,15 +17,11 @@ interface UserProfileProps {
   }[];
   
 }
-// const opponentName = game.winner_name === user.username ? game.loser_name : game.winner_name;
 
 const UserProfile: React.FC<UserProfileProps> = ({ user, stats = [] }) => {
   const { winRate } = calculateUserStats(
 	user.wins,
 	user.losses
-	// user.history
-	 
-
   );
 
   const {
@@ -43,9 +32,30 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, stats = [] }) => {
   
 
   const [fullHistory, setFullHistory] = useState(false);
- 
-  const handleShowHistory = () => {
-	console.log('JJJJ');
+//    const [userStats, setUserStats] = useState<Record<string, any>>({});
+  const handleShowHistory =() => {
+	
+
+	// const username = user.username;
+	//  try {
+    //   const response = await fetch('https://localhost:3000/statisticsUser', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({ username }),
+    //   });
+    //   const responseData = await response.json();
+    //   console.log('HERE=>', responseData.statUser);
+    //   if (!response.ok) throw new Error('Cannot find user');
+    //   setUserStats((prev) => ({
+    //     ...prev,
+    //     [username]: responseData.statUser,
+    //   }));
+    // } catch (err) {
+    //   console.error('Error', err);
+    // }
+
 	setFullHistory(true);
   };
   return (
@@ -146,7 +156,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ user, stats = [] }) => {
 		>
 		  FULL HISTORY <span className="text-4xl text-white">→</span>
 		</button>
-		{/* <div className='pt-6'> */}
 		{fullHistory && (
 		  <FullHistory
 			winRate={winRate}
