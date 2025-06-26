@@ -42,7 +42,7 @@ fastify.register(view, {
   root: path.resolve("./views"),
 });
 // JWT
-const jwtSecret = process.env.SECRET || "secret";
+const jwtSecret = process.env.SECRET || "kuku";
 fastify.register(jwt, { secret: jwtSecret });
 
 fastify.addHook("preHandler", (req, res, next) => {
