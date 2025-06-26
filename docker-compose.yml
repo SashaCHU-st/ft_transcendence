@@ -1,19 +1,104 @@
+# # services:
+# #   backend:
+# #     build:
+# <<<<<<< HEAD
+# #       context: .              # the project root; Dockerfile is located here
+# #       dockerfile: Dockerfile
+# #       target: backend
+# #     env_file:
+# #       - server/.env           # pull in server environment (PORT, JWT_SECRET_KEY, VITE_API_URL)
+# #     environment:
+# #       - PORT=3000             # explicitly expose PORT inside the container
+# #     extra_hosts:
+# #       - "host.docker.internal:host-gateway"  # allow container to resolve host machine by this hostname
+# #     volumes:
+# #       - ./server:/app/server:cached          # mount host server code for live reload (nodemon)
+# #       - ./shared:/app/shared:cached          # mount shared code across both services
+# #       # - server_node_modules:/app/server/node_modules  # named volume to persist installed deps
+# =======
+# #       context: .              # корень проекта, где ищем Dockerfile
+# #       dockerfile: Dockerfile
+# #       target: backend
+# #     env_file:
+# #       - server/.env           # подтянет PORT, JWT_SECRET_KEY и VITE_API_URL
+# #     environment:
+# #       - PORT=3000             # явно пробрасываем
+# #     extra_hosts:
+# #       - "host.docker.internal:host-gateway"
+# #     volumes:
+# #       - ./server:/app/server:cached
+# #       - ./shared:/app/shared:cached
+# #       - server_node_modules:/app/server/node_modules
+# >>>>>>> 610c563 (odin kontejner)
+# #     working_dir: /app/server
+# #     ports:
+# #       - "3000:3000"            # map container port 3000 → host port 3000
+
+# #   frontend:
+# #     build:
+# #       context: .
+# #       dockerfile: Dockerfile
+# #       target: frontend
+# #     env_file:
+# <<<<<<< HEAD
+# #       - server/.env           # bring in VITE_API_URL so Vite knows where to proxy API calls
+# #     environment:
+# #       - VITE_API_URL          # ensure Vite picks up the API URL at runtime
+# #     extra_hosts:
+# #       - "host.docker.internal:host-gateway"  # same host alias for frontend to reach backend
+# #     volumes:
+# #       - ./client:/app/client:cached         # mount host client code for live reload (Vite)
+# #       - ./shared:/app/shared:cached         # mount shared code
+# #       - ./server/cert:/app/server/cert:cached  # reuse backend’s TLS certs for HTTPS in Vite
+# #       - client_node_modules:/app/client/node_modules  # named volume for frontend deps
+# #     working_dir: /app/client
+# #     ports:
+# #       - "5173:5173"           # map container port 5173 → host port 5173
+# =======
+# #       - server/.env           # оттуда подхватит VITE_API_URL=https://localhost:3000
+# #     environment:
+# #       - VITE_API_URL          # гарантируем, что Vite его увидит
+# #     extra_hosts:
+# #       - "host.docker.internal:host-gateway"
+# #     volumes:
+# #       - ./client:/app/client:cached
+# #       - ./shared:/app/shared:cached
+# #       - ./server/cert:/app/server/cert:cached
+# #       - client_node_modules:/app/client/node_modules
+# #     working_dir: /app/client
+# #     ports:
+# #       - "5173:5173"
+
+# # volumes:
+# #   server_node_modules: {}      # именованные тома для node_modules
+# #   client_node_modules: {}
+# >>>>>>> 610c563 (odin kontejner)
+
+# # volumes:
+# #   server_node_modules: {}      # named volume to cache backend node_modules between rebuilds
+# #   client_node_modules: {}      # named volume to cache frontend node_modules between rebuilds
+
+
+
+
+# # файл: docker-compose.yml
 # services:
+# <<<<<<< HEAD
 #   backend:
 #     build:
-#       context: .              # the project root; Dockerfile is located here
+#       context: .
 #       dockerfile: Dockerfile
 #       target: backend
 #     env_file:
-#       - server/.env           # pull in server environment (PORT, JWT_SECRET_KEY, VITE_API_URL)
+#       - server/.env           # loads PORT, JWT_SECRET_KEY and VITE_API_URL
 #     environment:
-#       - PORT=3000             # explicitly expose PORT inside the container
+#       - PORT=3000             # explicitly tell container which port to listen on
 #     extra_hosts:
-#       - "host.docker.internal:host-gateway"  # allow container to resolve host machine by this hostname
+#       - "host.docker.internal:host-gateway"  # lets container reach host machine by this hostname
 #     volumes:
-#       - ./server:/app/server:cached          # mount host server code for live reload (nodemon)
-#       - ./shared:/app/shared:cached          # mount shared code across both services
-#       # - server_node_modules:/app/server/node_modules  # named volume to persist installed deps
+#       - ./server:/app/server:cached          # mount your server code for live reloading
+#       - ./shared:/app/shared:cached          # mount shared code between backend & frontend
+#       - server_node_modules:/app/server/node_modules  # named volume preserving built deps
 #     working_dir: /app/server
 #     ports:
 #       - "3000:3000"            # map container port 3000 → host port 3000
@@ -24,66 +109,44 @@
 #       dockerfile: Dockerfile
 #       target: frontend
 #     env_file:
-#       - server/.env           # bring in VITE_API_URL so Vite knows where to proxy API calls
+#       - server/.env           # ensures VITE_API_URL is injected for API proxying
 #     environment:
-#       - VITE_API_URL          # ensure Vite picks up the API URL at runtime
+#       - VITE_API_URL          # guarantee Vite sees the API URL at runtime
 #     extra_hosts:
-#       - "host.docker.internal:host-gateway"  # same host alias for frontend to reach backend
+#       - "host.docker.internal:host-gateway"  # same host alias so frontend can reach backend
 #     volumes:
-#       - ./client:/app/client:cached         # mount host client code for live reload (Vite)
+#       - ./client:/app/client:cached         # mount your client code for live reloading
 #       - ./shared:/app/shared:cached         # mount shared code
-#       - ./server/cert:/app/server/cert:cached  # reuse backend’s TLS certs for HTTPS in Vite
-#       - client_node_modules:/app/client/node_modules  # named volume for frontend deps
+#       - ./server/cert:/app/server/cert:cached  # reuse backend’s TLS certs for dev HTTPS
+#       - client_node_modules:/app/client/node_modules  # named volume preserving built deps
 #     working_dir: /app/client
 #     ports:
 #       - "5173:5173"           # map container port 5173 → host port 5173
 
 # volumes:
-#   server_node_modules: {}      # named volume to cache backend node_modules between rebuilds
-#   client_node_modules: {}      # named volume to cache frontend node_modules between rebuilds
+#   server_node_modules: {}      # caches backend node_modules between restarts
+#   client_node_modules: {}      # caches frontend node_modules between restarts
 
+# =======
+#   client:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#       target: frontend-builder
+#     ports:
+#       - "5173:5173"
+#     command: npm run dev
+#     working_dir: /app
 
-services:
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: backend
-    env_file:
-      - server/.env           # loads PORT, JWT_SECRET_KEY and VITE_API_URL
-    environment:
-      - PORT=3000             # explicitly tell container which port to listen on
-    extra_hosts:
-      - "host.docker.internal:host-gateway"  # lets container reach host machine by this hostname
-    volumes:
-      - ./server:/app/server:cached          # mount your server code for live reloading
-      - ./shared:/app/shared:cached          # mount shared code between backend & frontend
-      - server_node_modules:/app/server/node_modules  # named volume preserving built deps
-    working_dir: /app/server
-    ports:
-      - "3000:3000"            # map container port 3000 → host port 3000
-
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: frontend
-    env_file:
-      - server/.env           # ensures VITE_API_URL is injected for API proxying
-    environment:
-      - VITE_API_URL          # guarantee Vite sees the API URL at runtime
-    extra_hosts:
-      - "host.docker.internal:host-gateway"  # same host alias so frontend can reach backend
-    volumes:
-      - ./client:/app/client:cached         # mount your client code for live reloading
-      - ./shared:/app/shared:cached         # mount shared code
-      - ./server/cert:/app/server/cert:cached  # reuse backend’s TLS certs for dev HTTPS
-      - client_node_modules:/app/client/node_modules  # named volume preserving built deps
-    working_dir: /app/client
-    ports:
-      - "5173:5173"           # map container port 5173 → host port 5173
-
-volumes:
-  server_node_modules: {}      # caches backend node_modules between restarts
-  client_node_modules: {}      # caches frontend node_modules between restarts
-
+#   server:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#       target: final
+#     env_file:
+#       - ./server/.env
+#     ports:
+#       - "3000:3000"
+#     command: node server.js
+#     working_dir: /app
+# >>>>>>> 610c563 (odin kontejner)
