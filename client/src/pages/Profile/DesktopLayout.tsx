@@ -46,7 +46,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
               online: user.online,
               wins: user.wins,
               losses: user.losses,
-              history: user.history,
+              // history: user.history,
             
             }}
           />

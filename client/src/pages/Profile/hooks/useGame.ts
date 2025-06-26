@@ -37,3 +37,4 @@ export function useGame(user: UserInfo | null, fetchAllUsers: () => Promise<void
 
   return { selectedBot, setSelectedBot, handlePlay };
 }
+                                                    

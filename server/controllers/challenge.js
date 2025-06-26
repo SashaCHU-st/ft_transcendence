@@ -24,6 +24,7 @@ export async function challenge(req, reply) {
         .prepare(`INSERT INTO challenge (user_id, friends_id, sent_once) VALUES (?,?, ?) RETURNING id`)
         .run(user_id, friends_id.id, 1);
 
+        console.log("YYYYYYYYYYYYYYYYYYYYYYYYYY=>",sendRequest.lastInsertRowid)
       return reply.code(201).send({ message: 'Request sent', request: sendRequest, challenge_id : sendRequest.lastInsertRowid});
     }
     else
@@ -163,12 +164,14 @@ export async function accept(req, reply) {
         `UPDATE challenge SET confirmReq = 1 WHERE user_id = ? AND friends_id = ? RETURNING id`
       )
       .get(friends_id, user_id);
+
+      console.log("IIIIIIIIIIIIIII=>",acceptReq.id)
     return reply
       .code(201)
       .send({
         message: 'Accepted',
         id:acceptReq,
-        challenge_id: acceptReq.lastInsertRowid,
+        challenge_id: acceptReq.id,
       });
   } catch (err) {
     console.error('Database error:', err.message);
