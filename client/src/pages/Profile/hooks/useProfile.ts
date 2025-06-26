@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import {getAuthHeaders} from "../types/api";
 import { useUserData } from "./useUserData";
 import { useNotifications } from "./useNotification";
-//import { useFavorites } from "./useFavorites";
 import { useFriends } from "./useFriends";
 import { useProfileModal } from "./useProfileModal";
 import { useGame } from "./useGame";
@@ -22,7 +21,6 @@ export const useProfile = () => {
       friendRequests,
       declinedFriendRequest,
       setDeclinedFriendRequest,
-      //fetchFriendNotifications,
       setFriendRequests,
       
     } = useUserData();
@@ -46,8 +44,6 @@ export const useProfile = () => {
 
   } = useNotifications(userId);
 
-  // Favorites
-  //const { handleAdd, handleRemove } = useFavorites(fetchAllUsers, friends, setFriends, setPlayers);
 
   //Friends
   const { handleAdd, handleRemove, handleConfirm, handleDecline } = useFriends(
@@ -66,50 +62,38 @@ export const useProfile = () => {
 
   // Game logic
   const navigate = useNavigate();
-  const { selectedBot, setSelectedBot, handlePlay } = useGame(user, fetchAllUsers, authHeaders);
-
-  // useEffect(() => {
-  //   fetchAllUsers();
-  //   fetchFriendRequests();
-  //   fetchFriendNotifications();
-  //   if (declinedFriendRequest)
-  //     fetchFriendNotifications();
-
-  //   const interval = setInterval(() => {
-  //   fetchFriendRequests();
-  //   fetchAllUsers();
-   
-  //  }, 5000);
-  //    return () => clearInterval(interval);
-
-  // }, [fetchAllUsers, fetchFriendRequests]);
-
-
-// const dismissDeclinedFriendRequest = () => {
-//   if (declinedFriendRequest) {
-//     // Remove from visible friendRequests list
-//     setFriendRequests(prev => prev.filter(req => req.username !== declinedFriendRequest));
-//   }
-//   // Clear the modal trigger
-//   setDeclinedFriendRequest(null);
-// };
+  const { selectedBot, setSelectedBot, handlePlay } = useGame();
 
   // Refresh user data and notifications periodically
   useEffect(() => {
-  const init = async () => {
-    await fetchAllUsers();
-    await fetchFriendRequests();
-  };
+    fetchAllUsers();
+    fetchFriendRequests();
 
-  init();
-
-  const interval = setInterval(() => {
+    const interval = setInterval(() => {
     fetchFriendRequests();
     fetchAllUsers();
-  }, 5000);
+   
+   }, 5000);
+     return () => clearInterval(interval);
 
-  return () => clearInterval(interval);
-}, [fetchAllUsers, fetchFriendRequests]);
+  }, [fetchAllUsers, fetchFriendRequests]);
+
+
+//   useEffect(() => {
+//   const init = async () => {
+//     await fetchAllUsers();
+//     await fetchFriendRequests();
+//   };
+
+//   init();
+
+//   const interval = setInterval(() => {
+//     fetchFriendRequests();
+//     fetchAllUsers();
+//   }, 10000);
+
+//   return () => clearInterval(interval);
+// }, [fetchAllUsers, fetchFriendRequests]);
 
 
   useEffect(() => {

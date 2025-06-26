@@ -1,12 +1,13 @@
 import React from "react";
+import { FriendRequest } from "./types/UserInfo";
 
 
-type FriendRequest = {
-  id: string;
-  username: string;
-  avatar: string;
-  online: boolean;
-};
+// type FriendRequest = {
+//   id: string;
+//   username: string;
+//   avatar: string;
+//   online: boolean;
+// };
 
 interface FriendRequestListProps {
   requests: FriendRequest[];
@@ -14,8 +15,6 @@ interface FriendRequestListProps {
   onDecline: (username: string) => void;
  
 }
-
-
 
 const FriendRequestList: React.FC<FriendRequestListProps> = ({
   requests,
@@ -25,13 +24,13 @@ const FriendRequestList: React.FC<FriendRequestListProps> = ({
 }) => {
   
   return (
-    <div className="bg-gray-900 rounded-lg p-4 w-96">
+    <div className="p-8">
       <h2 className="text-lg xl:text-xl font-bold font-orbitron text-purple-200 mb-4 text-center drop-shadow-[0_0_8px_red] tracking-[.20em]">
         FRIEND REQUESTS
       </h2>
       <div className="flex flex-col gap-4">
         {requests.length === 0 ? (
-          <p className="text-center text-gray-300">No friend requests</p>
+          <p className="text-center text-gray-300 text-lg">No friend requests</p>
         ) : (
           requests.map((req) => (
             <div
@@ -52,7 +51,7 @@ const FriendRequestList: React.FC<FriendRequestListProps> = ({
                   />
                 </div>
                 <div>
-                  <p className="font-semibold text-white">{req.username}</p>
+                  <p className="font-semibold text-white text-lg">{req.username}</p>
                 </div>
               </div>
 
