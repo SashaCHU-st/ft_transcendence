@@ -8,15 +8,15 @@ export async function statisticsAll(request, reply) {
     game.id AS game_id,
     game.challenge_id,
     game.win_user_id,
-    winner.username AS winner_username,
+    COALESCE(winner.username, 'AI') AS winner_username,
     game.win_score AS winner_score,
     game.losses_user_id,
-    loser.username AS loser_username,
+    COALESCE(loser.username, 'AI') AS loser_username,
     game.lose_score AS loser_score,
     game.date
   FROM game
-  INNER JOIN users AS winner ON game.win_user_id = winner.id
-  INNER JOIN users AS loser ON game.losses_user_id = loser.id`
+  LEFT JOIN users AS winner ON game.win_user_id = winner.id
+  LEFT JOIN users AS loser ON game.losses_user_id = loser.id`
     )
     .all();
   return reply.code(200).send({ stat });
@@ -42,14 +42,14 @@ export async function statisticsUser(req, reply) {
 // =======
         `SELECT
           g.win_score,
-          winner.username AS winner_name,
+          COALESCE(winner.username, 'AI') AS winner_name,
           g.lose_score,
-          loser.username AS loser_name,
+          COALESCE(loser.username, 'AI') AS loser_name,
           g.date
       FROM users u
       JOIN game g ON g.win_user_id = u.id OR g.losses_user_id = u.id
-      JOIN users AS winner ON g.win_user_id = winner.id
-      JOIN users AS loser ON g.losses_user_id = loser.id
+      LEFT JOIN users AS winner ON g.win_user_id = winner.id
+      LEFT JOIN users AS loser ON g.losses_user_id = loser.id
       WHERE u.username = ?
       `
       )
@@ -167,7 +167,7 @@ export async function opponentStats(req, reply) {
   try {
     const rows = db
       .prepare(
-        `SELECT u.username AS username, t.opponent_id, t.wins, t.losses, t.wins + t.losses AS games
+        `SELECT COALESCE(u.username, 'AI') AS username, t.opponent_id, t.wins, t.losses, t.wins + t.losses AS games
          FROM (
            SELECT
              CASE WHEN win_user_id = ? THEN losses_user_id ELSE win_user_id END AS opponent_id,
@@ -177,7 +177,7 @@ export async function opponentStats(req, reply) {
            WHERE win_user_id = ? OR losses_user_id = ?
            GROUP BY opponent_id
          ) t
-         JOIN users u ON u.id = t.opponent_id
+         LEFT JOIN users u ON u.id = t.opponent_id
          ORDER BY games DESC`
       )
       .all(userId, userId, userId, userId, userId);
