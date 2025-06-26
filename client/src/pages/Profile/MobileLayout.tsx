@@ -13,6 +13,7 @@ interface MobileLayoutProps {
   players: UserInfo[];
   selectedBot: (typeof bots)[0] | null;
   handlePlay: () => void;
+  isRandomizing: boolean;
   expandUsername?: string;
   handleRemove: (username: string) => void;
   handleAdd: (username: string) => void;
@@ -27,6 +28,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
   players,
   selectedBot,
   handlePlay,
+  isRandomizing,
   expandUsername,
   handleRemove,
   handleAdd,
@@ -57,6 +59,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         user={{ username: user.username, avatar: user.avatar }}
         opponentImage={selectedBot ? selectedBot.image : null}
         opponentName={selectedBot ? selectedBot.name : undefined}
+        isRandomizing={isRandomizing}
       />
    
         <PrimaryButton onClick={handlePlay}>PLAY</PrimaryButton>
