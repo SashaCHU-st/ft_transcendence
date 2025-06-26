@@ -30,8 +30,12 @@ export function useGame(user: UserInfo | null, fetchAllUsers: () => Promise<void
     const result = Math.random() > 0.5 ? "win" : "loss";
 
     handleGameEnd(result, opponent.name);
-    if (!selectedBot) 
-		setSelectedBot(null);
+    if (selectedBot) {
+      localStorage.setItem("selectedBot", JSON.stringify(selectedBot));
+    } else {
+      localStorage.removeItem("selectedBot");
+      setSelectedBot(null);
+    }
     navigate("/pong?mode=ai");
   }, [selectedBot, handleGameEnd, navigate]);
 

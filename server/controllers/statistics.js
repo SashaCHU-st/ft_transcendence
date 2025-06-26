@@ -1,4 +1,5 @@
 import db from '../database/database.js';
+import { updateStats } from '../remote/gameLogic.js';
 
 export async function statisticsAll(request, reply) {
   const stat = db
@@ -182,6 +183,23 @@ export async function opponentStats(req, reply) {
       .all(userId, userId, userId, userId, userId);
     db.prepare(`UPDATE challenge SET game_end = 1 WHERE id = ? `).run(chId)
     return reply.code(200).send({ stats: rows });
+  } catch (err) {
+    console.error('Database error:', err.message);
+    return reply.code(500).send({ message: 'Something went wrong' });
+  }
+}
+
+export async function aiResult(req, reply) {
+  const { user_id, player_score, ai_score, player_won } = req.body;
+  try {
+    const winnerId = player_won ? user_id : 0;
+    const loserId = player_won ? 0 : user_id;
+    const winnerScore = player_won ? player_score : ai_score;
+    const loserScore = player_won ? ai_score : player_score;
+
+    updateStats(winnerId, loserId, winnerScore, loserScore);
+
+    return reply.code(200).send({ status: 'ok' });
   } catch (err) {
     console.error('Database error:', err.message);
     return reply.code(500).send({ message: 'Something went wrong' });
