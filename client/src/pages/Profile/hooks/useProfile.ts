@@ -1,33 +1,34 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import {getAuthHeaders} from "../types/api";
-import { useUserData } from "./useUserData";
-import { useNotifications } from "./useNotification";
-import { useFriends } from "./useFriends";
-import { useProfileModal } from "./useProfileModal";
-import { useGame } from "./useGame";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAuthHeaders } from '../types/api';
+import { useUserData } from './useUserData';
+import { useNotifications } from './useNotification';
+//import { useFavorites } from "./useFavorites";
+import { useFriends } from './useFriends';
+import { useProfileModal } from './useProfileModal';
+import { useGame } from './useGame';
 
 export const useProfile = () => {
-  const { user,
-      friends,
-      players, 
-      chatList, 
-      fetchAllUsers,
-      setFriends, 
-      setPlayers, 
-      setChatList, 
-      setUser,
-      fetchFriendRequests,
-      friendRequests,
-      declinedFriendRequest,
-      setDeclinedFriendRequest,
-      setFriendRequests,
-      
-    } = useUserData();
+  const {
+    user,
+    friends,
+    players,
+    chatList,
+    fetchAllUsers,
+    setFriends,
+    setPlayers,
+    setChatList,
+    setUser,
+    fetchFriendRequests,
+    friendRequests,
+    declinedFriendRequest,
+    setDeclinedFriendRequest,
+    //fetchFriendNotifications,
+    setFriendRequests,
+  } = useUserData();
 
   const userId = user?.id || null;
   const authHeaders = getAuthHeaders();
- 
 
   // Notifications
   const {
@@ -40,75 +41,87 @@ export const useProfile = () => {
     redirectToGame,
     setRedirectToGame,
     declinedChallenge,
-    setDeclinedChallenge
-
+    setDeclinedChallenge,
   } = useNotifications(userId);
 
+  // Favorites
+  //const { handleAdd, handleRemove } = useFavorites(fetchAllUsers, friends, setFriends, setPlayers);
 
   //Friends
   const { handleAdd, handleRemove, handleConfirm, handleDecline } = useFriends(
-  fetchAllUsers,
-  fetchFriendRequests,
-  friends,
-  setFriends,
-  setPlayers,
-   setFriendRequests,
-  // setDeclinedFriendRequest,
-
-);
+    fetchAllUsers,
+    fetchFriendRequests,
+    friends,
+    setFriends,
+    setPlayers,
+    setFriendRequests
+    // setDeclinedFriendRequest,
+  );
 
   // Profile modal
-  const { isModalOpen, setIsModalOpen, handleSaveProfile } = useProfileModal(user, fetchAllUsers, authHeaders);
+  const { isModalOpen, setIsModalOpen, handleSaveProfile } = useProfileModal(
+    user,
+    fetchAllUsers,
+    authHeaders
+  );
 
   // Game logic
   const navigate = useNavigate();
-  const { selectedBot, setSelectedBot, handlePlay } = useGame(user, fetchAllUsers, authHeaders);
+  const { selectedBot, setSelectedBot, handlePlay } = useGame();
+
+  // useEffect(() => {
+  //   fetchAllUsers();
+  //   fetchFriendRequests();
+  //   fetchFriendNotifications();
+  //   if (declinedFriendRequest)
+  //     fetchFriendNotifications();
+
+  //   const interval = setInterval(() => {
+  //   fetchFriendRequests();
+  //   fetchAllUsers();
+
+  //  }, 5000);
+  //    return () => clearInterval(interval);
+
+  // }, [fetchAllUsers, fetchFriendRequests]);
+
+  // const dismissDeclinedFriendRequest = () => {
+  //   if (declinedFriendRequest) {
+  //     // Remove from visible friendRequests list
+  //     setFriendRequests(prev => prev.filter(req => req.username !== declinedFriendRequest));
+  //   }
+  //   // Clear the modal trigger
+  //   setDeclinedFriendRequest(null);
+  // };
 
   useEffect(() => {
-    fetchAllUsers();
-    fetchFriendRequests();
+    const init = async () => {
+      await fetchAllUsers();
+      await fetchFriendRequests();
+    };
+
+    init();
 
     const interval = setInterval(() => {
-    fetchFriendRequests();
-    fetchAllUsers();
-   
-   }, 5000);
-     return () => clearInterval(interval);
+      fetchFriendRequests();
+      fetchAllUsers();
+    }, 5000);
 
+    return () => clearInterval(interval);
   }, [fetchAllUsers, fetchFriendRequests]);
 
-
-//   useEffect(() => {
-//   const init = async () => {
-//     await fetchAllUsers();
-//     await fetchFriendRequests();
-//   };
-
-//   init();
-
-//   const interval = setInterval(() => {
-//     fetchFriendRequests();
-//     fetchAllUsers();
-//   }, 10000);
-
-//   return () => clearInterval(interval);
-// }, [fetchAllUsers, fetchFriendRequests]);
-
-
   useEffect(() => {
-    if (!redirectToGame || !userId) 
-      return;
+    if (!redirectToGame || !userId) return;
 
-      setRedirectToGame(null);
+    setRedirectToGame(null);
   }, [redirectToGame, userId]);
-
 
   return {
     user,
     friends,
     players,
     chatList,
-    
+
     notifications,
     isNotificationModalOpen,
     setIsNotificationModalOpen,
@@ -122,7 +135,7 @@ export const useProfile = () => {
     setIsModalOpen,
     handleSaveProfile,
     selectedBot,
-      setChatList,
+    setChatList,
     setSelectedBot,
     handlePlay,
     navigate,
@@ -136,8 +149,6 @@ export const useProfile = () => {
   };
 };
 
-
-
 // import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 // import { useNavigate } from "react-router-dom";
 // import { toast } from "react-hot-toast";
@@ -148,7 +159,6 @@ export const useProfile = () => {
 // import { addToFavorites } from "../AddFavorites";
 // import api from "../types/api";
 // //import { ColorSplitterBlock } from "@babylonjs/core";
-
 
 // export const useProfile = () => {
 //   const [selectedBot, setSelectedBot] = useState<(typeof bots)[0] | null>(null);
@@ -171,7 +181,7 @@ export const useProfile = () => {
 //       return false;
 //     }
 //   };
- 
+
 //   const checkNotifications = useCallback(async () => {
 //     const currentUserId = localStorage.getItem("id");
 //     if (!currentUserId) return;
@@ -184,11 +194,11 @@ export const useProfile = () => {
 //       console.log("THEY ACCEPPTED ", data.acceptedUsers);
 //       console.log("THEY DID NOT ACCPTED", data.notAcceptedUsers);
 
-//       /// DEBUG 
+//       /// DEBUG
 //       // console.log("Friends id =>>>> ", data.acceptedUsers[0].friends_id);
 //       // console.log("Friends id =>>>> ", data.acceptedUsers[1].friends_id);
 //       // console.log("kuku2 ", data.acceptedSeen);
-      
+
 //       ////DEBUGGGGG
 //       //console.log("Username", data.usernames)
 //       // console.log("Username 1 ", data.usernames[0].username);
@@ -197,7 +207,7 @@ export const useProfile = () => {
 
 //       // console.log("username 2", data.accptedFromPartner[1].username);
 //       // console.log("kuku2 ", data.alreadySeenAccept[0].friends_id);
-     
+
 //       if (data.notification && Array.isArray(data.notification)) {
 //         // Extract unique new notifications by friends_id
 //         const newNotifications = data.notification.filter((notif: any) => {
@@ -230,7 +240,7 @@ export const useProfile = () => {
 //       const { data } = await api.get(`/users?t=${Date.now()}`, {
 //       headers: authHeaders,
 //     });
-       
+
 //       let currentUser: UserInfo | null = null;
 //       console.log("Fetch users");
 
@@ -258,7 +268,7 @@ export const useProfile = () => {
 //           history: [],
 //         };
 
-//         if (userInfo.id === currentUserId) 
+//         if (userInfo.id === currentUserId)
 //           currentUser = userInfo;
 
 //         return userInfo;
@@ -269,7 +279,7 @@ export const useProfile = () => {
 //       //   headers: { "Content-Type": "application/json" },
 //       // });
 //       // const favData = await favRes.json();
-//       // if (!favRes.ok) 
+//       // if (!favRes.ok)
 //       //   throw new Error(favData.message || "Failed to fetch favorites");
 //       const favRes = await api.get(`/favorites?user_id=${currentUserId}`);
 //       console.log("Fetch favorities");
@@ -283,7 +293,7 @@ export const useProfile = () => {
 //         .filter(u => u.id !== currentUserId)
 //         .filter(u => !favoriteUsernames.includes(u.username))
 //         .sort((a, b) => a.online === b.online ? 0 : a.online ? -1 : 1);
-      
+
 //       setUser(currentUser);
 //       console.log("bbbbbbbbb");
 //       setPlayers(playersList);
@@ -363,10 +373,10 @@ export const useProfile = () => {
 
 //     const handleDeclineChallenge = async (userId: string) => {
 //       try {
-//          await api.post("/declineRequest", { 
+//          await api.post("/declineRequest", {
 //           user_id: user?.id,
 //           friends_id: userId,
-        
+
 //       });
 
 //         toast.success("Challenge declined.");
@@ -379,7 +389,6 @@ export const useProfile = () => {
 //         if (notifications.length <= 1) setIsNotificationModalOpen(false);
 //       }
 //     };
-
 
 //   const handleAdd = async (username: string) => {
 //       try {
@@ -482,10 +491,6 @@ export const useProfile = () => {
 //     handleAdd,
 //   };
 // };
-
-
-
-
 
 // Custom hook to manage profile-related state and interactions
 // export const useProfile = () => {
