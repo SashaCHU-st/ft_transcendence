@@ -77,12 +77,17 @@ fastify.decorate("authenticate", async (request, reply) => {
 });
 
 // CORS
-const corsOrigin = process.env.CLIENT || true;
+const allowedOrigins = [
+   process.env.CLIENT,
+];
 fastify.register(cors, {
-  origin: corsOrigin,
+  origin: allowedOrigins,
   credentials: true,
-  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  methods: ['GET','POST','PATCH','DELETE','OPTIONS'],
 });
+
+
+
 
 // Routes
 fastify.register(authRoutes);
@@ -103,6 +108,9 @@ const start = async () => {
       port: process.env.PORT || 3000,
       host: '0.0.0.0',
     });
+    const { address, port } = fastify.server.address();
+    console.log(`🚀  Fastify on ${address}:${port} – ${httpsOptions ? 'HTTPS' : 'HTTP'}`);
+
     const gameWss = initWsServer();
     const chatWss = initChatWsServer();
 
