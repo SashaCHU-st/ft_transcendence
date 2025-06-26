@@ -1,4 +1,5 @@
 import db from '../database/database.js';
+import { WebSocket } from 'ws';
 import {
   FIELD_WIDTH,
   FIELD_HEIGHT,
@@ -221,7 +222,11 @@ export class Game {
     };
 
     for (const p of this.players) {
-      p.send(JSON.stringify(createStateMessage(state)));
+      if (p.readyState === WebSocket.OPEN) {
+        try {
+          p.send(JSON.stringify(createStateMessage(state)));
+        } catch {}
+      }
     }
 
     if (
@@ -244,8 +249,14 @@ export class Game {
       updateStats(winnerId, loserId, winnerScore, loserScore);
 
       for (const p of this.players) {
-        p.send(JSON.stringify(createEndMessage(winnerSide, state)));
-        p.close();
+        if (p.readyState === WebSocket.OPEN) {
+          try {
+            p.send(JSON.stringify(createEndMessage(winnerSide, state)));
+          } catch {}
+        }
+        try {
+          p.close();
+        } catch {}
       }
       this.stop();
     }
