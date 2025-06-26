@@ -19,6 +19,7 @@ import view from "@fastify/view";
 import ejs from "ejs";
 import ssrRoutes from "./routes/SsrRoutes.js";
 import { httpRequestDuration } from "./utils/monitor.js";
+import urlData from "./plugins/urlData.js";
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ const fastify = Fastify({
   logger: true,
   ...(httpsOptions ? { https: httpsOptions } : {}),
 });
+fastify.register(urlData);
 fastify.register(view, {
   engine: { ejs },
   root: path.resolve("./views"),
