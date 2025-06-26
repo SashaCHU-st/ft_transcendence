@@ -5,8 +5,6 @@ import hashedPassword from "../utils/hashedPass.js"
 export async function signup(req, reply) {
 
   const { name, username, email, password } = req.body;
-
-
   if (!name || !password || !email || !username) {
     return reply.code(400).send({ message: "No pass or name or email or username" });
   }
@@ -22,13 +20,9 @@ export async function signup(req, reply) {
       const token = req.jwt.sign({
         id: result.lastInsertRowid,
       });
-      const online = db
-        .prepare(`UPDATE users SET online = ? WHERE id = ?`)
-        .run(1, result.lastInsertRowid);
+      db.prepare(`UPDATE users SET online = ? WHERE id = ?`).run(1, result.lastInsertRowid);
 
-      const updated = db
-        .prepare(`SELECT id, online FROM users WHERE id = ?`)
-        .get(result.lastInsertRowid);
+       db.prepare(`SELECT id, online FROM users WHERE id = ?`).get(result.lastInsertRowid);
       return reply.code(201).send({ message: "USER created", users, accessToken: token, id:result.lastInsertRowid});
     } else {
       return reply.code(400).send({ message: "User already exists" });
@@ -56,9 +50,7 @@ export async function login(req, reply) {
         const token = req.jwt.sign({
           id: user.id,
         });
-        const online = db
-          .prepare(`UPDATE users SET online = '1' WHERE id = ?`)
-          .run(user.id);
+        db.prepare(`UPDATE users SET online = '1' WHERE id = ?`).run(user.id);
 
         return reply.code(200).send({ message: "We are logged in", accessToken: token, id:user.id});
       } else {
@@ -81,7 +73,7 @@ export async function logout(req, reply) {
     if (!user) {
       return reply.code(400).send({ message: "No such user" });
     }
-    const offline = db.prepare("UPDATE users SET online = ? WHERE id = ?").run(0, user_id);
+    db.prepare("UPDATE users SET online = ? WHERE id = ?").run(0, user_id);
     return reply.code(200).send({ message: "We are logged out" });
   } catch (err) {
     console.error("Database error:", err.message);

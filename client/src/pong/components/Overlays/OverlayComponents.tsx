@@ -54,7 +54,7 @@ const outlineColorClasses: Record<string, string> = {
   `,
   blue: `
     border-2 border-[#40BFFF]
-    shadow-[0_0_15px_rgba(0,255,255,0.7)]
+    shadow-[0_0_15px_rgba(0,255,255,0.5)]
   `,
   green: `
     border-2 border-[#00ffaa]

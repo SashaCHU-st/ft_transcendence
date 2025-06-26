@@ -64,6 +64,7 @@ export function updateStats(
     `INSERT INTO game (challenge_id, win_user_id, losses_user_id, win_score, lose_score, date)` +
       ` VALUES (?, ?, ?, ?, ?, ?)`,
   ).run(chId, winnerId ?? 0, loserId ?? 0, winnerScore, loserScore, new Date().toISOString());
+  db.prepare(`UPDATE challenge SET game_end = 1 WHERE id = ? `).run(chId)
 }
 
 export class Game {

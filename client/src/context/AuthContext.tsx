@@ -63,8 +63,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
      // const token = localStorage.getItem("token");
       const user_id = localStorage.getItem("id");
-      console.log("YYYY=>", user_id);
-      console.log(typeof user_id);
+      // console.log("YYYY=>", user_id);
+      // console.log(typeof user_id);
       //console.log("JWT in logout: ", token);
       const response = await fetch("https://localhost:3000/logout", {
         method: "POST",

@@ -14,27 +14,13 @@ export const askForChallenge = async (targetUsername: string): Promise<void> => 
       "/challenge",{ user_id, username: targetUsername },
       {
         headers: {
-          Authorization: `Bearer ${token}`, // attach token if your api doesn't auto-add it
+          Authorization: `Bearer ${token}`,
         },
       }
     );
-    // const response = await fetch("https://localhost:3000/challenge", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${token}`,
-    //   },
-    //   body: JSON.stringify({ user_id, username: targetUsername }),
-    // });
-
-    // const result = await response.json();
-
-    // if (!response.ok) {
-    //   console.error("Server responded with:", result);
-    //   throw new Error(result.message || "Failed to ask for challenge");
-    // }
-
     console.log("You sent request for challenge:", response.data);
+    // console.log("You sent request for challenge:", response.data.challenge_id);
+    localStorage.setItem("challenge_id", response.data.challenge_id);
     }catch (err: any) {
     if (err.response) {
       console.error("Status:", err.response.status);
@@ -43,9 +29,5 @@ export const askForChallenge = async (targetUsername: string): Promise<void> => 
     console.error("Axios error:", err.message);
     throw err;
   }
-  // } catch (err:any) {
-  //   console.error("Failed to ask for challenge:", err);
-  //   throw err;
-  // }
 };
 

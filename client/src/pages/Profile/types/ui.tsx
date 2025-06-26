@@ -37,8 +37,6 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
 };
 
 
-
-
 // ==== Card Wrapper ====
 type CardWrapperProps = {
   children: ReactNode;
@@ -64,7 +62,7 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
         
         sm:w-[280px]
         lg:w-[350px]
-        2xl:w-[450px]
+        
         
         duration-200
         ease-in-out

@@ -1,11 +1,13 @@
 import Database from "better-sqlite3";
+import { fileURLToPath } from "url";
+import path from "path";
 
-const db = new Database("./database/database.db");
-// Ensure SQLite enforces foreign key constraints
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const dbPath = path.join(__dirname, "database.db");
+const db = new Database(dbPath);
+
 db.pragma('foreign_keys = ON');
-//nickname uniqy and email
 
-//time for game
 db.exec(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,19 +21,19 @@ db.exec(`
     losses INTEGER default 0
   );
 `);
-console.log("Database initialized and users table is ready.");
 
-// const db = new Database("./database/friends.db");
-// db.exec(`
-//   CREATE TABLE IF NOT EXISTS friends (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     user_id INTEGER NOT NULL,
-//     friends_id INTEGER NOT NULL,
-//     confirmReq BOOL default 0,
-//     FOREIGN KEY (user_id) REFERENCES users(id),
-//     FOREIGN KEY (friends_id) REFERENCES users(id)
-//   );
-// `);
+db.exec(`
+  CREATE TABLE IF NOT EXISTS friends (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    friends_id INTEGER NOT NULL,
+    confirmReq INTEGER default 2,
+    saw INTEGER default 2,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (friends_id) REFERENCES users(id)
+  );
+ `);
+ 
 db.exec(`
   CREATE TABLE IF NOT EXISTS favorites (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -49,11 +51,12 @@ db.exec(`
     friends_id INTEGER NOT NULL,
     confirmReq INTEGER default 2,
     ok BOOL default 0,
+    sent_once BOOL default 0,
+    game_end BOOL default 0,
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (friends_id) REFERENCES users(id)
   );
 `);
-
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS messages (
@@ -87,7 +90,6 @@ db.exec(`
     );
     `);
     
-    // Add indexes to optimize lookups by sender and receiver
     db.exec("CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON messages(sender_id);");
     db.exec("CREATE INDEX IF NOT EXISTS idx_messages_receiver_id ON messages(receiver_id);");
     db.exec("CREATE INDEX IF NOT EXISTS idx_blocks_blocker_id ON blocks(blocker_id);");
@@ -115,11 +117,6 @@ db.exec(`
     if (!hasLoseScore) {
       db.exec('ALTER TABLE game ADD COLUMN lose_score INTEGER DEFAULT 0;');
     }
-    
-    
-    console.log("Database initialized and favorites table is ready.");
-    
-    
     
     export default db;
     

@@ -153,7 +153,7 @@ export function updateAI(state: GameState, objs: SceneObjects, dt: number) {
       predicted = 0; // return to center when ball moving away
     }
 
-    let target = predicted + (Math.random() - 0.5) * state.physics.AI_ERROR;
+    const target = predicted + (Math.random() - 0.5) * state.physics.AI_ERROR;
     state.input.aiTargetZ = target;
   }
   let targetZ = state.input.aiTargetZ;

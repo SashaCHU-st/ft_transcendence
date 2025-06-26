@@ -1,7 +1,6 @@
 import Fastify from "fastify";
 import authRoutes from "./routes/AuthRoutes.js";
-// import friendsRoutes from "./routes/FriendsRoutes.js"
-import favoriteRoutes from "./routes/FavoritesRoutes.js";
+import friendsRoutes from "./routes/FriendsRoutes.js"
 import profileRoutes from "./routes/ProfileRoutes.js";
 import statisticsRoutes from "./routes/StatisticRoutes.js";
 import challengeRoutes from "./routes/ChallangeRoutes.js";
@@ -23,19 +22,28 @@ import { httpRequestDuration } from "./utils/monitor.js";
 
 dotenv.config();
 
-const fastify = Fastify({
-  logger: true,
-  https: {
+let httpsOptions;
+try {
+  httpsOptions = {
     key: fs.readFileSync(path.resolve("cert", "key.pem")),
     cert: fs.readFileSync(path.resolve("cert", "cert.pem")),
-  },
+  };
+} catch (err) {
+  console.warn("SSL certificates not found, starting without HTTPS");
+  httpsOptions = null;
+}
+
+const fastify = Fastify({
+  logger: true,
+  ...(httpsOptions ? { https: httpsOptions } : {}),
 });
 fastify.register(view, {
   engine: { ejs },
   root: path.resolve("./views"),
 });
 // JWT
-fastify.register(jwt, { secret: "kuku" });
+const jwtSecret = process.env.SECRET || "secret";
+fastify.register(jwt, { secret: jwtSecret });
 
 fastify.addHook("preHandler", (req, res, next) => {
   req.jwt = fastify.jwt;
@@ -69,16 +77,16 @@ fastify.decorate("authenticate", async (request, reply) => {
 });
 
 // CORS
+const corsOrigin = process.env.CLIENT || true;
 fastify.register(cors, {
-  origin: "https://localhost:5173",
+  origin: corsOrigin,
   credentials: true,
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
 });
 
 // Routes
 fastify.register(authRoutes);
-// fastify.register(friendsRoutes);
-fastify.register(favoriteRoutes);
+fastify.register(friendsRoutes);
 fastify.register(profileRoutes);
 fastify.register(statisticsRoutes);
 fastify.register(challengeRoutes);

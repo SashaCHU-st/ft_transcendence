@@ -22,7 +22,7 @@ api.interceptors.response.use(
       localStorage.removeItem("token");
       window.location.href = "/login";
     } else {
-      toast.error(backendMessage);
+      // toast.error(backendMessage); // disabled generic error toast
     }
 
     return Promise.reject(error);
@@ -120,7 +120,7 @@ export const recordWin = async (
   if (id === null) throw new Error("No user id");
     const challenge_id = localStorage.getItem("challenge_id")
   console.log("TYYYYYYYYYYYYYYYYYYYYYYY=>", challenge_id)
-  console.log(typeof challenge_id)
+  // console.log(typeof challenge_id)
   await api.post("/winUser", { user_id: id , challenge_id :challenge_id}, { headers });
 };
 
@@ -130,7 +130,7 @@ export const recordLoss = async (
   const id = getUserIdFromToken();
   if (id === null) throw new Error("No user id");
   const challenge_id = localStorage.getItem("challenge_id")
-  console.log("TYYYYYYYYYYYYYYYYYYYYYYY=>", challenge_id)
+  // console.log("TYYYYYYYYYYYYYYYYYYYYYYY=>", challenge_id)
   await api.post("/loseUser", { user_id: id , challenge_id :challenge_id}, { headers });
 };
 
@@ -189,10 +189,10 @@ export const fetchBlockedUsers = async (
 
 export interface SessionStat {
   game_id: number;
-  winner_name: string;
+  winner_username: string;
   winner_score: number;
   win_user_id: number;
-  loser_name: string;
+  loser_username: string;
   loser_score: number;
   losses_user_id: number;
   date: string;
