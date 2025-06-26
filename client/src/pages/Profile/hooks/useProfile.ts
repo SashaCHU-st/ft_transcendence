@@ -62,7 +62,7 @@ export const useProfile = () => {
 
   // Game logic
   const navigate = useNavigate();
-  const { selectedBot, setSelectedBot, handlePlay } = useGame();
+  const { selectedBot, setSelectedBot, handlePlay } = useGame(user, fetchAllUsers, authHeaders);
 
   // Refresh user data and notifications periodically
   useEffect(() => {

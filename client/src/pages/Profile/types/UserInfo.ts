@@ -29,7 +29,7 @@ export type MatchResult = {
 	wins: number;
 	losses: number;
 	online: boolean;
-// history: MatchResult[];
+	history: MatchResult[];
 	onRemove?: () => void;
 	onChallenge?: () => void;
 	onAdd?: () => void;
