@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       localStorage.removeItem("token");
       localStorage.removeItem("id");
-      localStorage.removeItem("challenge_id");
+      // localStorage.removeItem("challenge_id");
       setIsAuthenticated(false);
       navigate("/login", { replace: true }); // Avoid double push
     }
