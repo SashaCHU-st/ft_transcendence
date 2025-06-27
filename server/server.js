@@ -85,10 +85,6 @@ fastify.register(cors, {
   credentials: true,
   methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
 });
-
-
-
-
 // Routes
 fastify.register(authRoutes);
 fastify.register(friendsRoutes);
