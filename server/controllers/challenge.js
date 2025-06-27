@@ -164,8 +164,6 @@ export async function accept(req, reply) {
         `UPDATE challenge SET confirmReq = 1 WHERE user_id = ? AND friends_id = ? RETURNING id`
       )
       .get(friends_id, user_id);
-
-      console.log("IIIIIIIIIIIIIII=>",acceptReq.id)
     return reply
       .code(201)
       .send({
