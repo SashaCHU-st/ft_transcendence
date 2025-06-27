@@ -64,10 +64,10 @@ const ChatProfileModal: React.FC<ChatProfileModalProps> = ({
         role="dialog"
         aria-modal="true"
         aria-labelledby="chat-profile-title"
-        className="w-[90%] max-w-lg mx-4 pb-10 text-white font-ubuntu overflow-hidden text-left bg-gray-800/10 backdrop-blur-md p-0"
+        className="w-[90%] max-w-lg mx-4 pb-10 text-white font-ubuntu overflow-hidden text-left bg-gray-800/10 backdrop-blur-md !p-0"
       >
-        <div className="relative z-10 bg-gray-950 pb-6 flex flex-col md:flex-row items-center gap-6 border-b-2 border-blue-400/50">
-          <div className="relative">
+        <div className="relative z-10 pl-2 bg-gray-950 flex flex-col md:flex-row items-center gap-6 border-b-2 border-blue-400/50">
+          <div className="relative p-4">
             <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-cyan-400">
               <Avatar
                 user={{ avatar: user.avatar, username: user.username }}
@@ -75,7 +75,7 @@ const ChatProfileModal: React.FC<ChatProfileModalProps> = ({
               />
             </div>
             {user.online && (
-              <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-green-500 border-2 border-gray-800" />
+              <div className="absolute bottom-5 right-5 w-4 h-4 rounded-full bg-green-500 border-2 border-gray-800" />
             )}
           </div>
           <div className="text-center md:text-left">

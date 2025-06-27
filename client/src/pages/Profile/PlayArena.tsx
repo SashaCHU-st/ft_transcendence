@@ -69,7 +69,7 @@ const Arena: React.FC<ArenaProps> = ({
       </div>
 
       {/* VS */}
-      <span className="text-xl font-bold text-red-400">VS</span>
+      <span className="text-xl font-bold text-emerald-200">VS</span>
 
       {/* Player 2 */}
       <div className="
@@ -86,15 +86,13 @@ const Arena: React.FC<ArenaProps> = ({
         2xl:w-72
         2xl:h-72
         rounded-full
-     
         bg-opacity-60
-       
         overflow-hidden
         flex
         items-center
         justify-center
         drop-shadow-[0_0_8px_white]
-       shadow-[0_0_15px_#60a5fa]
+        shadow-[0_0_15px_#60a5fa]
         relative
         ${isRandomizing ? 'animate-pulse' : ''}">
         {opponentImage ? (
