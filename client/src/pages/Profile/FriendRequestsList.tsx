@@ -25,7 +25,7 @@ const FriendRequestList: React.FC<FriendRequestListProps> = ({
   
   return (
     <div className="p-8 ">
-      <div className="bg-transparent bg-opacity-10 bg-purple-500 w-80 rounded-md">
+      <div className="bg-opacity-20 bg-purple-500 w-80 rounded-md">
       <h2 className="text-md xl:text-lg  font-orbitron text-purple-200 mb-4 text-center tracking-[.20em]">
         FRIEND REQUESTS
       </h2>

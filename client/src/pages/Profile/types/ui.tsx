@@ -19,7 +19,7 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
         tracking-[.10em]
         py-2
         px-8
-        rounded
+        rounded-lg
         text-md
         lg:text-2xl
         xl:text-2xl

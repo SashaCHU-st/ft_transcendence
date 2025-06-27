@@ -81,7 +81,7 @@ export function useUserData() {
           wins: u.wins || 0,
           losses: u.losses || 0,
           online: !!u.online,
-          // history: [],
+          history: [],
         };
 
         if (userInfo.id === currentUserId) 

@@ -1,14 +1,13 @@
 import React from "react";
 import UserList from "./UserList";
-import UserHeader from "./UserHeader";
 import PlayArena from "./PlayArena";
 import GameSelector from "./GameSelector/GameSelector";
 import { PrimaryButton } from "./types/ui";
-import { UserInfo, MatchResult } from "./types/UserInfo";
+import { UserInfo} from "./types/UserInfo";
 import { bots } from "./types/botsData";
 import UserProfile from "./UserProfile";
 
-// Define props for DesktopLayout component
+
 interface DesktopLayoutProps {
   user: UserInfo; // Current user's data
   friends: UserInfo[]; // List of friends
@@ -19,7 +18,6 @@ interface DesktopLayoutProps {
   expandUsername?: string;
   handleRemove: (username: string) => void;
   handleAdd: (username: string) => void;
-  
 }
 
 const DesktopLayout: React.FC<DesktopLayoutProps> = ({
@@ -32,14 +30,10 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   expandUsername,
   handleRemove,
   handleAdd,
- 
-  
 }) => {
   return (
     <div className="hidden xl:flex flex-col gap-8 px-4 flex-grow p-6">
-      {/* Top row: Friends | User Info | Players */}
       <div className="grid grid-cols-3 sm:grid-cols-1 md:grid-cols-3 gap-6 w-full">
-        {/* Friends List */}
         <div className="flex flex-col items-start w-full">
           <UserProfile
             user={{
@@ -49,33 +43,12 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
               wins: user.wins,
               losses: user.losses,
               // history: user.history,
-            
             }}
           />
          
-          {/* <h2 className="text-lg xl:text-xl  font-bold font-orbitron text-purple-200 mb-2 text-left drop-shadow-[0_0_8px_red] tracking-[.20em]">
-            FRIENDS
-          </h2>
-          <UserList
-            users={friends}
-            variant="friends"
-            expandUsername={expandUsername}
-            onRemove={handleRemove}
-            onAdd={handleAdd}
-          /> */}
-          
         </div>
-
         {/* Center Section */}
         <div className="flex flex-col items-center justify-start gap-6 w-full">
-          {/* <UserHeader
-            user={{
-              username: user.username,
-              wins: user.wins,
-              losses: user.losses,
-              history: user.history,
-            }}
-          /> */}
           <PlayArena
             user={{ username: user.username, avatar: user.avatar }}
             opponentImage={selectedBot ? selectedBot.image : null}
@@ -92,10 +65,9 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
         </div>
 
         {/* Players List */}
-
         <div className="flex flex-col items-end w-full">
          <div className="bg-gray-900 rounded-lg p-4 w-96 h-full">
-           <div className="bg-transparent bg-opacity-10 bg-purple-500  rounded-md">
+           <div className="bg-opacity-10 bg-purple-500 rounded-md">
           <h2 className="text-lg xl:text-lg font-orbitron text-purple-200 mb-2 text-center tracking-[.20em]">
             FRIENDS
           </h2>
@@ -111,7 +83,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           ) : (
             <p className="text-center text-sm text-gray-400 font-ubuntu">No friends available</p>
           )}
-          <div className="mt-52 bg-transparent bg-opacity-10 bg-purple-500  rounded-md">
+          <div className="mt-52 bg-opacity-10 bg-purple-500  rounded-md">
           <h2 className="text-lg xl:text-lg  font-orbitron text-purple-200  mb-2 text-center  tracking-[.20em]">
             PLAYERS
           </h2>
@@ -125,14 +97,8 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
               onAdd={handleAdd}
             />
           ) : (
-            <p className="text-center text-sm text-gray-400 font-ubuntu">No friends available</p>
+            <p className="text-center text-sm text-gray-400 font-ubuntu">No users available</p>
           )}
-          {/* <UserList
-            users={players}
-            variant="players"
-            expandUsername={expandUsername}
-            onAdd={handleAdd}
-          /> */}
         </div>
         </div>
       </div>

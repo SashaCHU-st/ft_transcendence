@@ -111,14 +111,14 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user, stats = [] }) => {
                   rounded-md
                   text-sm
                   font-orbitron
-                  text-white
+                  text-emerald-300
                   transition
                   duration-300
                   hover:scale-110
                  
                 "
         >
-          FULL HISTORY <span className="text-4xl text-white">→</span>
+          FULL HISTORY <span className="text-4xl text-emerald-300">→</span>
         </button>
         {/* <div className='pt-6'> */}
         {fullHistory && (

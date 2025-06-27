@@ -33,7 +33,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
   
 
   const [fullHistory, setFullHistory] = useState(false);
-	const [userStats, setUserStats] = useState<UserStat[]>([]);
+  const [userStats, setUserStats] = useState<UserStat[]>([]);
   const handleShowHistory =async () => {
 
 	const username = user.username;
@@ -48,7 +48,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
       const responseData = await response.json();
       console.log('HERE=>', responseData.statUser);
       if (!response.ok) throw new Error('Cannot find user');
-  setUserStats(responseData.statUser);
+ 		 setUserStats(responseData.statUser);
 
     } catch (err) {
       console.error('Error', err);
@@ -63,9 +63,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 		flex
 		flex-col
 		items-center
-		gap-4
-		w-full
-		max-w-md
+		gap-6
+		w-80
 		mx-auto
 		text-center
 	  `}
@@ -163,7 +162,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 			onClose={() => setFullHistory(false)}
 		  />
 		)}
-		 <div className="mt-10">
+		 <div className="mt-10 w-80 flex justify-center">
             <FriendRequestList
               requests={friendRequests}
               onConfirm={handleConfirm}

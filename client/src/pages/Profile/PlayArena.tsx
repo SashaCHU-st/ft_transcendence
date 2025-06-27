@@ -37,10 +37,10 @@ const Arena: React.FC<ArenaProps> = ({
         md:h-40
         lg:w-44
         lg:h-44
-        xl:w-56
-        xl:h-56
-        2xl:w-80
-        2xl:h-80
+        xl:w-52
+        xl:h-52
+        2xl:w-72
+        2xl:h-72
         rounded-full
         bg-gray-700
         bg-opacity-60
@@ -81,10 +81,10 @@ const Arena: React.FC<ArenaProps> = ({
         md:h-40
         lg:w-44
         lg:h-44
-        xl:w-56
-        xl:h-56
-        2xl:w-80
-        2xl:h-80
+        xl:w-52
+        xl:h-52
+        2xl:w-72
+        2xl:h-72
         rounded-full
      
         bg-opacity-60
