@@ -101,6 +101,8 @@ fastify.register(ssrRoutes);
 fastify.register(monitorRoutes);
 fastify.register(alertRoutes);
 
+
+
 // Server start
 const start = async () => {
   try {
