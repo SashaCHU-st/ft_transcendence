@@ -2,7 +2,7 @@ import os from 'os';
 import fs from 'fs';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { register, Gauge, Histogram, collectDefaultMetrics } from 'prom-client';
+import { register, Gauge, Histogram, collectDefaultMetrics } from './promClient.js';
 
 // Initialize Prometheus default metrics collection
 collectDefaultMetrics({ register });
