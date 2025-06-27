@@ -2,28 +2,33 @@
 
 FROM node:18-alpine
 
-# Install the utility for running commands in parallel
-RUN npm install -g concurrently
+# install utils
+RUN apk add --no-cache dos2unix openssl \
+ && npm install -g concurrently
 
-# Set working directory inside the container
 WORKDIR /app
 
-# Copy server and client package files
+# Copy server + client package files & install
 COPY server/package.json server/package-lock.json ./server/
+RUN npm ci --prefix server --omit=dev
+
 COPY client/package.json client/package-lock.json ./client/
+RUN npm ci --prefix client
 
-# Install dependencies for both server and client
-RUN npm ci --prefix server \
- && npm ci --prefix client
-
-# Copy the entire source code into the container
+# Copy entrypoint + rest of code
+COPY entrypoint.sh ./
 COPY . .
 
-# Expose ports for the API and the frontend
+# convert entrypoint to unix line endings & make executable
+RUN dos2unix ./entrypoint.sh \
+ && chmod +x ./entrypoint.sh
+
+# open ports
 EXPOSE 3000
 EXPOSE 5173
 
-# Start both the server and frontend in dev mode simultaneously
+# always run entrypoint via sh, then hand off to concurrently
+ENTRYPOINT ["sh", "/app/entrypoint.sh"]
 CMD ["concurrently", \
      "npm start --prefix server", \
      "npm run dev --prefix client -- --host 0.0.0.0"]
