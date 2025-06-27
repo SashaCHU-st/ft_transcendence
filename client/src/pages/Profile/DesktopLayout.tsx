@@ -94,27 +94,45 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
         {/* Players List */}
 
         <div className="flex flex-col items-end w-full">
-         <div className="bg-gray-900 rounded-lg p-4 w-96">
-          <h2 className="text-lg xl:text-xl  font-bold font-orbitron text-purple-200 mb-2 text-left drop-shadow-[0_0_8px_red] tracking-[.20em]">
+         <div className="bg-gray-900 rounded-lg p-4 w-96 h-full">
+           <div className="bg-transparent bg-opacity-10 bg-purple-500  rounded-md">
+          <h2 className="text-lg xl:text-lg font-orbitron text-purple-200 mb-2 text-center tracking-[.20em]">
             FRIENDS
           </h2>
-          <UserList
-            users={friends}
-            variant="friends"
-            expandUsername={expandUsername}
-            onRemove={handleRemove}
-            onAdd={handleAdd}
-          />
-          
-          <h2 className="text-lg xl:text-xl  font-semibold font-orbitron text-purple-200  mb-2 text-right   drop-shadow-[0_0_8px_red] tracking-[.20em]">
+          </div>
+          {friends.length > 0 ? (
+            <UserList
+              users={friends}
+              variant="friends"
+              expandUsername={expandUsername}
+              onRemove={handleRemove}
+              onAdd={handleAdd}
+            />
+          ) : (
+            <p className="text-center text-sm text-gray-400 font-ubuntu">No friends available</p>
+          )}
+          <div className="mt-52 bg-transparent bg-opacity-10 bg-purple-500  rounded-md">
+          <h2 className="text-lg xl:text-lg  font-orbitron text-purple-200  mb-2 text-center  tracking-[.20em]">
             PLAYERS
           </h2>
-          <UserList
+          </div>
+           {players.length > 0 ? (
+            <UserList
+              users={players}
+              variant="players"
+              expandUsername={expandUsername}
+              onRemove={handleRemove}
+              onAdd={handleAdd}
+            />
+          ) : (
+            <p className="text-center text-sm text-gray-400 font-ubuntu">No friends available</p>
+          )}
+          {/* <UserList
             users={players}
             variant="players"
             expandUsername={expandUsername}
             onAdd={handleAdd}
-          />
+          /> */}
         </div>
         </div>
       </div>

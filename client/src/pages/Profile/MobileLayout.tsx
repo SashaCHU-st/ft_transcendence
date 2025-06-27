@@ -6,6 +6,7 @@ import GameSelector from "./GameSelector/GameSelector";
 import { PrimaryButton } from "./types/ui";
 import { UserInfo } from "./types/UserInfo";
 import { bots } from "./types/botsData";
+import UserProfile from "./UserProfile";
 
 interface MobileLayoutProps {
   user: UserInfo;
@@ -46,7 +47,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
       "
     >
     <div className="flex flex-col items-center justify-start gap-6 w-full">
-      <UserHeader
+      {/* <UserHeader
         user={{
           username: user.username,
           //avatar: user.avatar,
@@ -54,7 +55,19 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           losses: user.losses,
           history: user.history,
         }}
-      />
+      /> */}
+
+        <UserProfile
+                  user={{
+                    username: user.username,
+                    avatar: user.avatar,
+                    online: user.online,
+                    wins: user.wins,
+                    losses: user.losses,
+                    // history: user.history,
+                  
+                  }}
+                />
       <PlayArena
         user={{ username: user.username, avatar: user.avatar }}
         opponentImage={selectedBot ? selectedBot.image : null}

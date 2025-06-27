@@ -57,7 +57,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 	setFullHistory(true);
   };
   return (
-	  <div className="bg-gray-900 rounded-lg p-4 w-96">
+	<div className="bg-gray-900 rounded-lg p-6 w-96 h-full">
 	<div
 	  className={`
 		flex
@@ -143,16 +143,16 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 				  px-4
 				  py-1
 				  rounded-md
-				  text-sm
+				  text-base
 				  font-orbitron
-				  text-white
+				  text-emerald-200
 				  transition
 				  duration-300
 				  hover:scale-110
 				 
 				"
 		>
-		  FULL HISTORY <span className="text-4xl text-white">→</span>
+		  FULL HISTORY <span className="text-4xl lg:text-5xl text-emerald-200 ">→</span>
 		</button>
 		{fullHistory && (
 		  <FullHistory
