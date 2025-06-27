@@ -4,6 +4,7 @@ const db = new Database("./database/database.db");
 
 db.exec(
   `
+   DELETE FROM users WHERE  id < 100;
   DELETE FROM friends WHERE  id < 100;
   ` 
 );
