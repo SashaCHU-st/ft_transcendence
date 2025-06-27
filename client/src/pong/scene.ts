@@ -131,7 +131,7 @@ export function createScene(
   new BABYLON.GlowLayer("glow", scene, {
     mainTextureFixedSize: 512,
     blurKernelSize: 32,
-  }).intensity = 0.2;
+  }).intensity = 0.3;
 
   scene.executeWhenReady(() => {
     fitFieldToCamera(camera, config.FIELD_WIDTH, config.FIELD_HEIGHT);
