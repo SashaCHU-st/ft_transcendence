@@ -15,6 +15,7 @@ interface DesktopLayoutProps {
   players: UserInfo[]; // List of other players
   selectedBot: (typeof bots)[0] | null; // Currently selected bot for gameplay
   handlePlay: () => void; // Callback to start the game
+  isRandomizing: boolean;
   expandUsername?: string;
   handleRemove: (username: string) => void;
   handleAdd: (username: string) => void;
@@ -27,6 +28,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
   players,
   selectedBot,
   handlePlay,
+  isRandomizing,
   expandUsername,
   handleRemove,
   handleAdd,
@@ -78,6 +80,7 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
             user={{ username: user.username, avatar: user.avatar }}
             opponentImage={selectedBot ? selectedBot.image : null}
             opponentName={selectedBot ? selectedBot.name : undefined}
+            isRandomizing={isRandomizing}
           />
           <PrimaryButton onClick={handlePlay}>PLAY</PrimaryButton>
           

@@ -60,8 +60,15 @@ export function createScene(
   const sky = BABYLON.MeshBuilder.CreateBox("sky", { size: 1000 }, scene);
   const skyMat = new BABYLON.StandardMaterial("skyMat", scene);
   skyMat.backFaceCulling = false;
-  skyMat.reflectionTexture = new BABYLON.CubeTexture(
-    "https://assets.babylonjs.com/environments/space",
+  skyMat.reflectionTexture = BABYLON.CubeTexture.CreateFromImages(
+    [
+      "/skybox/right.png",
+      "/skybox/top.png",
+      "/skybox/front.png",
+      "/skybox/left.png",
+      "/skybox/bottom.png",
+      "/skybox/back.png",
+    ],
     scene,
   );
   skyMat.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
@@ -70,18 +77,21 @@ export function createScene(
   sky.material = skyMat;
 
   // ground
-  const ground = BABYLON.MeshBuilder.CreateGround(
+  const groundThickness = 0.4;
+  const ground = BABYLON.MeshBuilder.CreateBox(
     "ground",
     {
       width: config.FIELD_WIDTH * 2,
-      height: config.FIELD_HEIGHT * 2,
+      depth: config.FIELD_HEIGHT * 2,
+      height: groundThickness,
     },
     scene,
   );
+  ground.position.y = -groundThickness / 2;
   const gmat = new GridMaterial("gridMat", scene);
   gmat.mainColor = new BABYLON.Color3(0, 0, 0);
   gmat.lineColor = new BABYLON.Color3(0.2, 1, 0.8);
-  gmat.opacity = 0.85;
+  gmat.opacity = 1;
   ground.material = gmat;
 
   // paddles

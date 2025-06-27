@@ -181,7 +181,6 @@ export async function opponentStats(req, reply) {
          ORDER BY games DESC`
       )
       .all(userId, userId, userId, userId, userId);
-    db.prepare(`UPDATE challenge SET game_end = 1 WHERE id = ? `).run(chId)
     return reply.code(200).send({ stats: rows });
   } catch (err) {
     console.error('Database error:', err.message);

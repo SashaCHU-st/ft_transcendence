@@ -61,11 +61,16 @@ const StatsDashboardModal: React.FC<StatsDashboardModalProps> = ({
 
   const userSessions = useMemo(
     () =>
-      sessions.filter(
-        (s) =>
-          s.win_user_id === Number(user.id) ||
-          s.losses_user_id === Number(user.id)
-      ),
+      sessions
+        .filter(
+          (s) =>
+            s.win_user_id === Number(user.id) ||
+            s.losses_user_id === Number(user.id)
+        )
+        .slice()
+        .sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        ),
     [sessions, user.id]
   );
   const sessionsPerPage = 5;

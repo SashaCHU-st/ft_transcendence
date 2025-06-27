@@ -63,7 +63,7 @@ export const useProfile = () => {
 
   // Game logic
   const navigate = useNavigate();
-  const { selectedBot, setSelectedBot, handlePlay } = useGame();
+  const { selectedBot, setSelectedBot, handlePlay, isRandomizing } = useGame();
 
   // Refresh user data and notifications periodically
   useEffect(() => {
@@ -141,6 +141,7 @@ export const useProfile = () => {
     setChatList,
     setSelectedBot,
     handlePlay,
+    isRandomizing,
     navigate,
     setUser,
     declinedChallenge,

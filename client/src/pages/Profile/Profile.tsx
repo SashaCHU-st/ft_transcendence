@@ -32,6 +32,7 @@ const Profile: React.FC = () => {
     setIsModalOpen, // Function to toggle profile modal
     handleSaveProfile, // Handler to save profile changes
     handlePlay, // Handler to start a game
+    isRandomizing,
     handleRemove,
     notifications,
     isNotificationModalOpen,
@@ -169,6 +170,7 @@ const handleOkButtondeclineFriend = async (username: string) => {
           players={players.filter((p) => p.id !== user.id)}
           selectedBot={selectedBot}
           handlePlay={handlePlay}
+          isRandomizing={isRandomizing}
           expandUsername={expandUsername}
           handleRemove={handleRemove}
           handleAdd={handleAdd}
@@ -182,6 +184,7 @@ const handleOkButtondeclineFriend = async (username: string) => {
           players={players.filter((p) => p.id !== user.id)}
           selectedBot={selectedBot}
           handlePlay={handlePlay}
+          isRandomizing={isRandomizing}
           expandUsername={expandUsername}
           handleRemove={handleRemove}
           handleAdd={handleAdd}

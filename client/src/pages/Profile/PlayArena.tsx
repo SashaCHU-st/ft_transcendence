@@ -6,12 +6,14 @@ interface ArenaProps {
   user: Pick<UserInfo, "username" | "avatar">;
   opponentImage?: string | null;
   opponentName?: string;
+  isRandomizing?: boolean;
 }
 
 const Arena: React.FC<ArenaProps> = ({
   user,
   opponentImage,
   opponentName,
+  isRandomizing,
 }) => {
   return (
     <div className="
@@ -93,7 +95,8 @@ const Arena: React.FC<ArenaProps> = ({
         justify-center
         drop-shadow-[0_0_8px_white]
        shadow-[0_0_15px_#60a5fa]
-        relative">
+        relative
+        ${isRandomizing ? 'animate-pulse' : ''}">
         {opponentImage ? (
           <>
             <img
