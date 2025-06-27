@@ -1,6 +1,5 @@
 import React from "react";
 import UserList from "./UserList";
-import UserHeader from "./UserHeader";
 import PlayArena from "./PlayArena";
 import GameSelector from "./GameSelector/GameSelector";
 import { PrimaryButton } from "./types/ui";
@@ -18,9 +17,6 @@ interface MobileLayoutProps {
   expandUsername?: string;
   handleRemove: (username: string) => void;
   handleAdd: (username: string) => void;
-  //handleConfirm: (username: string) => void;
-  
-
 }
 
 const MobileLayout: React.FC<MobileLayoutProps> = ({
@@ -44,37 +40,25 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
         items-center
         px-4
         gap-4
+        pt-6
       "
     >
     <div className="flex flex-col items-center justify-start gap-6 w-full">
-      {/* <UserHeader
-        user={{
-          username: user.username,
-          //avatar: user.avatar,
-          wins: user.wins,
-          losses: user.losses,
-          history: user.history,
-        }}
-      /> */}
-
         <UserProfile
-                  user={{
-                    username: user.username,
-                    avatar: user.avatar,
-                    online: user.online,
-                    wins: user.wins,
-                    losses: user.losses,
-                    // history: user.history,
-                  
-                  }}
-                />
+            user={{
+              username: user.username,
+              avatar: user.avatar,
+              online: user.online,
+              wins: user.wins,
+              losses: user.losses,
+             }}
+          />
       <PlayArena
         user={{ username: user.username, avatar: user.avatar }}
         opponentImage={selectedBot ? selectedBot.image : null}
         opponentName={selectedBot ? selectedBot.name : undefined}
         isRandomizing={isRandomizing}
       />
-   
         <PrimaryButton onClick={handlePlay}>PLAY</PrimaryButton>
         <GameSelector />
       </div>
@@ -87,7 +71,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           sm:justify-between
           gap-4
         "
-      >
+        >
         <div
           className="
             w-full
@@ -112,7 +96,12 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           >
             FRIENDS
           </h2>
-          <UserList users={friends} variant="friends" expandUsername={expandUsername} onRemove={handleRemove} onAdd={handleAdd}/>
+          <UserList 
+            users={friends} 
+            variant="friends" 
+            expandUsername={expandUsername} 
+            onRemove={handleRemove} 
+            onAdd={handleAdd}/>
         </div>
         <div
           className="
@@ -138,7 +127,11 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           >
             PLAYERS
           </h2>
-          <UserList users={players} variant="players" expandUsername={expandUsername}  onAdd={handleAdd}/>
+          <UserList 
+            users={players} 
+            variant="players" 
+            expandUsername={expandUsername}  
+            onAdd={handleAdd}/>
         </div>
       </div>
       <div
@@ -147,31 +140,6 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
           mt-8
         "
       >
-        {/* <div
-          className="
-            w-full
-            max-w-[600px]
-            bg-gray-800
-            bg-opacity-50
-            rounded-2xl
-            p-4
-            shadow-lg
-            mx-auto
-          "
-        >
-          <video
-            src="/videos/fight_gif.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="
-              w-full
-              h-auto
-              rounded-lg
-            "
-          />
-        </div> */}
       </div>
     </div>
   );

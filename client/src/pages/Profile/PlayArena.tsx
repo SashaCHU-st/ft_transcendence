@@ -119,8 +119,6 @@ const Arena: React.FC<ArenaProps> = ({
           </>
         ) : (
           <div className="flex flex-col items-center text-xs">
-            {/* <span className="font-semibold font-orbitron xl:text-xl">OPPONENT</span>
-            <span className="text-gray-300 font-ubuntu xl:text-base mt-1">Waiting...</span> */}
             <i className="fa-solid fa-question text-6xl xl:text-7xl text-blue-300"></i>
           </div>
         )}

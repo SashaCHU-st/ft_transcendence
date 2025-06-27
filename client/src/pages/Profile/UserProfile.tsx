@@ -8,7 +8,6 @@ import { useProfile } from "./hooks/useProfile";
 interface UserProfileProps {
   user: Pick<UserInfo, 'username' | 'avatar' | 'wins' | 'losses' | 'online'>;
 
-  
 }
 type UserStat = {
   date: string;
@@ -46,7 +45,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
         body: JSON.stringify({ username }),
       });
       const responseData = await response.json();
-      console.log('HERE=>', responseData.statUser);
+
       if (!response.ok) throw new Error('Cannot find user');
  		 setUserStats(responseData.statUser);
 
@@ -70,7 +69,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 	  `}
   
 	>
-	<div className="relative w-32 h-32">
+	<div className="relative">
 		<img
 			src={user.avatar}
 			alt="avatar"
@@ -91,7 +90,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 		  xl:text-xl
 		  2xl:text-3xl
 		  font-bold
-			font-orbitron
+		  font-orbitron
 		`}
 	  >
 		{user.username}
@@ -132,9 +131,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 		  <div className="font-orbitron text-[#E984BE] text-xl min-w-[80px] text-center">
 			LOSES
 		  </div>
-		  {/* <div className="font-orbitron text-[#76E29A] text-xl min-w-[80px] text-center">
-			STRIKE
-		  </div> */}
 		</div>
 		<button
 		  onClick={handleShowHistory}

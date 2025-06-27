@@ -22,7 +22,6 @@ const Avatar: React.FC<AvatarProps> = ({ user, className }) => {
         flex-col
         items-center
       `}
-      /* Main container: Centers the avatar vertically and horizontally */
     >
       <div
         className={`
@@ -37,7 +36,6 @@ const Avatar: React.FC<AvatarProps> = ({ user, className }) => {
           text-center
           ${className}
         `}
-        /* Avatar wrapper: Styles the circular avatar with border, background, and custom size */
       >
         {isImageLoaded ? (
           <img
@@ -48,7 +46,6 @@ const Avatar: React.FC<AvatarProps> = ({ user, className }) => {
               h-full
               object-cover
             `}
-            /* Avatar image: Ensures the image fills the circular container and covers it */
             onError={() => setIsImageLoaded(false)}
           />
         ) : (
@@ -58,7 +55,6 @@ const Avatar: React.FC<AvatarProps> = ({ user, className }) => {
               font-semibold
               px-2
             `}
-            /* Fallback text: Displays username in small, bold text when image fails to load */
           >
             {user.username}
           </span>

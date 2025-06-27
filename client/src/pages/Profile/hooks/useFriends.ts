@@ -1,7 +1,5 @@
 import { useCallback } from "react";
-import { addFriend } from "../AddFriend";
-import { deleteFriend } from "../DeleteFriend";
-import { confirmFriendRequest } from "../ConfirmFriendRequest";
+import { confirmFriendRequest, deleteFriend, addFriend } from "../types/api";
 import { toast } from "react-hot-toast";
 import api from "../types/api";
 import { FriendRequest } from "./useUserData";
@@ -14,13 +12,12 @@ export function useFriends(
 	setFriends: any, 
 	setPlayers: any,
   setFriendRequests: React.Dispatch<React.SetStateAction<FriendRequest[]>>,
-  // setDeclinedFriendRequest: React.Dispatch<React.SetStateAction<string | null>>
 ) {
 
   const handleAdd = useCallback(async (username: string) => {
     try {
       await addFriend(username);
-      toast.success(`${username} friend request sent`);
+      toast.success(`Friend request sent to ${username}`);
       await fetchAllUsers();
     } catch (err: any) {
       console.error("Failed to add friend:", err);
@@ -31,7 +28,6 @@ export function useFriends(
   const handleConfirm = useCallback( async (username: string) => {
   	try {
       await confirmFriendRequest(username);
-      toast.success(`Friend request from ${username} accepted!`);
       await fetchAllUsers();
       await fetchFriendRequests();
 	} catch (err) {
@@ -42,18 +38,13 @@ export function useFriends(
   const handleDecline = useCallback(async (username: string) => {
   try {
     const user_id = localStorage.getItem("id");
-    console.log("📛 handleDecline called with username:", username);
     await api.post('/declineFriend', { 
       user_id,
       username,
       confirmReq: 0
     });
-    console.log("All info of decline:", username, user_id);
     setFriendRequests(prev => prev.filter(req => req.username !== username));
-
     toast.success(`You declined a friend request from ${username}`);
-    //setDeclinedFriendRequest(username);
-    //await fetchFriendRequests();
   } catch (err: any) {
     toast.error("Failed to decline request");
   }

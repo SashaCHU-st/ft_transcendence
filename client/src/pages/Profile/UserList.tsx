@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
 import { CardWrapper } from './types/ui';
 import { UserInfo } from './types/UserInfo';
-import { askForChallenge } from './Challenge';
+import { askForChallenge } from './types/api'
 import { toast } from 'react-hot-toast';
 
 interface Props {
@@ -24,8 +24,7 @@ const UserList: React.FC<Props> = ({
 }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [userStats, setUserStats] = useState<Record<string, any>>({});
-  // const [fullHistory, setFullHistory] = useState(false);
-
+ 
   useEffect(() => {
     if (expandUsername) {
       const idx = users.findIndex(
@@ -39,10 +38,8 @@ const UserList: React.FC<Props> = ({
 
   const toggleExpand = async (index: number) => {
     const user = users[index];
-
-    // console.log("IIIIII=>,", user)
     const username = user.username;
-        // console.log("IIIIII=>,", username)
+
     try {
       const response = await fetch('https://localhost:3000/statisticsUser', {
         method: 'POST',
@@ -52,7 +49,7 @@ const UserList: React.FC<Props> = ({
         body: JSON.stringify({ username }),
       });
       const responseData = await response.json();
-      console.log('HERE=>', responseData.statUser);
+      
       if (!response.ok) throw new Error('Cannot find user');
       setUserStats((prev) => ({
         ...prev,
@@ -63,7 +60,6 @@ const UserList: React.FC<Props> = ({
     }
 
     setExpandedIndex((prev) => (prev === index ? null : index));
-    // setFullHistory(true);
   };
 
   const handleChallenge = async (username: string) => {

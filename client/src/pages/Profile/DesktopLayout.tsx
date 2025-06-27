@@ -7,13 +7,12 @@ import { UserInfo} from "./types/UserInfo";
 import { bots } from "./types/botsData";
 import UserProfile from "./UserProfile";
 
-
 interface DesktopLayoutProps {
-  user: UserInfo; // Current user's data
-  friends: UserInfo[]; // List of friends
-  players: UserInfo[]; // List of other players
-  selectedBot: (typeof bots)[0] | null; // Currently selected bot for gameplay
-  handlePlay: () => void; // Callback to start the game
+  user: UserInfo;
+  friends: UserInfo[];
+  players: UserInfo[];
+  selectedBot: (typeof bots)[0] | null;
+  handlePlay: () => void;
   isRandomizing: boolean;
   expandUsername?: string;
   handleRemove: (username: string) => void;
@@ -42,10 +41,8 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
               online: user.online,
               wins: user.wins,
               losses: user.losses,
-              // history: user.history,
             }}
           />
-         
         </div>
         {/* Center Section */}
         <div className="flex flex-col items-center justify-start gap-6 w-full">
@@ -106,6 +103,5 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
     </div>
   );
 };
-
 
 export default DesktopLayout;

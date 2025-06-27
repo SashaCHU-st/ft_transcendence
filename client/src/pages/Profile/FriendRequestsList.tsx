@@ -1,19 +1,10 @@
 import React from "react";
 import { FriendRequest } from "./types/UserInfo";
 
-
-// type FriendRequest = {
-//   id: string;
-//   username: string;
-//   avatar: string;
-//   online: boolean;
-// };
-
 interface FriendRequestListProps {
   requests: FriendRequest[];
   onConfirm: (username: string) => void;
   onDecline: (username: string) => void;
- 
 }
 
 const FriendRequestList: React.FC<FriendRequestListProps> = ({
@@ -26,9 +17,9 @@ const FriendRequestList: React.FC<FriendRequestListProps> = ({
   return (
     <div className="p-8 ">
       <div className="bg-opacity-20 bg-purple-500 w-80 rounded-md">
-      <h2 className="text-md xl:text-lg  font-orbitron text-purple-200 mb-4 text-center tracking-[.20em]">
-        FRIEND REQUESTS
-      </h2>
+        <h2 className="text-md xl:text-lg  font-orbitron text-purple-200 mb-4 text-center tracking-[.20em]">
+          FRIEND REQUESTS
+        </h2>
       </div>
       <div className="flex flex-col gap-4">
         {requests.length === 0 ? (

@@ -14,20 +14,16 @@ interface UserHeaderProps {
     winner_name: string;
   }[];
 }
-// const opponentName = game.winner_name === user.username ? game.loser_name : game.winner_name;
 
 const UserHeader: React.FC<UserHeaderProps> = ({ user, stats = [] }) => {
   const { winRate } = calculateUserStats(
     user.wins,
     user.losses
-    // user.history
   );
 
   const [fullHistory, setFullHistory] = useState(false);
-  // console.log('YYYYYYYYY=>', stats);
-
+  
   const handleShowHistory = () => {
-    console.log('JJJJ');
     setFullHistory(true);
   };
   return (
@@ -42,13 +38,7 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user, stats = [] }) => {
         mx-auto
         text-center
       `}
-  
     >
-      {/* <img
-        src={user.avatar}
-        alt="avatar"
-        className="w-32 h-32 rounded-full object-cover"
-      /> */}
       <h2
         className={`
           text-2xl
@@ -99,9 +89,6 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user, stats = [] }) => {
           <div className="font-orbitron text-[#E984BE] text-xl min-w-[80px] text-center">
             LOSES
           </div>
-          {/* <div className="font-orbitron text-[#76E29A] text-xl min-w-[80px] text-center">
-            STRIKE
-          </div> */}
         </div>
         <button
           onClick={handleShowHistory}
@@ -120,7 +107,7 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user, stats = [] }) => {
         >
           FULL HISTORY <span className="text-4xl text-emerald-300">→</span>
         </button>
-        {/* <div className='pt-6'> */}
+        
         {fullHistory && (
           <FullHistory
             winRate={winRate}
@@ -132,7 +119,6 @@ const UserHeader: React.FC<UserHeaderProps> = ({ user, stats = [] }) => {
         )}
         </div>
       </div>
-    // </div>
   );
 };
 

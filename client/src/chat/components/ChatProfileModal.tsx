@@ -1,8 +1,7 @@
 import React, { useMemo, useCallback, useState } from "react";
 import { toast } from "react-hot-toast";
 import { UserInfo } from "../../pages/Profile/types/UserInfo";
-import { addToFavorites } from "../../pages/Profile/AddFavorites";
-import { deleteFromFavorites } from "../../pages/Profile/DeleteFavorites";
+import { addToFavorites, deleteFromFavorites} from "../../pages/Profile/types/api"
 import { OverlayWrapper } from "../../pong/components/Overlays/OverlayWrapper";
 import {
   OverlayCard,

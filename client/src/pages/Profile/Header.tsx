@@ -11,7 +11,6 @@ interface HeaderProps {
   onOpenStats: () => void;
 }
 
-//const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onOpenChat, onOpenStats }) => {
 const Header: React.FC<HeaderProps> = ({ user, onProfileClick, onSearch, onClearSearch,  onOpenChat, onOpenStats }) => {
   return (
     <div

@@ -59,11 +59,8 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
         cursor-pointer
         w-full
         min-w-[280px]
-        
         sm:w-[280px]
         lg:w-[350px]
-        
-        
         duration-200
         ease-in-out
       "

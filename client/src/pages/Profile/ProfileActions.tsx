@@ -1,13 +1,8 @@
 import React, { useState } from "react";
 import { UserInfo } from "./types/UserInfo";
 import { toast } from "react-hot-toast";
-//import { useNavigate } from "react-router-dom";
-//import { getAuthHeaders } from "./types/api";
 import { useAuth } from "../../context/AuthContext";
 
-
-
-// Define the props accepted by the ProfileActions component
 interface ProfileActionsProps {
 
   user: Pick<UserInfo, "username" | "online" | "email">;
@@ -29,7 +24,6 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
   onOpenStats,
 
 }) => {
-  //const navigate = useNavigate();               // Hook for navigation after logout
   const [searchQuery, setSearchQuery] = useState(""); 
   const [hasSearched, setHasSearched] = useState(false);
 
@@ -66,12 +60,6 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
   return (
     // Container: switches layout from column (mobile) to row (desktop)
     <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-
-      {/*
-        Search Group:
-        - Input field for username
-        - Search and Clear buttons
-      */}
       <div className="flex items-center gap-2 flex-col sm:flex-row">
         <div className="relative w-32 sm:w-40">
           <input
@@ -202,7 +190,6 @@ const ProfileActions: React.FC<ProfileActionsProps> = ({
               hover:scale-110
             "
           >
-           
             <i className="fas fa-right-from-bracket text-blue-500 hover:text-blue-400 text-xl xl:text-2xl w-8 h-8"></i>
           </button>
         </div>
