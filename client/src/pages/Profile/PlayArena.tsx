@@ -37,10 +37,10 @@ const Arena: React.FC<ArenaProps> = ({
         md:h-40
         lg:w-44
         lg:h-44
-        xl:w-56
-        xl:h-56
-        2xl:w-80
-        2xl:h-80
+        xl:w-52
+        xl:h-52
+        2xl:w-72
+        2xl:h-72
         rounded-full
         bg-gray-700
         bg-opacity-60
@@ -69,7 +69,7 @@ const Arena: React.FC<ArenaProps> = ({
       </div>
 
       {/* VS */}
-      <span className="text-xl font-bold text-red-400">VS</span>
+      <span className="text-xl font-bold text-emerald-200">VS</span>
 
       {/* Player 2 */}
       <div className="
@@ -81,20 +81,18 @@ const Arena: React.FC<ArenaProps> = ({
         md:h-40
         lg:w-44
         lg:h-44
-        xl:w-56
-        xl:h-56
-        2xl:w-80
-        2xl:h-80
+        xl:w-52
+        xl:h-52
+        2xl:w-72
+        2xl:h-72
         rounded-full
-     
         bg-opacity-60
-       
         overflow-hidden
         flex
         items-center
         justify-center
         drop-shadow-[0_0_8px_white]
-       shadow-[0_0_15px_#60a5fa]
+        shadow-[0_0_15px_#60a5fa]
         relative
         ${isRandomizing ? 'animate-pulse' : ''}">
         {opponentImage ? (
@@ -121,8 +119,6 @@ const Arena: React.FC<ArenaProps> = ({
           </>
         ) : (
           <div className="flex flex-col items-center text-xs">
-            {/* <span className="font-semibold font-orbitron xl:text-xl">OPPONENT</span>
-            <span className="text-gray-300 font-ubuntu xl:text-base mt-1">Waiting...</span> */}
             <i className="fa-solid fa-question text-6xl xl:text-7xl text-blue-300"></i>
           </div>
         )}

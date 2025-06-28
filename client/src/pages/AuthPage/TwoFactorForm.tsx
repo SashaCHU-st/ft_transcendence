@@ -7,7 +7,6 @@ interface Props {
   onBack?: () => void;
 }
 
-
 const TwoFactorForm: React.FC<Props> = ({ email, onSuccess, onBack }) => {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);

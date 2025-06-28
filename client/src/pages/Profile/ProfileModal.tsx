@@ -25,8 +25,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
   const [nameError, setNameError] = useState<string | null>(null);
   const [usernameError, setUsernameError] = useState<string | null>(null);
 
-
-  // Handler for avatar change
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -43,7 +41,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
     reader.readAsDataURL(file);
   };
 
-  // Handler for saving changes
   const handleSave = () => {
     const passwordError = password ? validatePassword(password): null;
     const nameError = validateName(name);

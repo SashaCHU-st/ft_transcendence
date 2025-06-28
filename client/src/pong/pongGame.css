@@ -79,3 +79,23 @@
     transform: scale(1.2);
   }
 }
+
+/* Tron-style scoreboard */
+.scoreboard-wrapper {
+  perspective: 600px;
+}
+
+.score-container {
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid #0ff;
+  box-shadow: 0 0 10px #0ff, inset 0 0 20px #0ff;
+  transform-style: preserve-3d;
+}
+
+.score-left {
+  transform: rotateY(15deg);
+}
+
+.score-right {
+  transform: rotateY(-15deg);
+}

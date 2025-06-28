@@ -9,7 +9,6 @@ interface Props {
 }
 
 const PlayerCard: React.FC<Props> = ({ user,stats }) => {
-  console.log("UUUUUUU=>", stats)
   return (
     <div
       className="
@@ -99,8 +98,6 @@ const PlayerCard: React.FC<Props> = ({ user,stats }) => {
               </button>
             ) : null}
           </div>
-
-
               <div className="w-16">
                 {user.onChallenge && (
                   <button

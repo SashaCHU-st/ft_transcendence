@@ -33,25 +33,12 @@ export function useUserData() {
     try {
       const currentUserId = localStorage.getItem("id");
       if (!currentUserId) 
-		return;
+		    return;
 
       const { data } = await api.get(`/users?t=${Date.now()}`, {
         headers: authHeaders,
       });
-      console.log('GAME=>', data.game);
-      console.log('USERS=>', data.users);
-
-      // const parsedMatches: MatchResult[] = data.game.map((g: any) => ({
-      //   id: String(g.id),
-      //   winner_name: String(g.winner_name),
-      //   losses_name: String(g.losses_name),
-      //   date: g.date,
-      //   win_score: String(g.win_score),
-      //   losses_score: String(g.lose_score),
-      // }));
-
-      // setMatches(parsedMatches);
-
+      
       let currentUser: UserInfo | null = null;
 
       const mappedUsers: UserInfo[] = data.users.map((u: any) => {
@@ -60,8 +47,6 @@ export function useUserData() {
           	if (typeof u.image === "string" && isValidBase64(u.image)) {
             avatar = `data:image/jpeg;base64,${u.image}`;
          	 } else if (u.image?.data) {
-            // const binary = String.fromCharCode(...u.image.data);
-            // avatar = `data:image/jpeg;base64,${btoa(binary)}`;
 			const dataArray = u.image.data;
 			let binary = "";
 			for (let i = 0; i < dataArray.length; i++) {
@@ -81,7 +66,7 @@ export function useUserData() {
           wins: u.wins || 0,
           losses: u.losses || 0,
           online: !!u.online,
-          // history: [],
+          history: [],
         };
 
         if (userInfo.id === currentUserId) 
@@ -90,14 +75,6 @@ export function useUserData() {
         return userInfo;
       });
 
-      // Fetch favorites
-      // const favRes = await api.get(`/favorites?user_id=${currentUserId}`);
-      // const favoriteUsernames: string[] = favRes.data.favoritesUser.map(
-      //   (f: any) => f.username
-      // );
-      // const favoriteUsers = mappedUsers.filter((u) =>
-      //   favoriteUsernames.includes(u.username)
-      // );
       const friendsRes = await api.post("/myfriends", { user_id: currentUserId });
       const confirmedFriendIds = friendsRes.data.myfriends.map((f: any) =>
         f.user_id === Number(currentUserId) ? f.friends_id : f.user_id
@@ -130,7 +107,8 @@ export function useUserData() {
 const fetchFriendRequests = useCallback(async () => {
   try {
     const user_id = localStorage.getItem('id');
-    if (!user_id) return [];
+    if (!user_id) 
+      return [];
 
     const { data } = await api.post('/request', { user_id });
 
@@ -147,7 +125,6 @@ const fetchFriendRequests = useCallback(async () => {
             avatar = `data:image/jpeg;base64,${btoa(binary)}`;
           }
         }
-
         return {
           id: String(u.id),
           username: u.username || 'Unknown',
@@ -157,23 +134,17 @@ const fetchFriendRequests = useCallback(async () => {
       });
     }
 
-    // Now check for declined requests directly here
     const notifRes = await api.post('/notificationFriend', { user_id });
     const declinedUsernames = notifRes.data.usernamesDeclined?.map((d: any) => d.username) || [];
-    console.log("declined usernames in fetch friend request", declinedUsernames);
+
     const filtered = requests.filter(req => !declinedUsernames.includes(req.username));
-    //const hadDeclinedVisible = requests.some(req => declinedUsernames.includes(req.username));
     setFriendRequests(filtered);
     if (declinedUsernames.length > 0) {
       setDeclinedFriendRequest(declinedUsernames);
-      // Disabled toast spam
-      // toast('Some friend requests were declined.', { icon: '❌' });
     }
-
     return filtered;
   } catch (err: any) {
     console.error('Failed to fetch friend requests:', err);
-    // toast.error('Could not load friend requests'); // disabled spam
     return [];
   }
 }, []);
@@ -183,10 +154,8 @@ const fetchFriendRequests = useCallback(async () => {
     friends,
     players,
     chatList,
-    
     fetchAllUsers,
     fetchFriendRequests,
-   // fetchFriendNotifications,
     setFriends,
     setPlayers,
     setChatList,

@@ -8,7 +8,6 @@ import { useProfile } from "./hooks/useProfile";
 interface UserProfileProps {
   user: Pick<UserInfo, 'username' | 'avatar' | 'wins' | 'losses' | 'online'>;
 
-  
 }
 type UserStat = {
   date: string;
@@ -33,7 +32,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
   
 
   const [fullHistory, setFullHistory] = useState(false);
-	const [userStats, setUserStats] = useState<UserStat[]>([]);
+  const [userStats, setUserStats] = useState<UserStat[]>([]);
   const handleShowHistory =async () => {
 
 	const username = user.username;
@@ -46,9 +45,9 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
         body: JSON.stringify({ username }),
       });
       const responseData = await response.json();
-      console.log('HERE=>', responseData.statUser);
+
       if (!response.ok) throw new Error('Cannot find user');
-  setUserStats(responseData.statUser);
+ 		 setUserStats(responseData.statUser);
 
     } catch (err) {
       console.error('Error', err);
@@ -57,21 +56,20 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 	setFullHistory(true);
   };
   return (
-	  <div className="bg-gray-900 rounded-lg p-4 w-96">
+	<div className="bg-gray-900 rounded-lg p-6 w-96 h-full">
 	<div
 	  className={`
 		flex
 		flex-col
 		items-center
-		gap-4
-		w-full
-		max-w-md
+		gap-6
+		w-80
 		mx-auto
 		text-center
 	  `}
   
 	>
-	<div className="relative w-32 h-32">
+	<div className="relative">
 		<img
 			src={user.avatar}
 			alt="avatar"
@@ -92,7 +90,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 		  xl:text-xl
 		  2xl:text-3xl
 		  font-bold
-			font-orbitron
+		  font-orbitron
 		`}
 	  >
 		{user.username}
@@ -133,9 +131,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 		  <div className="font-orbitron text-[#E984BE] text-xl min-w-[80px] text-center">
 			LOSES
 		  </div>
-		  {/* <div className="font-orbitron text-[#76E29A] text-xl min-w-[80px] text-center">
-			STRIKE
-		  </div> */}
 		</div>
 		<button
 		  onClick={handleShowHistory}
@@ -143,16 +138,16 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 				  px-4
 				  py-1
 				  rounded-md
-				  text-sm
+				  text-base
 				  font-orbitron
-				  text-white
+				  text-emerald-200
 				  transition
 				  duration-300
 				  hover:scale-110
 				 
 				"
 		>
-		  FULL HISTORY <span className="text-4xl text-white">→</span>
+		  FULL HISTORY <span className="text-4xl lg:text-5xl text-emerald-200 ">→</span>
 		</button>
 		{fullHistory && (
 		  <FullHistory
@@ -163,7 +158,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
 			onClose={() => setFullHistory(false)}
 		  />
 		)}
-		 <div className="mt-10">
+		 <div className="mt-10 w-80 flex justify-center">
             <FriendRequestList
               requests={friendRequests}
               onConfirm={handleConfirm}

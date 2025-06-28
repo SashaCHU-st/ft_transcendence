@@ -1,29 +1,29 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import {getAuthHeaders} from "../types/api";
-import { useUserData } from "./useUserData";
-import { useNotifications } from "./useNotification";
-import { useFriends } from "./useFriends";
-import { useProfileModal } from "./useProfileModal";
-import { useGame } from "./useGame";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAuthHeaders } from '../types/api';
+import { useUserData } from './useUserData';
+import { useNotifications } from './useNotification';
+import { useFriends } from './useFriends';
+import { useProfileModal } from './useProfileModal';
+import { useGame } from './useGame';
 
 export const useProfile = () => {
-  const { user,
-      friends,
-      players, 
-      chatList, 
-      fetchAllUsers,
-      setFriends, 
-      setPlayers, 
-      setChatList, 
-      setUser,
-      fetchFriendRequests,
-      friendRequests,
-      declinedFriendRequest,
-      setDeclinedFriendRequest,
-      setFriendRequests,
-      
-    } = useUserData();
+  const {
+    user,
+    friends,
+    players,
+    chatList,
+    fetchAllUsers,
+    setFriends,
+    setPlayers,
+    setChatList,
+    setUser,
+    fetchFriendRequests,
+    friendRequests,
+    declinedFriendRequest,
+    setDeclinedFriendRequest,
+    setFriendRequests,
+  } = useUserData();
 
   const userId = user?.id || null;
   const authHeaders = getAuthHeaders();
@@ -33,7 +33,6 @@ export const useProfile = () => {
     notifications,
     isNotificationModalOpen,
     setIsNotificationModalOpen,
-    //checkNotifications,
     handleAcceptChallenge,
     handleDeclineChallenge,
     redirectToGame,
@@ -41,7 +40,6 @@ export const useProfile = () => {
     declinedChallenge,
     setDeclinedChallenge,
   } = useNotifications(userId);
-
 
   //Friends
   const { handleAdd, handleRemove, handleConfirm, handleDecline } = useFriends(
@@ -51,7 +49,6 @@ export const useProfile = () => {
     setFriends,
     setPlayers,
     setFriendRequests
-    // setDeclinedFriendRequest,
   );
 
   // Profile modal
@@ -65,37 +62,18 @@ export const useProfile = () => {
   const navigate = useNavigate();
   const { selectedBot, setSelectedBot, handlePlay, isRandomizing } = useGame();
 
-  // Refresh user data and notifications periodically
-  useEffect(() => {
-    fetchAllUsers();
-    fetchFriendRequests();
+  // useEffect(() => {
+  //   fetchAllUsers();
+  //   fetchFriendRequests();
 
-    const interval = setInterval(() => {
-    fetchFriendRequests();
-    fetchAllUsers();
-   
-   }, 5000);
-     return () => clearInterval(interval);
+  //   const interval = setInterval(() => {
+  //   fetchFriendRequests();
+  //   fetchAllUsers();
 
-  }, [fetchAllUsers, fetchFriendRequests]);
+  //  }, 5000);
+  //    return () => clearInterval(interval);
 
-
-//   useEffect(() => {
-//   const init = async () => {
-//     await fetchAllUsers();
-//     await fetchFriendRequests();
-//   };
-
-//   init();
-
-//   const interval = setInterval(() => {
-//     fetchFriendRequests();
-//     fetchAllUsers();
-//   }, 10000);
-
-//   return () => clearInterval(interval);
-// }, [fetchAllUsers, fetchFriendRequests]);
-
+  // }, [fetchAllUsers, fetchFriendRequests]);
 
   useEffect(() => {
     const init = async () => {
@@ -124,7 +102,6 @@ export const useProfile = () => {
     friends,
     players,
     chatList,
-
     notifications,
     isNotificationModalOpen,
     setIsNotificationModalOpen,
@@ -149,7 +126,5 @@ export const useProfile = () => {
     friendRequests,
     declinedFriendRequest,
     setDeclinedFriendRequest,
-    //dismissDeclinedFriendRequest
   };
 };
-

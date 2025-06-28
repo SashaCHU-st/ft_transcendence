@@ -1,11 +1,3 @@
-// export type MatchResult = {
-// 	id:string;
-// 	winner_name:string;
-// 	losses_name:string;
-// 	win_score:string;
-// 	losses_score:string;
-// 	date: string;
-//   };
 export type MatchResult = {
 	date: string;
 	weekday: string;
@@ -50,20 +42,8 @@ export type MatchResult = {
 	  .sort((a, b) => b.date.localeCompare(a.date))
 	  .find(Boolean)?.date;
   
-	// filtering the history to get stats for the latest game day.
-	// const dailyStats = latestDate
-	//   ? history.filter((h) => h.date === latestDate)
-	//   : [];
-  
-	// counting the wins and losses for the latest game day.
-	// const winsToday = dailyStats.filter((m) => m.result === "win").length;
-	// const lossesToday = dailyStats.filter((m) => m.result === "loss").length;
-  
-	// returning all the calculated stats as an object.
 	return {
 	  winRate,
 	  latestDate,
-	//   winsToday,
-	//   lossesToday,
 	};
   };

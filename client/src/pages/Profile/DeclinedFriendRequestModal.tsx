@@ -1,15 +1,12 @@
 import React from "react";
-//import Avatar from "./Avatar"
 
 interface DeclinedFriendRequestModalProps {
   declinedUsername: string | null;
-  // declinedUserAvatar?: string; 
   onClose: () => void;
 }
 
 const DeclinedFriendRequestModal: React.FC<DeclinedFriendRequestModalProps> = ({
   declinedUsername,
- // declinedUserAvatar
   onClose,
 }) => {
   if (!declinedUsername) return null;
@@ -23,10 +20,6 @@ const DeclinedFriendRequestModal: React.FC<DeclinedFriendRequestModalProps> = ({
 		  FRIEND REQUEST DECLINED!
 		</h2>
 		<div className="border border-blue-200 rounded-lg p-4 bg-gray shadow">
-			{/* <Avatar
-						user={{ avatar: declinedUserAvatar || "/prof_img/avatar1.png", username: declinedUsername}}
-						className="w-10 h-10"
-					  />	 */}
 			<p className="mb-4 font-orbitron text-lg">
 			  {declinedUsername} has declined your friend request.
 			</p>

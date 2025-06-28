@@ -1,19 +1,10 @@
 import React from "react";
 import { FriendRequest } from "./types/UserInfo";
 
-
-// type FriendRequest = {
-//   id: string;
-//   username: string;
-//   avatar: string;
-//   online: boolean;
-// };
-
 interface FriendRequestListProps {
   requests: FriendRequest[];
   onConfirm: (username: string) => void;
   onDecline: (username: string) => void;
- 
 }
 
 const FriendRequestList: React.FC<FriendRequestListProps> = ({
@@ -24,13 +15,15 @@ const FriendRequestList: React.FC<FriendRequestListProps> = ({
 }) => {
   
   return (
-    <div className="p-8">
-      <h2 className="text-lg xl:text-xl font-bold font-orbitron text-purple-200 mb-4 text-center drop-shadow-[0_0_8px_red] tracking-[.20em]">
-        FRIEND REQUESTS
-      </h2>
+    <div className="p-8 ">
+      <div className="bg-opacity-20 bg-purple-500 w-80 rounded-md">
+        <h2 className="text-md xl:text-lg  font-orbitron text-purple-200 mb-4 text-center tracking-[.20em]">
+          FRIEND REQUESTS
+        </h2>
+      </div>
       <div className="flex flex-col gap-4">
         {requests.length === 0 ? (
-          <p className="text-center text-gray-300 text-lg">No friend requests</p>
+          <p className="text-center text-gray-400 text-sm">No friend requests</p>
         ) : (
           requests.map((req) => (
             <div
@@ -57,13 +50,13 @@ const FriendRequestList: React.FC<FriendRequestListProps> = ({
 
               <div className="flex gap-2">
                 <button onClick={() => onConfirm(req.username)}
-                   className="px-3 py-1 text-sm bg-emerald-700 text-white border border-emerald-400 rounded hover:bg-emerald-500 hover:text-white"
+                   className="px-2 py-1 text-sm bg-emerald-700 text-white border border-emerald-400 rounded hover:bg-emerald-500 hover:text-white"
                   >
                   ACCEPT
                 </button>
                 <button
                   onClick={() => onDecline(req.username)}
-                  className="px-3 py-1 text-sm text-white border bg-pink-700 border-pink-400 rounded hover:bg-pink-500 hover:text-white"
+                  className="px-2 py-1 text-sm text-white border bg-pink-700 border-pink-400 rounded hover:bg-pink-500 hover:text-white"
                 >
                   DECLINE
                 </button>
