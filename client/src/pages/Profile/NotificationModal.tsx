@@ -1,10 +1,8 @@
 import React from "react";
-//import Avatar from "./Avatar";
 
 interface Notification{
 	user_id: string;
 	username: string;
-	//avatar: string;
 };
 
 interface NotificationModalProps{
@@ -34,10 +32,6 @@ const NotificationModal: React.FC<NotificationModalProps> = ({
 					className="border border-blue-200 rounded-lg p-4 bg-gray shadow"
 				>
 					<div className="flex justify-center gap-2">
-						{/* <Avatar
-							user={{ avatar: notif.avatar || "/prof_img/avatar1.png", username: notif.username }}
-							className="w-10 h-10"
-						/>	 */}
 						<p className="mb-4 font-orbitron text-lg">
 						{notif.username} has challenged you to a game!
 						</p>

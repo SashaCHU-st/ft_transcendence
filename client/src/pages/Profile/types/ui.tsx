@@ -19,7 +19,7 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
         tracking-[.10em]
         py-2
         px-8
-        rounded
+        rounded-lg
         text-md
         lg:text-2xl
         xl:text-2xl
@@ -59,11 +59,8 @@ export const CardWrapper: React.FC<CardWrapperProps> = ({
         cursor-pointer
         w-full
         min-w-[280px]
-        
         sm:w-[280px]
         lg:w-[350px]
-        
-        
         duration-200
         ease-in-out
       "

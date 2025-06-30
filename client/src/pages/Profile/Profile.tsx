@@ -9,11 +9,9 @@ import { toast } from "react-hot-toast";
 import { SpaceBackground } from "../../pong/components/SpaceBackground";
 import ChatModal from "../../chat/components/ChatModal";
 import { ChatProvider } from "../../chat/context/ChatContext";
-//import { UserInfo } from "./types/UserInfo";
 import NotificationModal from "./NotificationModal";
 import StatsDashboardModal from "./StatsDashboardModal";
 import DeclinedChallengeModal from "./DeclinedChallengeModal";
-//import FriendRequestList from "./FriendRequestsList"
 import DeclinedFriendRequestModal from "./DeclinedFriendRequestModal";
 import api from "./types/api";
 
@@ -27,7 +25,6 @@ const Profile: React.FC = () => {
     chatList,
     selectedBot, // Currently selected bot for gameplay
     isModalOpen, // State for profile modal visibility
-   // isLoading, // Loading state for data fetching
     setSelectedBot, // Function to update selected bot
     setIsModalOpen, // Function to toggle profile modal
     handleSaveProfile, // Handler to save profile changes
@@ -39,8 +36,6 @@ const Profile: React.FC = () => {
     handleAcceptChallenge,
     handleDeclineChallenge,
     handleAdd,
-    //handleConfirm,
-   // handleDecline,
     setDeclinedChallenge,
     declinedChallenge, 
     //friendRequests,
@@ -100,24 +95,6 @@ const handleOkButtondeclineFriend = async (username: string) => {
   setExpandUsername(undefined); // Clear search result so the card won't reopen
 };
 
-  // Display loading state while fetching data
-  // if (isLoading) {
-  //   return (
-  //     <SpaceBackground>
-  //       <div
-  //         className="h-screen
-  //                     w-full 
-  //                     flex 
-  //                     items-center 
-  //                     justify-center
-  //                     text-white"
-  //       >
-  //         Loading data, please wait...
-  //       </div>
-  //     </SpaceBackground>
-  //   );
-  // }
-
   // Display error if user data failed to load
   if (!user) {
     return (
@@ -174,7 +151,6 @@ const handleOkButtondeclineFriend = async (username: string) => {
           expandUsername={expandUsername}
           handleRemove={handleRemove}
           handleAdd={handleAdd}
-          //handleConfirm={handleConfirm}
         />
 
         {/* Mobile-specific layout for smaller screens */}
@@ -188,24 +164,13 @@ const handleOkButtondeclineFriend = async (username: string) => {
           expandUsername={expandUsername}
           handleRemove={handleRemove}
           handleAdd={handleAdd}
-          //handleConfirm={handleConfirm}
         />
-
-        {/* Bot selector for choosing game opponent */}
-        {/* <FriendRequestList
-            requests={friendRequests}
-            onConfirm={handleConfirm}
-            onDecline={handleDecline}
-           
-        /> */}
         <BotSelector
           selectedBot={selectedBot}
           setSelectedBot={setSelectedBot}
         />
 
-      
       </div>
-
 
       {/* Conditionally render profile modal for editing user data */}
       {isModalOpen && (
@@ -232,14 +197,6 @@ const handleOkButtondeclineFriend = async (username: string) => {
         onClose={() => setDeclinedChallenge(null)}
       />
       )}
-
-      {/* {declinedFriendRequest && (
-        <DeclinedFriendRequestModal
-          declinedUsername={declinedFriendRequest}
-          onClose={handleOkButtondeclineFriend }
-        />
-      )} */}
-
       {declinedFriendRequest &&
         declinedFriendRequest.map((username) => (
           <DeclinedFriendRequestModal

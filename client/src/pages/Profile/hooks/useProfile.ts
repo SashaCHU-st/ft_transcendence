@@ -27,13 +27,12 @@ export const useProfile = () => {
 
   const userId = user?.id || null;
   const authHeaders = getAuthHeaders();
-
+ 
   // Notifications
   const {
     notifications,
     isNotificationModalOpen,
     setIsNotificationModalOpen,
-    //checkNotifications,
     handleAcceptChallenge,
     handleDeclineChallenge,
     redirectToGame,
@@ -42,17 +41,15 @@ export const useProfile = () => {
     setDeclinedChallenge,
   } = useNotifications(userId);
 
-
   //Friends
   const { handleAdd, handleRemove, handleConfirm, handleDecline } = useFriends(
-    fetchAllUsers,
-    fetchFriendRequests,
-    friends,
-    setFriends,
-    setPlayers,
-    setFriendRequests
-    // setDeclinedFriendRequest,
-  );
+  fetchAllUsers,
+  fetchFriendRequests,
+  friends,
+  setFriends,
+  setPlayers,
+  setFriendRequests,
+);
 
   // Profile modal
   const { isModalOpen, setIsModalOpen, handleSaveProfile } = useProfileModal(
@@ -65,36 +62,35 @@ export const useProfile = () => {
   const navigate = useNavigate();
   const { selectedBot, setSelectedBot, handlePlay, isRandomizing } = useGame();
 
-  // Refresh user data and notifications periodically
-  useEffect(() => {
-    fetchAllUsers();
-    fetchFriendRequests();
+  // useEffect(() => {
+  //   fetchAllUsers();
+  //   fetchFriendRequests();
 
-    const interval = setInterval(() => {
-    fetchFriendRequests();
-    fetchAllUsers();
+  //   const interval = setInterval(() => {
+  //   fetchFriendRequests();
+  //   fetchAllUsers();
    
-   }, 5000);
-     return () => clearInterval(interval);
+  //  }, 5000);
+  //    return () => clearInterval(interval);
 
-  }, [fetchAllUsers, fetchFriendRequests]);
+  // }, [fetchAllUsers, fetchFriendRequests]);
 
 
-//   useEffect(() => {
-//   const init = async () => {
-//     await fetchAllUsers();
-//     await fetchFriendRequests();
-//   };
+  useEffect(() => {
+  const init = async () => {
+    await fetchAllUsers();
+    await fetchFriendRequests();
+  };
 
-//   init();
+  init();
 
-//   const interval = setInterval(() => {
-//     fetchFriendRequests();
-//     fetchAllUsers();
-//   }, 10000);
+  const interval = setInterval(() => {
+    fetchFriendRequests();
+    fetchAllUsers();
+  }, 5000);
 
-//   return () => clearInterval(interval);
-// }, [fetchAllUsers, fetchFriendRequests]);
+  return () => clearInterval(interval);
+}, [fetchAllUsers, fetchFriendRequests]);
 
 
   useEffect(() => {
@@ -124,7 +120,6 @@ export const useProfile = () => {
     friends,
     players,
     chatList,
-
     notifications,
     isNotificationModalOpen,
     setIsNotificationModalOpen,
@@ -149,7 +144,5 @@ export const useProfile = () => {
     friendRequests,
     declinedFriendRequest,
     setDeclinedFriendRequest,
-    //dismissDeclinedFriendRequest
   };
 };
-

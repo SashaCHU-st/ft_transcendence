@@ -13,7 +13,7 @@ import {
 import "./ChatModal.css";
 import { MAX_MESSAGE_LENGTH } from "../../../../shared/chatConstants.js";
 import ChatProfileModal from "./ChatProfileModal";
-import { askForChallenge } from "../../pages/Profile/Challenge";
+import { askForChallenge } from "../../pages/Profile/types/api";
 import { toast } from "react-hot-toast";
 
 interface ChatModalProps {

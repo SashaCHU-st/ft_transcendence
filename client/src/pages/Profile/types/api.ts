@@ -29,18 +29,131 @@ api.interceptors.response.use(
   }
 );
 
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error: AxiosError) => {
-//     //toast.error(error.response?.data.message)/// need to fix
-//     if (error.response?.status === 401) {
-//       toast.error("Session expired. Please log in again.");
-//       localStorage.removeItem("token");
-//       window.location.href = "/login";
-//     }
-//     return Promise.reject(error);
-//   },
-// );
+export const addFriend = async (targetUsername: string): Promise<void> => {
+ try {
+    const token = localStorage.getItem("token");
+    const user_id = localStorage.getItem("id");
+
+    if (!token || !user_id) {
+      throw new Error("User not authenticated");
+    }
+    await api.post("/addFriends", { user_id, username: targetUsername }, {
+    headers: { Authorization: `Bearer ${token}` }
+  	});
+  } catch (err:any) {
+    console.error("Failed to add to friends:", err);
+    throw err;
+  }
+};
+
+export const confirmFriendRequest = async (username: string): Promise<void> => {
+  try {
+    const user_id = Number(localStorage.getItem("id"));
+    if (!user_id) throw new Error("Not authenticated");
+
+    await api.post("/confirmFriend", {
+      user_id,
+      username,
+      confirmReq: 1,
+    });
+  } catch (err: any) {
+    throw err;
+  }
+};
+
+export const deleteFriend = async (targetUsername: string): Promise<void> => {
+ try {
+    const token = localStorage.getItem("token");
+    const user_id = localStorage.getItem("id");
+
+    if (!token || !user_id) {
+      throw new Error("User not authenticated");
+    }
+
+	await api.delete("/deletefriend", {
+    headers: { Authorization: `Bearer ${token}` },
+    data: { user_id, username: targetUsername }
+  });
+  } catch (err:any) {
+    console.error("Failed to delete friend:", err);
+    throw err;
+  }
+};
+
+export const addToFavorites = async (targetUsername: string): Promise<void> => {
+  try {
+    const token = localStorage.getItem("token");
+    const user_id = localStorage.getItem("id");
+
+    if (!token || !user_id) {
+      throw new Error("User not authenticated");
+    }
+    console.log("Sending to server:", { user_id, username: targetUsername });
+    const response = await api.post(
+      "/addfavorites",
+      { user_id, username: targetUsername },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log("Added to favorites:", response.data);
+  } catch (err:any) {
+    console.error("Failed to add to favorites:", err);
+    throw err;
+  }
+};
+
+export const deleteFromFavorites = async (targetUsername: string): Promise<void> => {
+  try {
+    const token = localStorage.getItem("token");
+    const user_id = localStorage.getItem("id");
+
+    if (!token || !user_id) {
+      throw new Error("User not authenticated");
+    }
+     const response = await api.delete("/deletefavorites", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: { user_id, username: targetUsername },
+    });
+    console.log("Deleted from favorites:", response.data);
+  } catch (err:any) {
+    console.error("Failed to delete from favorites:", err);
+    throw err;
+  }
+};
+
+
+export const askForChallenge = async (targetUsername: string): Promise<void> => {
+  try {
+    const token = localStorage.getItem("token");
+    const user_id = localStorage.getItem("id");
+
+    if (!token || !user_id) {
+      throw new Error("User not authenticated");
+    }
+    const response = await api.post(
+      "/challenge",{ user_id, username: targetUsername },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    localStorage.setItem("challenge_id", response.data.challenge_id);
+    }catch (err: any) {
+    if (err.response) {
+      console.error("Status:", err.response.status);
+      console.error("Backend error message:", err.response.data);
+    }
+    console.error("Axios error:", err.message);
+    throw err;
+  }
+};
+
 
 export const getAuthHeaders = ():
   | { Authorization: string }

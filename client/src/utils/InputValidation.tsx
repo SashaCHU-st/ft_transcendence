@@ -14,6 +14,8 @@ export const validatePassword = (password: string): string | null => {
 	return "Password is required.";
   if (password.length < 4) 
 	return "Password must be at least 4 characters.";
+  if (password.length > 20)
+     return "Password must be maximum 20 characters long."
   if (/\s/.test(password)) 
     return "Password cannot contain spaces.";
   return null;
@@ -24,6 +26,8 @@ export const validateUsername = (username: string): string | null => {
 	return "Username is required.";
   if (username.length < 2) 
 	return "Username must be at least 2 characters.";
+  if (username.length > 15)
+     return "Username must be maximum 15 characters long."
   if (/^\s/.test(username)) 
     return "Username cannot start with a whitespace.";
   if (!/^[a-zA-Z0-9_]+$/.test(username)) 
@@ -36,6 +40,8 @@ export const validateName = (name: string): string | null => {
 	return "Name is required.";
   if (name.length < 2) 
 	return "Name must be at least 2 characters.";
+  if(name.length > 15)
+    return "Name must be maximum 15 characters long."
   if (/^\s/.test(name)) 
     return "Name cannot start with a whitespace.";
   if (!/^[a-zA-Z\s\-']+$/.test(name)) 

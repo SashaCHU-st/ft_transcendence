@@ -17,7 +17,7 @@ const AuthPage = ({
     if (onClose) {
       onClose();
     } else {
-      navigate("/"); // or whatever fallback route you want
+      navigate("/");
     }
   };
 
