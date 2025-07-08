@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import ProfileModal from "./ProfileModal";
-import Header from "./Header";
-import DesktopLayout from "./DesktopLayout";
-import MobileLayout from "./MobileLayout";
-import BotSelector from "./BotSelector";
-import { useProfile } from "./hooks/useProfile";
+import ProfileModal from "../EditProfile/ProfileModal";
+import Header from "./ProfileComponents/Header";
+import DesktopLayout from "../../components/Layouts/DesktopLayout";
+import MobileLayout from "../../components/Layouts/MobileLayout";
+import BotSelector from "./ProfileComponents/BotSelector";
+import { useProfile } from "../../hooks/useProfile";
 import { toast } from "react-hot-toast";
 import { SpaceBackground } from "../../pong/components/SpaceBackground";
 import ChatModal from "../../chat/components/ChatModal";
 import { ChatProvider } from "../../chat/context/ChatContext";
-import NotificationModal from "./NotificationModal";
-import StatsDashboardModal from "./StatsDashboardModal";
-import DeclinedChallengeModal from "./DeclinedChallengeModal";
-import DeclinedFriendRequestModal from "./DeclinedFriendRequestModal";
-import api from "./types/api";
+import NotificationModal from "./ProfileComponents/NotificationModal";
+import StatsDashboardModal from "../Dashbord/StatsDashboardModal";
+import DeclinedChallengeModal from "./ProfileComponents/DeclinedChallengeModal";
+import DeclinedFriendRequestModal from "./ProfileComponents/DeclinedFriendRequestModal";
+import api from "../../types/api";
 
 
 // Profile component serves as the main page for user profile management
@@ -60,8 +60,6 @@ const handleOkButtondeclineFriend = async (username: string) => {
   const user_id = Number(user_id1);
   try {
     await api.post("/sawAccept", { user_id, username });
-    console.log(`Handled declined request for ${username}`);
-    // Remove only the acknowledged username from the array
     setDeclinedFriendRequest((prev) =>
       prev ? prev.filter((u) => u !== username) : null
     );

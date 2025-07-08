@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { UserInfo } from './types/UserInfo';
+import { UserInfo } from '../../../types/UserInfo';
 
 interface ArenaProps {
   user: Pick<UserInfo, "username" | "avatar">;

@@ -1,5 +1,5 @@
 import React from "react";
-import { FriendRequest } from "./types/UserInfo";
+import { FriendRequest } from "../../../types/UserInfo";
 
 interface FriendRequestListProps {
   requests: FriendRequest[];

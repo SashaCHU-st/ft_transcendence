@@ -1,12 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
-import Avatar from "./Avatar";
+import Avatar from "../Profile/ProfileComponents/Avatar";
 import { OverlayWrapper } from "../../pong/components/Overlays/OverlayWrapper";
 import {
   OverlayCard,
   OverlayHeading,
   overlayOutlineClass,
 } from "../../pong/components/Overlays/OverlayComponents";
-import { UserInfo } from "./types/UserInfo";
+import { UserInfo } from "../../types/UserInfo";
 import {
   fetchStatistics,
   SessionStat,
@@ -14,7 +14,7 @@ import {
   ChallengeStats,
   fetchOpponentStats,
   OpponentStat,
-} from "./types/api";
+} from "../../types/api";
 import {
   ResponsiveContainer,
   BarChart,

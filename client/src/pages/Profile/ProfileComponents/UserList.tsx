@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import PlayerCard from './PlayerCard';
-import { CardWrapper } from './types/ui';
-import { UserInfo } from './types/UserInfo';
-import { askForChallenge } from './types/api'
+import { CardWrapper } from '../../../types/ui';
+import { UserInfo } from '../../../types/UserInfo';
+import { askForChallenge } from '../../../types/api'
 import { toast } from 'react-hot-toast';
 
 interface Props {

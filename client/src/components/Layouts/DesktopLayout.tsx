@@ -1,11 +1,11 @@
 import React from "react";
-import UserList from "./UserList";
-import PlayArena from "./PlayArena";
-import GameSelector from "./GameSelector/GameSelector";
-import { PrimaryButton } from "./types/ui";
-import { UserInfo} from "./types/UserInfo";
-import { bots } from "./types/botsData";
-import UserProfile from "./UserProfile";
+import UserList from "../../pages/Profile/ProfileComponents/UserList";
+import PlayArena from "../../pages/Profile/ProfileComponents/PlayArena";
+import GameSelector from "../../pages/GameSelector/GameSelector";
+import { PrimaryButton } from "../../types/ui";
+import { UserInfo} from "../../types/UserInfo";
+import { bots } from "../../types/botsData";
+import UserProfile from "../../pages/Profile/ProfileComponents/UserProfile";
 
 interface DesktopLayoutProps {
   user: UserInfo;

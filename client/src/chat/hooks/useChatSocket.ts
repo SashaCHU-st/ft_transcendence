@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ChatMessage } from "../../pages/Profile/types/api";
+import { ChatMessage } from "../../types/api.js";
 import type { SystemNotification } from "../../../../shared/chatConstants.js";
 import { ChatMessageTypes } from "../../../../shared/chatMessageTypes.js";
 

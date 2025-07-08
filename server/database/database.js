@@ -64,8 +64,6 @@ db.exec(`
     );
     `);
     
-    // If the messages table existed before the blocked column was introduced,
-    // add it so newer queries don't fail.
     const messageColumns = db.prepare('PRAGMA table_info(messages);').all();
     const hasBlockedColumn = messageColumns.some((c) => c.name === 'blocked');
     if (!hasBlockedColumn) {

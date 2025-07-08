@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   useReducer,
@@ -7,17 +7,17 @@ import React, {
   useEffect,
   useRef,
 } from 'react';
-import { UserInfo } from '../../pages/Profile/types/UserInfo';
+import { UserInfo } from '../../types/UserInfo.js';
 import {
   ChatMessage,
   fetchChatMessages,
   blockUserRequest,
   unblockUserRequest,
   fetchBlockedUsers,
-} from '../../pages/Profile/types/api';
-import { sendMessage as sendChat, sendViaSocket } from '../services/chatService';
+} from '../../types/api.js';
+import { sendMessage as sendChat, sendViaSocket } from '../services/chatService.js';
 import { toast } from 'react-hot-toast';
-import { useChatSocket } from '../hooks/useChatSocket';
+import { useChatSocket } from '../hooks/useChatSocket.js';
 import {
   SYSTEM_MESSAGE_TTL_MS,
   MAX_SYSTEM_MESSAGES,

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { UserInfo } from "../../pages/Profile/types/UserInfo";
+import { UserInfo } from "../../types/UserInfo";
 import "./ChatModal.css";
 
 interface Props {

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { initGame, GameAPI, PongCallbacks, GameMode, type GameState } from "./pong";
-import { recordAiMatch } from "../pages/Profile/types/api";
+import { recordAiMatch } from "../types/api.js";
 import BracketOverlay from "./BracketOverlay";
 import { ByeOverlay } from "./components/Overlays/ByeOverlay";
 import { MatchResultOverlay } from "./components/Overlays/MatchResultOverlay";

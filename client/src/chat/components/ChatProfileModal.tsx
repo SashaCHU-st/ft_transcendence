@@ -1,14 +1,14 @@
 import React, { useMemo, useCallback, useState } from "react";
 import { toast } from "react-hot-toast";
-import { UserInfo } from "../../pages/Profile/types/UserInfo";
-import { addToFavorites, deleteFromFavorites} from "../../pages/Profile/types/api"
+import { UserInfo } from "../../types/UserInfo";
+import { addToFavorites, deleteFromFavorites} from "../../types/api"
 import { OverlayWrapper } from "../../pong/components/Overlays/OverlayWrapper";
 import {
   OverlayCard,
   OverlayButton,
 } from "../../pong/components/Overlays/OverlayComponents";
-import Avatar from "../../pages/Profile/Avatar";
-import { calculateUserStats } from "../../pages/Profile/types/UserInfo";
+import Avatar from "../../pages/Profile/ProfileComponents/Avatar";
+import { calculateUserStats } from "../../types/UserInfo";
 import { useEscapeKey } from "../../pong/hooks/useEscapeKey";
 import StatsBlock from "./StatsBlock";
 import RecentGamesList from "./RecentGamesList";

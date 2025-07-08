@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { useAuth } from '../../context/AuthContext';
-import { validateEmail, validatePassword } from '../../utils/InputValidation';
+import { useAuth } from '../../../context/AuthContext';
+import { validateEmail, validatePassword } from '../../../utils/InputValidation';
 import TwoFactorForm from './TwoFactorForm';
 
 const SignInForm = ({ onSuccess }: { onSuccess: () => void }) => {

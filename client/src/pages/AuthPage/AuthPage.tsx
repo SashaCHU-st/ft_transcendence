@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import SignInForm from "./LogInForm";
-import SignUpForm from "./SignUpForm";
+import SignInForm from "./AuthComponents/LogInForm";
+import SignUpForm from "./AuthComponents/SignUpForm";
 
 const AuthPage = ({
   onClose,

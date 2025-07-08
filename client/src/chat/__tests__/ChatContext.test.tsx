@@ -3,7 +3,7 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { createRoot } from 'react-dom/client';
 
-import type { ChatState } from '../context/ChatContext';
+import type { ChatState } from '../context/ChatContext.js';
 import type { SystemNotification } from '../../../../shared/chatConstants.js';
 
 let callbacks: { onSystemMessage?: (msg: SystemNotification) => void; onSystemRemove?: (id: string) => void } = {};
@@ -23,7 +23,7 @@ vi.mock('../hooks/useChatSocket', () => ({
   },
 }));
 
-import { ChatProvider, useChatContext } from '../context/ChatContext';
+import { ChatProvider, useChatContext } from '../context/ChatContext.js';
 import { SYSTEM_MESSAGE_TTL_MS, MAX_SYSTEM_MESSAGES } from '../../../../shared/chatConstants.js';
 
 let container: HTMLElement;

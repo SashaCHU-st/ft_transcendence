@@ -1,4 +1,4 @@
-import { sendChatMessage } from "../../pages/Profile/types/api";
+import { sendChatMessage } from "../../types/api";
 export const sendViaSocket = (
   socket: WebSocket | null,
   toId: string | number,
@@ -15,7 +15,7 @@ export const sendViaSocket = (
   return true;
 };
 
-export { sendChatMessage as sendViaHttp } from '../../pages/Profile/types/api';
+export { sendChatMessage as sendViaHttp } from '../../types/api';
 
 export const sendMessage = async (
   socket: WebSocket | null,

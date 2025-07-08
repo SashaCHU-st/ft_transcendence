@@ -1,4 +1,4 @@
-import { PowerUpType } from "../../../pong/powerups";
+import { PowerUpType } from "../pong/powerups";
 
 export type BotInfo = {
   name: string;

@@ -1,7 +1,7 @@
 import React from 'react';
 //import React, { useState } from "react";
 import UserHeader from './UserHeader';
-import { UserInfo } from './types/UserInfo';
+import { UserInfo } from '../../../types/UserInfo';
 
 interface Props {
   user: UserInfo;

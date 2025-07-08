@@ -88,7 +88,6 @@ export const addToFavorites = async (targetUsername: string): Promise<void> => {
     if (!token || !user_id) {
       throw new Error("User not authenticated");
     }
-    console.log("Sending to server:", { user_id, username: targetUsername });
     const response = await api.post(
       "/addfavorites",
       { user_id, username: targetUsername },
@@ -98,7 +97,6 @@ export const addToFavorites = async (targetUsername: string): Promise<void> => {
         },
       }
     );
-    console.log("Added to favorites:", response.data);
   } catch (err:any) {
     console.error("Failed to add to favorites:", err);
     throw err;
@@ -119,7 +117,6 @@ export const deleteFromFavorites = async (targetUsername: string): Promise<void>
       },
       data: { user_id, username: targetUsername },
     });
-    console.log("Deleted from favorites:", response.data);
   } catch (err:any) {
     console.error("Failed to delete from favorites:", err);
     throw err;

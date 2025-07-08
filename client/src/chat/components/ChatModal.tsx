@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useEscapeKey } from "../../pong/hooks/useEscapeKey";
-import { UserInfo } from "../../pages/Profile/types/UserInfo";
-import { useChatContext } from "../context/ChatContext";
-import ChatUserList from "./ChatUserList";
-import SystemNotification from "./SystemNotification";
+import { UserInfo } from "../../types/UserInfo.js";
+import { useChatContext } from "../context/ChatContext.js";
+import ChatUserList from "./ChatUserList.js";
+import SystemNotification from "./SystemNotification.js";
 import { OverlayWrapper } from "../../pong/components/Overlays/OverlayWrapper";
 import {
   OverlayCard,
@@ -12,8 +12,8 @@ import {
 } from "../../pong/components/Overlays/OverlayComponents";
 import "./ChatModal.css";
 import { MAX_MESSAGE_LENGTH } from "../../../../shared/chatConstants.js";
-import ChatProfileModal from "./ChatProfileModal";
-import { askForChallenge } from "../../pages/Profile/types/api";
+import ChatProfileModal from "./ChatProfileModal.js";
+import { askForChallenge } from "../../types/api.js";
 import { toast } from "react-hot-toast";
 
 interface ChatModalProps {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { UserInfo } from './types/UserInfo';
+import { UserInfo } from '../../../types/UserInfo';
 
 interface AvatarProps {
   user: Pick<UserInfo, "avatar" | "username">;

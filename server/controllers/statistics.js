@@ -28,18 +28,6 @@ export async function statisticsUser(req, reply) {
   try {
     const statUser = db
       .prepare(
-// <<<<<<< HEAD
-//         `SELECT 
-//         users.id,
-//         users.wins,
-//         users.losses,
-//         game.id AS game_id,
-//         game.date
-//         FROM users
-//         LEFT JOIN game
-//         ON users.id = game.win_user_id OR users.id = game.losses_user_id
-//         WHERE users.id = ?`
-// =======
         `SELECT
           g.win_score,
           COALESCE(winner.username, 'AI') AS winner_name,
@@ -54,8 +42,6 @@ export async function statisticsUser(req, reply) {
       `
       )
       .all(username);
-    console.log('USER STAT =>', statUser);
-
 
     return reply.code(200).send({ statUser });
   } catch (err) {
@@ -65,35 +51,6 @@ export async function statisticsUser(req, reply) {
 }
 
 export async function win(req, reply) {
-  console.log('WE IN WIN');
-
-// <<<<<<< HEAD
-//   const { user_id, challenge_id } = req.body;
-
-//   console.log("UUUUUUUUUUUUU=>", challenge_id)
-//   console.log("ttttttttt=>", user_id)
-//   try {
-//     // const challenge_id = challenge_id;
-//     const gameEND = db
-//       .prepare(
-//         `UPDATE game SET win_user_id = ?, date = ? WHERE challenge_id = ? `
-//       )
-//       .run(user_id, new Date().toISOString(), challenge_id);
-//     console.log('JJJJJJ=>', gameEND);
-//     if (gameEND.changes !== 0) {
-//       const winUser = db
-//         .prepare(`SELECT * FROM users WHERE id = ?`)
-//         .get(user_id);
-
-//       const winValue = winUser.wins + 1;
-//       const updateWins = db
-//         .prepare(`UPDATE users SET wins = ? WHERE id = ?`)
-//         .run(winValue, user_id);
-//       return reply.code(200).send({ updateWins, gameEND });
-//     } else {
-//       return reply.code(400).send({ message: 'We are not in game' });
-//     }
-// =======
   try {
     let gameEND = { changes: 0 };
     if (challenge_id) {
@@ -127,27 +84,6 @@ export async function loseUser(req, reply) {
   const { user_id, challenge_id } = req.body;
 
   try {
-// <<<<<<< HEAD
-//     // const challenge_id = 1;
-//     const gameEND = db
-//       .prepare(
-//         `UPDATE game SET losses_user_id = ?, date = ? WHERE challenge_id = ? `
-//       )
-//       .run(user_id, new Date().toISOString(), challenge_id);
-//     if (gameEND.changes !== 0) {
-//       const loseUser = db
-//         .prepare(`SELECT * FROM users WHERE id = ?`)
-//         .get(user_id);
-
-//       const count = loseUser.losses + 1;
-//       const updateLoses = db
-//         .prepare(`UPDATE users SET losses = ? WHERE id = ?`)
-//         .run(count, user_id);
-
-//       return reply.code(200).send({ updateLoses, gameEND });
-//     } else {
-//       return reply.code(400).send({ message: 'We are not in game' });
-// =======
     let gameEND = { changes: 0 };
     if (challenge_id) {
       gameEND = db

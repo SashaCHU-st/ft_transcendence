@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import AuthPage from '../pages/AuthPage/AuthPage';
+import AuthPage from '../../pages/AuthPage/AuthPage';
 
 const Layout: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

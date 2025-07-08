@@ -1,7 +1,7 @@
 // import React from 'react';
 import React, { useState } from 'react';
-import { UserInfo, calculateUserStats } from './types/UserInfo';
-import FullHistory from './FullHistory';
+import { UserInfo, calculateUserStats } from '../../../types/UserInfo';
+import FullHistory from '../../History/FullHistory';
 
 interface UserHeaderProps {
   user: Pick<UserInfo, 'username' | 'avatar' | 'wins' | 'losses' | 'online'>;

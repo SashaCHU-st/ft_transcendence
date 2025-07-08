@@ -123,7 +123,7 @@ export interface GameState {
   powerUpsEnabled: boolean;
 }
 
-import type { BotInfo } from "../pages/Profile/types/botsData";
+import type { BotInfo } from "../types/botsData.js";
 
 export interface GameAPI {
   startSinglePlayerAI: (bot?: BotInfo) => void;

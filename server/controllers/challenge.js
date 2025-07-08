@@ -23,8 +23,6 @@ export async function challenge(req, reply) {
       const sendRequest = db
         .prepare(`INSERT INTO challenge (user_id, friends_id, sent_once) VALUES (?,?, ?) RETURNING id`)
         .run(user_id, friends_id.id, 1);
-
-        console.log("YYYYYYYYYYYYYYYYYYYYYYYYYY=>",sendRequest.lastInsertRowid)
       return reply.code(201).send({ message: 'Request sent', request: sendRequest, challenge_id : sendRequest.lastInsertRowid});
     }
     else
@@ -108,7 +106,6 @@ export async function notification(req, reply) {
       )
       .all(user_id);
 
-    // ✅ Mark accepted challenges as "seen" by setting ok = 1
     if (acceptedUsers.length > 0) {
       db.prepare(`
         UPDATE challenge 

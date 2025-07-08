@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { UserInfo } from "./types/UserInfo";
+import { UserInfo } from "../../types/UserInfo";
 import { toast } from "react-hot-toast";
 import { validatePassword, validateName, validateUsername } from "../../utils/InputValidation";
 
@@ -60,7 +60,6 @@ const ProfileModal: React.FC<ProfileModalProps> = ({
       toast.error("Username must be at least 2 characters long.");
       return;
     }
-    console.log("Saving data:", { avatar, username, name, password }); // Debugging
     onSave({ avatar, username, name, password });
   };
 

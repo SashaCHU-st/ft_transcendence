@@ -5,7 +5,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import api from "../pages/Profile/types/api";
+import api from "../types/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -55,7 +55,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
-    console.log("User jwt: ", token);
     setIsAuthenticated(true);
   };
 
@@ -71,7 +70,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const responseData = await response.json();
-      console.log("HERE=>", responseData);
       if (!response.ok) throw new Error("Failed to logout");
 
       toast.success("Logged out successfully!");

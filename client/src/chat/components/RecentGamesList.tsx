@@ -1,5 +1,5 @@
 import React from "react";
-import { MatchResult } from "../../pages/Profile/types/UserInfo";
+import { MatchResult } from "../../types/UserInfo";
 
 interface RecentGamesListProps {
   history: MatchResult[];

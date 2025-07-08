@@ -4,7 +4,7 @@ import {
   OverlayHeading,
 } from '../../pong/components/Overlays/OverlayComponents';
 import { OverlayWrapper } from '../../pong/components/Overlays/OverlayWrapper';
-import { UserInfo } from './types/UserInfo';
+import { UserInfo } from '../../types/UserInfo';
 
 interface FullHistoryProps {
   onClose: () => void;

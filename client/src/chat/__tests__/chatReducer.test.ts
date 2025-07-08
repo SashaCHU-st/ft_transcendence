@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { chatReducer } from '../context/ChatContext';
+import { chatReducer } from '../context/ChatContext.js';
 import { MAX_SYSTEM_MESSAGES } from '../../../../shared/chatConstants.js';
 
 interface SystemMessage {

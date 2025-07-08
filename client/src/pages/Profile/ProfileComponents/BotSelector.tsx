@@ -1,6 +1,6 @@
 import React from "react";
 import BotCard from "./BotCard";
-import { bots } from "./types/botsData";
+import { bots } from "../../../types/botsData";
 
 interface BotSelectorProps {
 	selectedBot: (typeof bots)[0] | null;

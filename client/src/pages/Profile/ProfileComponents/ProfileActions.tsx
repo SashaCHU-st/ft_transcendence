@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { UserInfo } from "./types/UserInfo";
+import { UserInfo } from "../../../types/UserInfo";
 import { toast } from "react-hot-toast";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 
 interface ProfileActionsProps {
 

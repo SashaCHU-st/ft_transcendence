@@ -12,6 +12,7 @@ dist
 dist-ssr
 *.local
 /database/database.db
+seed.js
 /cert/cert.pem
 /cert/key.pem
 # Editor directories and files

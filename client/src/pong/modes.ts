@@ -10,7 +10,7 @@ import { PADDLE_SPEED } from "../../../shared/constants.js";
 /**
  * SINGLE vs AI
  */
-import type { BotInfo } from "../pages/Profile/types/botsData";
+import type { BotInfo } from "../types/botsData.js";
 
 export function startSinglePlayerAI(
   state: GameState,

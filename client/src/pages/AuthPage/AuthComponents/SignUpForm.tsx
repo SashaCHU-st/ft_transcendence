@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 import {
   validateEmail,
   validatePassword,
   validateName,
   validateUsername,
-} from '../../utils/InputValidation';
+} from '../../../utils/InputValidation';
 import TwoFactorForm from './TwoFactorForm';
 
 interface SignUpFormProps {

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { UserInfo, calculateUserStats } from './types/UserInfo';
-import FullHistory from './FullHistory';
+import { UserInfo, calculateUserStats } from '../../../types/UserInfo';
+import FullHistory from '../../History/FullHistory';
 import FriendRequestList from './FriendRequestsList';
-import { useProfile } from "./hooks/useProfile";
+import { useProfile } from "../../../hooks/useProfile";
 
 
 interface UserProfileProps {
