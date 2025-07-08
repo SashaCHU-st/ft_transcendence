@@ -1,0 +1,125 @@
+{
+  "id": null,
+  "uid": "pong-monitoring",
+  "title": "Pong Monitoring",
+  "timezone": "browser",
+  "schemaVersion": 16,
+  "version": 0,
+  "refresh": "10s",
+  "panels": [
+    {
+      "type": "text",
+      "title": "style",
+      "options": {
+        "content": "<style>@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');body{font-family:'Orbitron',sans-serif;background:#000;color:#d3e0fb;}h2.panel-title-text{color:#ff00ff;}<\/style>",
+        "mode": "html"
+      },
+      "gridPos": {"x": 0, "y": 0, "w": 24, "h": 1}
+    },
+    {
+      "type": "timeseries",
+      "title": "Process Uptime",
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "process_uptime_seconds", "legendFormat": "uptime" }],
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "#ff00ff", "mode": "fixed"}}, "overrides": []},
+      "gridPos": {"x": 0, "y": 1, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory RSS",
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "process_rss_bytes", "legendFormat": "rss" }],
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "#00ffff", "mode": "fixed"}}, "overrides": []},
+      "gridPos": {"x": 12, "y": 1, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Heap Used",
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "process_heap_used_bytes", "legendFormat": "heap" }],
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "#6600ff", "mode": "fixed"}}, "overrides": []},
+      "gridPos": {"x": 0, "y": 9, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Load Average",
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "load_average_1m", "legendFormat": "1m" },
+        { "expr": "load_average_5m", "legendFormat": "5m" },
+        { "expr": "load_average_15m", "legendFormat": "15m" }
+      ],
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}},
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}}, "overrides": []},
+      "gridPos": {"x": 12, "y": 9, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Chat Clients",
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "chat_clients", "legendFormat": "clients" }],
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "#00fc65", "mode": "fixed"}}, "overrides": []},
+      "gridPos": {"x": 0, "y": 17, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Remote Players",
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "remote_players", "legendFormat": "players" }],
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "#00ffff", "mode": "fixed"}}, "overrides": []},
+      "gridPos": {"x": 12, "y": 17, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Host CPU Load",
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "node_load1", "legendFormat": "load1" }],
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "#ff00ff", "mode": "fixed"}}, "overrides": []},
+      "gridPos": {"x": 0, "y": 25, "w": 24, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Free Memory",
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "node_memory_MemAvailable_bytes", "legendFormat": "free" }],
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "#00ffff", "mode": "fixed"}}, "overrides": []},
+      "gridPos": {"x": 0, "y": 33, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Disk Usage %",
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "(1 - node_filesystem_free_bytes{mountpoint=\"/\", fstype!=\"rootfs\"} / node_filesystem_size_bytes{mountpoint=\"/\", fstype!=\"rootfs\"}) * 100", "legendFormat": "disk" }],
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}},
+      "fieldConfig": {"defaults": {"color": {"fixedColor": "#6600ff", "mode": "fixed"}}, "overrides": []},
+      "gridPos": {"x": 12, "y": 33, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Request Duration",
+      "datasource": "Prometheus",
+      "targets": [
+        { "expr": "rate(http_request_duration_seconds_sum[1m]) / rate(http_request_duration_seconds_count[1m])", "legendFormat": "avg" },
+        { "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[1m])) by (le))", "legendFormat": "p95" }
+      ],
+      "options": {"legend": {"displayMode": "table", "placement": "bottom"}},
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}}, "overrides": []},
+      "gridPos": {"x": 0, "y": 41, "w": 12, "h": 8}
+    },
+    {
+      "type": "stat",
+      "title": "Active Alerts",
+      "datasource": "Prometheus",
+      "targets": [{ "expr": "count(ALERTS{alertstate=\"firing\"})", "legendFormat": "firing" }],
+      "fieldConfig": {"defaults": {"color": {"mode": "palette-classic"}}, "overrides": []},
+      "gridPos": {"x": 12, "y": 41, "w": 12, "h": 8}
+    }
+  ]
+}

@@ -20,5 +20,17 @@ export default defineConfig({
       cert: fs.readFileSync(path.resolve(__dirname, '../server/cert/cert.pem')),
     },
     port: 5173,
+    proxy: {
+      '/health': {
+        target: 'https://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/metrics': {
+        target: 'https://localhost:3000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 })

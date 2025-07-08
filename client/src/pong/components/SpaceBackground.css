@@ -1,0 +1,38 @@
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.12;
+  mix-blend-mode: screen;
+
+  /*background-image: url("../png_icons/tv-noise5.png");*/
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  
+  animation: noise-flicker 2s infinite;
+  
+}
+
+@keyframes noise-flicker {
+  0%,100% { opacity: 0.10; }
+  50%     { opacity: 0.16; }
+}
+
+.cosmic-circle {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.3;
+  z-index: -1;
+}
+
+/* base gradient background */
+.space-gradient {
+  background: radial-gradient(ellipse at bottom, #050b33 0%, #1b133d 100%);
+}
+
+
+
+/*animation: noise-flicker 0.15s steps(2) infinite;*/

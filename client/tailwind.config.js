@@ -35,7 +35,11 @@ export default {
         neonGreen: '#00fc65',
         neonCyan: '#00ffff',
         neonIndigo: '#6600ff',
-		mainNeon: '#0a0a23',
+                mainNeon: '#0a0a23',
+      },
+      fontFamily: {
+        orbitron: ['Orbitron', 'sans-serif'],
+        ubuntu: ['Ubuntu', 'sans-serif'],
       },
     },
   },
@@ -52,6 +56,7 @@ module.exports = {
     extend: {
       fontFamily: {
         orbitron: ['Orbitron', 'sans-serif'],
+        ubuntu: ['Ubuntu', 'sans-serif'],
       },
     },
   },

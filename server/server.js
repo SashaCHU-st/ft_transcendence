@@ -1,32 +1,72 @@
 import Fastify from "fastify";
 import authRoutes from "./routes/AuthRoutes.js";
-// import friendsRoutes from "./routes/FriendsRoutes.js"
-import favoriteRoutes from "./routes/FavoritesRoutes.js";
+import friendsRoutes from "./routes/FriendsRoutes.js"
 import profileRoutes from "./routes/ProfileRoutes.js";
 import statisticsRoutes from "./routes/StatisticRoutes.js";
 import challengeRoutes from "./routes/ChallangeRoutes.js";
+import messageRoutes from "./routes/MessageRoutes.js";
+import blockRoutes from "./routes/BlockRoutes.js";
+import monitorRoutes from "./routes/MonitorRoutes.js";
+import alertRoutes from "./routes/AlertRoutes.js";
+import { initWsServer } from "./remote/wsServer.js";
+import { initChatWsServer } from "./chatWsServer.js";
 import cors from "@fastify/cors";
 import dotenv from "dotenv";
 import jwt from "@fastify/jwt";
 import fs from "fs";
 import path from "path";
+import view from "@fastify/view";
+import ejs from "ejs";
+import ssrRoutes from "./routes/SsrRoutes.js";
+import { httpRequestDuration } from "./utils/monitor.js";
+import urlData from "./plugins/urlData.js";
 
 dotenv.config();
 
-const fastify = Fastify({
-  logger: true,
-  https: {
+let httpsOptions;
+try {
+  httpsOptions = {
     key: fs.readFileSync(path.resolve("cert", "key.pem")),
     cert: fs.readFileSync(path.resolve("cert", "cert.pem")),
-  },
-});
+  };
+} catch (err) {
+  console.warn("SSL certificates not found, starting without HTTPS");
+  httpsOptions = null;
+}
 
+const fastify = Fastify({
+  logger: true,
+  ...(httpsOptions ? { https: httpsOptions } : {}),
+});
+fastify.register(urlData);
+fastify.register(view, {
+  engine: { ejs },
+  root: path.resolve("./views"),
+});
 // JWT
-fastify.register(jwt, { secret: "kuku" });
+const jwtSecret = process.env.SECRET || "kuku";
+fastify.register(jwt, { secret: jwtSecret });
 
 fastify.addHook("preHandler", (req, res, next) => {
   req.jwt = fastify.jwt;
   return next();
+});
+
+fastify.addHook('onRequest', (req, reply, done) => {
+  req.metricsStart = process.hrtime.bigint();
+  done();
+});
+
+fastify.addHook('onResponse', (req, reply, done) => {
+  if (req.metricsStart) {
+    const diff = Number(process.hrtime.bigint() - req.metricsStart) / 1e9;
+    let route = req.routerPath || req.urlData().path;
+    if (reply.statusCode === 404) route = 'not_found';
+    httpRequestDuration
+      .labels(route, req.method, reply.statusCode)
+      .observe(diff);
+  }
+  done();
 });
 
 // JWT Authentication
@@ -39,24 +79,48 @@ fastify.decorate("authenticate", async (request, reply) => {
 });
 
 // CORS
+const corsOrigin = process.env.CLIENT || true;
 fastify.register(cors, {
-  origin: "https://localhost:5173",
+  origin: corsOrigin,
   credentials: true,
-  methods: ["GET", "POST", "PATCH", "DELETE"],
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
 });
-
 // Routes
 fastify.register(authRoutes);
-// fastify.register(friendsRoutes);
-fastify.register(favoriteRoutes);
+fastify.register(friendsRoutes);
 fastify.register(profileRoutes);
 fastify.register(statisticsRoutes);
 fastify.register(challengeRoutes);
+fastify.register(messageRoutes);
+fastify.register(blockRoutes);
+fastify.register(ssrRoutes);
+fastify.register(monitorRoutes);
+fastify.register(alertRoutes);
+
+
 
 // Server start
 const start = async () => {
   try {
-    await fastify.listen({ port: process.env.PORT || 3000 });
+    await fastify.listen({
+      port: process.env.PORT || 3000,
+      host: '0.0.0.0',
+    });
+    const gameWss = initWsServer();
+    const chatWss = initChatWsServer();
+
+    fastify.server.on('upgrade', (req, socket, head) => {
+      const pathname = req.url.split('?')[0];
+      if (pathname === '/ws') {
+        gameWss.handleUpgrade(req, socket, head, ws => {
+          gameWss.emit('connection', ws, req);
+        });
+      } else if (pathname === '/chat') {
+        chatWss.handleUpgrade(req, socket, head, ws => {
+          chatWss.emit('connection', ws, req);
+        });
+      }
+    });
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);

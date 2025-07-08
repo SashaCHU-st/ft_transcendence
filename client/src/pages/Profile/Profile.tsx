@@ -1,30 +1,72 @@
 import React, { useState } from "react";
-import ProfileModal from "./ProfileModal";
-import Header from "./Header";
-import DesktopLayout from "./DesktopLayout";
-import MobileLayout from "./MobileLayout";
-import BotSelector from "./BotSelector";
-import { useProfile } from "./hooks/useProfile";
+import ProfileModal from "../EditProfile/ProfileModal";
+import Header from "./ProfileComponents/Header";
+import DesktopLayout from "../../components/Layouts/DesktopLayout";
+import MobileLayout from "../../components/Layouts/MobileLayout";
+import BotSelector from "./ProfileComponents/BotSelector";
+import { useProfile } from "../../hooks/useProfile";
 import { toast } from "react-hot-toast";
+import { SpaceBackground } from "../../pong/components/SpaceBackground";
+import ChatModal from "../../chat/components/ChatModal";
+import { ChatProvider } from "../../chat/context/ChatContext";
+import NotificationModal from "./ProfileComponents/NotificationModal";
+import StatsDashboardModal from "../Dashbord/StatsDashboardModal";
+import DeclinedChallengeModal from "./ProfileComponents/DeclinedChallengeModal";
+import DeclinedFriendRequestModal from "./ProfileComponents/DeclinedFriendRequestModal";
+import api from "../../types/api";
+
 
 // Profile component serves as the main page for user profile management
 const Profile: React.FC = () => {
-  // Destructure user data, state, and handlers from custom useProfile hook
   const {
     user, // Current user's data
     friends, // List of friends
     players, // List of all players
+    chatList,
     selectedBot, // Currently selected bot for gameplay
     isModalOpen, // State for profile modal visibility
-    isLoading, // Loading state for data fetching
     setSelectedBot, // Function to update selected bot
     setIsModalOpen, // Function to toggle profile modal
     handleSaveProfile, // Handler to save profile changes
     handlePlay, // Handler to start a game
+    isRandomizing,
+    handleRemove,
+    notifications,
+    isNotificationModalOpen,
+    handleAcceptChallenge,
+    handleDeclineChallenge,
+    handleAdd,
+    setDeclinedChallenge,
+    declinedChallenge, 
+    //friendRequests,
+    declinedFriendRequest,
+    setDeclinedFriendRequest,
+    //dismissDeclinedFriendRequest
   } = useProfile();
 
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
+ 
+
   // State to store username for auto-expanding a user card
-  const [expandUsername, setExpandUsername] = useState<string | undefined>(undefined);
+  const [expandUsername, setExpandUsername] = useState<string | undefined>(
+    undefined
+  );
+
+const handleOkButtondeclineFriend = async (username: string) => {
+  const user_id1 = localStorage.getItem("id");
+  if (!user_id1) return;
+
+  const user_id = Number(user_id1);
+  try {
+    await api.post("/sawAccept", { user_id, username });
+    setDeclinedFriendRequest((prev) =>
+      prev ? prev.filter((u) => u !== username) : null
+    );
+  } catch (err) {
+    console.error(`Failed to acknowledge declined request for ${username}:`, err);
+  }
+};
 
   // Handle search for a user by username (case-insensitive)
   const handleSearch = (username: string) => {
@@ -36,7 +78,7 @@ const Profile: React.FC = () => {
       (f) => f.username.toLowerCase() === username.toLowerCase()
     );
 
-    // If found, set expandUsername to trigger card expansion and show success toast
+    //If found, set expandUsername to trigger card expansion and show success toast
     if (foundInPlayers || foundInFriends) {
       setExpandUsername(username);
       toast.success(`Found user: ${username}`);
@@ -47,55 +89,39 @@ const Profile: React.FC = () => {
     }
   };
 
-  // Display loading state while fetching data
-  if (isLoading) {
-    return (
-      <div
-        className="
-          min-h-screen
-          w-full
-          flex
-          items-center
-          justify-center
-          text-white
-        "
-      >
-        Loading data, please wait...
-      </div>
-    );
-  }
+  const handleClearSearch = () => {
+  setExpandUsername(undefined); // Clear search result so the card won't reopen
+};
 
   // Display error if user data failed to load
   if (!user) {
     return (
-      <div
-        className="
-          min-h-screen
-          w-full
-          flex
-          items-center
-          justify-center
-          text-white
-        "
-      >
-        Failed to load user data.
-      </div>
+      <SpaceBackground>
+        <div
+          className="h-screen 
+        w-full 
+        flex 
+        items-center 
+        justify-center
+         text-white"
+        >
+          Failed to load user data.
+        </div>
+      </SpaceBackground>
     );
   }
 
   // Render the main profile page layout
   return (
-    <>
+    <SpaceBackground>
       <div
-        className="
-          min-h-screen
-          w-full
-          text-white
-          flex
-          flex-col
-          overflow-y-auto
-          justify-between
-        "
+        className="h-screen 
+       w-full
+       text-white 
+       flex 
+       flex-col 
+       overflow-y-auto
+       font-ubuntu"
       >
         {/* Header with user info, profile toggle, and search functionality */}
         <Header
@@ -104,47 +130,94 @@ const Profile: React.FC = () => {
             online: user.online,
             email: user.email,
           }}
-          onProfileClick={() => setIsModalOpen(true)} // Open profile modal on click
-          onSearch={handleSearch} // Pass search handler
+          onProfileClick={() => setIsModalOpen(true)}
+          onSearch={handleSearch}
+          onClearSearch={handleClearSearch}
+          onOpenChat={() => setIsChatOpen(true)}
+          onOpenStats={() => setIsStatsOpen(true)}
+
         />
+
         {/* Desktop-specific layout for large screens */}
         <DesktopLayout
           user={user}
           friends={friends}
-          players={players.filter((p) => p.id !== user.id)} // Exclude current user from players list
+          players={players.filter((p) => p.id !== user.id)}
           selectedBot={selectedBot}
           handlePlay={handlePlay}
-          expandUsername={expandUsername} // Pass username for card expansion
+          isRandomizing={isRandomizing}
+          expandUsername={expandUsername}
+          handleRemove={handleRemove}
+          handleAdd={handleAdd}
         />
+
         {/* Mobile-specific layout for smaller screens */}
         <MobileLayout
           user={user}
           friends={friends}
-          players={players.filter((p) => p.id !== user.id)} // Exclude current user from players list
+          players={players.filter((p) => p.id !== user.id)}
           selectedBot={selectedBot}
           handlePlay={handlePlay}
-          expandUsername={expandUsername} // Pass username for card expansion
+          isRandomizing={isRandomizing}
+          expandUsername={expandUsername}
+          handleRemove={handleRemove}
+          handleAdd={handleAdd}
         />
-        {/* Bot selector for choosing game opponent */}
         <BotSelector
           selectedBot={selectedBot}
           setSelectedBot={setSelectedBot}
         />
+
       </div>
 
       {/* Conditionally render profile modal for editing user data */}
       {isModalOpen && (
         <ProfileModal
-          onClose={() => setIsModalOpen(false)} // Close modal on dismiss
+          onClose={() => setIsModalOpen(false)}
           userData={{
             avatar: user.avatar,
             username: user.username,
             name: user.name,
           }}
-          onSave={handleSaveProfile} // Save profile changes
+          onSave={handleSaveProfile}
         />
       )}
-    </>
+      {isNotificationModalOpen && notifications.length > 0 && (
+        <NotificationModal
+          notifications={notifications}
+          onAccept={handleAcceptChallenge}
+          onDecline={handleDeclineChallenge}
+        />
+      )}
+      {declinedChallenge && (
+       <DeclinedChallengeModal
+        declinedUsername={declinedChallenge}
+        onClose={() => setDeclinedChallenge(null)}
+      />
+      )}
+      {declinedFriendRequest &&
+        declinedFriendRequest.map((username) => (
+          <DeclinedFriendRequestModal
+            key={username}
+            declinedUsername={username}
+            onClose={() => handleOkButtondeclineFriend(username)}
+          />
+      ))}
+
+      {isStatsOpen && (
+        <StatsDashboardModal user={user} onClose={() => setIsStatsOpen(false)} />
+      )}
+
+      {isChatOpen && (
+        <ChatProvider currentUserId={user.id}>
+          <ChatModal
+            onClose={() => setIsChatOpen(false)}
+            currentUserId={user.id}
+            players={chatList.filter((p) => p.id !== user.id)}
+          />
+        </ChatProvider>
+      )}
+    </SpaceBackground>
   );
 };
 

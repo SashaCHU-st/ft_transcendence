@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <title>Super Pong Metrics</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+      body {
+        background: #000;
+        color: #d3e0fb;
+        font-family: 'Orbitron', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+      h1 {
+        text-shadow: 0 0 12px #007BFF;
+        margin-bottom: 1.5rem;
+      }
+      table {
+        border-collapse: collapse;
+        background: rgba(0, 0, 0, 0.6);
+        box-shadow: 0 0 15px rgba(0, 161, 255, 0.8);
+      }
+      th, td {
+        padding: 8px 12px;
+        border: 1px solid rgba(0, 161, 255, 0.4);
+      }
+      th {
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Server Metrics</h1>
+    <table>
+      <tbody>
+        <% for (const key in metrics) { %>
+          <tr>
+            <th><%= key %></th>
+            <td><%= metrics[key] %></td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </body>
+</html>

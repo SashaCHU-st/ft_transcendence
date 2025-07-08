@@ -1,0 +1,17 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - ./server/.env
+
+    volumes:
+      - ./server/database:/app/server/database
+      - ./server/cert:/app/server/cert:ro
+
+    ports:
+      - "3000:3000"
+      - "5173:5173"
+
+    restart: unless-stopped

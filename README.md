@@ -13,8 +13,13 @@ cd server
 ```bash
 npm install
 ```
-2.3 Start server
+2.3 Generate local SSL certificates (only once)
+```bash
+./generate-cert.sh
 ```
+
+2.4 Start server
+```bash
 npm run dev
 ```
 
@@ -31,4 +36,10 @@ npm install
 3.3 Start server   
 ```
 npm run dev
+
+
+
+
+
+
 ```

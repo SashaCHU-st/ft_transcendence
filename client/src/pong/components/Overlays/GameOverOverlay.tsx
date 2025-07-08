@@ -1,10 +1,18 @@
-import React from "react";
+import { OverlayWrapper } from "./OverlayWrapper";
+import { useEnterKey } from "../../hooks/useEnterKey";
+import {
+  OverlayCard,
+  OverlayButton,
+  OverlayHeading,
+  OverlayText,
+} from "./OverlayComponents";
 
 interface GameOverOverlayProps {
   winnerName: string;
   playerScore: number;
   aiScore: number;
   onOk: () => void;
+  message?: string;
 }
 
 export function GameOverOverlay({
@@ -12,23 +20,23 @@ export function GameOverOverlay({
   playerScore,
   aiScore,
   onOk,
+  message,
 }: GameOverOverlayProps) {
+  useEnterKey(onOk);
   return (
-    <div className="absolute inset-0 z-40 flex items-center justify-center bg-black bg-opacity-80">
-      <div className="rounded border-2 border-pink-500 p-4 text-center">
-        <h2 className="mb-4 text-3xl">GAME OVER</h2>
-        <p className="mb-4 text-xl">
-          Winner: {winnerName}
+    <OverlayWrapper>
+      <OverlayCard>
+        <OverlayHeading className="text-3xl">GAME OVER</OverlayHeading>
+        {message && (
+          <OverlayText className="text-lg mb-2">{message}</OverlayText>
+        )}
+        <OverlayText className="text-xl">
+          Winner: <b className="text-[#74C0FC]">{winnerName}</b>
           <br />
           Score: {playerScore}:{aiScore}
-        </p>
-        <button
-          onClick={onOk}
-          className="rounded border border-white px-6 py-2"
-        >
-          OK
-        </button>
-      </div>
-    </div>
+        </OverlayText>
+        <OverlayButton onClick={onOk}>OK</OverlayButton>
+      </OverlayCard>
+    </OverlayWrapper>
   );
 }

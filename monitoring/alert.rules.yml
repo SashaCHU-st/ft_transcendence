@@ -1,0 +1,35 @@
+groups:
+  - name: pong
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: 'Instance {{ $labels.instance }} down'
+          description: 'The instance {{ $labels.instance }} has been down for more than 1 minute.'
+      - alert: HighMemoryUsage
+        expr: process_rss_bytes > 5e+08
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'High memory usage'
+          description: 'Server memory usage has exceeded 500MB for over 2 minutes.'
+      - alert: HighCPUUsage
+        expr: (1 - avg(rate(node_cpu_seconds_total{mode="idle"}[1m])) by (instance)) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'High CPU usage'
+          description: 'CPU usage has been over 80% for more than 5 minutes.'
+      - alert: HighDiskUsage
+        expr: (node_filesystem_size_bytes{mountpoint="/"} - node_filesystem_avail_bytes{mountpoint="/"}) / node_filesystem_size_bytes{mountpoint="/"} > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: 'High disk usage'
+          description: 'Root filesystem is more than 90% full.'

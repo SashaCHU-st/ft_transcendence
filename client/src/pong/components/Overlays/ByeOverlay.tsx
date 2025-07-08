@@ -1,5 +1,11 @@
-import React from "react";
-import { stripPredTag } from "../../utils/utils";
+import { useEnterKey } from "../../hooks/useEnterKey";
+import { OverlayWrapper } from "./OverlayWrapper";
+import {
+  OverlayCard,
+  OverlayButton,
+  OverlayHeading,
+  OverlayText,
+} from "./OverlayComponents";
 
 interface ByeOverlayProps {
   winner: string;
@@ -8,23 +14,28 @@ interface ByeOverlayProps {
 }
 
 export function ByeOverlay({ winner, nextPair, onContinue }: ByeOverlayProps) {
+  useEnterKey(onContinue);
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
-      <div className="rounded border-2 border-yellow-400 p-4 text-center">
-        <h2 className="mb-4 text-2xl text-yellow-200">BYE Match</h2>
-        <p className="mb-4 text-lg">
-          Player <b>{stripPredTag(winner)}</b> gets a pass to next round!
-        </p>
+    <OverlayWrapper>
+      <OverlayCard>
+        <OverlayHeading className="text-2xl">BYE Match</OverlayHeading>
+        <OverlayText className="text-lg">
+          Player <b className="text-[#74C0FC]">{winner}</b> gets a pass to next round!
+        </OverlayText>
         {nextPair && (
-          <p className="text-md mb-4 text-gray-300">Next match: {nextPair}</p>
+          <p
+            className="
+              mb-4
+              text-md
+              text-[#743b91]
+              drop-shadow-[0_0_5px_rgba(147,51,234,0.6)]
+            "
+          >
+            Next match: {nextPair}
+          </p>
         )}
-        <button
-          onClick={onContinue}
-          className="rounded border border-white px-6 py-2"
-        >
-          Continue
-        </button>
-      </div>
-    </div>
+        <OverlayButton onClick={onContinue}>Continue</OverlayButton>
+      </OverlayCard>
+    </OverlayWrapper>
   );
 }

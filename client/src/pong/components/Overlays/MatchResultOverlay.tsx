@@ -1,8 +1,17 @@
-import React from "react";
+import { OverlayWrapper } from "./OverlayWrapper";
+import { useEnterKey } from "../../hooks/useEnterKey";
+import {
+  OverlayCard,
+  OverlayButton,
+  OverlayHeading,
+  OverlayText,
+} from "./OverlayComponents";
 
 interface MatchResultOverlayProps {
   winner: string;
   loser: string;
+  winnerScore: number;
+  loserScore: number;
   isFinal: boolean;
   nextPair?: string;
   onContinue: () => void;
@@ -11,35 +20,60 @@ interface MatchResultOverlayProps {
 export function MatchResultOverlay({
   winner,
   loser,
+  winnerScore,
+  loserScore,
   isFinal,
   nextPair,
   onContinue,
 }: MatchResultOverlayProps) {
+  useEnterKey(onContinue);
   return (
-    <div className="absolute inset-0 z-[55] flex items-center justify-center bg-black bg-opacity-80">
-      <div className="rounded border-2 border-yellow-400 p-4 text-center">
-        <h2 className="mb-2 text-2xl text-yellow-300">Match result</h2>
-        <p className="mb-4 text-lg">
-          Winner: {winner}
+    <OverlayWrapper>
+      <OverlayCard>
+        <OverlayHeading className="mb-2 text-2xl">Match result</OverlayHeading>
+        <OverlayText className="text-lg">
+          Winner: <b className="text-[#74C0FC]">{winner}</b>
           <br />
-          Loser: {loser}
-        </p>
-
+          Loser: <b className="text-[#743b91]">{loser}</b>
+          <br />
+          Score: {winnerScore}:{loserScore}
+        </OverlayText>
         {isFinal ? (
-          <p className="mb-4 text-lg text-green-300">This was final!</p>
+          <p
+            className="
+              mb-4
+              text-lg
+              text-[#74C0FC]
+              drop-shadow-[0_0_5px_rgba(74,222,128,0.6)]
+            "
+          >
+            This was final!
+          </p>
         ) : nextPair ? (
-          <p className="text-md mb-4 text-gray-300">Next match: {nextPair}</p>
+          <p
+            className="
+              mb-4
+              text-md
+              text-[#743b91]
+              drop-shadow-[0_0_5px_rgba(147,51,234,0.6)]
+            "
+          >
+            Next match: {nextPair}
+          </p>
         ) : (
-          <p className="text-md mb-4 text-gray-300">Next match is coming...</p>
+          <p
+            className="
+              mb-4
+              text-md
+              text-[#743b91]
+              drop-shadow-[0_0_5px_rgba(147,51,234,0.6)]
+            "
+          >
+            Next match is coming...
+          </p>
         )}
-
-        <button
-          onClick={onContinue}
-          className="rounded border border-white px-6 py-2"
-        >
-          Continue
-        </button>
-      </div>
-    </div>
+        <OverlayButton onClick={onContinue}>Continue</OverlayButton>
+      </OverlayCard>
+    </OverlayWrapper>
   );
 }

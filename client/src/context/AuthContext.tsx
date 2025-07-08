@@ -5,6 +5,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
+import api from "../types/api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 
@@ -28,36 +29,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token) {
-      setIsAuthenticated(true);
-    }
-  }, []);
+    if (!token) return;
+
+    const verifyToken = async () => {
+      try {
+        const { data } = await api.get("/users/me", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (data?.user?.id) {
+          localStorage.setItem("id", String(data.user.id));
+          setIsAuthenticated(true);
+        } else {
+          throw new Error("User not found");
+        }
+      } catch (err) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("id");
+        setIsAuthenticated(false);
+        navigate("/login", { replace: true });
+      }
+    };
+
+    verifyToken();
+  }, [navigate]);
 
   const login = (token: string) => {
     localStorage.setItem("token", token);
-    console.log("User jwt: ", token);
     setIsAuthenticated(true);
   };
 
   const logout = async () => {
     try {
-      const token = localStorage.getItem("token");
       const user_id = localStorage.getItem("id");
-      console.log("YYYY=>", user_id);
-      console.log(typeof user_id);
-      console.log("JWT in logout: ", token);
       const response = await fetch("https://localhost:3000/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
         body: JSON.stringify({ user_id }),
       });
 
-      console.log("!!!!!!!!!");
       const responseData = await response.json();
-      console.log("HERE=>", responseData);
       if (!response.ok) throw new Error("Failed to logout");
 
       toast.success("Logged out successfully!");
@@ -68,7 +80,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       localStorage.removeItem("token");
       localStorage.removeItem("id");
       setIsAuthenticated(false);
-      navigate("/login", { replace: true }); // Avoid double push
+      navigate("/login", { replace: true });
     }
   };
 
