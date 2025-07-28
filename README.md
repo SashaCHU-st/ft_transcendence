@@ -1,6 +1,7 @@
 # ✅ Project Summary
 
 A secure, feature-rich Pong game with local & online multiplayer, AI opponent, user management, tournament system, 3D graphics, monitoring tools, and full Dockerized deployment.
+
 ---
 ## 👥 Contributors
 
