@@ -1,6 +1,13 @@
 # ✅ Project Summary
 
 A secure, feature-rich Pong game with local & online multiplayer, AI opponent, user management, tournament system, 3D graphics, monitoring tools, and full Dockerized deployment.
+---
+## 👥 Contributors
+
+- Aleksandra Heinänen [@SashaCHU-st](https://github.com/SashaCHU-st)
+- Alisa Arbenina [@aarbenin](https://github.com/aarbenin)
+- Elena Polkhovski [@lenkras](https://github.com/lenkras)
+- Oleg Goman [@OleGoman85](https://github.com/OleGoman85)
 
 ---
 
